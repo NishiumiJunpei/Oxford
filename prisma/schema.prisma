@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
+enum MemorizeStatus {
+  UNKNOWN
+  NOT_MEMORIZED
+  MEMORIZED
+  PERFECTLY_MEMORIZED
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  profile   String?
+  googleId  String?  @unique
+  UserWordList             UserWordList[]
+  UserWordListByThemeStatus UserWordListByThemeStatus[]
+}
+
+model UserWordList {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  english         String
+  japanese        String
+  exampleSentence String?
+  wordImage       String?
+  remark          String?
+  memorizeStatus    MemorizeStatus @default(UNKNOWN)
+  lastCheckDate   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model WordListByTheme {
+  id              Int      @id @default(autoincrement())
+  theme           String
+  block           Int
+  english         String
+  japanese        String
+  exampleSentence String?
+  wordImage       String?
+  remark          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+  UserWordListByThemeStatus UserWordListByThemeStatus[]
+}
+
+model UserWordListByThemeStatus {
+  id                Int             @id @default(autoincrement())
+  userId            Int
+  wordListByThemeId Int
+  memorizeStatus    MemorizeStatus @default(UNKNOWN)
+  lastCheckDate     DateTime?
+  updatedAt         DateTime       @default(now()) @updatedAt
+  user              User           @relation(fields: [userId], references: [id])
+  wordListByTheme   WordListByTheme @relation(fields: [wordListByThemeId], references: [id])
+}
+
+

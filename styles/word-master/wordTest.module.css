@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 左詰めにする */
+  justify-content: flex-start; /* 上詰めにする */
+  margin: 20px; /* 適切なマージンを追加 */
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f9fc;
+}
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .word {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #555;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .button:hover {
+    background-color: #e0e0e0;
+  }
+  

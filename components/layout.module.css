@@ -1,0 +1,14 @@
+/* components/layout.module.css */
+.container {
+    display: flex;
+  }
+  
+  .main {
+    margin-left: 250px; /* サイドバーの幅に合わせて調整 */
+    padding: 20px; /* コンテンツに余白を加える */
+    width: calc(100% - 250px); /* サイドバーの幅を除いた幅を設定 */
+    min-height: 100vh; /* ビューポートの高さに合わせる */
+  }
+  
+  /* 他のスタイルも必要に応じて追加 */
+  
