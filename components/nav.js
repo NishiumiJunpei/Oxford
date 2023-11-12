@@ -1,5 +1,8 @@
 import Link from 'next/link';
-import { Drawer, List, ListItem, ListItemText, Typography, Box } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
+import ImportContactsIcon from '@mui/icons-material/ImportContacts'; // 理解度ステータス用アイコン
+import BookmarksIcon from '@mui/icons-material/Bookmarks'; // マイ単語帳用アイコン
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // 単語理解度チェック用アイコン
 
 const drawerWidth = 240;
 
@@ -20,76 +23,30 @@ function Nav() {
               単語マスター
             </Typography>
           </ListItem>
-          <ListItem button component="a" href="/word-master/statusByTheme">
-            <ListItemText primary="テーマ別単語帳" />
+          <ListItem button component="a" href="/">
+            <ListItemIcon>
+              <CheckCircleIcon /> 
+            </ListItemIcon>
+            <ListItemText primary="ホーム" />
+          </ListItem>
+          <ListItem button component="a" href="/word-master/progressByBlockTheme">
+            <ListItemIcon>
+              <ImportContactsIcon /> {/* 理解度ステータスのアイコン */}
+            </ListItemIcon>
+            <ListItemText primary="英単語マスター" />
           </ListItem>
           <ListItem button component="a" href="/word-master/myWordList">
+            <ListItemIcon>
+              <BookmarksIcon /> {/* マイ単語帳のアイコン */}
+            </ListItemIcon>
             <ListItemText primary="マイ単語帳" />
-          </ListItem>
-          <ListItem button component="a" href="/word-master/wordTest">
-            <ListItemText primary="単語理解度チェック" />
           </ListItem>
         </List>
 
-        <List>
-          <ListItem>
-            <Typography variant="h6" noWrap component="div">
-              ライティングマスター
-            </Typography>
-          </ListItem>
-          <ListItem button component="a" href="/writing-master/somePath">
-            <ListItemText primary="XXXX" />
-          </ListItem>
-          {/* 他のセクションも同様に */}
-        </List>
+        {/* 他のリストも同様にアイコンを追加可能 */}
       </Box>
     </Drawer>
   );
 }
 
 export default Nav;
-
-
-
-
-
-// import Link from 'next/link';
-// import styles from './nav.module.css';
-
-// function Nav() {
-//   return (
-//     <aside className={styles.sidebar}>
-//       <h2>単語マスター</h2>
-//       <ul className={styles.sidebarList}>
-//         <li className={styles.sidebarItem}>
-//           <Link href="/word-master/wordListByTheme">
-//             テーマ別単語帳
-//           </Link>
-//         </li>
-//         <li className={styles.sidebarItem}>
-//           <Link href="/word-master/myWordList">
-//             マイ単語帳
-//           </Link>
-//         </li>
-//         <li className={styles.sidebarItem}>
-//           <Link href="/word-master/wordTest">
-//             単語理解度チェック
-//           </Link>
-//         </li>
-//       </ul>
-
-//       <h2>ライティングマスター</h2>
-//       <ul className={styles.sidebarList}>
-//         <li className={styles.sidebarItem}>
-//           <Link href="/word-master/wordListByTheme">
-//             XXXX
-//           </Link>
-//         </li>
-//       </ul>
-
-//       {/* 他のセクションも同様に */}
-//     </aside>
-//   );
-// }
-
-// export default Nav;

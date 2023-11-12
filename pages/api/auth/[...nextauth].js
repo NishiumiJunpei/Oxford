@@ -2,51 +2,42 @@
 import NextAuth from "next-auth"
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
-import prisma from "../../../utils/prisma-utils"
+import {findUserByEmail} from '../../../utils/prisma-utils'
+import bcrypt from 'bcrypt';
 
 
 
 export const authOptions = {
   // Configure one or more authentication providers
+  session: {
+    strategy: "jwt"
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    encryption: true,
+  },
   providers: [
-    // EmailProvider({
-    //   server: process.env.EMAIL_SERVER,
-    //   from: process.env.EMAIL_FROM
-    // }),
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Credentials',
-      // The credentials is used to generate a suitable form on the sign in page.
-      // You can specify whatever fields you are expecting to be submitted.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        const res = await fetch("/your/endpoint", {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" }
-        })
-        const user = await res.json()
-  
-        // If no error and we have user data, return it
-        if (res.ok && user) {
-          return user
+        const user = await findUserByEmail(credentials.email);
+        
+        // ユーザーが存在し、パスワードが一致する場合
+        if (user && bcrypt.compareSync(credentials.password, user.password)) {
+          // 認証成功：ユーザーオブジェクトを返す
+          console.log('^^ authorization is done successfully')
+          return { id: user.id, name: user.name, email: user.email };
+        } else {
+          // 認証失敗：nullを返す
+          console.log('>< authorization error')
+          return null;
         }
-        // Return null if user data could not be retrieved
-        return null
       }
     })
-  
 
   ],
   callbacks: {
@@ -60,7 +51,23 @@ export const authOptions = {
         // Or you can return a URL to redirect to:
         // return '/unauthorized'
       }
-    }
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.userId = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token.userId) {
+        session.userId = token.userId;
+      }
+      return session;
+    },    
+    async redirect({ url, baseUrl }) {
+      // ユーザーがサインインした後のリダイレクト先
+      return baseUrl;
+    }    
   },
   pages: {
     signIn: '/auth/signin',
@@ -69,9 +76,6 @@ export const authOptions = {
     verifyRequest: '/auth/verify-request', // (used for check email message)
     newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
   }
-
-  
-
 }
 
 export default NextAuth(authOptions)
