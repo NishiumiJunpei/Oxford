@@ -14,14 +14,14 @@ export default async function handler(req, res) {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const userData = {
-        name: "Junpei",
-        email: "nishiumi@gmail.com",
+        name: "Rina",
+        email: "rina.nishiumi@gmail.com",
         password: hashedPassword,
         profile: "",
       }
 
 
-    // const user = await createUser(userData);
+    const user = await createUser(userData);
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error', error: error.message });

@@ -4,7 +4,6 @@
 //npx prisma generate
 //npx prisma migrate dev --name xxx
 
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,44 +20,44 @@ enum MemorizeStatus {
   PERFECTLY_MEMORIZED
 }
 
-
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  profile   String?
-  googleId  String?  @unique
-  UserWordList             UserWordList[]
+  id                        Int                         @id @default(autoincrement())
+  name                      String
+  email                     String                      @unique
+  password                  String
+  profile                   String?
+  googleId                  String?                     @unique
+  UserWordList              UserWordList[]
   UserWordListByThemeStatus UserWordListByThemeStatus[]
+  WordStoryByGPT            WordStoryByGPT[]
 }
 
 model UserWordList {
-  id              Int      @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   userId          Int
   english         String
   japanese        String
   exampleSentence String?
   wordImage       String?
   remark          String?
-  memorizeStatus    MemorizeStatus @default(UNKNOWN)
+  memorizeStatus  MemorizeStatus @default(UNKNOWN)
   lastCheckDate   DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @updatedAt
-  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now()) @updatedAt
+  user            User           @relation(fields: [userId], references: [id])
 }
 
 model WordListByTheme {
-  id              Int      @id @default(autoincrement())
-  theme           String
-  block           Int
-  english         String
-  japanese        String
-  exampleSentence String?
-  wordImage       String?
-  remark          String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @updatedAt
+  id                        Int                         @id @default(autoincrement())
+  theme                     String
+  block                     Int
+  english                   String
+  japanese                  String
+  exampleSentence           String?
+  wordImage                 String?
+  remark                    String?
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @default(now()) @updatedAt
   UserWordListByThemeStatus UserWordListByThemeStatus[]
 }
 
@@ -66,14 +65,30 @@ model UserWordListByThemeStatus {
   id                Int             @id @default(autoincrement())
   userId            Int
   wordListByThemeId Int
-  memorizeStatus    MemorizeStatus @default(UNKNOWN)
-  numMemorized      Int @default(0)
-  numNotMemorized   Int @default(0)
+  memorizeStatus    MemorizeStatus  @default(UNKNOWN)
+  numMemorized      Int             @default(0)
+  numNotMemorized   Int             @default(0)
+  exampleSentence   String?
   lastCheckDate     DateTime?
-  updatedAt         DateTime       @default(now()) @updatedAt
-  user              User           @relation(fields: [userId], references: [id])
+  updatedAt         DateTime        @default(now()) @updatedAt
+  user              User            @relation(fields: [userId], references: [id])
   wordListByTheme   WordListByTheme @relation(fields: [wordListByThemeId], references: [id])
+
   @@unique([userId, wordListByThemeId])
 }
 
-
+model WordStoryByGPT {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  theme         String
+  block         Int
+  storyTitle    String
+  storyContent  String
+  lengthCategory        String
+  genre         String
+  characters  String
+  words         String[] // Prismaでは配列をサポートしています
+  imageUrl      String?   // AWSのパスを格納
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+}

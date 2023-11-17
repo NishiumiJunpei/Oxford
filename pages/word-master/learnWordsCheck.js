@@ -22,6 +22,7 @@ const LearnWordsCheck = () => {
         const queryParams = new URLSearchParams({ theme, block, wordStatus, wordCount, lastCheck }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
+        console.log('test', data)
         setWordList(data);
       };
   
@@ -29,37 +30,36 @@ const LearnWordsCheck = () => {
         fetchData();
       }
     }, [theme, block]); // 依存配列にクエリパラメータを追加
-  
-  
-    const updateWordStatus = async (wordId, known) => {
-        try {
-          await fetch('/api/word-master/updateUserWordStatus', {
-            method: 'POST', // 通常、APIへのデータ更新はPOSTまたはPUTメソッドを使用
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED' }),
-          });
-        } catch (error) {
-          console.error('Error updating word status:', error);
-        }
-      };
 
-      const handleAnswer = (known) => {
-        const word = wordList[currentIndex];
-        updateWordStatus(word.id, known);
+    const handleAnswer = (known) => {
+        if (currentIndex >= 0 && currentIndex < wordList.length) {
+            const word = wordList[currentIndex];
+            if (word){
+                updateWordStatus(word.id, known);
 
-        if (known) {
-            setResult({ ...result, known: result.known + 1 });
-            nextWord();
-        } else {
-            setShowJapanese(true);
-            setButtonDisabled(true);
-            setNextButtonDisabled(false);
+                if (known) {
+                    setResult({ ...result, known: result.known + 1 });
+                    nextWord();
+                } else {
+                    setShowJapanese(true);
+                    setButtonDisabled(true);
+                    setNextButtonDisabled(false);
+                }    
+            }
+            else{
+                console.error('Current word is undefined.');
+            }
         }
     };
 
     const handleShowAnswer = () => {
         setShowJapanese(true);
         setShowAnswerButton(false);
+    };
+
+    const handleNext = () => {
+        setResult({ ...result, unknown: result.unknown + 1 });
+        nextWord();
     };
 
     const nextWord = () => {
@@ -74,22 +74,60 @@ const LearnWordsCheck = () => {
         }
     };
 
-    const handleNext = () => {
-        setResult({ ...result, unknown: result.unknown + 1 });
-        nextWord();
-    };
+    const updateWordStatus = async (wordId, known) => {
+        try {
+          await fetch('/api/word-master/updateUserWordStatus', {
+            method: 'POST', // 通常、APIへのデータ更新はPOSTまたはPUTメソッドを使用
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED' }),
+          });
+        } catch (error) {
+          console.error('Error updating word status:', error);
+        }
+      };
+
 
     const handleExit = () => {
         router.push(`/word-master/wordList?theme=${theme}&block=${block}`);
     };
 
 
+  const word = wordList[currentIndex];
+  const remainingWords = wordList.length - currentIndex - 1; // 残りの問題数
+
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      switch (event.key) {
+        case 'j':
+          handleAnswer(true);
+          break;
+        case 'k':
+          handleShowAnswer();
+          break;
+        case 'l':
+          handleAnswer(false);
+          break;
+        case 'n':
+          handleNext();
+          break;
+        default:
+          break;
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyPress);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
+
   if (wordList.length === 0) {
     return <Typography>Loading...</Typography>;
   }
 
-  const word = wordList[currentIndex];
-  const remainingWords = wordList.length - currentIndex - 1; // 残りの問題数
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>

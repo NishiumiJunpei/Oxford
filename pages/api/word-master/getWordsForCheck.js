@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       const wordStatusFilter = JSON.parse(wordStatus);
       wordList = await Promise.all(wordList.map(async word => {
         const status = await getUserWordListStatus(userId, word.id);
-        return { ...word, memorizeStatus: status };
+        return { ...word, memorizeStatus: status.memorizeStatus };
       }));
 
       wordList = wordList.filter(word => 

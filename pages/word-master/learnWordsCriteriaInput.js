@@ -7,7 +7,7 @@ const LearnWordsCriteriaInput = () => {
   const { theme, block } = router.query;
   const [wordStatus, setWordStatus] = useState({
     memorized: false,
-    notMemorized: true,
+    notMemorized: false,
     unknown: true,
   });
   const [wordCount, setWordCount] = useState('20');

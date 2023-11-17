@@ -2,19 +2,27 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 
-const GPTHelpModal = ({ open, onClose, onSave, onGenerate, englishWord, japaneseWord }) => {
+const GPTHelpModal = ({ open, onClose, onSave, onGenerate, english, japanese, wordListByThemeId }) => {
       const theme = useTheme();
       const fullScreen = useMediaQuery(theme.breakpoints.down('md')); // モバイル端末など小さい画面用
       const [exampleSentence, setExampleSentence] = useState('');
+      const [imageUrl, setImageUrl] = useState(null);
       const [isLoading, setIsLoading] = useState(false); // ローディング状態の管理
 
     const handleGenerate = async () => {
         setIsLoading(true); // ローディング開始
         try {
-          const response = await fetch('/api/word-master/genExampleSentenceByGPT');
-          const data = await response.json();
-          setExampleSentence(data.exampleSentence);
-          setIsLoading(false); // ローディング終了
+          const response = await fetch('/api/word-master/genExampleSentenceByGPT', {
+            method: 'POST', // HTTP メソッドを POST に設定
+            headers: {
+              'Content-Type': 'application/json', // コンテントタイプを JSON に設定
+            },
+            body: JSON.stringify({ english, japanese }) // ボディに english と japanese を JSON 形式で含める
+          });
+        const data = await response.json();
+        setExampleSentence(data.exampleSentence);
+        setImageUrl(data.imageUrl);
+        setIsLoading(false); // ローディング終了
         } catch (error) {
           console.error('Error generating example sentence:', error);
           setIsLoading(false); // ローディング終了
@@ -28,6 +36,26 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, englishWord, japanese
         }
       }, [open]);
     
+
+      const handleSave = async () => {
+        setIsLoading(true);
+        try {
+          await fetch('/api/word-master/saveExampleSentence', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ wordListByThemeId, exampleSentence })
+          });
+          onSave(exampleSentence); // 親コンポーネントの保存処理を呼び出す
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error saving example sentence:', error);
+          setIsLoading(false);
+        }
+      };
+    
+
     return (
     <Dialog
         open={open}
@@ -45,8 +73,8 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, englishWord, japanese
       >
         <DialogTitle>GPTヘルプ</DialogTitle>
       <DialogContent>
-          <Typography variant="h6">{englishWord}</Typography>
-        <Typography variant="subtitle1">{japaneseWord}</Typography>
+          <Typography variant="h6">{english}</Typography>
+        <Typography variant="subtitle1">{japanese}</Typography>
         {isLoading ? (
           <CircularProgress /> // ローディングインジケーターの表示
         ) : (
@@ -54,13 +82,21 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, englishWord, japanese
             例文生成
           </Button>
         )}
-        {exampleSentence && (
-          <Typography style={{ marginTop: 20 }}>{exampleSentence}</Typography>
-        )}
+      {exampleSentence && (
+        <>
+          <Typography className="preformatted-text" style={{ marginTop: 20 }}>
+            {exampleSentence}
+          </Typography>
+          {imageUrl && (
+            <img src={imageUrl} alt="例文の画像" style={{ marginTop: 20, maxWidth: '100%' }} />
+          )}
+        </>
+      )}
+
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>キャンセル</Button>
-        <Button onClick={onSave} disabled={!exampleSentence}>保存</Button>
+        <Button onClick={handleSave} disabled={!exampleSentence}>保存</Button>
       </DialogActions>
     </Dialog>
   );

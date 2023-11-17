@@ -4,14 +4,17 @@ import { Typography, Button, Table, TableHead, TableRow, TableCell, TableBody, P
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import GPTHelpModal from '../../components/GPTHelpModal'; // GPTHelpModalのインポート
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import GPTHelpModal from '../../components/gptHelpModal'; // GPTHelpModalのインポート
+import WordExampleSentenceModal from '../../components/wordExampleSentenceModal';
 
 const WordListPage = () => {
   const router = useRouter();
   const { theme, block } = router.query;
   const [wordList, setWordList] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); // モーダル用の状態
+  const [modalOpen, setModalOpen] = useState(false); // gptHelp用のモーダル用の状態
+  const [modalOpenWord, setModalOpenWord] = useState(null);// 例文確認用のモーダル用の状態
   const [selectedWord, setSelectedWord] = useState({}); // 選択された単語の情報を保存するステート
 
   useEffect(() => {
@@ -25,6 +28,10 @@ const WordListPage = () => {
       fetchData();
     }
   }, [theme, block]);
+
+  const handleBack = () => {
+    router.push(`/word-master/progressByBlockTheme?theme=${theme}`);
+  };
 
   // ステータスフィルタリング関数
   const handleStatusFilter = (status) => {
@@ -61,22 +68,43 @@ const StatusFilterIcons = () => (
     setModalOpen(true);
   };
   const handleCloseModal = () => setModalOpen(false);
-  const handleSaveModal = () => {
-    // 保存処理
+  const handleSaveModal = (savedExampleSentence) => {
+    setWordList(wordList.map(word => {
+      if (word.english === selectedWord.english) {
+        return { ...word, exampleSentence: savedExampleSentence };
+      }
+      return word;
+    }));
     handleCloseModal();
   };
 
-
+  const handleOpenModalWord = (word) => {
+    setSelectedWord(word);
+    setModalOpenWord(true);
+  };
+  
+  const handleImageSearch = (englishWord) => {
+    const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
+    window.open(url, '_blank');
+  };
+  
   return (
     <div>
-      <Box display="flex" alignItems="center" mb={2}>
-        <Typography variant="h4" component="div" sx={{ flexGrow: 1, mr: 2 }}>
-            {theme}
-        </Typography>
-        <Avatar sx={{ bgcolor: 'secondary.main', mr: 1 }}>{block}</Avatar>
-        <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?block=${block}&theme=${theme}`)}>
-            理解度チェック
+      <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
+        <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
+          戻る
         </Button>
+        <Box display="flex" alignItems="center" mt={1} width="100%">
+          <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
+            <Typography variant="h4" component="div">
+                {theme}
+            </Typography>
+            <Avatar sx={{ bgcolor: 'secondary.main', ml: 2, mr: 1 }}>{block}</Avatar>
+          </Box>
+          <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?block=${block}&theme=${theme}`)}>
+              理解度チェック
+          </Button>
+        </Box>
       </Box>
 
       <StatusFilterIcons /> {/* ステータスフィルタリングアイコンを表示 */}
@@ -110,9 +138,24 @@ const StatusFilterIcons = () => (
                   {word.status === 'NOT_MEMORIZED' && <WarningIcon style={{ color: 'orange' }} />}
                   {word.status === 'UNKNOWN' && <HelpOutlineIcon style={{ color: 'gray' }} />}
                 </TableCell>
-                <TableCell>{word.exampleSentence}</TableCell>
                 <TableCell>
-                <Button onClick={() => handleOpenModal(word)}>GPTヘルプ</Button>
+                  {word.exampleSentence?.length > 30
+                    ? `${word.exampleSentence?.substring(0, 30)}...`
+                    : word.exampleSentence}
+                  {word.exampleSentence?.length > 30 && (
+                    <Button onClick={() => handleOpenModalWord(word)}>もっと見る</Button>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Button variant="outlined" onClick={() => handleOpenModal(word)}>GPTヘルプ</Button>
+                  <Button 
+                    variant="outlined" 
+                    onClick={() => handleImageSearch(word.english)}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    画像検索
+                  </Button>
+                  
                 </TableCell>
 
 
@@ -126,9 +169,15 @@ const StatusFilterIcons = () => (
         onClose={handleCloseModal}
         onSave={handleSaveModal}
         // onGenerate={...} // 例文生成のロジックをここに実装
-        englishWord={selectedWord.english} // 英単語をモーダルに渡す
-        japaneseWord={selectedWord.japanese} // 日本語をモーダルに渡す
+        english={selectedWord.english} // 英単語をモーダルに渡す
+        japanese={selectedWord.japanese} // 日本語をモーダルに渡す
+        wordListByThemeId={selectedWord.id} // wordListByThemeIdをモーダルに渡す
 
+      />
+      <WordExampleSentenceModal
+        open={modalOpenWord}
+        onClose={() => setModalOpenWord(false)}
+        word={selectedWord}
       />
 
     </div>

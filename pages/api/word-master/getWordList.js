@@ -20,12 +20,13 @@ export default async function handler(req, res) {
 
       const wordList = await getWordListByCriteria(criteria);
 
-      // UserWordListByThemeStatusからmemorizeStatusを取得
       const updatedWordList = await Promise.all(wordList.map(async word => {
-        const status = await getUserWordListStatus(userId, word.id);
+        const { memorizeStatus, exampleSentence } = await getUserWordListStatus(userId, word.id);
+
         return {
           ...word,
-          status
+          status: memorizeStatus,
+          exampleSentence: exampleSentence || word.exampleSentence // userWordListStatusの例文で上書き
         };
       }));
       
