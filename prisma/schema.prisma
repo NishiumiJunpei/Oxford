@@ -25,6 +25,7 @@ model User {
   name                      String
   email                     String                      @unique
   password                  String
+  birthday                  DateTime?
   profile                   String?
   googleId                  String?                     @unique
   UserWordList              UserWordList[]

@@ -16,38 +16,17 @@ const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogTitle>{selectedStory.storyTitle}</DialogTitle>
       <DialogContent>
-        {/* 各プロパティをリストで表示 */}
+        <Typography variant="subtitle1" gutterBottom>ストーリー</Typography>
+        <Typography variant="body1" style={{ fontSize: '24px' }} gutterBottom>{selectedStory.storyContent}</Typography>
+
+
+        <Typography variant="subtitle1" sx={{marginTop: 5}}>使用された単語</Typography>
         <List>
-          <ListItem>
-            <ListItemText primary="テーマ" secondary={selectedStory.theme} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="ブロック" secondary={selectedStory.block} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="ストーリー内容" secondary={selectedStory.storyContent} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="長さのカテゴリー" secondary={selectedStory.lengthCategory} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="ジャンル" secondary={selectedStory.genre} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="登場キャラクター" secondary={selectedStory.characters} />
-          </ListItem>
-          <ListItem>
-            <Box sx={{ width: '100%' }}>
-              <Typography variant="subtitle1">使用された単語</Typography>
-              <List>
-                {selectedStory.words.map((word, index) => (
-                  <ListItem key={index}>
-                    <Typography variant="body2">{word}</Typography>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </ListItem>
+          {selectedStory.words.map((word, index) => (
+            <ListItem key={index}>
+              <Typography variant="body1" style={{ fontSize: '18px' }}>{word}</Typography>
+            </ListItem>
+          ))}
         </List>
 
         {/* 画像のURLがある場合は画像を表示 */}

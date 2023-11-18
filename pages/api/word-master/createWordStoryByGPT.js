@@ -1,6 +1,6 @@
 // createWordStoryByGPT.js
-import { getWordListByCriteria, getUserWordListStatus } from '../../../utils/prisma-utils';
-import { getUserById } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getUserWordListStatus, getUserById } from '../../../utils/prisma-utils';
+import { calculateAge } from '../../../utils/utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import OpenAI from "openai";
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
   const userId = session.userId; 
   const user = await getUserById(userId);
   const userProfile = JSON.stringify(user.profile)
+  const age = calculateAge(user.birthday);
   
 
   try {
@@ -46,11 +47,13 @@ export default async function handler(req, res) {
     const wordsString = updatedWordList.map(word => `${word.english} (${word.japanese})`).join(', ');
     const lengthMapping = { 'Short': 50, 'Medium': 100, 'Long': 200 };
     const maxCharacters = lengthMapping[length];
-    const content = `下記の単語を使い、私のプロフィールを考慮して私向けに、指定された条件に基づいて英語の物語を作ってください。\n#単語\n${wordsString}\n#私のプロフィール\n${userProfile}\n#条件\n物語の単語数上限：${maxCharacters}字\nジャンル：${genre}\n登場人物：${characters}`;
+    const content = `下記の単語を使い、年齢・プロフィールを考慮して、指定された条件に基づいて物語を作ってください。物語は英語で出力し、この年齢が理解できるレベルの言葉・漢字を使って日本語訳も書いてください。\n#プロフィール\n${age}才、${userProfile}\n#単語:${wordsString}\n#条件\n物語の単語数上限：${maxCharacters}字\nジャンル：${genre}\n登場人物：${characters}`; 
+    // console.log(content)
+
 
     // console.log('test0', content)
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-1106",
+      model: "gpt-4",
       messages: [{role: 'assistant', content }],
       temperature: 0.5,
       max_tokens: 1000,

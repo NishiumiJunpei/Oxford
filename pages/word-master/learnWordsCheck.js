@@ -22,7 +22,6 @@ const LearnWordsCheck = () => {
         const queryParams = new URLSearchParams({ theme, block, wordStatus, wordCount, lastCheck }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
-        console.log('test', data)
         setWordList(data);
       };
   
@@ -124,7 +123,7 @@ const LearnWordsCheck = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, []);
+  }, [currentIndex, wordList, showJapanese, buttonDisabled, nextButtonDisabled]); // 依存配列に必要な状態や関数を追加
 
 
   if (wordList.length === 0) {
@@ -133,9 +132,9 @@ const LearnWordsCheck = () => {
 
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <Button onClick={handleExit} sx={{ position: 'absolute', top: 20, right: 20 }}>
-            <CloseIcon />
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10, height: 'calc(100vh - 10px)' }}>
+        <Button onClick={handleExit} sx={{ position: 'absolute', top: 20, right: 20, zIndex: 1500 }}>
+          <CloseIcon />
         </Button>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
         <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
@@ -144,18 +143,18 @@ const LearnWordsCheck = () => {
         {showJapanese && <Typography variant="subtitle1" sx={{ marginBottom: 2 }}>{word.japanese}</Typography>}
         <Box sx={{ '& > button': { margin: 1 } }}>
             <Button variant="contained" color="primary" onClick={() => handleAnswer(true)} disabled={buttonDisabled}>
-                わかる
+                わかる(j)
             </Button>
             <Button variant="contained" onClick={handleShowAnswer} disabled={!showAnswerButton}>
-                答えチェック
+                答えチェック(k)
             </Button>
             <Button variant="contained" color="secondary" onClick={() => handleAnswer(false)} disabled={buttonDisabled}>
-                わからない
+                わからない(l)
             </Button>
         </Box>
         {showJapanese && (
             <Button variant="contained" onClick={handleNext} disabled={nextButtonDisabled} sx={{ marginTop: 2 }}>
-                次へ
+                次へ(n)
             </Button>
         )}
     </Box>
