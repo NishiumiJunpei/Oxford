@@ -1,32 +1,36 @@
 import React from 'react';
-import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, Image } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Typography } from '@mui/material';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { signOut } from 'next-auth/react'; // NextAuthからsignOutをインポート
 
-function Nav({ isOpen, drawerWidth }) {
+
+function Nav({ isOpen, onClose, isMobile }) {
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    window.location.href = '/auth/signin';
+  };
+
+
   return (
-    <Box
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        display: isOpen ? 'block' : 'none', // サイドバーの表示/非表示
-        [`& .MuiBox-root`]: { width: drawerWidth, boxSizing: 'border-box' },
-        bgcolor: '#dfedf0'
-      }}
+    <Drawer
+      variant={isMobile ? "temporary" : "persistent"}
+      open={isOpen}
+      onClose={onClose}
     >
-      <Box sx={{ padding: 0 , marginTop: 2, textAlign: 'center' }}>
+      <Box sx={{ padding: 0, marginTop: 2, textAlign: 'center' }}>
         <img src="/logo.png" alt="ロゴ" style={{ maxWidth: '50%', height: 'auto' }} />
       </Box>
 
-      {/* <Typography variant="h6" noWrap component="div" sx={{ padding: 2, marginTop: 2 }}>
-        単語マスター
-      </Typography> */}
+
       <List>
         {/* ListItems... */}
         <ListItem button component="a" href="/">
           <ListItemIcon>
-            <CheckCircleIcon />
+            <HomeIcon />
           </ListItemIcon>
           <ListItemText primary="ホーム" />
         </ListItem>
@@ -42,8 +46,19 @@ function Nav({ isOpen, drawerWidth }) {
             </ListItemIcon>
             <ListItemText primary="マイ単語帳" />
           </ListItem>
+          <ListItem button component="a" href="/user-setting/userProfile">
+            <ListItemIcon>
+              <SettingsIcon /> {/* マイ単語帳のアイコン */}
+            </ListItemIcon>
+            <ListItemText primary="ユーザアカウント" />
+          </ListItem>
+          <ListItem button component="a" onClick={handleLogout}>
+            <ListItemIcon>
+            </ListItemIcon>
+            <ListItemText primary="ログアウト" />
+          </ListItem>
       </List>
-    </Box>
+    </Drawer>
   );
 }
 

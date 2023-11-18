@@ -19,7 +19,7 @@ async function generateExampleSentences(english, japanese, userProfile) {
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
       messages: [{role: 'assistant', content }],
-      temperature: 0,
+      temperature: 0.5,
       max_tokens: 300,
     });
 

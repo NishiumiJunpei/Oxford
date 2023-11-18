@@ -70,7 +70,10 @@ const LearnWordsCheck = () => {
             setButtonDisabled(false);
             setNextButtonDisabled(true);
         } else {
-            // 終了処理
+          router.push({
+              pathname: '/word-master/learnWordsCheckCompletion',
+              query: { theme: theme }
+          });
         }
     };
 
@@ -93,7 +96,7 @@ const LearnWordsCheck = () => {
 
 
   const word = wordList[currentIndex];
-  const remainingWords = wordList.length - currentIndex - 1; // 残りの問題数
+  const remainingWords = wordList.length - currentIndex; // 残りの問題数
 
 
   useEffect(() => {

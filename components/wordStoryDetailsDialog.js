@@ -13,7 +13,7 @@ const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
 
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogTitle>{selectedStory.storyTitle}</DialogTitle>
       <DialogContent>
         {/* 各プロパティをリストで表示 */}
@@ -60,7 +60,6 @@ const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
       <DialogActions>
         <Button onClick={onClose}>閉じる</Button>
         <Button onClick={handleDeleteClick} disabled={!selectedStory.id}>削除</Button>
-        {/* 必要に応じて削除ボタンなどを追加 */}
       </DialogActions>
     </Dialog>
   );
