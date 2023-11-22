@@ -30,25 +30,43 @@ const LearnWordsCheck = () => {
       }
     }, [theme, block]); // 依存配列にクエリパラメータを追加
 
-    const handleAnswer = (known) => {
-        if (currentIndex >= 0 && currentIndex < wordList.length) {
-            const word = wordList[currentIndex];
-            if (word){
-                updateWordStatus(word.id, known);
-
-                if (known) {
-                    setResult({ ...result, known: result.known + 1 });
-                    nextWord();
-                } else {
-                    setShowJapanese(true);
-                    setButtonDisabled(true);
-                    setNextButtonDisabled(false);
-                }    
-            }
-            else{
-                console.error('Current word is undefined.');
-            }
+    const nextWord = (calledFromHandleAnswer = false) => {
+      if (currentIndex < wordList.length - 1) {
+        // handleAnswerからの呼び出しの場合、またはnextButtonDisabledがfalseの場合のみ進む
+        if (calledFromHandleAnswer || !nextButtonDisabled) {
+          setCurrentIndex(currentIndex + 1);
+          setShowJapanese(false);
+          setShowAnswerButton(true);
+          setButtonDisabled(false);
+          setNextButtonDisabled(true);
         }
+      } else {
+        router.push({
+          pathname: '/word-master/learnWordsCheckCompletion',
+          query: { theme: theme , block: block}
+        });
+      }
+    };
+    
+    const handleAnswer = (known) => {
+      if (currentIndex >= 0 && currentIndex < wordList.length) {
+        const word = wordList[currentIndex];
+        if (word){
+          updateWordStatus(word.id, known);
+    
+          if (known) {
+            setResult({ ...result, known: result.known + 1 });
+            nextWord(true); // handleAnswerから呼ばれたことを示す引数を追加
+          } else {
+            setShowJapanese(true);
+            setButtonDisabled(true);
+            setNextButtonDisabled(false);
+          }    
+        }
+        else{
+          console.error('Current word is undefined.');
+        }
+      }
     };
 
     const handleShowAnswer = () => {
@@ -61,20 +79,6 @@ const LearnWordsCheck = () => {
         nextWord();
     };
 
-    const nextWord = () => {
-        if (currentIndex < wordList.length - 1) {
-            setCurrentIndex(currentIndex + 1);
-            setShowJapanese(false);
-            setShowAnswerButton(true);
-            setButtonDisabled(false);
-            setNextButtonDisabled(true);
-        } else {
-          router.push({
-              pathname: '/word-master/learnWordsCheckCompletion',
-              query: { theme: theme }
-          });
-        }
-    };
 
     const updateWordStatus = async (wordId, known) => {
         try {

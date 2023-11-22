@@ -23,16 +23,24 @@ export default async function handler(req, res) {
         const blockWords = wordList.filter(word => word.block === block);
         const memorizedCount = userWordStatus.filter(status => 
           status.memorizeStatus === 'MEMORIZED' && 
+          status.userId === userId &&
           blockWords.some(bw => bw.id === status.wordListByThemeId)
         ).length;
-        const progress = memorizedCount / blockWords.length * 100;
-
+      
+        const unknownCount = blockWords.filter(bw => {
+          const status = userWordStatus.find(us => us.wordListByThemeId === bw.id && us.userId === userId);
+          return !status || status.memorizeStatus === 'UNKNOWN';
+        }).length;
+      
+        const progress = Math.round(memorizedCount / blockWords.length * 100);
+      
         return {
           block,
-          progress
+          progress,
+          unknownCount
         };
       });
-
+                  
 
       res.status(200).json(result);
     } catch (error) {

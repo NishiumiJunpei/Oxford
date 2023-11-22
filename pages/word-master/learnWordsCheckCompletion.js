@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 const LearnWordsCheckCompletion = () => {
     const router = useRouter();
-    const { theme } = router.query;
+    const { theme, block } = router.query;
 
 
     // 画像ファイル名の配列
@@ -40,7 +40,7 @@ const LearnWordsCheckCompletion = () => {
           よくできました！
         </Typography>
         <img width="300" src={`/images/${randomImage}`} alt="Completion" />
-        <Link href={`/word-master/progressByBlockTheme?theme=${theme}`} passHref>
+        <Link href={`/word-master/wordList?block=${block}&theme=${theme}`} passHref>
           <Button variant="default" color="primary" sx={{marginTop: 3}}>
             戻る
           </Button>

@@ -14,8 +14,8 @@ export default async function handler(req, res) {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const userData = {
-        name: "Rina",
-        email: "rina.nishiumi@gmail.com",
+        name: "Rika",
+        email: "rika.nishiumi@gmail.com",
         password: hashedPassword,
         profile: "",
       }
