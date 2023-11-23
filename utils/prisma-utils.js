@@ -270,7 +270,7 @@ export async function saveWordStoryByGPT(userId, theme, block, length, genre, ch
     data: {
       userId,
       theme,
-      block,
+      block: parseInt(block),
       storyTitle: '',
       storyContent,
       lengthCategory: length,

@@ -77,7 +77,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
     const handleSave = async () => {
         // ここで保存処理を行います
         try {
-            const saveResponse = await fetch('/api/word-master/saveWordStoryByGPT', {
+          const saveResponse = await fetch('/api/word-master/saveWordStoryByGPT', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -95,7 +95,6 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
             if (!saveResponse.ok) {
                 throw new Error('Save API call failed');
             }
-
 
             // 親コンポーネントの保存処理を呼び出す
             const savedStory = {

@@ -14,12 +14,11 @@ export default async function handler(req, res) {
   }
   const userId = session.userId;
 
-
   const { theme, block, length, genre, characters, storyData } = req.body;
   try {
     // prisma-utilsで定義した関数を使用してDBに保存
-    await saveWordStoryByGPT(userId, theme, block, length, genre, characters, storyData);
-    res.status(200).json({ message: 'Example sentence saved successfully' });
+    await saveWordStoryByGPT(userId, theme, parseInt(block), length, genre, characters, storyData);
+    res.status(200).json({ message: 'story saved successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }

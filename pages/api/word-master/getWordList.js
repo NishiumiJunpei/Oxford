@@ -50,7 +50,6 @@ export default async function handler(req, res) {
 
       const wordStories = await getWordStoriesByUserIdAndTheme(userId, theme);
       const wordStoryList = wordStories.filter(story => story.block === parseInt(block));
-      console.log('test', wordStoryList)
 
       res.status(200).json({
         wordList: updatedWordList,

@@ -41,7 +41,6 @@ async function generateImage(description) {
       size: '256x256'
     });
 
-    console.log('test3 - gpt image response:', image.data[0])
     // 生成された画像のURLまたはデータを返す
     return image.data[0].url; // または適切なプロパティを使用
   } catch (error) {
