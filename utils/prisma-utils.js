@@ -175,37 +175,50 @@ export async function updateUserWordStatus(userId, wordListByThemeId, memorizeSt
     }
   });
 
+  const currentTime = new Date();
+
   if (existingRecord) {
-    // レコードが存在する場合は、numMemorized または numNotMemorized を更新
-    const updatedData = {};
+    const updatedData = {
+      memorizeStatus: memorizeStatus,
+      lastCheckDate: currentTime,
+    };
+
     if (memorizeStatus === 'MEMORIZED') {
       updatedData.numMemorized = existingRecord.numMemorized + 1;
+      updatedData.lastMemorizedDate = currentTime;
     } else if (memorizeStatus === 'NOT_MEMORIZED') {
       updatedData.numNotMemorized = existingRecord.numNotMemorized + 1;
+      updatedData.lastNotMemorizedDate = currentTime;
     }
-    updatedData.memorizeStatus = memorizeStatus;
-    updatedData.lastCheckDate = new Date();
 
     return await prisma.userWordListByThemeStatus.update({
       where: { id: existingRecord.id },
       data: updatedData,
     });
   } else {
-    // レコードが存在しない場合は新しいレコードを作成
     const newData = {
       userId,
       wordListByThemeId,
       memorizeStatus,
-      lastCheckDate: new Date(),
-      numMemorized: memorizeStatus === 'MEMORIZED' ? 1 : 0,
-      numNotMemorized: memorizeStatus === 'NOT_MEMORIZED' ? 1 : 0
+      lastCheckDate: currentTime,
+      numMemorized: 0,
+      numNotMemorized: 0,
     };
+
+    if (memorizeStatus === 'MEMORIZED') {
+      newData.numMemorized = 1;
+      newData.lastMemorizedDate = currentTime;
+    } else if (memorizeStatus === 'NOT_MEMORIZED') {
+      newData.numNotMemorized = 1;
+      newData.lastNotMemorizedDate = currentTime;
+    }
 
     return await prisma.userWordListByThemeStatus.create({
       data: newData,
     });
   }
 }
+
 
 export async function saveExampleSentence(userId, wordListByThemeId, exampleSentence) {
   // Prisma Client を使用して例文を保存

@@ -5,7 +5,7 @@ import {
   Box, Typography, CircularProgress, Divider 
 } from '@mui/material';
 
-const StoryCreationDialog = ({ open, onClose, onSave, data, theme }) => {
+const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockList, theme }) => {
     
     const [selectedBlock, setSelectedBlock] = useState('all');
     const [length, setLength] = useState('');
@@ -134,8 +134,10 @@ const StoryCreationDialog = ({ open, onClose, onSave, data, theme }) => {
                 label="ブロック選択"
                 onChange={handleBlockChange}
               >
-                <MenuItem value={'all'}>All</MenuItem>
-                {data.map((item, index) => (
+                {showAllinBlockList && (
+                  <MenuItem value={'all'}>All</MenuItem>
+                )}
+                {blockList.map((item, index) => (
                   <MenuItem key={index} value={item.block}>{item.block} ({item.progress || 0}%)</MenuItem>
                 ))}
               </Select>

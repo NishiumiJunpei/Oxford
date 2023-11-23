@@ -1,4 +1,4 @@
-import { getWordListByCriteria, getUserWordListStatus } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getUserWordListStatus, getUserWordStatusByTheme, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
@@ -19,6 +19,16 @@ export default async function handler(req, res) {
       };
 
       const wordList = await getWordListByCriteria(criteria);
+      const userWordStatus = await getUserWordStatusByTheme(userId, theme); // 全ユーザー単語の状態を取得
+
+      // 進捗と未知の単語数を計算
+      const blockWords = wordList.filter(word => word.block === parseInt(block));
+      const memorizedCount = userWordStatus.filter(status => 
+        status.memorizeStatus === 'MEMORIZED' && 
+        status.userId === userId &&
+        blockWords.some(bw => bw.id === status.wordListByThemeId)
+      ).length;
+
 
       const updatedWordList = await Promise.all(wordList.map(async word => {
         const { memorizeStatus, exampleSentence } = await getUserWordListStatus(userId, word.id);
@@ -29,8 +39,25 @@ export default async function handler(req, res) {
           exampleSentence: exampleSentence || word.exampleSentence // userWordListStatusの例文で上書き
         };
       }));
-      
-      res.status(200).json(updatedWordList);
+
+      const progress = Math.round(memorizedCount / blockWords.length * 100);
+
+      const unknownCount = blockWords.filter(bw => {
+        const status = userWordStatus.find(us => us.wordListByThemeId === bw.id && us.userId === userId);
+        return !status || status.memorizeStatus === 'UNKNOWN';
+      }).length;
+
+
+      const wordStories = await getWordStoriesByUserIdAndTheme(userId, theme);
+      const wordStoryList = wordStories.filter(story => story.block === parseInt(block));
+      console.log('test', wordStoryList)
+
+      res.status(200).json({
+        wordList: updatedWordList,
+        progress,
+        unknownCount,
+        wordStoryList
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

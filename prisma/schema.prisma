@@ -71,6 +71,8 @@ model UserWordListByThemeStatus {
   numNotMemorized   Int             @default(0)
   exampleSentence   String?
   lastCheckDate     DateTime?
+  lastMemorizedDate     DateTime?
+  lastNotMemorizedDate     DateTime?
   updatedAt         DateTime        @default(now()) @updatedAt
   user              User            @relation(fields: [userId], references: [id])
   wordListByTheme   WordListByTheme @relation(fields: [wordListByThemeId], references: [id])

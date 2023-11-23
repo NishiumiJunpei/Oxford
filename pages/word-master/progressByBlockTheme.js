@@ -41,7 +41,14 @@ const HomePage = () => {
   };
 
 
-
+  useEffect(() => {
+    if (theme && theme !== selectedTheme) {
+      setSelectedTheme(theme);
+      fetchData(theme);
+      fetchWordStoryList(theme);
+    }
+  }, [theme]);
+  
   useEffect(() => {
     if (selectedTheme) {
       fetchData(selectedTheme);
@@ -239,7 +246,8 @@ const HomePage = () => {
         open={openStoryCreationDialog} 
         onClose={handleCloseStoryCreationDialog} 
         onSave={handleSaveStoryCreationDialog} 
-        data={data} 
+        blockList={data} 
+        showAllinBlockList={true}
         theme={selectedTheme} 
       />
       <WordStoryDetailsDialog
