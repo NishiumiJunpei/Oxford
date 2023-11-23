@@ -25,9 +25,9 @@ export default async function handler(req, res) {
       const userId = session.userId; // セッションから userId を取得
       const { wordId, status } = req.body;
 
-      console.log('test',userId, wordId, status)
+      console.log('test1',userId, wordId, status)
       const response = await updateUserWordStatus(userId, wordId, status);
-      console.log('res', response)
+      console.log('test2', response)
       res.status(200).json(response);
     } catch (error) {
       res.status(500).json({ error: error.message });
