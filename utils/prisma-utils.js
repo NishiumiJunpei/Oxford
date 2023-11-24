@@ -119,13 +119,17 @@ export async function getUserWordListByThemeStatusById(id) {
 }
 
 export async function getUserWordStatusByTheme(userId, theme) {
+  const whereClause = theme 
+    ? { 
+        userId: userId, 
+        wordListByTheme: { theme: theme } 
+      } 
+    : { 
+        userId: userId 
+      };
+
   return await prisma.userWordListByThemeStatus.findMany({
-    where: {
-      userId: userId,
-      wordListByTheme: {
-        theme: theme
-      }
-    },
+    where: whereClause,
     include: {
       wordListByTheme: true
     }
