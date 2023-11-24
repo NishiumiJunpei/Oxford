@@ -16,7 +16,8 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
 
     useEffect(() => {
       if (open) {
-        setSelectedBlock('all');
+        const firstBlock = blockList.length > 0 ? blockList[0].block : 'all';
+        setSelectedBlock(firstBlock);
         setLength('');
         setGenre('');
         setCharacters('');

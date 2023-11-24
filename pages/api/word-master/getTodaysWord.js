@@ -12,7 +12,6 @@ export default async function handler(req, res) {
 
       const userWordStatus = await getUserWordStatusByTheme(userId, theme);
 
-      console.log('test1')
       // NOT_MEMORIZED な単語をフィルタリング
       const notMemorizedWords = userWordStatus.filter(status => 
         status.memorizeStatus === 'NOT_MEMORIZED'
