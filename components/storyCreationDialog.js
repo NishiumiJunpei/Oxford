@@ -157,7 +157,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
             </Box>
             <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>ジャンル</Typography>
-              {['フィクション', 'ビジネス', 'コメディ', 'ミステリー'].map((option) => (
+              {['エンタメ','サイエンス','フィクション','スポーツ', 'ビジネス', 'コメディ', 'ミステリー'].map((option) => (
                 <Chip
                   key={option}
                   label={option}
@@ -169,7 +169,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
             </Box>
             <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>登場人物</Typography>
-              {['指定なし', '先生', '宇宙人', 'おばけ', 'うんち'].map((option) => (
+              {['指定なし', 'ミッキー','ドラえもん','プーさん','ガンダム', '宇宙人', 'おばけ', 'うんち'].map((option) => (
                 <Chip
                   key={option}
                   label={option}
