@@ -167,16 +167,6 @@ const WordListPage = () => {
     }
   };
 
-  const handleNext = () => {
-    const nextBlock = parseInt(block, 10) + 1;
-    router.push(`/word-master/wordList?theme=${theme}&block=${nextBlock}`);
-  };
-
-  const handlePrevious = () => {
-    const previousBlock = parseInt(block, 10) - 1;
-    router.push(`/word-master/wordList?theme=${theme}&block=${previousBlock}`);
-  };
-
   
   return (
     <div>
@@ -193,13 +183,13 @@ const WordListPage = () => {
             </Typography>
 
             <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Link href={`/word-master/wordListPage?theme=${theme}&block=${parseInt(block, 10) - 1}`} passHref>
+              <Link href={`/word-master/wordList?theme=${theme}&block=${parseInt(block, 10) - 1}`} passHref>
                 <IconButton component="a" disabled={block === '1'}>
                   <ArrowBackIosIcon />
                 </IconButton>
               </Link>
               <Avatar sx={{ bgcolor: 'secondary.main', ml: 1, mr: 1 }}>{block}</Avatar>
-              <Link href={`/word-master/wordListPage?theme=${theme}&block=${parseInt(block, 10) + 1}`} passHref>
+              <Link href={`/word-master/wordList?theme=${theme}&block=${parseInt(block, 10) + 1}`} passHref>
                 <IconButton component="a">
                   <ArrowForwardIosIcon />
                 </IconButton>
