@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
@@ -28,6 +29,9 @@ export default function Home() {
 
   return (
     <div>
+      <Head>
+        <title>すーすーEnglish</title>
+      </Head>
       <h1>英検アプリへようこそ</h1>
       {isLoading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>

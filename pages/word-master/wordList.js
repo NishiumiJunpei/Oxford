@@ -167,7 +167,19 @@ const WordListPage = () => {
     }
   };
 
+  // console.log('wordList', wordList)
   
+
+  const daysAgo = (date) => {
+    const now = new Date();
+    const pastDate = new Date(date);
+    const differenceInTime = now.getTime() - pastDate.getTime();
+    const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+  
+    return differenceInDays;
+  }
+  
+
   return (
     <div>
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -247,6 +259,7 @@ const WordListPage = () => {
                 <TableCell>ステータス</TableCell>
                 <TableCell>例文</TableCell>
                 <TableCell>アクション</TableCell>
+                <TableCell>その他</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -290,6 +303,14 @@ const WordListPage = () => {
                       画像検索
                     </Button>
                     
+                  </TableCell>
+                  <TableCell>
+                    <Typography>
+                        {word.userWordListStatus.lastMemorizedTimeAgo }
+                    </Typography>
+                    <Typography>
+                      {word.userWordListStatus.numMemorized}, {word.userWordListStatus.numNotMemorized}
+                    </Typography>
                   </TableCell>
 
 

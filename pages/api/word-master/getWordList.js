@@ -31,12 +31,14 @@ export default async function handler(req, res) {
 
 
       const updatedWordList = await Promise.all(wordList.map(async word => {
-        const { memorizeStatus, exampleSentence } = await getUserWordListStatus(userId, word.id);
+        // const { memorizeStatus, exampleSentence } = await getUserWordListStatus(userId, word.id);
+        const userWordListStatus = await getUserWordListStatus(userId, word.id);
 
         return {
           ...word,
-          status: memorizeStatus,
-          exampleSentence: exampleSentence || word.exampleSentence // userWordListStatusの例文で上書き
+          status: userWordListStatus.memorizeStatus,
+          exampleSentence: userWordListStatus.exampleSentence || word.exampleSentence, // userWordListStatusの例文で上書き
+          userWordListStatus,
         };
       }));
 

@@ -29,4 +29,24 @@ export const kanjiByGrade = {
 };
 
 
-  
+export const timeAgo = (date) => {
+  const now = new Date();
+  const pastDate = new Date(date);
+  const differenceInTime = now.getTime() - pastDate.getTime();
+  const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+  const differenceInHours = Math.floor(differenceInTime / (1000 * 3600));
+  const differenceInMinutes = Math.floor(differenceInTime / (1000 * 60));
+
+  if (differenceInDays > 0) {
+    return `${differenceInDays}日前`;
+  } else if (differenceInHours > 0) {
+    return `${differenceInHours}時間前`;
+  } else if (differenceInMinutes > 0) {
+    return `${differenceInMinutes}分前`;
+  } else {
+    return '数分前';
+  }
+}
+
+
+

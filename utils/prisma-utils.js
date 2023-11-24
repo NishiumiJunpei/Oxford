@@ -1,5 +1,6 @@
 // utils/prisma-utils.js
 import prisma from '../prisma/prisma';  // Assume prisma.js exports your Prisma client instance
+import { timeAgo } from './utils';
 
 // User related functions
 export async function createUser(data) {
@@ -144,21 +145,22 @@ export async function getUserWordListStatus(userId, wordListByThemeId) {
         wordListByThemeId
       }
     },
-    select: {
-      memorizeStatus: true,
-      exampleSentence: true // 例文を取得
-    }
   });
 
-  // statusRecordが存在しない場合、既定の値を返す
   if (!statusRecord) {
     return {
       memorizeStatus: 'UNKNOWN',
-      exampleSentence: null
+      exampleSentence: null,
+      lastMemorizedTimeAgo: null,
+      lastNotMemorizedTimeAgo: null
     };
   }
 
-  return statusRecord;
+  return {
+    ...statusRecord,
+    lastMemorizedTimeAgo: statusRecord.lastMemorizedDate ? timeAgo(statusRecord.lastMemorizedDate) : null,
+    lastNotMemorizedTimeAgo: statusRecord.lastNotMemorizedDate ? timeAgo(statusRecord.lastNotMemorizedDate) : null
+  };
 }
 
 
