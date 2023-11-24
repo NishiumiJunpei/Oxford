@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Avatar, Box, Chip, LinearProgress, CircularProgress } from '@mui/material';
+import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Avatar, Box, Chip, LinearProgress, CircularProgress, IconButton } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -10,6 +10,10 @@ import GPTHelpModal from '../../components/gptHelpModal'; // GPTHelpModalのイ�
 import WordExampleSentenceModal from '../../components/wordExampleSentenceModal';
 import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import Link from 'next/link';
+
 
 const WordListPage = () => {
   const router = useRouter();
@@ -162,6 +166,17 @@ const WordListPage = () => {
       console.error('Failed to delete story:', error);
     }
   };
+
+  const handleNext = () => {
+    const nextBlock = parseInt(block, 10) + 1;
+    router.push(`/word-master/wordListPage?theme=${theme}&block=${nextBlock}`);
+  };
+
+  const handlePrevious = () => {
+    const previousBlock = parseInt(block, 10) - 1;
+    router.push(`/word-master/wordListPage?theme=${theme}&block=${previousBlock}`);
+  };
+
   
   return (
     <div>
@@ -169,16 +184,28 @@ const WordListPage = () => {
         <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
           戻る
         </Button>
+
+
         <Box display="flex" alignItems="center" mt={1} width="100%">
           <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-            <Typography variant="h4" component="div">
+            <Typography variant="h4" component="div" sx={{mr: 5}}>
                 {theme}
             </Typography>
-            <Avatar sx={{ bgcolor: 'secondary.main', ml: 2, mr: 1 }}>{block}</Avatar>
+
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Link href={`/word-master/wordListPage?theme=${theme}&block=${parseInt(block, 10) - 1}`} passHref>
+                <IconButton component="a" disabled={block === '1'}>
+                  <ArrowBackIosIcon />
+                </IconButton>
+              </Link>
+              <Avatar sx={{ bgcolor: 'secondary.main', ml: 1, mr: 1 }}>{block}</Avatar>
+              <Link href={`/word-master/wordListPage?theme=${theme}&block=${parseInt(block, 10) + 1}`} passHref>
+                <IconButton component="a">
+                  <ArrowForwardIosIcon />
+                </IconButton>
+              </Link>
+            </Box>
           </Box>
-          <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?block=${block}&theme=${theme}`)}>
-              理解度チェック
-          </Button>
         </Box>
       </Box>
 
@@ -194,6 +221,9 @@ const WordListPage = () => {
             ステータス
           </Typography>
         </Box>
+        <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?block=${block}&theme=${theme}`)} sx={{marginBottom: 3}}>
+              理解度チェック
+        </Button>
 
         <Box display="flex" alignItems="center">
           {unknownCount > 0 ? (
