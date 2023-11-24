@@ -169,12 +169,12 @@ const WordListPage = () => {
 
   const handleNext = () => {
     const nextBlock = parseInt(block, 10) + 1;
-    router.push(`/word-master/wordListPage?theme=${theme}&block=${nextBlock}`);
+    router.push(`/word-master/wordList?theme=${theme}&block=${nextBlock}`);
   };
 
   const handlePrevious = () => {
     const previousBlock = parseInt(block, 10) - 1;
-    router.push(`/word-master/wordListPage?theme=${theme}&block=${previousBlock}`);
+    router.push(`/word-master/wordList?theme=${theme}&block=${previousBlock}`);
   };
 
   
