@@ -249,7 +249,7 @@ export async function updateUserWordStatus(userId, wordListByThemeId, memorizeSt
 }
 
 
-export async function saveExampleSentence(userId, wordListByThemeId, exampleSentence) {
+export async function saveExampleSentence(userId, wordListByThemeId, exampleSentence, imageFilename = '') {
   // Prisma Client を使用して例文を保存
   await prisma.userWordListByThemeStatus.upsert({
     where: {
@@ -259,12 +259,14 @@ export async function saveExampleSentence(userId, wordListByThemeId, exampleSent
       }
     },
     update: {
-      exampleSentence: exampleSentence
+      exampleSentence: exampleSentence,
+      imageFilename: imageFilename || null
     },
     create: {
       userId: userId,
       wordListByThemeId: wordListByThemeId,
-      exampleSentence: exampleSentence
+      exampleSentence: exampleSentence,
+      imageFilename: imageFilename || null
     }
   });
 }

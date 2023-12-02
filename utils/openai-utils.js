@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
@@ -29,15 +30,19 @@ export async function generateExampleSentences(english, japanese, userProfile) {
 // 画像を生成する関数
 export async function generateImage(description) {
   try {
-    const image = await openai.images.generate({ 
+    console.log('test - generateImage')
+
+    const image = await openai.images.generate({
       model: "dall-e-2", 
       prompt: description ,
       n: 1,
       size: '256x256'
     });
 
+    console.log('test - generateImage -2:', image)
     // 生成された画像のURLまたはデータを返す
-    return image.data[0].url; // または適切なプロパティを使用
+    const ret = image ? image.data[0].url : ''
+    return ret; // または適切なプロパティを使用
   } catch (error) {
     console.error('generateImage error:', error);
     throw error;

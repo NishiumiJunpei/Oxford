@@ -17,7 +17,7 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, english, japanese, wo
             headers: {
               'Content-Type': 'application/json', // コンテントタイプを JSON に設定
             },
-            body: JSON.stringify({ english, japanese }) // ボディに english と japanese を JSON 形式で含める
+            body: JSON.stringify({ wordListByThemeId, english, japanese }) // ボディに english と japanese を JSON 形式で含める
           });
         const data = await response.json();
         setExampleSentence(data.exampleSentence);
