@@ -167,19 +167,36 @@ const WordListPage = () => {
     }
   };
 
+
+  const handleGPTHelpBatchButton = async () => {
+    // 確認ダイアログを表示
+    const isConfirmed = window.confirm('GPTヘルプを一括処理しますか？');
+    if (isConfirmed) {
+      try {
+        // API呼び出し
+        const response = await fetch('/api/word-master/createExampleSentenceByGPTBulk', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ theme, block }),
+        });
+  
+        if (response.ok) {
+          alert('処理が開始されました。');
+        } else {
+          throw new Error('API Error');
+        }
+      } catch (error) {
+        console.error('API呼び出し中にエラーが発生しました:', error);
+        alert('エラーが発生しました。');
+      }
+    }
+  };
+  
+
   // console.log('wordList', wordList)
   
-
-  const daysAgo = (date) => {
-    const now = new Date();
-    const pastDate = new Date(date);
-    const differenceInTime = now.getTime() - pastDate.getTime();
-    const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-  
-    return differenceInDays;
-  }
-  
-
   return (
     <div>
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -247,7 +264,12 @@ const WordListPage = () => {
           </Typography>
         </Box>
 
-        <StatusFilterIcons /> {/* ステータスフィルタリングアイコンを表示 */}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <StatusFilterIcons /> {/* 既存のステータスフィルターアイコン */}
+          <Button variant="contained" onClick={handleGPTHelpBatchButton} sx={{ ml: 'auto' }}>
+            GPTヘルプ(一括)
+          </Button>
+        </Box>
 
         <Paper>
           <Table>

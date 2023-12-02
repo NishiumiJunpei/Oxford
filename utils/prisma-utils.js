@@ -15,6 +15,29 @@ export async function getUserById(id) {
   });
 }
 
+export async function getUserByIdWithUserWordListByThemeStatus(userId, theme, block) {
+  return await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    include: {
+      UserWordListByThemeStatus: {
+        where: {
+          wordListByTheme: {
+            theme: theme,
+            block: block
+          }
+        },
+        include: {
+          wordListByTheme: true
+        }
+      }
+    }
+  });
+}
+
+
+
 export async function findUserByEmail(email) {
   return await prisma.user.findUnique({
     where: { email },

@@ -12,7 +12,7 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, english, japanese, wo
     const handleGenerate = async () => {
         setIsLoading(true); // ローディング開始
         try {
-          const response = await fetch('/api/word-master/genExampleSentenceByGPT', {
+          const response = await fetch('/api/word-master/createExampleSentenceByGPT', {
             method: 'POST', // HTTP メソッドを POST に設定
             headers: {
               'Content-Type': 'application/json', // コンテントタイプを JSON に設定

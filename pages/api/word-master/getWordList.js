@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       };
 
       const wordList = await getWordListByCriteria(criteria);
-      const userWordStatus = await getUserWordStatusByTheme(userId, theme); // 全ユーザー単語の状態を取得
+      const userWordStatus = await getUserWordStatusByTheme(userId, theme); 
 
       // 進捗と未知の単語数を計算
       const blockWords = wordList.filter(word => word.block === parseInt(block));

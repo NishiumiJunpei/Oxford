@@ -1,8 +1,3 @@
-// pages/api/genExampleSentenceByGPT.js
-import { getUserById } from '../../../utils/prisma-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
-
 import OpenAI from "openai";
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -10,7 +5,7 @@ const openai = new OpenAI({
 
 
 
-async function generateExampleSentences(english, japanese, userProfile) {
+export async function generateExampleSentences(english, japanese, userProfile) {
   try{
     // const content = `${english} (${japanese}) という英単語・フレーズを覚えたいです。\n私のプロフィールを踏まえて下記を作ってください。\n・この英単語を使った例文2つ （私のプロフィールを考慮して私が使う、または使われる例文で、英語と日本語訳も書いてください）\n・この英単語の別の言い方や類語3つ\n\n私のプロフィール\n${userProfile}`;
     const content = `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください\n\n私のプロフィール\n${userProfile}`;
@@ -32,7 +27,7 @@ async function generateExampleSentences(english, japanese, userProfile) {
 }
 
 // 画像を生成する関数
-async function generateImage(description) {
+export async function generateImage(description) {
   try {
     const image = await openai.images.generate({ 
       model: "dall-e-2", 
@@ -49,32 +44,20 @@ async function generateImage(description) {
   }
 }
 
+export async function generateWordStory(wordList, length, age, userProfile, genre, characters) {
 
-
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    // POSTリクエストからデータを取得
-    const { english, japanese } = req.body;
-    const session = await getServerSession(req, res, authOptions);
-    const userId = session.userId; 
-
-    try {
-      const user = await getUserById(userId);
-      const exampleSentence = await generateExampleSentences(english, japanese, JSON.stringify(user.profile));
-
-      // 画像生成処理を追加
-      const imageDescription = `例文の画像を作ってください。${exampleSentence})`; // 画像の説明を設定
-      // const imageUrl = await generateImage(imageDescription);
-      const imageUrl = ""
-
-      // 生成した例文と画像のURLをレスポンスとして返す
-      res.status(200).json({ exampleSentence, imageUrl });
-      
-    } catch (error) {
-      res.status(500).json({ error: 'サーバーエラーが発生しました。' });
-    }
-  } else {
-    res.setHeader('Allow', 'POST');
-    res.status(405).end('Method Not Allowed');
-  }
+    const wordsString = wordList.map(word => `${word.english} (${word.japanese})`).join(', ');
+    const lengthMapping = { 'Short': 50, 'Medium': 100, 'Long': 200 };
+    const maxCharacters = lengthMapping[length];
+    const content = `下記の単語を使い、年齢・プロフィールを考慮して、指定された条件に基づいて物語を作ってください。物語は英語で出力し、この年齢が理解できるレベルの言葉・漢字を使って日本語訳も書いてください。\n#プロフィール\n${age}才、${userProfile}\n#単語:${wordsString}\n#条件\n物語の単語数上限：${maxCharacters}字\nジャンル：${genre}\n登場人物：${characters}`;
+    
+    const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [{ role: 'assistant', content }],
+        temperature: 0.5,
+        max_tokens: 1000,
+    });
+    
+    return response.choices[0].message.content;
+          
 }
