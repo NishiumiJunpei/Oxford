@@ -1,43 +1,58 @@
-import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button,useMediaQuery, useTheme } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 
-const WordExampleSentenceModal = ({ open, onClose, word }) => {
+const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex }) => {
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md')); // モバイル端末など小さい画面用
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const [index, setIndex] = useState(initialIndex);
 
-    // モバイル端末などの画面サイズに応じた対応が必要な場合はここで useMediaQuery を使用
-  return (
-    <Dialog
-        open={open}
-        onClose={onClose}
-        fullScreen={fullScreen} // モバイル端末などの小さい画面で全画面表示
-        PaperProps={{
-          sx: {
-            width: '80%', // 幅を80%に設定
-            height: '80%', // 高さを80%に設定
-            maxWidth: '100%', // 最大幅を100%に設定
-            maxHeight: '100%', // 最大高さを100%に設定
-            overflow: 'auto' // コンテンツがオーバーフローした場合はスクロール可能
-          }
-        }}
-      >
-      <DialogTitle>{word?.english}</DialogTitle>
-      <DialogContent>
-        {/* ここにコンテンツを配置 */}
-        {/* <Typography variant="h6">{word?.english}</Typography> */}
-        <Typography variant="subtitle1" style={{ marginTop: 20 }}>{word?.japanese}</Typography>
-        <Typography className="preformatted-text" style={{ marginTop: 20 }}>
-                {word?.exampleSentence}
-        </Typography>
+    useEffect(() => {
+        setIndex(initialIndex);
+    }, [initialIndex]);
 
+    const handleNext = () => {
+        if (index < wordList.length - 1) {
+            setIndex(index + 1);
+        }
+    };
 
-        {/* 画像を表示する場合はここに追加 */}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>閉じる</Button>
-      </DialogActions>
-    </Dialog>
-  );
+    const handlePrev = () => {
+        if (index > 0) {
+            setIndex(index - 1);
+        }
+    };
+
+    const word = wordList[index];
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullScreen={fullScreen}
+            PaperProps={{
+                sx: {
+                    width: '80%',
+                    height: '80%',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    overflow: 'auto'
+                }
+            }}
+        >
+            <DialogTitle>{word?.english}</DialogTitle>
+            <DialogContent>
+                <Typography variant="subtitle1" style={{ marginTop: 20 }}>{word?.japanese}</Typography>
+                <Typography className="preformatted-text" style={{ marginTop: 20 }}>
+                    {word?.exampleSentence}
+                </Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handlePrev} disabled={index <= 0}>前へ</Button>
+                <Button onClick={handleNext} disabled={index >= wordList.length - 1}>次へ</Button>
+                <Button onClick={onClose}>閉じる</Button>
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default WordExampleSentenceModal;

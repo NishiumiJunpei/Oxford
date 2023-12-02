@@ -23,6 +23,7 @@ const WordListPage = () => {
   const [modalOpen, setModalOpen] = useState(false); // gptHelp用のモーダル用の状態
   const [modalOpenWord, setModalOpenWord] = useState(null);// 例文確認用のモーダル用の状態
   const [selectedWord, setSelectedWord] = useState({}); // 選択された単語の情報を保存するステート
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [progress, setProgress] = useState(0);
   const [unknownCount, setUnknownCount] = useState(0);
   const [wordStoryList, setWordStoryList] = useState([]);
@@ -112,8 +113,8 @@ const WordListPage = () => {
     handleCloseModal();
   };
 
-  const handleOpenModalWord = (word) => {
-    setSelectedWord(word);
+  const handleOpenModalWord = (index) => {
+    setSelectedIndex(index);
     setModalOpenWord(true);
   };
   
@@ -306,8 +307,8 @@ const WordListPage = () => {
                       ? `${word.exampleSentence?.substring(0, 30)}...`
                       : word.exampleSentence}
                     {word.exampleSentence?.length > 30 && (
-                      <Button onClick={() => handleOpenModalWord(word)}>もっと見る</Button>
-                    )}
+                      <Button onClick={() => handleOpenModalWord(index)}>もっと見る</Button>
+                      )}
                   </TableCell>
                   <TableCell>
                     <Button 
@@ -400,8 +401,11 @@ const WordListPage = () => {
       <WordExampleSentenceModal
         open={modalOpenWord}
         onClose={() => setModalOpenWord(false)}
-        word={selectedWord}
+        wordList={filteredWordList}
+        initialIndex={selectedIndex}
       />
+
+
 
       <StoryCreationDialog 
         open={openStoryCreationDialog} 
