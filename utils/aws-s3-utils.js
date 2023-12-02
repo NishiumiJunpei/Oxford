@@ -10,7 +10,7 @@ const s3 = new AWS.S3({
 // S3に画像をアップロードする関数
 export async function uploadImageToS3(imageBuffer, fileName) {
   const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: fileName,
     Body: imageBuffer,
     ContentType: 'image/png'
@@ -24,3 +24,23 @@ export async function uploadImageToS3(imageBuffer, fileName) {
     throw error;
   }
 }
+
+export const getS3FileUrl = async (fileName) => {
+  if (!fileName || fileName.trim() === '') {
+    return null;
+  }
+
+  const params = {
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: fileName,
+    Expires: 60 * 60 // URLの有効期限（秒）
+  };
+
+  try {
+    const url = await s3.getSignedUrlPromise('getObject', params);
+    return url;
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    return null;
+  }
+};

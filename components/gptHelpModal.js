@@ -22,6 +22,7 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, english, japanese, wo
         const data = await response.json();
         setExampleSentence(data.exampleSentence);
         setImageUrl(data.imageUrl);
+        onSave(data.exampleSentence, data.imageUrl); // 親コンポーネントの保存処理を呼び出す
         setIsLoading(false); // ローディング終了
         } catch (error) {
           console.error('Error generating example sentence:', error);
@@ -47,7 +48,7 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, english, japanese, wo
             },
             body: JSON.stringify({ wordListByThemeId, exampleSentence })
           });
-          onSave(exampleSentence); // 親コンポーネントの保存処理を呼び出す
+          onSave(exampleSentence, imageUrl); // 親コンポーネントの保存処理を呼び出す
           setIsLoading(false);
         } catch (error) {
           console.error('Error saving example sentence:', error);
@@ -88,15 +89,15 @@ const GPTHelpModal = ({ open, onClose, onSave, onGenerate, english, japanese, wo
             {exampleSentence}
           </Typography>
           {imageUrl && (
-            <img src={imageUrl} alt="例文の画像" style={{ marginTop: 20, maxWidth: '100%' }} />
+            <img src={imageUrl} alt="例文の画像" style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }}  />
           )}
         </>
       )}
 
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>キャンセル</Button>
-        <Button onClick={handleSave} disabled={!exampleSentence}>保存</Button>
+        <Button onClick={onClose}>閉じる</Button>
+        {/* <Button onClick={handleSave} disabled={!exampleSentence}>保存</Button> */}
       </DialogActions>
     </Dialog>
   );

@@ -103,14 +103,14 @@ const WordListPage = () => {
     setModalOpen(true);
   };
   const handleCloseModal = () => setModalOpen(false);
-  const handleSaveModal = (savedExampleSentence) => {
+  const handleSaveModal = (savedExampleSentence, imageUrl='') => {
     setWordList(wordList.map(word => {
       if (word.english === selectedWord.english) {
-        return { ...word, exampleSentence: savedExampleSentence };
+        return { ...word, exampleSentence: savedExampleSentence, imageUrl };
       }
       return word;
     }));
-    handleCloseModal();
+    // handleCloseModal();
   };
 
   const handleOpenModalWord = (index) => {

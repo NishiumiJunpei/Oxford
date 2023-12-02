@@ -45,6 +45,15 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex }) => 
                 <Typography className="preformatted-text" style={{ marginTop: 20 }}>
                     {word?.exampleSentence}
                 </Typography>
+                {word?.imageUrl && (
+                    <img 
+                        src={word.imageUrl} 
+                        alt={word.english} 
+                        style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }} 
+                    />
+                )}
+
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={handlePrev} disabled={index <= 0}>前へ</Button>

@@ -1,6 +1,7 @@
-import { getWordListByCriteria, getUserWordListStatus, getUserWordStatusByTheme, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
+import { getWordListByCriteria, getUserWordListStatus, getUserWordStatusByTheme, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
+import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -38,6 +39,7 @@ export default async function handler(req, res) {
           ...word,
           status: userWordListStatus.memorizeStatus,
           exampleSentence: userWordListStatus.exampleSentence || word.exampleSentence, // userWordListStatusの例文で上書き
+          imageUrl: await getS3FileUrl(userWordListStatus.imageFilename || word.imageFilename),
           userWordListStatus,
         };
       }));

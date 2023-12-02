@@ -30,16 +30,13 @@ export async function generateExampleSentences(english, japanese, userProfile) {
 // 画像を生成する関数
 export async function generateImage(description) {
   try {
-    console.log('test - generateImage')
-
     const image = await openai.images.generate({
-      model: "dall-e-2", 
+      model: "dall-e-3", 
       prompt: description ,
       n: 1,
-      size: '256x256'
+      size: '1024x1024'
     });
 
-    console.log('test - generateImage -2:', image)
     // 生成された画像のURLまたはデータを返す
     const ret = image ? image.data[0].url : ''
     return ret; // または適切なプロパティを使用

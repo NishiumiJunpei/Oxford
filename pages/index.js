@@ -55,6 +55,10 @@ export default function Home() {
               例文: {word.exampleSentence}
             </Typography>
           )}
+          {word.imageUrl && (
+            <img src={word.imageUrl} alt="例文の画像" style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }}  />
+          )}
+
 
           <Typography variant="body2" style={{ marginTop: '10px' }}>
             ({word.theme} - {word.block})
