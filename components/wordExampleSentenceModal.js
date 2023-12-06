@@ -1,3 +1,4 @@
+//wordExampleSentenceModal.js
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 

@@ -5,6 +5,7 @@ import TimerIcon from '@mui/icons-material/Timer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
+import WeakWordsList from '../../components/weakWordList'; 
 
 
 const HomePage = () => {
@@ -152,7 +153,8 @@ const HomePage = () => {
       <>
 
         <Tabs value={tabValue} onChange={handleTabChange} sx={{ marginLeft: 2 }}>
-          <Tab label="単語" />
+          <Tab label="学習進捗" />
+          <Tab label="苦手単語" />
           <Tab label="ストーリー" />
         </Tabs>
 
@@ -201,6 +203,10 @@ const HomePage = () => {
         )}
 
         {tabValue === 1 && (
+            <WeakWordsList /> 
+        )}
+
+        {tabValue === 2 && (
           <>
           <Box sx={{ margin: 3 }}>
             <Button variant="contained" onClick={handleOpenStoryCreationDialog}>
