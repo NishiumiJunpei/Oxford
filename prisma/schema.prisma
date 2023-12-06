@@ -27,7 +27,7 @@ model User {
   password                  String
   birthday                  DateTime?
   profile                   String?
-  defaultTheme              String?
+  currentChallengeTheme     String?
   googleId                  String?                     @unique
   UserWordList              UserWordList[]
   UserWordListByThemeStatus UserWordListByThemeStatus[]

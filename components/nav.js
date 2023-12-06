@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Typography } from '@mui/material';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -8,6 +8,25 @@ import { signOut } from 'next-auth/react'; // NextAuthからsignOutをインポ�
 
 
 function Nav({ isOpen, onClose, isMobile }) {
+  const [currentChallengeTheme, setCurrentChallengeTheme] = useState('');
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('/api/user-setting/getUserInfo');
+        if (!response.ok) {
+          throw new Error('ネットワークレスポンスが不正です。');
+        }
+        const data = await response.json();
+        setCurrentChallengeTheme(data.currentChallengeTheme);
+      } catch (error) {
+        console.error('ユーザ情報の取得に失敗しました', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
@@ -34,7 +53,7 @@ function Nav({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="ホーム" />
         </ListItem>
-        <ListItem button component="a" href="/word-master/progressByBlockTheme">
+        <ListItem button component="a" href={`/word-master/progressByBlockTheme?theme=${currentChallengeTheme}`}>
             <ListItemIcon>
               <ImportContactsIcon /> {/* 理解度ステータスのアイコン */}
             </ListItemIcon>

@@ -1,6 +1,6 @@
 // pages/learnWordsCheckCompletion.js
 import React from 'react';
-import { Typography, Box, Container, Button } from '@mui/material';
+import { Container, Box, Typography, Button } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -33,8 +33,9 @@ const LearnWordsCheckCompletion = () => {
         display="flex" 
         flexDirection="column" 
         alignItems="center" 
-        justifyContent="center" 
+        justifyContent="flex-start" // このプロパティを 'flex-start' に変更
         height="100vh"
+        marginTop={2} // 上にマージンを追加
       >
         <Typography variant="h3" gutterBottom>
           よくできました！

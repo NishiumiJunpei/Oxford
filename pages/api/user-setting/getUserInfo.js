@@ -18,9 +18,9 @@ export default async function handler(req, res) {
         }
   
         const formattedBirthday = user.birthday ? user.birthday.toISOString().split('T')[0] : ''
-        const { email, name, profile } = user;
+        const { email, name, profile, currentChallengeTheme } = user;
 
-        res.status(200).json({ email, name, birthday: formattedBirthday || '', profile });
+        res.status(200).json({ email, name, birthday: formattedBirthday || '', profile, currentChallengeTheme });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
