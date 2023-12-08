@@ -40,7 +40,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
             exampleSentence: data.exampleSentence,
             imageUrl: data.imageUrl
           };
-          updateWordList(index, newWordData);
+          updateWordList(newWordData);
       
           setIsLoading(false); // ローディング終了
         } catch (error) {
@@ -49,6 +49,11 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
         }
       
     }
+
+    const handleImageSearch = (englishWord) => {
+        const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
+        window.open(url, '_blank');
+      };    
 
     const word = wordList[index];
 
@@ -83,15 +88,53 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
 
 
             </DialogContent>
-            <DialogActions>
+            <DialogActions style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+                <div style={{ width: '100%', textAlign: 'center', marginBottom: 5 }}> 
+
                 {isLoading ? (
                     <CircularProgress /> // ローディングインジケーターの表示
                 ) : (
-                    <Button onClick={handleExampleSentenceGenerate} variante="outlined" disabled={isLoading}>例文生成</Button>
+                    <Button 
+                    onClick={handleExampleSentenceGenerate} 
+                    variant="outlined" 
+                    disabled={isLoading}
+                    style={{ margin: 5, padding: 5, minWidth: 90 }} // ここでボタンのスタイルを調整
+                  >
+                    例文生成
+                </Button>                
                 )}
-                <Button onClick={handlePrev} disabled={index <= 0}>前へ</Button>
-                <Button onClick={handleNext} disabled={index >= wordList.length - 1}>次へ</Button>
-                <Button onClick={onClose}>閉じる</Button>
+                <Button 
+                    onClick={() => handleImageSearch(word.english)} 
+                    variant="outlined" 
+                    disabled={isLoading}
+                    style={{ margin: 5, padding: 5, minWidth: 90 }} // 同様にスタイル調整
+                >
+                    画像検索
+                </Button>
+                </div>
+                <div style={{ width: '100%', textAlign: 'center' }}> 
+                {/* 前へ、次へ、閉じるのボタンをここに配置 */}
+                    <Button 
+                    onClick={handlePrev} 
+                    disabled={(index <= 0) || isLoading}
+                    style={{ margin: 5, padding: 5, minWidth: 90 }}
+                    >
+                    前へ
+                    </Button>
+                    <Button 
+                    onClick={handleNext} 
+                    disabled={(index >= wordList.length - 1) || isLoading}
+                    style={{ margin: 5, padding: 5, minWidth: 90 }}
+                    >
+                    次へ
+                    </Button>
+                    <Button 
+                    onClick={onClose}
+                    style={{ margin: 5, padding: 5, minWidth: 90 }}
+                    >
+                    閉じる
+                    </Button>
+            </div>
             </DialogActions>
         </Dialog>
     );

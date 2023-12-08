@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typography, Avatar, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Chip } from '@mui/material';
+import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typography, Avatar, FormControlLabel,Switch,
+  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Chip } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StoryCreationDialog from '../../components/storyCreationDialog'
@@ -18,6 +19,8 @@ const HomePage = () => {
   const [wordStoryList, setWordStoryList] = useState([]); // 新しいstateを追加
   const [selectedStory, setSelectedStory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
+  const [weakWordsLoaded, setWeakWordsLoaded] = useState(false);
 
 
   const { theme } = router.query; // URLのクエリパラメータからthemeを取得
@@ -159,7 +162,13 @@ const HomePage = () => {
         </Tabs>
 
         {tabValue === 0 && (
-          <TableContainer component={Paper} sx={{ marginTop: 5 }}>
+          <>
+            <FormControlLabel
+            control={<Switch checked={showMaster} onChange={() => setShowMaster(!showMaster)} />}
+            label="マスターを表示"
+            sx={{ margin: 2 }}
+          />
+            <TableContainer component={Paper} sx={{ marginTop: 5 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
@@ -170,6 +179,7 @@ const HomePage = () => {
                 </TableHead>
                 <TableBody>
                   {data.map((item, index) => (
+                    showMaster || item.progress < 100 ? ( // スイッチがオフの場合は進捗が100%未満の行のみ表示
                     <TableRow key={index}>
                       <TableCell component="th" scope="row">
                         <ListItemButton onClick={() => handleBlockClick(item.block)}>
@@ -196,14 +206,16 @@ const HomePage = () => {
                         </Button>
                       </TableCell>
                     </TableRow>
-                  ))}
+                ) : null
+                ))}
                 </TableBody>
               </Table>
             </TableContainer>
+          </>
         )}
 
         {tabValue === 1 && (
-            <WeakWordsList /> 
+          <WeakWordsList /> 
         )}
 
         {tabValue === 2 && (

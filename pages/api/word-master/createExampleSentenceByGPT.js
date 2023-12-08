@@ -23,7 +23,6 @@ export default async function handler(req, res) {
       // 画像生成処理を追加
       const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${exampleSentence}`;
       const imageUrlAtOpenAI = await generateImage(imageDescription);
-      console.log('test1', imageUrlAtOpenAI)
 
       if (imageUrlAtOpenAI) { 
         // imageUrlAtOpenAIから画像データを取得
@@ -34,11 +33,9 @@ export default async function handler(req, res) {
         const imageFilename = `userData/${userId}/wordImageByGPT-${wordListByThemeId}.png`;
         await uploadImageToS3(imageBuffer, imageFilename); // 画像をS3にアップロード
         imageUrl = await getS3FileUrl(imageFilename)
-        console.log('test2', imageFilename, imageUrl);
       
         // データベースに画像URLを保存する処理をここに追加
         await saveExampleSentence(userId, wordListByThemeId, exampleSentence, imageFilename);
-        console.log('test3');
       }
        
       // 生成した例文と画像のURLをレスポンスとして返す

@@ -119,12 +119,13 @@ const WordListPage = () => {
     setModalOpenWord(true);
   };
 
-  const updateWordList = (index, newWordData) => {
-    const updatedWordList = [...wordList];
-    updatedWordList[index] = newWordData;
+  const updateWordList = (newWordData) => {
+    const updatedWordList = wordList.map(wordItem => 
+      wordItem.id === newWordData.id ? newWordData : wordItem
+    );
     setWordList(updatedWordList);
   };
-  
+    
   
   const handleImageSearch = (englishWord) => {
     const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
@@ -287,10 +288,10 @@ const WordListPage = () => {
                 <TableCell>#</TableCell>
                 <TableCell>English</TableCell>
                 <TableCell>Japanese</TableCell>
-                <TableCell>ステータス</TableCell>
-                <TableCell>例文</TableCell>
-                <TableCell>アクション</TableCell>
-                <TableCell>その他</TableCell>
+                <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>ステータス</TableCell>
+                <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
+                {/* <TableCell>アクション</TableCell> */}
+                <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>その他</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -299,8 +300,10 @@ const WordListPage = () => {
                   key={index}
                   sx={{ 
                     backgroundColor: word.status === 'NOT_MEMORIZED' ? '#ffccbc' : 
-                                    word.status === 'UNKNOWN' ? '#f5f5f5' : 'inherit'
-                  }}
+                                    word.status === 'UNKNOWN' ? '#f5f5f5' : 'inherit',
+                    cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
+                    }}
+                  onClick={() => handleOpenModalWord(index)} // ここでクリ
                 >
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{word.english}</TableCell>
@@ -310,7 +313,7 @@ const WordListPage = () => {
                     {word.status === 'NOT_MEMORIZED' && <WarningIcon style={{ color: 'orange' }} />}
                     {word.status === 'UNKNOWN' && <HelpOutlineIcon style={{ color: 'gray' }} />}
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
                     {word.exampleSentence?.length > 30
                       ? `${word.exampleSentence?.substring(0, 30)}...`
                       : word.exampleSentence}
@@ -318,7 +321,7 @@ const WordListPage = () => {
                       <Button onClick={() => handleOpenModalWord(index)}>もっと見る</Button>
                       )}
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Button 
                       variant="outlined" 
                       onClick={() => handleOpenModal(word)}
@@ -334,8 +337,8 @@ const WordListPage = () => {
                       画像検索
                     </Button>
                     
-                  </TableCell>
-                  <TableCell>
+                  </TableCell> */}
+                  <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
                     <Typography>
                         {word.userWordListStatus.lastMemorizedTimeAgo }
                     </Typography>

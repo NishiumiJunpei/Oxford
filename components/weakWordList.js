@@ -3,7 +3,7 @@ import { Avatar, CircularProgress, List, ListItem, ListItemAvatar, ListItemText,
 import axios from 'axios';
 import WordExampleSentenceModal from './wordExampleSentenceModal';
 
-const WordList = () => {
+const WeakWordList = () => {
   const [wordList, setWordList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedWordIndex, setSelectedWordIndex] = useState(-1);
@@ -38,6 +38,14 @@ const WordList = () => {
     setShowJapanese(!showJapanese);
   };
 
+  const updateWordList = (newWordData) => {
+    const updatedWordList = wordList.map(wordItem => 
+      wordItem.id === newWordData.id ? newWordData : wordItem
+    );
+    setWordList(updatedWordList);
+  };
+
+
   return (
     <Container>
 
@@ -50,7 +58,7 @@ const WordList = () => {
             label="日本語を表示"
         />
 
-        <List>
+        <List sx={{ height: '700px', overflow: 'auto' }}> {/* ここで高さとオーバーフローを設定 */}
           {wordList.map((word, index) => (
             <ListItem button key={word.id} onClick={() => handleWordClick(index)}>
             <ListItemAvatar>
@@ -73,9 +81,10 @@ const WordList = () => {
         onClose={handleCloseModal}
         wordList={wordList}
         initialIndex={selectedWordIndex}
+        updateWordList={updateWordList}
       />
     </Container>
   );
 };
 
-export default WordList;
+export default WeakWordList;
