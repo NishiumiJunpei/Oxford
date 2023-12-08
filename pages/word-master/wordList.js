@@ -103,6 +103,7 @@ const WordListPage = () => {
     setModalOpen(true);
   };
   const handleCloseModal = () => setModalOpen(false);
+
   const handleSaveModal = (savedExampleSentence, imageUrl='') => {
     setWordList(wordList.map(word => {
       if (word.english === selectedWord.english) {
@@ -117,6 +118,13 @@ const WordListPage = () => {
     setSelectedIndex(index);
     setModalOpenWord(true);
   };
+
+  const updateWordList = (index, newWordData) => {
+    const updatedWordList = [...wordList];
+    updatedWordList[index] = newWordData;
+    setWordList(updatedWordList);
+  };
+  
   
   const handleImageSearch = (englishWord) => {
     const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
@@ -403,9 +411,8 @@ const WordListPage = () => {
         onClose={() => setModalOpenWord(false)}
         wordList={filteredWordList}
         initialIndex={selectedIndex}
+        updateWordList={updateWordList}
       />
-
-
 
       <StoryCreationDialog 
         open={openStoryCreationDialog} 

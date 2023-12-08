@@ -1,11 +1,13 @@
 //wordExampleSentenceModal.js
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
+import axios from 'axios';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, useTheme,CircularProgress } from '@mui/material';
 
-const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex }) => {
+const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updateWordList }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [index, setIndex] = useState(initialIndex);
+    const [isLoading, setIsLoading] = useState(false); // ローディング状態の管理
 
     useEffect(() => {
         setIndex(initialIndex);
@@ -22,6 +24,31 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex }) => 
             setIndex(index - 1);
         }
     };
+
+    const handleExampleSentenceGenerate = async () =>{
+        setIsLoading(true); // ローディング開始
+        try {
+          const response = await axios.post('/api/word-master/createExampleSentenceByGPT', {
+            wordListByThemeId: wordList[index].id, 
+            english: wordList[index].english, 
+            japanese: wordList[index].japanese
+          });
+      
+          const data = response.data;
+          const newWordData = {
+            ...wordList[index],
+            exampleSentence: data.exampleSentence,
+            imageUrl: data.imageUrl
+          };
+          updateWordList(index, newWordData);
+      
+          setIsLoading(false); // ローディング終了
+        } catch (error) {
+          console.error('Error generating example sentence:', error);
+          setIsLoading(false); // ローディング終了
+        }
+      
+    }
 
     const word = wordList[index];
 
@@ -57,6 +84,11 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex }) => 
 
             </DialogContent>
             <DialogActions>
+                {isLoading ? (
+                    <CircularProgress /> // ローディングインジケーターの表示
+                ) : (
+                    <Button onClick={handleExampleSentenceGenerate} variante="outlined" disabled={isLoading}>例文生成</Button>
+                )}
                 <Button onClick={handlePrev} disabled={index <= 0}>前へ</Button>
                 <Button onClick={handleNext} disabled={index >= wordList.length - 1}>次へ</Button>
                 <Button onClick={onClose}>閉じる</Button>
