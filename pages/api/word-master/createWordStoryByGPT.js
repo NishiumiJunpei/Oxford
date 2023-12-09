@@ -7,10 +7,12 @@ import { generateWordStory } from '../../../utils/openai-utils';
 
 
 export default async function handler(req, res) {
+  console.log('test00')
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  console.log('test0')
   const { theme, block, length, genre, characters } = req.body;
   const session = await getServerSession(req, res, authOptions);
   const userId = session.userId; 
@@ -56,7 +58,7 @@ export default async function handler(req, res) {
     // });
 
     // 5. 結果と単語をフロントに返す
-    res.status(200).json({ story: response.choices[0].message.content, words: updatedWordList });
+    res.status(200).json({ story: response, words: updatedWordList });
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ message: 'Internal Server Error' });

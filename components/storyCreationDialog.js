@@ -54,7 +54,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
         };
 
         try {
-        const response = await fetch('/api/word-master/createWordStoryByGPT', {
+          const response = await fetch('/api/word-master/createWordStoryByGPT', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
