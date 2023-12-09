@@ -20,7 +20,6 @@ const HomePage = () => {
   const [selectedStory, setSelectedStory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
-  const [weakWordsLoaded, setWeakWordsLoaded] = useState(false);
 
 
   const { theme } = router.query; // URLのクエリパラメータからthemeを取得

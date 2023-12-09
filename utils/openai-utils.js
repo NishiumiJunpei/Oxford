@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function generateExampleSentences(english, japanese, userProfile) {
   try{
     // const content = `${english} (${japanese}) という英単語・フレーズを覚えたいです。\n私のプロフィールを踏まえて下記を作ってください。\n・この英単語を使った例文2つ （私のプロフィールを考慮して私が使う、または使われる例文で、英語と日本語訳も書いてください）\n・この英単語の別の言い方や類語3つ\n\n私のプロフィール\n${userProfile}`;
-    const content = `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください\n\n私のプロフィール\n${userProfile}`;
+    const content = `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください`;
 
 
     const response = await openai.chat.completions.create({
