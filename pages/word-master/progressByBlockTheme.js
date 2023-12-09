@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typography, Avatar, FormControlLabel,Switch,
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Chip } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
@@ -7,6 +8,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import WeakWordsList from '../../components/weakWordList'; 
+import ProgressCircle from '@/components/progressCircle';
 
 
 const HomePage = () => {
@@ -14,6 +16,7 @@ const HomePage = () => {
   const [data, setData] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState('');
   const [tabValue, setTabValue] = useState(0); // タブの状態
+  const [overallProgress, setOverallProgress] = useState(0); 
   const [openStoryCreationDialog, setOpenStoryCreationDialog] = useState(false);
   const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
   const [wordStoryList, setWordStoryList] = useState([]); // 新しいstateを追加
@@ -25,21 +28,28 @@ const HomePage = () => {
   const { theme } = router.query; // URLのクエリパラメータからthemeを取得
 
   const fetchData = async (themeToFetch) => {
-    setIsLoading(true);
-    const response = await fetch(`/api/word-master/getProgressByBlockTheme?theme=${themeToFetch}`);
-    const data = await response.json();
-    setData(data);
-    setIsLoading(false);
+    try{
+      setIsLoading(true);
+      const response = await axios.get(`/api/word-master/getProgressByBlockTheme?theme=${themeToFetch}`);
+      setData(response.data.blocks);
+      setOverallProgress(response.data.overallProgress)
+      setIsLoading(false);  
+    } catch(error){
+      console.error('Error fetching words:', error);
+    }
   };
 
   const fetchWordStoryList = async (themeToFetch) => {
-    const response = await fetch(`/api/word-master/getWordStoryList?theme=${themeToFetch}`);
-    const data = await response.json();
-    if (Array.isArray(data)) {
-      setWordStoryList(data);
-    } else {
-      console.error('Expected an array but got:', data);
-      setWordStoryList([]);
+    try{
+      const response = await axios.get(`/api/word-master/getWordStoryList?theme=${themeToFetch}`);
+      if (Array.isArray(response.data)) {
+        setWordStoryList(response.data);
+      } else {
+        console.error('Expected an array but got:', response.data);
+        setWordStoryList([]);
+      }  
+    } catch(error){
+      console.error('Error fetching words:', error);
     }
   };
 
@@ -162,11 +172,15 @@ const HomePage = () => {
 
         {tabValue === 0 && (
           <>
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
+              <ProgressCircle value={overallProgress} />
+            </Box>
+
             <FormControlLabel
             control={<Switch checked={showMaster} onChange={() => setShowMaster(!showMaster)} />}
             label="マスターを表示"
             sx={{ margin: 2 }}
-          />
+            />
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>

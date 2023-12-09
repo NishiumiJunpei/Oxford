@@ -19,6 +19,9 @@ export default async function handler(req, res) {
 
       const blocks = [...new Set(wordList.map(word => word.block))];
 
+      let totalMemorized = 0;
+      let totalWords = 0;
+
       const result = blocks.map(block => {
         const blockWords = wordList.filter(word => word.block === block);
         const memorizedCount = userWordStatus.filter(status => 
@@ -26,7 +29,10 @@ export default async function handler(req, res) {
           status.userId === userId &&
           blockWords.some(bw => bw.id === status.wordListByThemeId)
         ).length;
-      
+
+        totalMemorized += memorizedCount;
+        totalWords += blockWords.length;
+            
         const unknownCount = blockWords.filter(bw => {
           const status = userWordStatus.find(us => us.wordListByThemeId === bw.id && us.userId === userId);
           return !status || status.memorizeStatus === 'UNKNOWN';
@@ -41,8 +47,10 @@ export default async function handler(req, res) {
         };
       });
                   
+      const overallProgress = totalWords > 0 ? Math.round(totalMemorized / totalWords * 100) : 0;
 
-      res.status(200).json(result);
+      result.sort((a, b) => a.block - b.block);
+      res.status(200).json({ overallProgress, blocks: result });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
