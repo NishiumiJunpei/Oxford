@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-
+import Link from 'next/link';
 
 export default function Home() {
   const [word, setWord] = useState(null);
@@ -61,7 +61,7 @@ export default function Home() {
 
 
           <Typography variant="body2" style={{ marginTop: '10px' }}>
-            ({word.theme} - {word.block})
+            <Link href={`/word-master/wordList?block=${word.block}&theme=${word.theme}`}>({word.theme} - {word.block})</Link>
           </Typography>
 
 
