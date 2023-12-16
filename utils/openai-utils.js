@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { getKanjiFromBirthday } from "./utils";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -6,17 +7,25 @@ const openai = new OpenAI({
 
 
 
-export async function generateExampleSentences(english, japanese, userProfile) {
+export async function generateExampleSentences(english, japanese, userProfile, birthday) {
   try{
-    
-    const content = userProfile ? 
+
+    let content = userProfile ? 
       `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください` :
       `${english} (${japanese}) という英単語を使った例文を1つ作ってください。例文(英語)とその例文の日本語訳も書いてください\n\n最後にこの英単語の類語をいくつか教えてください` 
     
+    // const kanjiArray = getKanjiFromBirthday(birthday)
+    // if (kanjiArray.length > 0) {
+    //   const kanjiString = kanjiArray.join(', ');
+    //   content += `\n\n出力する日本語はひがらとカタカナなだけ使ってください。但し、下記の漢字は使っても良いです。\n${kanjiString}`;
+    // }
+
+    console.log('test', content)
 
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
+      // model: "gpt-4",
       messages: [{role: 'assistant', content }],
       temperature: 0.5,
       max_tokens: 300,

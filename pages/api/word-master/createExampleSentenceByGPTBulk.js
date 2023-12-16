@@ -36,7 +36,8 @@ export default async function handler(req, res) {
         const exampleSentence = await generateExampleSentences(
           word.english, 
           word.japanese, 
-          JSON.stringify(user.profile) // ユーザープロフィール情報を渡す
+          JSON.stringify(user.profile), // ユーザープロフィール情報を渡す
+          user.birthday
         );
         await saveExampleSentence(userId, word.id, exampleSentence);
       });

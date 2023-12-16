@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     try {
       const user = await getUserById(userId);
-      const exampleSentence = await generateExampleSentences(english, japanese, JSON.stringify(user.profile));
+      const exampleSentence = await generateExampleSentences(english, japanese, JSON.stringify(user.profile), user.birthday);
       let imageUrl = ''
 
       // 画像生成処理を追加
