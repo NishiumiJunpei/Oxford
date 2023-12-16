@@ -38,6 +38,7 @@ export default async function handler(req, res) {
         await saveExampleSentence(userId, wordListByThemeId, exampleSentence, imageFilename);
       }
        
+      console.log('example sentence is craeted, ', english)
       // 生成した例文と画像のURLをレスポンスとして返す
       res.status(200).json({ exampleSentence, imageUrl });
       
