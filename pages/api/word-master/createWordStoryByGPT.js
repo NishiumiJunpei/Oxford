@@ -7,12 +7,10 @@ import { generateWordStory } from '../../../utils/openai-utils';
 
 
 export default async function handler(req, res) {
-  console.log('test00')
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  console.log('test0')
   const { theme, block, length, genre, characters } = req.body;
   const session = await getServerSession(req, res, authOptions);
   const userId = session.userId; 

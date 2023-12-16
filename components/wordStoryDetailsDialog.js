@@ -24,7 +24,7 @@ const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
         <List>
           {selectedStory.words.map((word, index) => (
             <ListItem key={index}>
-              <Typography variant="body1" style={{ fontSize: '18px' }}>{word}</Typography>
+              <Typography variant="body1" className="preformatted-text" style={{ fontSize: '18px' }}>{word}</Typography>
             </ListItem>
           ))}
         </List>

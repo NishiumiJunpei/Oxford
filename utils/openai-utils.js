@@ -20,8 +20,6 @@ export async function generateExampleSentences(english, japanese, userProfile, b
     //   content += `\n\n出力する日本語はひがらとカタカナなだけ使ってください。但し、下記の漢字は使っても良いです。\n${kanjiString}`;
     // }
 
-    console.log('test', content)
-
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
@@ -42,12 +40,19 @@ export async function generateExampleSentences(english, japanese, userProfile, b
 // 画像を生成する関数
 export async function generateImage(description) {
   try {
+    // const image = await openai.images.generate({
+    //   model: "dall-e-2", 
+    //   prompt: description ,
+    //   n: 1,
+    //   size: '256x256'
+    // });
     const image = await openai.images.generate({
       model: "dall-e-3", 
       prompt: description ,
       n: 1,
       size: '1024x1024'
     });
+
 
     // 生成された画像のURLまたはデータを返す
     const ret = image ? image.data[0].url : ''
