@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 import { Typography, Button, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
 
@@ -87,6 +88,17 @@ const LearnWordsCheck = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED' }),
           });
+
+          if (!known){
+            const word = wordList[currentIndex];
+
+            axios.post('/api/word-master/createExampleSentenceByGPT', {
+              wordListByThemeId: wordId, 
+              english: word.english, 
+              japanese: word.japanese
+            });
+  
+          }
         } catch (error) {
           console.error('Error updating word status:', error);
         }
