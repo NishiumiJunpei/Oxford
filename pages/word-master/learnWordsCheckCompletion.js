@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 const LearnWordsCheckCompletion = () => {
     const router = useRouter();
-    const { theme, block } = router.query;
+    const { blockId } = router.query;
 
 
     // 画像ファイル名の配列
