@@ -6,7 +6,6 @@ import WarningIcon from '@mui/icons-material/Warning';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TimerIcon from '@mui/icons-material/Timer';
-import GPTHelpModal from '../../components/gptHelpModal'; // GPTHelpModalのインポート
 import WordExampleSentenceModal from '../../components/wordExampleSentenceModal';
 import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
@@ -17,12 +16,10 @@ import Link from 'next/link';
 
 const WordListPage = () => {
   const router = useRouter();
-  const { theme, block } = router.query;
+  const { blockId } = router.query;
   const [wordList, setWordList] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); // gptHelp用のモーダル用の状態
   const [modalOpenWord, setModalOpenWord] = useState(null);// 例文確認用のモーダル用の状態
-  const [selectedWord, setSelectedWord] = useState({}); // 選択された単語の情報を保存するステート
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [progress, setProgress] = useState(0);
   const [unknownCount, setUnknownCount] = useState(0);
@@ -31,25 +28,28 @@ const WordListPage = () => {
   const [openStoryCreationDialog, setOpenStoryCreationDialog] = useState(false);
   const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
+  const [block, setBlock] = useState(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
-      const response = await fetch(`/api/word-master/getWordList?theme=${theme}&block=${block}`);
+      const response = await fetch(`/api/word-master/getWordList?blockId=${blockId}`);
       const data = await response.json();
       if (data && data.wordList) { // dataとdata.wordListが存在する場合のみセット
         setWordList(data.wordList);
         setProgress(data.progress);
         setUnknownCount(data.unknownCount);
         setWordStoryList(data.wordStoryList);
+        setBlock(data.block);
       }
       setIsLoading(false); // データ取得後にローディング状態をfalseに設定
     };
 
-    if (theme && block) {
+    if (blockId) {
       fetchData();
     }
-  }, [theme, block]);
+  }, [blockId]);
 
   useEffect(() => {
     if (unknownCount > 0) {
@@ -63,7 +63,7 @@ const WordListPage = () => {
   
 
   const handleBack = () => {
-    router.push(`/word-master/progressByBlockTheme?theme=${theme}`);
+    router.push(`/word-master/wordMasterTop`);
   };
 
   // ステータスフィルタリング関数
@@ -97,22 +97,6 @@ const WordListPage = () => {
     </Box>
   );
 
-  // モーダル関連の関数
-  const handleOpenModal = (word) => {
-    setSelectedWord(word); // 選択された単語をステートに設定
-    setModalOpen(true);
-  };
-  const handleCloseModal = () => setModalOpen(false);
-
-  const handleSaveModal = (savedExampleSentence, imageUrl='') => {
-    setWordList(wordList.map(word => {
-      if (word.english === selectedWord.english) {
-        return { ...word, exampleSentence: savedExampleSentence, imageUrl };
-      }
-      return word;
-    }));
-    // handleCloseModal();
-  };
 
   const handleOpenModalWord = (index) => {
     setSelectedIndex(index);
@@ -177,35 +161,6 @@ const WordListPage = () => {
     }
   };
 
-
-  const handleGPTHelpBatchButton = async () => {
-    // 確認ダイアログを表示
-    const isConfirmed = window.confirm('GPTヘルプを一括処理しますか？');
-    if (isConfirmed) {
-      try {
-        // API呼び出し
-        const response = await fetch('/api/word-master/createExampleSentenceByGPTBulk', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ theme, block }),
-        });
-  
-        if (response.ok) {
-          alert('処理が開始されました。');
-        } else {
-          throw new Error('API Error');
-        }
-      } catch (error) {
-        console.error('API呼び出し中にエラーが発生しました:', error);
-        alert('エラーが発生しました。');
-      }
-    }
-  };
-  
-
-  // console.log('wordList', wordList)
   
   return (
     <div>
@@ -218,17 +173,17 @@ const WordListPage = () => {
         <Box display="flex" alignItems="center" mt={1} width="100%">
           <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
             <Typography variant="h4" component="div" sx={{mr: 5}}>
-                {theme}
+                {block?.theme.name}
             </Typography>
 
             <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Link href={`/word-master/wordList?theme=${theme}&block=${parseInt(block, 10) - 1}`} passHref>
-                <IconButton component="a" disabled={block === '1'}>
+              <Link href={`/word-master/wordList?&blockId=${parseInt(blockId, 10) - 1}`} passHref>
+                <IconButton component="a" disabled={blockId === '1'}>
                   <ArrowBackIosIcon />
                 </IconButton>
               </Link>
-              <Avatar sx={{ bgcolor: 'secondary.main', ml: 1, mr: 1 }}>{block}</Avatar>
-              <Link href={`/word-master/wordList?theme=${theme}&block=${parseInt(block, 10) + 1}`} passHref>
+              <Avatar sx={{ bgcolor: 'secondary.main', ml: 1, mr: 1 }}>{block?.name}</Avatar>
+              <Link href={`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`} passHref>
                 <IconButton component="a">
                   <ArrowForwardIosIcon />
                 </IconButton>
@@ -250,7 +205,7 @@ const WordListPage = () => {
             ステータス
           </Typography>
         </Box>
-        <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?block=${block}&theme=${theme}`)} sx={{marginBottom: 3}}>
+        <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>
               理解度チェック
         </Button>
 
@@ -273,14 +228,7 @@ const WordListPage = () => {
             単語リスト
           </Typography>
         </Box>
-
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <StatusFilterIcons /> {/* 既存のステータスフィルターアイコン */}
-          <Button variant="contained" onClick={handleGPTHelpBatchButton} sx={{ ml: 'auto' }}>
-            GPTヘルプ(一括)
-          </Button>
-        </Box>
-
+        
         <Paper>
           <Table>
             <TableHead>
@@ -371,7 +319,6 @@ const WordListPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell>No</TableCell>
-                {/* <TableCell>テーマ</TableCell> */}
                 <TableCell>ブロック</TableCell>
                 <TableCell>ストーリー</TableCell>
               </TableRow>
@@ -380,9 +327,8 @@ const WordListPage = () => {
               {wordStoryList.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
-                  {/* <TableCell>{item.theme}</TableCell> */}
                   <TableCell>
-                    <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block}</Avatar>
+                    <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
                   </TableCell>
                   <TableCell>
                     {item.storyContent.substring(0, 30)}
@@ -399,16 +345,6 @@ const WordListPage = () => {
 
         </>
       )}
-      <GPTHelpModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        onSave={handleSaveModal}
-        // onGenerate={...} // 例文生成のロジックをここに実装
-        english={selectedWord.english} // 英単語をモーダルに渡す
-        japanese={selectedWord.japanese} // 日本語をモーダルに渡す
-        wordListByThemeId={selectedWord.id} // wordListByThemeIdをモーダルに渡す
-
-      />
       <WordExampleSentenceModal
         open={modalOpenWord}
         onClose={() => setModalOpenWord(false)}
@@ -421,9 +357,7 @@ const WordListPage = () => {
         open={openStoryCreationDialog} 
         onClose={handleCloseStoryCreationDialog} 
         onSave={handleSaveStoryCreationDialog} 
-        blockList={[{block, progress}]} 
-        showAllinBlockList={false}
-        theme={theme} 
+        block={block}
       />
       <WordStoryDetailsDialog
         open={openWordStoryDetailsDialog}

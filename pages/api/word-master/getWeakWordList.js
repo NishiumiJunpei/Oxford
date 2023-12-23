@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
-import { getWordListByCriteria, getUserWordListStatus, getUserWordStatusByTheme, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatusByWordListId, getUserWordStatusByTheme, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
@@ -9,17 +9,16 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; // セッションから userId を取得
 
-      const { theme } = req.query;
+      const { themeId } = req.query;
 
       const criteria = {
-        theme: theme ? theme : session.currentChallengeTheme,
+        themeId: themeId ? themeId : session.currentChallengeThemeId,
       };
 
       const wordList = await getWordListByCriteria(criteria);
 
       const allWordList = await Promise.all(wordList.map(async word => {
-        // const { memorizeStatus, exampleSentence } = await getUserWordListStatus(userId, word.id);
-        const userWordListStatus = await getUserWordListStatus(userId, word.id);
+        const userWordListStatus = await getWordListUserStatusByWordListId(userId, word.id);
 
         return {
           ...word,

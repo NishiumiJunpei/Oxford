@@ -1,4 +1,4 @@
-import { getUserById, getUserWordListById, getUserWordStatusByTheme } from '../../../utils/prisma-utils';
+import { getUserById, getWordListUserStatus } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { getS3FileUrl } from '@/utils/aws-s3-utils';
@@ -9,9 +9,9 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId;
       const user = await getUserById(userId)
-      const theme = user.currentChallengeTheme
+      const themeId = user.currentChallengeThemeId
 
-      const userWordStatus = await getUserWordStatusByTheme(userId, theme);
+      const userWordStatus = await getWordListUserStatus(userId, themeId);
 
       const notMemorizedWords = userWordStatus.filter(status => 
         status.memorizeStatus === 'NOT_MEMORIZED'
@@ -26,18 +26,17 @@ export default async function handler(req, res) {
 
           // 選択された単語の情報を配列に追加
           selectedWords.push({
-            id: randomWordStatus.wordListByTheme.id,
-            english: randomWordStatus.wordListByTheme.english,
-            japanese: randomWordStatus.wordListByTheme.japanese,
+            id: randomWordStatus.wordList.id,
+            english: randomWordStatus.wordList.english,
+            japanese: randomWordStatus.wordList.japanese,
             exampleSentence: randomWordStatus.exampleSentence || null,
-            theme: randomWordStatus.wordListByTheme.theme,
-            block: randomWordStatus.wordListByTheme.block,
             imageUrl: await getS3FileUrl(randomWordStatus.imageFilename),
           });
 
           // 同じ単語を二度選ばないようにする
           notMemorizedWords.splice(randomIndex, 1);
         }
+
 
         res.status(200).json(selectedWords);
       } else {

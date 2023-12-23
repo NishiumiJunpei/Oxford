@@ -97,9 +97,9 @@ export default function Home() {
           )}
 
 
-          <Typography variant="body2" style={{ marginTop: '10px' }}>
-            <Link href={`/word-master/wordList?block=${currentWord.block}&theme=${currentWord.theme}`} style={{color: 'blue'}}>({currentWord.theme} - {currentWord.block})</Link>
-          </Typography>
+          {/* <Typography variant="body2" style={{ marginTop: '10px' }}>
+            <Link href={`/word-master/wordList?blockId=${currentWord.block.id}&theme=${currentWord.block.theme.name}`} style={{color: 'blue'}}>({currentWord.block.theme.name} - {currentWord.block.name})</Link>
+          </Typography> */}
 
         </div>
       ) : (

@@ -4,7 +4,7 @@ import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Radio, R
 
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
-  const { theme, block } = router.query;
+  const { blockId } = router.query;
   const [wordStatus, setWordStatus] = useState({
     memorized: false,
     notMemorized: false,
@@ -19,8 +19,7 @@ const LearnWordsCriteriaInput = () => {
 
   const handleSubmit = () => {
     const queryParams = new URLSearchParams({
-      theme,
-      block,
+      blockId,
       wordStatus: JSON.stringify(wordStatus),
       wordCount,
       lastCheck

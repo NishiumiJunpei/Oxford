@@ -11,7 +11,7 @@ export async function generateExampleSentences(english, japanese, userProfile, b
   try{
 
     let content = userProfile ? 
-      `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください` :
+      `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください(「例文」や「日本語訳」などの言葉は書かないで下さい)\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください` :
       `${english} (${japanese}) という英単語を使った例文を1つ作ってください。例文(英語)とその例文の日本語訳も書いてください\n\n最後にこの英単語の類語をいくつか教えてください` 
     
     // const kanjiArray = getKanjiFromBirthday(birthday)

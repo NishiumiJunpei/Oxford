@@ -5,9 +5,8 @@ import {
   Box, Typography, CircularProgress, Divider 
 } from '@mui/material';
 
-const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockList, theme }) => {
+const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
     
-    const [selectedBlock, setSelectedBlock] = useState('all');
     const [length, setLength] = useState('');
     const [genre, setGenre] = useState('');
     const [characters, setCharacters] = useState('');
@@ -16,8 +15,6 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
 
     useEffect(() => {
       if (open) {
-        const firstBlock = blockList.length > 0 ? blockList[0].block : 'all';
-        setSelectedBlock(firstBlock);
         setLength('');
         setGenre('');
         setCharacters('');
@@ -26,10 +23,6 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
       }
     }, [open]);
     
-    const handleBlockChange = (event) => {
-        setSelectedBlock(event.target.value);
-    };
-
     const handleLengthChange = (selectedLength) => {
         setLength(selectedLength);
     };
@@ -46,11 +39,10 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
         setLoading(true);
         setStoryData(null)
         const storyRequestData = {
-        theme,
-        block: selectedBlock === 'all' ? 999 : selectedBlock,
-        length,
-        genre,
-        characters,
+          blockId: block.id,
+          length,
+          genre,
+          characters,
         };
 
         try {
@@ -60,61 +52,33 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
             'Content-Type': 'application/json',
             },
             body: JSON.stringify(storyRequestData),
-        });
+          });
 
-        if (!response.ok) {
-            throw new Error('API call failed');
-        }
+          if (!response.ok) {
+              throw new Error('API call failed');
+          }
 
-        const responseData = await response.json();
-        setStoryData(responseData);
-        setLoading(false);
+          const responseData = await response.json();
+          setStoryData(responseData);
+          setLoading(false);
+
+          // 親コンポーネントの保存処理を呼び出す
+          const savedStory = {
+            block, 
+            length, 
+            genre, 
+            characters, 
+            storyContent: responseData.story,
+            words: responseData.words.map(word => `${word.english} (${word.japanese})`),
+            imageUrl: ''
+          }
+          onSave(savedStory);
+
         } catch (error) {
-        console.error('Failed to create story:', error);
-        setLoading(false);
+          console.error('Failed to create story:', error);
+          setLoading(false);
         }
     };
-
-    const handleSave = async () => {
-        // ここで保存処理を行います
-        try {
-          const saveResponse = await fetch('/api/word-master/saveWordStoryByGPT', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    theme, 
-                    block: selectedBlock === 'all' ? 999 : selectedBlock, 
-                    length, 
-                    genre, 
-                    characters, 
-                    storyData
-                }),
-            });
-
-            if (!saveResponse.ok) {
-                throw new Error('Save API call failed');
-            }
-
-            // 親コンポーネントの保存処理を呼び出す
-            const savedStory = {
-                theme,
-                block: selectedBlock === 'all' ? 999 : selectedBlock, 
-                length, 
-                genre, 
-                characters, 
-                storyContent: storyData.story,
-                words: storyData.words.map(word => `${word.english} (${word.japanese})`),
-                imageUrl: ''
-              }
-            onSave(savedStory);
-            onClose();
-        } catch (error) {
-            console.error('Failed to save story:', error);
-        }
-    };
-
 
     const isSubmitDisabled = !length || !genre || !characters;
     
@@ -123,7 +87,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
         <DialogTitle>ストーリー作成</DialogTitle>
         <DialogContent>
-          <Box sx={{ marginBottom: 2 }}>
+          {/* <Box sx={{ marginBottom: 2 }}>
             <Typography variant="subtitle1" gutterBottom>対象ブロック</Typography>
             <FormControl fullWidth>
               <InputLabel id="block-select-label">ブロック選択</InputLabel>
@@ -134,15 +98,12 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
                 label="ブロック選択"
                 onChange={handleBlockChange}
               >
-                {showAllinBlockList && (
-                  <MenuItem value={'all'}>All</MenuItem>
-                )}
                 {blockList.map((item, index) => (
                   <MenuItem key={index} value={item.block}>{item.block} ({item.progress || 0}%)</MenuItem>
                 ))}
               </Select>
             </FormControl>
-          </Box>
+          </Box> */}
   
             <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>ストーリーの長さ</Typography>
@@ -202,9 +163,8 @@ const StoryCreationDialog = ({ open, onClose, onSave, blockList, showAllinBlockL
             
           </DialogContent>
           <DialogActions>
-            <Button onClick={onClose}>キャンセル</Button>
             <Button onClick={handleSubmit} color="primary" disabled={isSubmitDisabled || loading}>作成</Button>
-            <Button onClick={handleSave} color="primary" disabled={!storyData || loading}>保存</Button>
+            <Button onClick={onClose}>閉じる</Button>
           </DialogActions>
         </Dialog>
       );

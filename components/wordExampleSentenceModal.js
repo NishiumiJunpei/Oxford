@@ -29,7 +29,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
         setIsLoading(true); // ローディング開始
         try {
           const response = await axios.post('/api/word-master/createExampleSentenceByGPT', {
-            wordListByThemeId: wordList[index].id, 
+            wordListId: wordList[index].id, 
             english: wordList[index].english, 
             japanese: wordList[index].japanese
           });

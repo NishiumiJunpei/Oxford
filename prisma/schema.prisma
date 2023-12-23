@@ -27,12 +27,53 @@ model User {
   password                  String
   birthday                  DateTime?
   profile                   String?
-  currentChallengeTheme     String?
   googleId                  String?                     @unique
+  currentChallengeThemeId   Int?
+  currentChallengeTheme     Theme?                      @relation(fields: [currentChallengeThemeId], references: [id])
   UserWordList              UserWordList[]
-  UserWordListByThemeStatus UserWordListByThemeStatus[]
+  WordListUserStatus        WordListUserStatus[]
   WordStoryByGPT            WordStoryByGPT[]
 }
+
+model Theme {
+  id      Int    @id @default(autoincrement())
+  name    String
+  blocks  Block[]
+  users   User[]
+}
+
+model Block {
+  id        Int         @id @default(autoincrement())
+  name      String
+  themeId   Int
+  theme     Theme       @relation(fields: [themeId], references: [id])
+  wordLists WordListBlock[]
+  WordStoryByGPT            WordStoryByGPT[]
+}
+
+model WordList {
+  id              Int              @id @default(autoincrement())
+  english         String
+  japanese        String
+  exampleSentence String?
+  imageFilename   String?
+  remark          String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now()) @updatedAt
+  blocks          WordListBlock[]
+  WordListUserStatus WordListUserStatus[]
+}
+
+model WordListBlock {
+  wordListId  Int
+  blockId     Int
+  wordList    WordList  @relation(fields: [wordListId], references: [id])
+  block       Block     @relation(fields: [blockId], references: [id])
+
+  @@id([wordListId, blockId])
+}
+
+
 
 model UserWordList {
   id              Int            @id @default(autoincrement())
@@ -49,24 +90,10 @@ model UserWordList {
   user            User           @relation(fields: [userId], references: [id])
 }
 
-model WordListByTheme {
-  id                        Int                         @id @default(autoincrement())
-  theme                     String
-  block                     Int
-  english                   String
-  japanese                  String
-  exampleSentence           String?
-  imageFilename             String?
-  remark                    String?
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @default(now()) @updatedAt
-  UserWordListByThemeStatus UserWordListByThemeStatus[]
-}
-
-model UserWordListByThemeStatus {
+model WordListUserStatus {
   id                Int             @id @default(autoincrement())
   userId            Int
-  wordListByThemeId Int
+  wordListId        Int
   memorizeStatus    MemorizeStatus  @default(UNKNOWN)
   numMemorized      Int             @default(0)
   numNotMemorized   Int             @default(0)
@@ -77,16 +104,16 @@ model UserWordListByThemeStatus {
   lastNotMemorizedDate     DateTime?
   updatedAt         DateTime        @default(now()) @updatedAt
   user              User            @relation(fields: [userId], references: [id])
-  wordListByTheme   WordListByTheme @relation(fields: [wordListByThemeId], references: [id])
+  wordList   WordList @relation(fields: [wordListId], references: [id])
 
-  @@unique([userId, wordListByThemeId])
+  @@unique([userId, wordListId])
 }
+
 
 model WordStoryByGPT {
   id            Int      @id @default(autoincrement())
   userId        Int
-  theme         String
-  block         Int
+  blockId       Int
   storyTitle    String
   storyContent  String
   lengthCategory        String
@@ -95,5 +122,7 @@ model WordStoryByGPT {
   words         String[] // Prismaでは配列をサポートしています
   imageFilename      String?   // AWSのパスを格納
   user          User     @relation(fields: [userId], references: [id])
+  block         Block    @relation(fields: [blockId], references: [id])
   createdAt     DateTime @default(now())
 }
+

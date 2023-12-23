@@ -9,13 +9,13 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
 
-      const theme = req.query.theme;
-      if (!theme) {
+      const themeId = req.query.themeId;
+      if (!themeId) {
         return res.status(400).json({ error: 'Theme is required' });
       }
 
       // getWordStoriesByUserIdAndTheme関数を使ってデータを取得
-      const wordStories = await getWordStoriesByUserIdAndTheme(userId, theme);
+      const wordStories = await getWordStoriesByUserIdAndThemeId(userId, themeId);
 
       res.status(200).json(wordStories);
     } catch (error) {

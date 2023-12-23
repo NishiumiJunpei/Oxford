@@ -41,7 +41,7 @@ const LearnWordsCheckCompletion = () => {
           よくできました！
         </Typography>
         <img width="300" src={`/images/${randomImage}`} alt="Completion" />
-        <Link href={`/word-master/wordList?block=${block}&theme=${theme}`} passHref>
+        <Link href={`/word-master/wordList?blockId=${blockId}`} passHref>
           <Button variant="default" color="primary" sx={{marginTop: 3}}>
             戻る
           </Button>

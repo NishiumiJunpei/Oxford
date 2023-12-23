@@ -15,28 +15,6 @@ export async function getUserById(id) {
   });
 }
 
-export async function getUserByIdWithUserWordListByThemeStatus(userId, theme, block) {
-  return await prisma.user.findUnique({
-    where: {
-      id: userId
-    },
-    include: {
-      UserWordListByThemeStatus: {
-        where: {
-          wordListByTheme: {
-            theme: theme,
-            block: block
-          }
-        },
-        include: {
-          wordListByTheme: true
-        }
-      }
-    }
-  });
-}
-
-
 
 export async function findUserByEmail(email) {
   return await prisma.user.findUnique({
@@ -57,6 +35,15 @@ export async function deleteUser(id) {
     where: { id },
   });
 }
+
+export async function getBlock(blockId) {
+  return await prisma.block.findUnique({
+    where: { id: parseInt(blockId) }, // ここではモデルのフィールド名を使用
+    include: { theme: true } // theme を含める場合
+  });
+}
+
+
 
 // UserWordList related functions
 export async function createUserWordList(data) {
@@ -85,89 +72,71 @@ export async function deleteUserWordList(id) {
 }
 
 
-// WordListByTheme related functions
-export async function createWordListByTheme(data) {
-  return await prisma.wordListByTheme.create({
-    data,
-  });
-}
-
-export async function getWordListByThemeById(id) {
-  return await prisma.wordListByTheme.findUnique({
-    where: { id },
-  });
-}
-
-
 export async function getWordListByCriteria(criteria) {
   const query = {};
 
-  if (criteria.theme) {
-    query.theme = criteria.theme;
+  if (criteria.blockId) {
+    query.blocks = {
+      some: {
+        blockId: parseInt(criteria.blockId)
+      }
+    };
+  } else if (criteria.themeId) {
+    query.blocks = {
+        some: { 
+          block: {
+            themeId: parseInt(criteria.themeId)
+          }
+      }
+    };
   }
 
-  if (criteria.block !== undefined) {
-    query.block = criteria.block;
-  }
-
-  return await prisma.wordListByTheme.findMany({
+  return await prisma.wordList.findMany({
     where: query,
+    include: {
+      blocks: {
+        include: {
+          block: true  // Block の詳細を含める
+        }
+      }
+    }
+  
   });
 }
 
 
-export async function updateWordListByTheme(id, data) {
-  return await prisma.wordListByTheme.update({
-    where: { id },
-    data,
-  });
-}
-
-export async function deleteWordListByTheme(id) {
-  return await prisma.wordListByTheme.delete({
-    where: { id },
-  });
-}
-
-// UserWordListByThemeStatus related functions
-export async function createUserWordListByThemeStatus(data) {
-  return await prisma.userWordListByThemeStatus.create({
-    data,
-  });
-}
-
-export async function getUserWordListByThemeStatusById(id) {
-  return await prisma.userWordListByThemeStatus.findUnique({
-    where: { id },
-  });
-}
-
-export async function getUserWordStatusByTheme(userId, theme) {
-  const whereClause = theme 
-    ? { 
-        userId: userId, 
-        wordListByTheme: { theme: theme } 
+export async function getWordListUserStatus(userId, themeId) {
+  // themeId が指定されている場合のクエリ条件を設定
+  const whereClause = themeId 
+    ? {
+        userId: userId,
+        wordList: {
+          blocks: {
+            some: {
+              block: {themeId: parseInt(themeId)}
+            }
+          }
+        }
       } 
-    : { 
-        userId: userId 
+    : {
+        userId: userId
       };
 
-  return await prisma.userWordListByThemeStatus.findMany({
+  // Prisma クエリを使用して WordListUserStatus データを取得
+  return await prisma.wordListUserStatus.findMany({
     where: whereClause,
     include: {
-      wordListByTheme: true
+      wordList: true  // WordList の詳細を含める
     }
   });
 }
 
-export async function getUserWordListStatus(userId, wordListByThemeId) {
-  const statusRecord = await prisma.userWordListByThemeStatus.findUnique({
+export async function getWordListUserStatusByWordListId(userId, wordListId) {
+  const statusRecord = await prisma.wordListUserStatus.findUnique({
     where: {
-      userId_wordListByThemeId: {
-        userId,
-        wordListByThemeId
-      }
-    },
+      userId: userId,
+      wordListId: wordListId
+    }
   });
 
   if (!statusRecord) {
@@ -186,24 +155,16 @@ export async function getUserWordListStatus(userId, wordListByThemeId) {
   };
 }
 
-
-export async function updateUserWordListByThemeStatus(id, data) {
-  return await prisma.userWordListByThemeStatus.update({
-    where: { id },
-    data,
-  });
-}
-
-export async function updateUserWordStatus(userId, wordListByThemeId, memorizeStatus) {
-  const existingRecord = await prisma.userWordListByThemeStatus.findUnique({
+export async function updateUserWordStatus(userId, wordListId, memorizeStatus) {
+  const existingRecord = await prisma.wordListUserStatus.findUnique({
     where: {
-      userId_wordListByThemeId: {
-        userId,
-        wordListByThemeId
+      userId_wordListId: {
+        userId: userId,
+        wordListId: wordListId
       }
     }
   });
-
+  
   const currentTime = new Date();
 
   if (existingRecord) {
@@ -220,14 +181,14 @@ export async function updateUserWordStatus(userId, wordListByThemeId, memorizeSt
       updatedData.lastNotMemorizedDate = currentTime;
     }
 
-    return await prisma.userWordListByThemeStatus.update({
+    return await prisma.wordListUserStatus.update({
       where: { id: existingRecord.id },
       data: updatedData,
     });
   } else {
     const newData = {
       userId,
-      wordListByThemeId,
+      wordListId,
       memorizeStatus,
       lastCheckDate: currentTime,
       numMemorized: 0,
@@ -242,20 +203,19 @@ export async function updateUserWordStatus(userId, wordListByThemeId, memorizeSt
       newData.lastNotMemorizedDate = currentTime;
     }
 
-    return await prisma.userWordListByThemeStatus.create({
+    return await prisma.wordListUserStatus.create({
       data: newData,
     });
   }
 }
 
-
-export async function saveExampleSentence(userId, wordListByThemeId, exampleSentence, imageFilename = '') {
+export async function saveExampleSentence(userId, wordListId, exampleSentence, imageFilename = '') {
   // Prisma Client を使用して例文を保存
-  await prisma.userWordListByThemeStatus.upsert({
+  await prisma.WordListUserStatus.upsert({
     where: {
-      userId_wordListByThemeId: {
+      userId_wordListId: { // 修正: userId_wordListId を使用
         userId: userId,
-        wordListByThemeId: wordListByThemeId
+        wordListId: wordListId // 修正: wordListId を使用
       }
     },
     update: {
@@ -264,35 +224,31 @@ export async function saveExampleSentence(userId, wordListByThemeId, exampleSent
     },
     create: {
       userId: userId,
-      wordListByThemeId: wordListByThemeId,
+      wordListId: wordListId, // 修正: wordListId を使用
       exampleSentence: exampleSentence,
       imageFilename: imageFilename || null
     }
   });
 }
 
-
-export async function deleteUserWordListByThemeStatus(id) {
-  return await prisma.userWordListByThemeStatus.delete({
+export async function deleteUserWordListStatus(id) {
+  return await prisma.wordListUserStatus.delete({
     where: { id },
   });
 }
 
 
-// userIdに一致するWordStoryByGPTを取得する関数
-export const getWordStoriesByUserIdAndTheme = async (userId, theme) => {
+export const getWordStoriesByUserIdAndBlockId = async (userId, blockId) => {
   return await prisma.wordStoryByGPT.findMany({
     where: {
       userId: userId,
-      theme: theme,
+      blockId: blockId,
     },
+    include: {block: true}
   });
 };
 
-
-
-export async function saveWordStoryByGPT(userId, theme, block, length, genre, characters, storyData) {
-  // const storyTitle = storyData.title; // 仮定: storyDataにtitle属性が存在する
+export async function saveWordStoryByGPT(userId, blockId, length, genre, characters, storyData) {
   const storyContent = storyData.story; // 仮定: storyDataにstory属性が存在する
   const words = storyData.words; // 仮定: storyDataにwords属性が存在する
   const updatedWords = words.map(word => `${word.english} (${word.japanese})`)
@@ -300,8 +256,7 @@ export async function saveWordStoryByGPT(userId, theme, block, length, genre, ch
   return await prisma.wordStoryByGPT.create({
     data: {
       userId,
-      theme,
-      block: parseInt(block),
+      blockId: parseInt(blockId),
       storyTitle: '',
       storyContent,
       lengthCategory: length,

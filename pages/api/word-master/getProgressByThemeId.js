@@ -1,5 +1,5 @@
-// pages/api/word-master/getWordsByTheme.js
-import { getWordListByCriteria, getUserWordStatusByTheme } from '../../../utils/prisma-utils';
+// pages/api/word-master/getProgressByThemeId.js
+import { getWordListByCriteria, getWordListUserStatus } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
@@ -9,32 +9,44 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
 
-      const theme = req.query.theme;
-      if (!theme) {
-        return res.status(400).json({ error: 'Theme is required' });
+      const {themeId} = req.query;
+      if (!themeId) {
+        return res.status(400).json({ error: 'ThemeId is required' });
       }
 
-      const wordList = await getWordListByCriteria({ theme });
-      const userWordStatus = await getUserWordStatusByTheme(userId, theme);
+      const wordList = await getWordListByCriteria({ themeId });
+      const wordListUserStatus = await getWordListUserStatus(userId, themeId);
 
-      const blocks = [...new Set(wordList.map(word => word.block))];
+      const blocks = wordList.reduce((acc, word) => {
+        if (!acc.some(block => block.id === word.blocks[0].block.id)) {
+          acc.push(word.blocks[0].block);
+        }
+        return acc;
+      }, []);
 
+      // blocksをblock.nameの昇順で並び替え
+      blocks.sort((a, b) => {
+        if (parseInt(a.name) < parseInt(b.name)) return -1;
+        if (parseInt(a.name) > parseInt(b.name)) return 1;
+        return 0;
+      });
+      
       let totalMemorized = 0;
       let totalWords = 0;
 
       const result = blocks.map(block => {
-        const blockWords = wordList.filter(word => word.block === block);
-        const memorizedCount = userWordStatus.filter(status => 
+        const blockWords = wordList.filter(word => word.blocks[0].block.id === block.id);
+        const memorizedCount = wordListUserStatus.filter(status => 
           status.memorizeStatus === 'MEMORIZED' && 
           status.userId === userId &&
-          blockWords.some(bw => bw.id === status.wordListByThemeId)
+          blockWords.some(bw => bw.id === status.wordListId)
         ).length;
 
         totalMemorized += memorizedCount;
         totalWords += blockWords.length;
             
         const unknownCount = blockWords.filter(bw => {
-          const status = userWordStatus.find(us => us.wordListByThemeId === bw.id && us.userId === userId);
+          const status = wordListUserStatus.find(us => us.wordListId === bw.id && us.userId === userId);
           return !status || status.memorizeStatus === 'UNKNOWN';
         }).length;
       

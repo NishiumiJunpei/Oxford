@@ -30,7 +30,7 @@ export const authOptions = {
         if (user && bcrypt.compareSync(credentials.password, user.password)) {
           // 認証成功：ユーザーオブジェクトを返す
           console.log('^^ authorization is done successfully')
-          return { id: user.id, name: user.name, email: user.email, currentChallengeTheme: user.currentChallengeTheme };
+          return { id: user.id, name: user.name, email: user.email, currentChallengeThemeId: user.currentChallengeThemeId };
         } else {
           // 認証失敗：nullを返す
           console.log('>< authorization error')
@@ -55,14 +55,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.userId = user.id;
-        token.currentChallengeTheme = user.currentChallengeTheme;
+        token.currentChallengeThemeId = user.currentChallengeThemeId;
       }
       return token;
     },
     async session({ session, token }) {
       if (token.userId) {
         session.userId = token.userId;
-        session.currentChallengeTheme = token.currentChallengeTheme;
+        session.currentChallengeThemeId = token.currentChallengeThemeId;
       }
       return session;
     },    

@@ -63,7 +63,7 @@ const WeakWordList = () => {
             <ListItem button key={word.id} onClick={() => handleWordClick(index)}>
             <ListItemAvatar>
               <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize: '0.75rem', bgcolor: 'secondary.main' }}>
-                {word.block}
+                {word.blocks[0].block.name}
               </Avatar>
             </ListItemAvatar>
             <ListItemText 

@@ -5,7 +5,6 @@ import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typograph
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Chip } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import WeakWordsList from '../../components/weakWordList'; 
 import ProgressCircle from '@/components/progressCircle';
@@ -14,23 +13,21 @@ import ProgressCircle from '@/components/progressCircle';
 const HomePage = () => {
   const router = useRouter();
   const [data, setData] = useState([]);
-  const [selectedTheme, setSelectedTheme] = useState('');
+  const [selectedThemeId, setSelectedThemeId] = useState('');
   const [tabValue, setTabValue] = useState(0); // タブの状態
   const [overallProgress, setOverallProgress] = useState(0); 
-  const [openStoryCreationDialog, setOpenStoryCreationDialog] = useState(false);
   const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
-  const [wordStoryList, setWordStoryList] = useState([]); // 新しいstateを追加
   const [selectedStory, setSelectedStory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
 
 
-  const { theme } = router.query; // URLのクエリパラメータからthemeを取得
+  const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
 
   const fetchData = async (themeToFetch) => {
     try{
       setIsLoading(true);
-      const response = await axios.get(`/api/word-master/getProgressByBlockTheme?theme=${themeToFetch}`);
+      const response = await axios.get(`/api/word-master/getProgressByThemeId?themeId=${themeToFetch}`);
       setData(response.data.blocks);
       setOverallProgress(response.data.overallProgress)
       setIsLoading(false);  
@@ -41,7 +38,7 @@ const HomePage = () => {
 
   const fetchWordStoryList = async (themeToFetch) => {
     try{
-      const response = await axios.get(`/api/word-master/getWordStoryList?theme=${themeToFetch}`);
+      const response = await axios.get(`/api/word-master/getWordStoryList?themeId=${themeToFetch}`);
       if (Array.isArray(response.data)) {
         setWordStoryList(response.data);
       } else {
@@ -55,54 +52,40 @@ const HomePage = () => {
 
 
   useEffect(() => {
-    if (theme && theme !== selectedTheme) {
-      setSelectedTheme(theme);
-      fetchData(theme);
-      fetchWordStoryList(theme);
+    if (themeId && themeId !== selectedThemeId) {
+      setSelectedThemeId(themeId);
+      fetchData(themeId);
+      fetchWordStoryList(themeId);
     }
-  }, [theme]);
+  }, [themeId]);
   
   useEffect(() => {
-    if (selectedTheme) {
-      fetchData(selectedTheme);
-      fetchWordStoryList(selectedTheme);
+    if (selectedThemeId) {
+      fetchData(selectedThemeId);
+      fetchWordStoryList(selectedThemeId);
     }
-  }, [selectedTheme]);
+  }, [selectedThemeId]);
 
 
   const handleMenuClick = async (newTheme) => {
-    setSelectedTheme(newTheme);
-    router.push(`/word-master/progressByBlockTheme?theme=${newTheme}`);
+    setSelectedThemeId(newTheme);
+    router.push(`/word-master/wordMasterTop?themeId=${newTheme}`);
     await fetchData(newTheme); 
     await fetchWordStoryList(newTheme);
   };
   
-  const handleBlockClick = (block) => {
-    router.push(`/word-master/wordList?block=${block}&theme=${selectedTheme}`);
+  const handleBlockClick = (blockId) => {
+    router.push(`/word-master/wordList?blockId=${blockId}`);
   };
 
-  const handleActionClick = (block) => {
-    router.push(`/word-master/learnWordsCriteriaInput?block=${block}&theme=${selectedTheme}`);
+  const handleActionClick = (blockId) => {
+    router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`);
   };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
-  const handleOpenStoryCreationDialog = () => {
-    setOpenStoryCreationDialog(true);
-  };
-
-  const handleSaveStoryCreationDialog = (newStory) => {
-    // 新しいストーリーをwordStoryListに追加
-    setWordStoryList(prevList => [...prevList, newStory]);
-    setOpenStoryCreationDialog(false);
-  };
-
-
-  const handleCloseStoryCreationDialog = () => {
-    setOpenStoryCreationDialog(false);
-  };
 
 
   const handleCloseStoryDetailsDialog = () => {
@@ -140,18 +123,18 @@ const HomePage = () => {
       <AppBar position="static" color="inherit" elevation={0}>
         <Toolbar>
           <Button 
-            color={selectedTheme === '英検４級' ? 'primary' : 'inherit'}
-            onClick={() => handleMenuClick('英検４級')}>
+            color={selectedThemeId === '4' ? 'primary' : 'inherit'}
+            onClick={() => handleMenuClick('4')}>
             英検４級
           </Button>
           <Button 
-            color={selectedTheme === '英検準１級' ? 'primary' : 'inherit'}
-            onClick={() => handleMenuClick('英検準１級')}>
+            color={selectedThemeId === '2' ? 'primary' : 'inherit'}
+            onClick={() => handleMenuClick('2')}>
             英検準１級
           </Button>
           <Button 
-            color={selectedTheme === '英検１級' ? 'primary' : 'inherit'}
-            onClick={() => handleMenuClick('英検１級')}>
+            color={selectedThemeId === '3' ? 'primary' : 'inherit'}
+            onClick={() => handleMenuClick('3')}>
             英検１級
           </Button>
         </Toolbar>
@@ -167,7 +150,6 @@ const HomePage = () => {
         <Tabs value={tabValue} onChange={handleTabChange} sx={{ marginLeft: 2 }}>
           <Tab label="学習進捗" />
           <Tab label="苦手単語" />
-          <Tab label="ストーリー" />
         </Tabs>
 
         {tabValue === 0 && (
@@ -195,8 +177,8 @@ const HomePage = () => {
                     showMaster || item.progress < 100 ? ( // スイッチがオフの場合は進捗が100%未満の行のみ表示
                     <TableRow key={index}>
                       <TableCell component="th" scope="row">
-                        <ListItemButton onClick={() => handleBlockClick(item.block)}>
-                          <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block}</Avatar>
+                        <ListItemButton onClick={() => handleBlockClick(item.block.id)}>
+                          <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
                         </ListItemButton>
                       </TableCell>
                       <TableCell align="left">
@@ -214,7 +196,7 @@ const HomePage = () => {
                         </Box>
                     </TableCell>
                       <TableCell align="left">
-                        <Button variant="text" onClick={() => handleActionClick(item.block)}>
+                        <Button variant="text" onClick={() => handleActionClick(item.block.id)}>
                           理解度チェック
                         </Button>
                       </TableCell>
@@ -231,56 +213,9 @@ const HomePage = () => {
           <WeakWordsList /> 
         )}
 
-        {tabValue === 2 && (
-          <>
-          <Box sx={{ margin: 3 }}>
-            <Button variant="contained" onClick={handleOpenStoryCreationDialog}>
-              ストーリーを作る
-            </Button>
-          </Box>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>No</TableCell>
-                  <TableCell>テーマ</TableCell>
-                  <TableCell>ブロック</TableCell>
-                  <TableCell>ストーリー</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {wordStoryList.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.theme}</TableCell>
-                    <TableCell>
-                      <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block}</Avatar>
-                    </TableCell>
-                    <TableCell>
-                      {item.storyContent.substring(0, 30)}
-                      {item.storyContent.length > 30 && (
-                        <Button onClick={() => handleOpenWordStoryDetailsDialog(item)}>もっと見る</Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-        )}
-
       </>
       )}
 
-      <StoryCreationDialog 
-        open={openStoryCreationDialog} 
-        onClose={handleCloseStoryCreationDialog} 
-        onSave={handleSaveStoryCreationDialog} 
-        blockList={data} 
-        showAllinBlockList={true}
-        theme={selectedTheme} 
-      />
       <WordStoryDetailsDialog
         open={openWordStoryDetailsDialog}
         onClose={handleCloseStoryDetailsDialog}

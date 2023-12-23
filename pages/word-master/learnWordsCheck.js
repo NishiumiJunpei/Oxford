@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのイ�
 
 const LearnWordsCheck = () => {
     const router = useRouter();
-    const { theme, block, wordStatus, wordCount, lastCheck } = router.query;
+    const { blockId, wordStatus, wordCount, lastCheck } = router.query;
 
     const [wordList, setWordList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,16 +20,16 @@ const LearnWordsCheck = () => {
     useEffect(() => {
       // URLクエリパラメータを使用してAPIから単語データを取得する
       const fetchData = async () => {
-        const queryParams = new URLSearchParams({ theme, block, wordStatus, wordCount, lastCheck }).toString();
+        const queryParams = new URLSearchParams({ blockId, wordStatus, wordCount, lastCheck }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
         setWordList(data);
       };
   
-      if (theme && block) {
+      if (blockId) {
         fetchData();
       }
-    }, [theme, block]); // 依存配列にクエリパラメータを追加
+    }, [blockId]); // 依存配列にクエリパラメータを追加
 
     const nextWord = (calledFromHandleAnswer = false) => {
       if (currentIndex < wordList.length - 1) {
@@ -44,7 +44,7 @@ const LearnWordsCheck = () => {
       } else {
         router.push({
           pathname: '/word-master/learnWordsCheckCompletion',
-          query: { theme: theme , block: block}
+          query: { blockId}
         });
       }
     };
@@ -93,7 +93,7 @@ const LearnWordsCheck = () => {
             const word = wordList[currentIndex];
 
             axios.post('/api/word-master/createExampleSentenceByGPT', {
-              wordListByThemeId: wordId, 
+              wordListId: wordId, 
               english: word.english, 
               japanese: word.japanese
             });
@@ -106,7 +106,7 @@ const LearnWordsCheck = () => {
 
 
     const handleExit = () => {
-        router.push(`/word-master/wordList?theme=${theme}&block=${block}`);
+        router.push(`/word-master/wordList?blockId=${blockId}`);
     };
 
 

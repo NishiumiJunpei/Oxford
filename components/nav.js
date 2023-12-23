@@ -8,7 +8,7 @@ import { signOut } from 'next-auth/react'; // NextAuthからsignOutをインポ�
 
 
 function Nav({ isOpen, onClose, isMobile }) {
-  const [currentChallengeTheme, setCurrentChallengeTheme] = useState('');
+  const [currentChallengeThemeId, setCurrentChallengeThemeId] = useState('');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -18,7 +18,7 @@ function Nav({ isOpen, onClose, isMobile }) {
           throw new Error('ネットワークレスポンスが不正です。');
         }
         const data = await response.json();
-        setCurrentChallengeTheme(data.currentChallengeTheme);
+        setCurrentChallengeThemeId(data.currentChallengeThemeId);
       } catch (error) {
         console.error('ユーザ情報の取得に失敗しました', error);
       }
@@ -53,7 +53,7 @@ function Nav({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="ホーム" />
         </ListItem>
-        <ListItem button component="a" href={`/word-master/progressByBlockTheme?theme=${currentChallengeTheme}`}>
+        <ListItem button component="a" href={`/word-master/wordMasterTop?themeId=${currentChallengeThemeId}`}>
             <ListItemIcon>
               <ImportContactsIcon /> {/* 理解度ステータスのアイコン */}
             </ListItemIcon>

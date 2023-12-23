@@ -11,7 +11,7 @@ import { saveExampleSentence } from '../../../utils/prisma-utils'
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     // POSTリクエストからデータを取得
-    const { wordListByThemeId, english, japanese } = req.body;
+    const { wordListId, english, japanese } = req.body;
     const session = await getServerSession(req, res, authOptions);
     const userId = session.userId; 
 
@@ -30,12 +30,12 @@ export default async function handler(req, res) {
           responseType: 'arraybuffer' // 画像データをarraybufferとして取得
         });
         const imageBuffer = Buffer.from(response.data); // 取得したデータをバッファに変換
-        const imageFilename = `userData/${userId}/wordImageByGPT-${wordListByThemeId}.png`;
+        const imageFilename = `userData/${userId}/wordImageCreatedByGPT-${wordListId}.png`;
         await uploadImageToS3(imageBuffer, imageFilename); // 画像をS3にアップロード
         imageUrl = await getS3FileUrl(imageFilename)
       
         // データベースに画像URLを保存する処理をここに追加
-        await saveExampleSentence(userId, wordListByThemeId, exampleSentence, imageFilename);
+        await saveExampleSentence(userId, wordListId, exampleSentence, imageFilename);
       }
        
       console.log('example sentence is craeted, ', english)

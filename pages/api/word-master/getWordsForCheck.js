@@ -1,5 +1,5 @@
 // pages/api/word-master/getWordsForCheck.js
-import { getWordListByCriteria, getUserWordListStatus } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatusByWordListId } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
@@ -9,10 +9,9 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId;
 
-      const { theme, block, wordStatus, wordCount } = req.query;
+      const { blockId, wordStatus, wordCount } = req.query;
       const criteria = {
-        theme,
-        block: parseInt(block),
+        blockId: parseInt(blockId),
       };
 
       let wordList = await getWordListByCriteria(criteria);
@@ -20,7 +19,7 @@ export default async function handler(req, res) {
       // フロントからの条件に基づいて絞り込む
       const wordStatusFilter = JSON.parse(wordStatus);
       wordList = await Promise.all(wordList.map(async word => {
-        const status = await getUserWordListStatus(userId, word.id);
+        const status = await getWordListUserStatusByWordListId(userId, word.id);
         return { ...word, memorizeStatus: status.memorizeStatus };
       }));
 
