@@ -8,11 +8,8 @@ export default async function handler(req, res) {
     try {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
-
-      const themeId = req.query.themeId;
-      if (!themeId) {
-        return res.status(400).json({ error: 'Theme is required' });
-      }
+      const currentChallengeThemeId = session.currentChallengeThemeId
+      const themeId = req.query.themeId != 'undefined' ? req.query.themeId : currentChallengeThemeId
 
       // getWordStoriesByUserIdAndTheme関数を使ってデータを取得
       const wordStories = await getWordStoriesByUserIdAndThemeId(userId, themeId);

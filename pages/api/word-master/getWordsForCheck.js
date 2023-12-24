@@ -2,6 +2,7 @@
 import { getWordListByCriteria, getWordListUserStatusByWordListId } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
+import { getS3FileUrl } from '@/utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -20,7 +21,14 @@ export default async function handler(req, res) {
       const wordStatusFilter = JSON.parse(wordStatus);
       wordList = await Promise.all(wordList.map(async word => {
         const status = await getWordListUserStatusByWordListId(userId, word.id);
-        return { ...word, memorizeStatus: status.memorizeStatus };
+        return { 
+          ...word, 
+          memorizeStatus: status.memorizeStatus,
+          exampleSentence: status.exampleSentence || word.exampleSentence, // statusの例文で上書き
+          imageUrl: await getS3FileUrl(status.imageFilename || word.imageFilename),
+          userWordListStatus: status,
+    
+        };
       }));
 
       wordList = wordList.filter(word => 
@@ -35,6 +43,7 @@ export default async function handler(req, res) {
         wordList = wordList.slice(0, parseInt(wordCount));
       }
 
+      
       res.status(200).json(wordList);
     } catch (error) {
       res.status(500).json({ error: error.message });

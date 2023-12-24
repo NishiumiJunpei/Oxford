@@ -89,9 +89,8 @@ const LearnWordsCheck = () => {
             body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED' }),
           });
 
-          if (!known){
-            const word = wordList[currentIndex];
-
+          const word = wordList[currentIndex];
+          if (!known && !word.imageUrl){
             axios.post('/api/word-master/createExampleSentenceByGPT', {
               wordListId: wordId, 
               english: word.english, 
@@ -112,7 +111,7 @@ const LearnWordsCheck = () => {
 
   const word = wordList[currentIndex];
   const remainingWords = wordList.length - currentIndex; // 残りの問題数
-
+  console.log(word)
 
   useEffect(() => {
     const handleKeyPress = (event) => {

@@ -5,7 +5,6 @@ import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typograph
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Chip } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import WeakWordsList from '../../components/weakWordList'; 
 import ProgressCircle from '@/components/progressCircle';
 
@@ -13,11 +12,8 @@ import ProgressCircle from '@/components/progressCircle';
 const HomePage = () => {
   const router = useRouter();
   const [data, setData] = useState([]);
-  const [selectedThemeId, setSelectedThemeId] = useState('');
   const [tabValue, setTabValue] = useState(0); // タブの状態
   const [overallProgress, setOverallProgress] = useState(0); 
-  const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
-  const [selectedStory, setSelectedStory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
 
@@ -36,43 +32,11 @@ const HomePage = () => {
     }
   };
 
-  const fetchWordStoryList = async (themeToFetch) => {
-    try{
-      const response = await axios.get(`/api/word-master/getWordStoryList?themeId=${themeToFetch}`);
-      if (Array.isArray(response.data)) {
-        setWordStoryList(response.data);
-      } else {
-        console.error('Expected an array but got:', response.data);
-        setWordStoryList([]);
-      }  
-    } catch(error){
-      console.error('Error fetching words:', error);
-    }
-  };
-
 
   useEffect(() => {
-    if (themeId && themeId !== selectedThemeId) {
-      setSelectedThemeId(themeId);
-      fetchData(themeId);
-      fetchWordStoryList(themeId);
-    }
-  }, [themeId]);
+    fetchData(themeId);
+  }, []);
   
-  useEffect(() => {
-    if (selectedThemeId) {
-      fetchData(selectedThemeId);
-      fetchWordStoryList(selectedThemeId);
-    }
-  }, [selectedThemeId]);
-
-
-  const handleMenuClick = async (newTheme) => {
-    setSelectedThemeId(newTheme);
-    router.push(`/word-master/wordMasterTop?themeId=${newTheme}`);
-    await fetchData(newTheme); 
-    await fetchWordStoryList(newTheme);
-  };
   
   const handleBlockClick = (blockId) => {
     router.push(`/word-master/wordList?blockId=${blockId}`);
@@ -87,59 +51,8 @@ const HomePage = () => {
   };
 
 
-
-  const handleCloseStoryDetailsDialog = () => {
-    setOpenWordStoryDetailsDialog(false);
-  };
-
-  const handleOpenWordStoryDetailsDialog = (story) => {
-    setSelectedStory(story);
-    setOpenWordStoryDetailsDialog(true);
-  };
-
-  const onDeleteWordStory = async (id) => {
-    try {
-      const response = await fetch('/api/word-master/deleteWordStoryByGPT', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id }),
-      });
-  
-      if (response.ok) {
-        setWordStoryList(prevList => prevList.filter(story => story.id !== id));
-      } else {
-        throw new Error('API Error');
-      }
-    } catch (error) {
-      console.error('Failed to delete story:', error);
-    }
-  };
-  
-
   return (
-    <div>
-      <AppBar position="static" color="inherit" elevation={0}>
-        <Toolbar>
-          <Button 
-            color={selectedThemeId === '4' ? 'primary' : 'inherit'}
-            onClick={() => handleMenuClick('4')}>
-            英検４級
-          </Button>
-          <Button 
-            color={selectedThemeId === '2' ? 'primary' : 'inherit'}
-            onClick={() => handleMenuClick('2')}>
-            英検準１級
-          </Button>
-          <Button 
-            color={selectedThemeId === '3' ? 'primary' : 'inherit'}
-            onClick={() => handleMenuClick('3')}>
-            英検１級
-          </Button>
-        </Toolbar>
-      </AppBar>
-
+    <Box maxWidth="lg">
       {isLoading ? (
       <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
         <CircularProgress />
@@ -216,16 +129,7 @@ const HomePage = () => {
       </>
       )}
 
-      <WordStoryDetailsDialog
-        open={openWordStoryDetailsDialog}
-        onClose={handleCloseStoryDetailsDialog}
-        selectedStory={selectedStory}
-        onDelete={onDeleteWordStory}
-      />
-
-
-
-    </div>
+    </Box>
   );
 };
 

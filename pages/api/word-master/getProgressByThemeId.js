@@ -8,11 +8,8 @@ export default async function handler(req, res) {
     try {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
-
-      const {themeId} = req.query;
-      if (!themeId) {
-        return res.status(400).json({ error: 'ThemeId is required' });
-      }
+      const currentChallengeThemeId = session.currentChallengeThemeId
+      const themeId = req.query.themeId != 'undefined' ? req.query.themeId : currentChallengeThemeId
 
       const wordList = await getWordListByCriteria({ themeId });
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);

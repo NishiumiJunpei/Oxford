@@ -7,6 +7,7 @@ import { generateExampleSentences, generateImage } from '../../../utils/openai-u
 import { getS3FileUrl, uploadImageToS3 } from '../../../utils/aws-s3-utils'
 import { saveExampleSentence } from '../../../utils/prisma-utils'
 
+const sharp = require('sharp');
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -30,15 +31,21 @@ export default async function handler(req, res) {
           responseType: 'arraybuffer' // 画像データをarraybufferとして取得
         });
         const imageBuffer = Buffer.from(response.data); // 取得したデータをバッファに変換
+
+        const compressedImageBuffer = await sharp(imageBuffer)
+          .png({ quality: 80 }) // PNGの品質を設定
+          .toBuffer();
+        //sharpのエラーはこれで解消　→ npm install --os=darwin --cpu=x64 sharp
+        
         const imageFilename = `userData/${userId}/wordImageCreatedByGPT-${wordListId}.png`;
-        await uploadImageToS3(imageBuffer, imageFilename); // 画像をS3にアップロード
+        await uploadImageToS3(compressedImageBuffer, imageFilename); // 画像をS3にアップロード
         imageUrl = await getS3FileUrl(imageFilename)
       
         // データベースに画像URLを保存する処理をここに追加
         await saveExampleSentence(userId, wordListId, exampleSentence, imageFilename);
       }
        
-      console.log('example sentence is craeted, ', english)
+      console.log('example sentence is created, ', english)
       // 生成した例文と画像のURLをレスポンスとして返す
       res.status(200).json({ exampleSentence, imageUrl });
       

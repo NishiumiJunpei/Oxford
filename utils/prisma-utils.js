@@ -134,8 +134,10 @@ export async function getWordListUserStatus(userId, themeId) {
 export async function getWordListUserStatusByWordListId(userId, wordListId) {
   const statusRecord = await prisma.wordListUserStatus.findUnique({
     where: {
-      userId: userId,
-      wordListId: wordListId
+      userId_wordListId: {
+        userId: userId,
+        wordListId: wordListId
+      }
     }
   });
 

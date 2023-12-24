@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Head from 'next/head';
 import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import Link from 'next/link';
-import IconButton from '@mui/material/IconButton';
+import {Typography, IconButton, Box} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
@@ -58,7 +56,7 @@ export default function Home() {
 
 
   return (
-    <div>
+    <Box maxWidth="lg">
       <Head>
         <title>すーすーEnglish</title>
       </Head>
@@ -114,6 +112,6 @@ export default function Home() {
         updateWordList={updateWordList}
       />
 
-    </div>
+    </Box>
   );
 }

@@ -19,7 +19,7 @@ const WordListPage = () => {
   const { blockId } = router.query;
   const [wordList, setWordList] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState([]);
-  const [modalOpenWord, setModalOpenWord] = useState(null);// 例文確認用のモーダル用の状態
+  const [modalOpenWord, setModalOpenWord] = useState(false);// 例文確認用のモーダル用の状態
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [progress, setProgress] = useState(0);
   const [unknownCount, setUnknownCount] = useState(0);
@@ -163,12 +163,18 @@ const WordListPage = () => {
 
   
   return (
-    <div>
+    <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
         <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
           戻る
         </Button>
 
+        {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </div>
+        ) : (
+          <>
 
         <Box display="flex" alignItems="center" mt={1} width="100%">
           <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
@@ -177,29 +183,23 @@ const WordListPage = () => {
             </Typography>
 
             <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Link href={`/word-master/wordList?&blockId=${parseInt(blockId, 10) - 1}`} passHref>
-                <IconButton component="a" disabled={blockId === '1'}>
-                  <ArrowBackIosIcon />
-                </IconButton>
-              </Link>
+              <IconButton
+                onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) - 1}`)}
+                disabled={blockId === '1'}
+              >
+                <ArrowBackIosIcon />
+              </IconButton>
               <Avatar sx={{ bgcolor: 'secondary.main', ml: 1, mr: 1 }}>{block?.name}</Avatar>
-              <Link href={`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`} passHref>
-                <IconButton component="a">
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              </Link>
+              <IconButton
+                onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`)}
+              >
+                <ArrowForwardIosIcon />
+              </IconButton>
+
             </Box>
           </Box>
         </Box>
-      </Box>
-
-      {isLoading ? (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </div>
-      ) : (
-        <>
-
+        
         <Box width="100%" bgcolor="lightblue" p={1} marginTop={5} marginBottom={5}>
           <Typography variant="h6" component="div">
             ステータス
@@ -222,14 +222,14 @@ const WordListPage = () => {
           )}
         </Box>
 
-
         <Box width="100%" bgcolor="lightblue" p={1} marginTop={10} marginBottom={5}>
           <Typography variant="h6" component="div">
             単語リスト
           </Typography>
         </Box>
+        <StatusFilterIcons/>
         
-        <Paper>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -265,27 +265,7 @@ const WordListPage = () => {
                     {word.exampleSentence?.length > 30
                       ? `${word.exampleSentence?.substring(0, 30)}...`
                       : word.exampleSentence}
-                    {word.exampleSentence?.length > 30 && (
-                      <Button onClick={() => handleOpenModalWord(index)}>もっと見る</Button>
-                      )}
                   </TableCell>
-                  {/* <TableCell>
-                    <Button 
-                      variant="outlined" 
-                      onClick={() => handleOpenModal(word)}
-                      style={{ margin: '5px' }}
-                    >
-                      GPTヘルプ
-                    </Button>
-                    <Button 
-                      variant="outlined" 
-                      onClick={() => handleImageSearch(word.english)}
-                      style={{ margin: '5px' }}
-                    >
-                      画像検索
-                    </Button>
-                    
-                  </TableCell> */}
                   <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
                     <Typography>
                         {word.userWordListStatus.lastMemorizedTimeAgo }
@@ -300,7 +280,7 @@ const WordListPage = () => {
               ))}
             </TableBody>
           </Table>
-        </Paper>
+        </TableContainer>
 
         <Box width="100%" bgcolor="lightblue" p={1} marginTop={10} marginBottom={5}>
           <Typography variant="h6" component="div">
@@ -325,16 +305,21 @@ const WordListPage = () => {
             </TableHead>
             <TableBody>
               {wordStoryList.map((item, index) => (
-                <TableRow key={index}>
+                <TableRow key={index} 
+                  onClick={() => handleOpenWordStoryDetailsDialog(item)}
+                  sx={{
+                    cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
+                  }}
+                  >
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
                   </TableCell>
                   <TableCell>
                     {item.storyContent.substring(0, 30)}
-                    {item.storyContent.length > 30 && (
+                    {/* {item.storyContent.length > 30 && (
                       <Button onClick={() => handleOpenWordStoryDetailsDialog(item)}>もっと見る</Button>
-                    )}
+                    )} */}
                   </TableCell>
                 </TableRow>
               ))}
@@ -345,6 +330,7 @@ const WordListPage = () => {
 
         </>
       )}
+      </Box>
       <WordExampleSentenceModal
         open={modalOpenWord}
         onClose={() => setModalOpenWord(false)}
@@ -367,7 +353,7 @@ const WordListPage = () => {
       />
 
 
-    </div>
+    </Box>
   );
 };
 
