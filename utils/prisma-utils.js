@@ -248,10 +248,7 @@ export const getWordStoriesByUserIdAndBlockId = async (userId, blockId) => {
   });
 };
 
-export async function saveWordStoryByGPT(userId, blockId, length, genre, characters, storyData) {
-  const storyContent = storyData.story; // 仮定: storyDataにstory属性が存在する
-  const words = storyData.words; // 仮定: storyDataにwords属性が存在する
-  const updatedWords = words.map(word => `${word.english} (${word.japanese})`)
+export async function saveWordStoryByGPT(userId, blockId, length, genre, characters, storyContent, words) {
 
   return await prisma.wordStoryByGPT.create({
     data: {
@@ -262,7 +259,7 @@ export async function saveWordStoryByGPT(userId, blockId, length, genre, charact
       lengthCategory: length,
       genre,
       characters,
-      words: updatedWords,
+      words,
       // imageUrl: 'AWSのパス', // 必要に応じて設定
     },
   });

@@ -40,12 +40,9 @@ export default async function handler(req, res) {
     // 4. OpenAI APIにプロンプトを渡す
     const response = await generateWordStory(updatedWordList, length, age, userProfile, genre, characters)
 
-    //5. DBに保存
-    const storyData = {
-      story: response,
-      words: updatedWordList.map(word => `${word.english} (${word.japanese})`),
-    }
-    await saveWordStoryByGPT(userId, blockId, length, genre, characters, storyData);
+    // 5. DBに登録
+    const words = updatedWordList.map(word => `${word.english} (${word.japanese})`)
+    await saveWordStoryByGPT(userId, blockId, length, genre, characters, response, words);
 
 
     // 6. 結果と単語をフロントに返す

@@ -68,7 +68,7 @@ export async function generateWordStory(wordList, length, age, userProfile, genr
     const wordsString = wordList.map(word => `${word.english} (${word.japanese})`).join(', ');
     const lengthMapping = { 'Short': 50, 'Medium': 100, 'Long': 200 };
     const maxCharacters = lengthMapping[length];
-    const content = `下記の単語を使い、年齢・プロフィールを考慮して、指定された条件に基づいて物語を作ってください。物語は英語で出力し、この年齢が理解できるレベルの言葉・漢字を使って日本語訳も書いてください。\n#プロフィール\n${age}才、${userProfile}\n#単語:${wordsString}\n#条件\n物語の単語数上限：${maxCharacters}字\nジャンル：${genre}\n登場人物：${characters}`;
+    const content = `下記の単語を使い、プロフィールを考慮して、指定された条件に基づいて物語を作ってください。物語は英語で出力し、この年齢が理解できるレベルの言葉・漢字を使って日本語訳も書いてください。\n#プロフィール\n${userProfile}\n#単語:${wordsString}\n#条件\n物語の単語数上限：${maxCharacters}字\nジャンル：${genre}\n登場人物：${characters}`;
     
     const response = await openai.chat.completions.create({
         model: "gpt-4",

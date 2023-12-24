@@ -50,12 +50,14 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
       
     }
 
-    const handleImageSearch = (englishWord) => {
-        const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
+    const handleSearch = (englishWord) => {
+        // const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
+        const url = `https://translate.google.com/?sl=en&tl=ja&text=${englishWord}&op=translate&hl=ja`;
         window.open(url, '_blank');
       };    
+      
 
-    const word = wordList[index];
+      const word = wordList[index];
 
     return (
         <Dialog
@@ -104,12 +106,12 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                 </Button>                
                 )}
                 <Button 
-                    onClick={() => handleImageSearch(word.english)} 
+                    onClick={() => handleSearch(word.english)} 
                     variant="outlined" 
                     disabled={isLoading}
                     style={{ margin: 5, padding: 5, minWidth: 90 }} // 同様にスタイル調整
                 >
-                    画像検索
+                    Google翻訳
                 </Button>
                 </div>
                 <div style={{ width: '100%', textAlign: 'center' }}> 

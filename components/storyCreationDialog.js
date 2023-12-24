@@ -164,7 +164,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleSubmit} color="primary" disabled={isSubmitDisabled || loading}>作成</Button>
-            <Button onClick={onClose}>閉じる</Button>
+            <Button onClick={onClose} disabled={loading}>閉じる</Button>
           </DialogActions>
         </Dialog>
       );
