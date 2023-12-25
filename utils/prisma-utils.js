@@ -36,6 +36,13 @@ export async function deleteUser(id) {
   });
 }
 
+export async function getTheme(themeId) {
+  return await prisma.theme.findUnique({
+    where: { id: parseInt(themeId) }
+  });
+}
+
+
 export async function getBlock(blockId) {
   return await prisma.block.findUnique({
     where: { id: parseInt(blockId) }, // ここではモデルのフィールド名を使用

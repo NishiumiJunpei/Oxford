@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Button, Box, CircularProgress } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
 
 
 const LearnWordsCheck = () => {
     const router = useRouter();
-    const { blockId, wordStatus, wordCount, lastCheck } = router.query;
+    const { blockId, wordCount, languageDirection } = router.query;
 
     const [wordList, setWordList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,7 +20,7 @@ const LearnWordsCheck = () => {
     useEffect(() => {
       // URLクエリパラメータを使用してAPIから単語データを取得する
       const fetchData = async () => {
-        const queryParams = new URLSearchParams({ blockId, wordStatus, wordCount, lastCheck }).toString();
+        const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
         setWordList(data);
@@ -111,14 +111,15 @@ const LearnWordsCheck = () => {
 
   const word = wordList[currentIndex];
   const remainingWords = wordList.length - currentIndex; // 残りの問題数
-  console.log(word)
 
   useEffect(() => {
     const handleKeyPress = (event) => {
       switch (event.key) {
         case 'j':
-          handleAnswer(true);
-          break;
+          if (!buttonDisabled) {
+            handleAnswer(true);
+          }
+            break;
         case 'k':
           handleShowAnswer();
           break;
@@ -142,15 +143,29 @@ const LearnWordsCheck = () => {
 
 
   if (wordList.length === 0) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'start'}}>
+        <CircularProgress />
+      </div>
+
+    )
   }
 
+  if (wordList.length === 0) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'start' }}>
+        <Typography>対象データがありません。</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10, height: 'calc(100vh - 10px)' }}>
         <Button onClick={handleExit} sx={{ position: 'absolute', top: 20, right: 20, zIndex: 1500 }}>
           <CloseIcon />
         </Button>
+
+        
         <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
         <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
             {word.english}
@@ -160,12 +175,14 @@ const LearnWordsCheck = () => {
             <Button variant="contained" color="primary" onClick={() => handleAnswer(true)} disabled={buttonDisabled}>
                 わかる(j)
             </Button>
-            <Button variant="contained" onClick={handleShowAnswer} disabled={!showAnswerButton}>
-                答えチェック(k)
-            </Button>
             <Button variant="contained" color="secondary" onClick={() => handleAnswer(false)} disabled={buttonDisabled}>
                 わからない(l)
             </Button>
+        </Box>
+        <Box>
+          <Button variant="outlined" onClick={handleShowAnswer} disabled={!showAnswerButton}>
+              答えチェック(k)
+          </Button>
         </Box>
         {showJapanese && (
             <Button variant="contained" onClick={handleNext} disabled={nextButtonDisabled} sx={{ marginTop: 2 }}>

@@ -9,7 +9,7 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
       const currentChallengeThemeId = session.currentChallengeThemeId
-      const themeId = req.query.themeId != 'undefined' ? req.query.themeId : currentChallengeThemeId
+      const themeId = (!req.query.themeId && req.query.themeId != 'undefined' ) ? req.query.themeId : currentChallengeThemeId
 
       const wordList = await getWordListByCriteria({ themeId });
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from 'next/head';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -7,14 +8,20 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import WordExampleSentenceModal from '@/components/wordExampleSentenceModal';
+import ProgressCircle from '@/components/progressCircle';
+import SubTitleTypography from '@/components/subTitleTypography';
 
 
 export default function Home() {
+  const router = useRouter();
+
   const [words, setWords] = useState([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-
+  const [themeName, setThemeName] = useState('');
+  const [progressRatio, setProgressRatio] = useState(0);
+  
 
   useEffect(() => {
     const fetchWords = async () => {
@@ -29,7 +36,20 @@ export default function Home() {
       setIsLoading(false);
     };
 
+    // 新しいAPIを呼び出してテーマと進捗率を取得
+    const fetchThemeProgress = async () => {
+      try {
+        const response = await axios.get('/api/word-master/getProgressRatio');
+        setThemeName(response.data.theme.name);
+        setProgressRatio(response.data.progressRatio);
+      } catch (error) {
+        console.error('Failed to fetch theme progress:', error);
+      }
+    };
+
     fetchWords();
+    fetchThemeProgress();
+
   }, []);
 
   const currentWord = words[currentWordIndex];
@@ -46,6 +66,9 @@ export default function Home() {
   const toggleModal = () => {
     setModalOpen(!modalOpen);
   };
+  const handleClickTheme = () => {
+    router.push('/word-master/wordMasterTop');
+  };
 
   const updateWordList = (newWordData) => {
     const updatedWordList = words.map(wordItem =>
@@ -60,14 +83,27 @@ export default function Home() {
       <Head>
         <title>すーすーEnglish</title>
       </Head>
-      <h1>今日の単語</h1>
+
       {isLoading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
           <CircularProgress />
         </div>
       ) : currentWord ? (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+        <>
+        <SubTitleTypography text="チャレンジ中のテーマ"/>
+        <Typography variant='h5' component="p" onClick={handleClickTheme} style={{ cursor: 'pointer' }}>
+            {themeName}
+            <OpenInBrowserIcon fontSize="small" style={{ marginLeft: 4, cursor: 'pointer' }} />
+        </Typography>
+
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
+          <ProgressCircle value={progressRatio} />
+        </Box>
+
+
+        <div sx={{marginTop: 5}}>
+          <SubTitleTypography text="今日の単語"/>
+          <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
             <IconButton onClick={handlePrevious} disabled={currentWordIndex === 0}>
               <ArrowBackIcon />
             </IconButton>
@@ -100,6 +136,7 @@ export default function Home() {
           </Typography> */}
 
         </div>
+        </>
       ) : (
         <p>今日の単語はありません。</p>
       )}

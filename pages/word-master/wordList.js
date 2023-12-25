@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Avatar, Box, Chip, LinearProgress, CircularProgress, IconButton } from '@mui/material';
+import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
+  TableBody, Paper, Avatar, Box, Chip, LinearProgress, CircularProgress, IconButton, Tabs, Tab, FormControlLabel, Switch, Checkbox } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -11,7 +12,7 @@ import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import Link from 'next/link';
+import SubTitleTypography from '@/components/subTitleTypography';
 
 
 const WordListPage = () => {
@@ -29,8 +30,11 @@ const WordListPage = () => {
   const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
   const [block, setBlock] = useState(null);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [isEnglishToJapanese, setIsEnglishToJapanese] = useState(true);
+  const [showAnswer, setShowAnswer] = useState(true);
   
-
+  
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
@@ -81,19 +85,39 @@ const WordListPage = () => {
 
   // テーブルヘッド内のフィルタリングアイコン
   const StatusFilterIcons = () => (
-    <Box>
-      <CheckCircleIcon
-        style={{ color: selectedStatus.includes('MEMORIZED') ? 'green' : 'inherit' }}
-        onClick={() => handleStatusFilter('MEMORIZED')}
-      />
-      <WarningIcon
-        style={{ color: selectedStatus.includes('NOT_MEMORIZED') ? 'orange' : 'inherit' }}
-        onClick={() => handleStatusFilter('NOT_MEMORIZED')}
-      />
-      <HelpOutlineIcon
-        style={{ color: selectedStatus.includes('UNKNOWN') ? 'gray' : 'inherit' }}
-        onClick={() => handleStatusFilter('UNKNOWN')}
-      />
+    <Box sx={{ marginBottom: 3 }}>
+      <Typography variant="caption">フィルター</Typography>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        alignItems="center"
+      >        
+        <Box display="flex" alignItems="center" sx={{ marginRight: 7, marginBottom: 1 }}>
+          <Typography variant="body1">英→日</Typography>
+          <Switch checked={isEnglishToJapanese} onChange={toggleLanguageDirection} />
+          <Typography variant="body1">日→英</Typography>
+        </Box>
+        <FormControlLabel
+          control={<Checkbox checked={showAnswer} onChange={toggleShowAnswer} />}
+          label="答えを表示"
+          sx={{ marginRight: 7, marginBottom: 1 }}
+        />
+        <Box display="flex" alignItems="center" sx={{ marginRight: 2, marginBottom: 1 }}>
+          <Typography variant="body1">ステータス表示</Typography>
+          <CheckCircleIcon
+            style={{ color: selectedStatus.includes('MEMORIZED') ? 'green' : 'inherit', marginRight: 5 }}
+            onClick={() => handleStatusFilter('MEMORIZED')}
+          />
+          <WarningIcon
+            style={{ color: selectedStatus.includes('NOT_MEMORIZED') ? 'orange' : 'inherit', marginRight: 5 }}
+            onClick={() => handleStatusFilter('NOT_MEMORIZED')}
+          />
+          <HelpOutlineIcon
+            style={{ color: selectedStatus.includes('UNKNOWN') ? 'gray' : 'inherit' }}
+            onClick={() => handleStatusFilter('UNKNOWN')}
+          />
+        </Box>
+      </Box>
     </Box>
   );
 
@@ -161,7 +185,17 @@ const WordListPage = () => {
     }
   };
 
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+  const toggleLanguageDirection = () => {
+    setIsEnglishToJapanese(!isEnglishToJapanese);
+  };
   
+  const toggleShowAnswer = (event) => {
+    setShowAnswer(event.target.checked);
+  };
+
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -176,7 +210,7 @@ const WordListPage = () => {
         ) : (
           <>
 
-        <Box display="flex" alignItems="center" mt={1} width="100%">
+        <Box display="flex" alignItems="center" mt={1} width="100%" sx={{marginBottom: 5}}>
           <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
             <Typography variant="h4" component="div" sx={{mr: 5}}>
                 {block?.theme.name}
@@ -200,133 +234,146 @@ const WordListPage = () => {
           </Box>
         </Box>
         
-        <Box width="100%" bgcolor="lightblue" p={1} marginTop={5} marginBottom={5}>
-          <Typography variant="h6" component="div">
-            ステータス
-          </Typography>
-        </Box>
-        <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>
-              理解度チェック
-        </Button>
 
-        <Box display="flex" alignItems="center">
+        <SubTitleTypography text="ステータス" />
+        <Box display="flex" alignItems="center" sx={{mb: 2}}>
           {unknownCount > 0 ? (
             <Chip variant="outlined" label="測定中" color="default" icon={<TimerIcon />} />
           ) : progress === 100 ? (
             <Chip label="マスター" color="success" icon={<CheckCircleIcon />} />
           ) : (
             <>
-              <LinearProgress variant="determinate" value={progress} sx={{ width: '50%' }} />
-              <Typography variant="body2" color="textSecondary" sx={{ marginLeft: 2 }}>{`${Math.round(progress)}%`}</Typography>
+              {/* <LinearProgress variant="determinate" value={progress} sx={{ width: '50%' }} /> */}
+              <Typography variant="h3" color="primary" sx={{ marginLeft: 2 }}>{`${Math.round(progress)}%`}</Typography>
             </>
           )}
         </Box>
-
-        <Box width="100%" bgcolor="lightblue" p={1} marginTop={10} marginBottom={5}>
-          <Typography variant="h6" component="div">
-            単語リスト
-          </Typography>
-        </Box>
-        <StatusFilterIcons/>
-        
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>English</TableCell>
-                <TableCell>Japanese</TableCell>
-                <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>ステータス</TableCell>
-                <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
-                {/* <TableCell>アクション</TableCell> */}
-                <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>その他</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredWordList?.map((word, index) => (
-                <TableRow 
-                  key={index}
-                  sx={{ 
-                    backgroundColor: word.status === 'NOT_MEMORIZED' ? '#ffccbc' : 
-                                    word.status === 'UNKNOWN' ? '#f5f5f5' : 'inherit',
-                    cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
-                    }}
-                  onClick={() => handleOpenModalWord(index)} // ここでクリ
-                >
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{word.english}</TableCell>
-                  <TableCell>{word.japanese}</TableCell>
-                  <TableCell>
-                    {word.status === 'MEMORIZED' && <CheckCircleIcon style={{ color: 'green' }} />}
-                    {word.status === 'NOT_MEMORIZED' && <WarningIcon style={{ color: 'orange' }} />}
-                    {word.status === 'UNKNOWN' && <HelpOutlineIcon style={{ color: 'gray' }} />}
-                  </TableCell>
-                  <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
-                    {word.exampleSentence?.length > 30
-                      ? `${word.exampleSentence?.substring(0, 30)}...`
-                      : word.exampleSentence}
-                  </TableCell>
-                  <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
-                    <Typography>
-                        {word.userWordListStatus.lastMemorizedTimeAgo }
-                    </Typography>
-                    <Typography>
-                      {word.userWordListStatus.numMemorized}, {word.userWordListStatus.numNotMemorized}
-                    </Typography>
-                  </TableCell>
+        <Button variant="contained" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>
+              理解度チェック
+        </Button>
 
 
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {unknownCount == 0 &&(
+          <>
+            <SubTitleTypography text="スタディ" />
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: 3}}>
+              <Tabs value={selectedTab} onChange={handleTabChange} aria-label="word list tabs">
+                <Tab label="単語リスト" />
+                <Tab label="単語ストーリー" />
+              </Tabs>
+            </Box>
 
-        <Box width="100%" bgcolor="lightblue" p={1} marginTop={10} marginBottom={5}>
-          <Typography variant="h6" component="div">
-            GPTストーリー
-          </Typography>
-        </Box>
+            {selectedTab === 0 && (
+              <>
+                <StatusFilterIcons/>        
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>#</TableCell>
+                        <TableCell>{isEnglishToJapanese ? "English" : "Japanese"}</TableCell>
+                        <TableCell>{isEnglishToJapanese ? "Japanese" : "English"}</TableCell>
+                        <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>ステータス</TableCell>
+                        <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
+                        {/* <TableCell>アクション</TableCell> */}
+                        <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>その他</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredWordList?.map((word, index) => (
+                        <TableRow 
+                          key={index}
+                          sx={{ 
+                            backgroundColor: word.status === 'NOT_MEMORIZED' ? '#ffccbc' : 
+                                            word.status === 'UNKNOWN' ? '#f5f5f5' : 'inherit',
+                            cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
+                            }}
+                          onClick={() => handleOpenModalWord(index)} // ここでクリ
+                        >
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{isEnglishToJapanese ? word.english : word.japanese}</TableCell>
+                          <TableCell>
+                            {showAnswer ? isEnglishToJapanese ? word.japanese : word.english : "　" }
+                          </TableCell>
+                          <TableCell>
+                            {word.status === 'MEMORIZED' && <CheckCircleIcon style={{ color: 'green' }} />}
+                            {word.status === 'NOT_MEMORIZED' && <WarningIcon style={{ color: 'orange' }} />}
+                            {word.status === 'UNKNOWN' && <HelpOutlineIcon style={{ color: 'gray' }} />}
+                          </TableCell>
+                          <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
+                            {word.exampleSentence?.length > 30
+                              ? `${word.exampleSentence?.substring(0, 30)}...`
+                              : word.exampleSentence}
+                          </TableCell>
+                          <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
+                            <Typography>
+                                {word.userWordListStatus.lastMemorizedTimeAgo }
+                            </Typography>
+                            <Typography>
+                              {word.userWordListStatus.numMemorized}, {word.userWordListStatus.numNotMemorized}
+                            </Typography>
+                          </TableCell>
 
-        <Box sx={{ margin: 3 }}>
-          <Button variant="contained" onClick={handleOpenStoryCreationDialog}>
-            ストーリーを作る
-          </Button>
-        </Box>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>No</TableCell>
-                <TableCell>ブロック</TableCell>
-                <TableCell>ストーリー</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {wordStoryList.map((item, index) => (
-                <TableRow key={index} 
-                  onClick={() => handleOpenWordStoryDetailsDialog(item)}
-                  sx={{
-                    cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
-                  }}
-                  >
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
-                  </TableCell>
-                  <TableCell>
-                    {item.storyContent.substring(0, 30)}
-                    {/* {item.storyContent.length > 30 && (
-                      <Button onClick={() => handleOpenWordStoryDetailsDialog(item)}>もっと見る</Button>
-                    )} */}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
 
+              </>
+            )}
+
+            {selectedTab === 1 && (
+              <>
+
+                <Box sx={{ margin: 3 }}>
+                  <Button variant="contained" onClick={handleOpenStoryCreationDialog}>
+                    ストーリーを作る
+                  </Button>
+                </Box>
+
+                {wordStoryList.length>1 &&(
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>No</TableCell>
+                          <TableCell>ブロック</TableCell>
+                          <TableCell>ストーリー</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {wordStoryList.map((item, index) => (
+                          <TableRow key={index} 
+                            onClick={() => handleOpenWordStoryDetailsDialog(item)}
+                            sx={{
+                              cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
+                            }}
+                            >
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>
+                              <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
+                            </TableCell>
+                            <TableCell>
+                              {item.storyContent.substring(0, 30)}
+                              {/* {item.storyContent.length > 30 && (
+                                <Button onClick={() => handleOpenWordStoryDetailsDialog(item)}>もっと見る</Button>
+                              )} */}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+
+                )}
+
+              </>
+            )}
+
+          </>          
+        )}
 
         </>
       )}
