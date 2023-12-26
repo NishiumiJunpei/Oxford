@@ -1,3 +1,5 @@
+import Queue from 'queue';
+
 export function calculateAge(birthday) {
     // birthdayが空白の場合、20歳を返す
     if (!birthday) {
@@ -97,6 +99,5 @@ export const timeAgo = (date) => {
     return '数分前';
   }
 }
-
 
 

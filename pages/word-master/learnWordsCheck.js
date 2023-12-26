@@ -32,6 +32,7 @@ const LearnWordsCheck = () => {
     }, [blockId]); // 依存配列にクエリパラメータを追加
 
     const nextWord = (calledFromHandleAnswer = false) => {
+      console.log(currentIndex, wordList.length -1)
       if (currentIndex < wordList.length - 1) {
         // handleAnswerからの呼び出しの場合、またはnextButtonDisabledがfalseの場合のみ進む
         if (calledFromHandleAnswer || !nextButtonDisabled) {

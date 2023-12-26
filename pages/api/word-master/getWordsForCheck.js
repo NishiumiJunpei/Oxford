@@ -20,19 +20,19 @@ export default async function handler(req, res) {
       let wordList = await getWordListByCriteria(criteria);
       const wordListUserStatus = await getWordListUserStatus(userId);
 
-      let totalMemorized = 0;
-      let totalWords = wordList.length;
+      let unknownCount = 0;
+      // let totalWords = wordList.length;
 
       wordList.forEach(word => {
         const status = wordListUserStatus.find(us => us.wordListId === word.id);
         if (status && status.memorizeStatus === 'MEMORIZED') {
-          totalMemorized++;
+          unknownCount++;
         }
       });
 
-      const progressRatio = totalWords > 0 ? Math.round(totalMemorized / totalWords * 100) : 0;
+      // const progressRatio = totalWords > 0 ? Math.round(totalMemorized / totalWords * 100) : 0;
 
-      const wordStatus = progressRatio == 0 ? 'UNKNOWN' : 'NOT_MEMORIZED'
+      const wordStatus = unknownCount > 0 ? 'UNKNOWN' : 'NOT_MEMORIZED'
       wordList = await Promise.all(wordList.map(async word => {
         // const status = await getWordListUserStatusByWordListId(userId, word.id);
         const status = wordListUserStatus.find(us => us.wordListId === word.id) || {};
@@ -50,7 +50,6 @@ export default async function handler(req, res) {
         (wordStatus == 'NOT_MEMORIZED' && word.memorizeStatus === 'NOT_MEMORIZED') ||
         (wordStatus == 'UNKNOWN' && word.memorizeStatus === 'UNKNOWN')
       );
-
 
       // ランダムに並び替えとwordCountに基づく絞り込み
       wordList = wordList.sort(() => 0.5 - Math.random());
