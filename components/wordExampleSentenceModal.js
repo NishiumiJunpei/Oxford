@@ -66,7 +66,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
             fullScreen={fullScreen}
             PaperProps={{
                 sx: {
-                    width: '100%',
+                    width: fullScreen ? '100%' : '50%', // モバイルでは100%、それ以外では70%
                     height: '90%',
                     maxWidth: '100%',
                     maxHeight: '100%',

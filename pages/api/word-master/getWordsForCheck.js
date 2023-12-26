@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
       wordList.forEach(word => {
         const status = wordListUserStatus.find(us => us.wordListId === word.id);
-        if (status && status.memorizeStatus === 'MEMORIZED') {
+        if (!status) {
           unknownCount++;
         }
       });
@@ -39,13 +39,16 @@ export default async function handler(req, res) {
         return { 
           ...word, 
           memorizeStatus: status.memorizeStatus || 'UNKNOWN',
-          exampleSentence: status.exampleSentence || word.exampleSentence, // statusの例文で上書き
-          imageUrl: await getS3FileUrl(status.imageFilename || word.imageFilename),
+          exampleSentence: word.exampleSentence, // statusの例文で上書き
+          imageUrl: await getS3FileUrl(word.imageFilename),
+          // exampleSentence: status.exampleSentence || word.exampleSentence, // statusの例文で上書き
+          // imageUrl: await getS3FileUrl(status.imageFilename || word.imageFilename),
           userWordListStatus: status,
     
         };
       }));
 
+      console.log('test3', wordStatus)
       wordList = wordList.filter(word => 
         (wordStatus == 'NOT_MEMORIZED' && word.memorizeStatus === 'NOT_MEMORIZED') ||
         (wordStatus == 'UNKNOWN' && word.memorizeStatus === 'UNKNOWN')
@@ -54,6 +57,8 @@ export default async function handler(req, res) {
       // ランダムに並び替えとwordCountに基づく絞り込み
       wordList = wordList.sort(() => 0.5 - Math.random());
       wordList = wordList.slice(0, parseInt(wordCount));
+
+      console.log('test5', wordList)
 
       res.status(200).json(wordList);
     } catch (error) {

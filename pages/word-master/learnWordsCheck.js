@@ -8,7 +8,7 @@ import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのイ�
 const LearnWordsCheck = () => {
     const router = useRouter();
     const { blockId, wordCount, languageDirection } = router.query;
-
+    const [isLoading, setIsLoading] = useState(false);
     const [wordList, setWordList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showJapanese, setShowJapanese] = useState(false);
@@ -20,10 +20,12 @@ const LearnWordsCheck = () => {
     useEffect(() => {
       // URLクエリパラメータを使用してAPIから単語データを取得する
       const fetchData = async () => {
+        setIsLoading(true)
         const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
         setWordList(data);
+        setIsLoading(false)
       };
   
       if (blockId) {
@@ -143,7 +145,7 @@ const LearnWordsCheck = () => {
   }, [currentIndex, wordList, showJapanese, buttonDisabled, nextButtonDisabled]); // 依存配列に必要な状態や関数を追加
 
 
-  if (wordList.length === 0) {
+  if (isLoading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'start'}}>
         <CircularProgress />
