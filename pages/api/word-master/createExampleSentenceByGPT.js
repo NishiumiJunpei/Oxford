@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         }
 
 
-        const imageFilename = `userData/${userId}/wordImageCreatedByGPT-${wordListId}.png`;
+        const imageFilename = `userData/${userId}/wordImageCreatedByDALLE3-${wordListId}.png`;
         await uploadImageToS3(compressedImageBuffer, imageFilename); // 画像をS3にアップロード
         imageUrl = await getS3FileUrl(imageFilename)
       

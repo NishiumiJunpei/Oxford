@@ -96,16 +96,18 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                 {isLoading ? (
                     <CircularProgress /> // ローディングインジケーターの表示
                 ) : (
-                    <Button 
-                        onClick={handleExampleSentenceGenerate} 
-                        variant="outlined" 
-                        disabled={isLoading}
-                        style={{ margin: 5, padding: 5, minWidth: 90 }} // ボタンのスタイルを調整
-                        >
-                      {/* <img src="/icon/openai-white-logomark.png" alt="OpenAI Logo" style={{ marginRight: 8, height: '20px' }} />  */}
-                        例文生成
-                    </Button>                
+                    <div>
+                        {/* <Button 
+                            onClick={handleExampleSentenceGenerate} 
+                            variant="outlined" 
+                            disabled={isLoading}
+                            style={{ margin: 5, padding: 5, minWidth: 90 }} // ボタンのスタイルを調整
+                            >
+                            例文生成
+                        </Button>                 */}
+                    </div>
                 )}
+                
                 <Button 
                     onClick={() => handleSearch(word.english)} 
                     variant="outlined" 

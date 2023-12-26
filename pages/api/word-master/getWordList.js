@@ -36,8 +36,10 @@ export default async function handler(req, res) {
         return {
           ...word,
           status: userWordListStatus.memorizeStatus,
-          exampleSentence: userWordListStatus.exampleSentence || word.exampleSentence, // userWordListStatusの例文で上書き
-          imageUrl: await getS3FileUrl(userWordListStatus.imageFilename || word.imageFilename),
+          exampleSentence: word.exampleSentence, // userWordListStatusの例文で上書き
+          imageUrl: await getS3FileUrl(word.imageFilename),
+          // exampleSentence: userWordListStatus.exampleSentence || word.exampleSentence, // userWordListStatusの例文で上書き
+          // imageUrl: await getS3FileUrl(userWordListStatus.imageFilename || word.imageFilename),
           userWordListStatus,
         };
       }));

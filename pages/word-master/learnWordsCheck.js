@@ -90,15 +90,15 @@ const LearnWordsCheck = () => {
             body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED' }),
           });
 
-          const word = wordList[currentIndex];
-          if (!known && !word.imageUrl){
-            axios.post('/api/word-master/createExampleSentenceByGPT', {
-              wordListId: wordId, 
-              english: word.english, 
-              japanese: word.japanese
-            });
+          // const word = wordList[currentIndex];
+          // if (!known && !word.imageUrl){
+          //   axios.post('/api/word-master/createExampleSentenceByGPT', {
+          //     wordListId: wordId, 
+          //     english: word.english, 
+          //     japanese: word.japanese
+          //   });
   
-          }
+          // }
         } catch (error) {
           console.error('Error updating word status:', error);
         }

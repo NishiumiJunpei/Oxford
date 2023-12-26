@@ -7,18 +7,22 @@ const openai = new OpenAI({
 
 
 
-export async function generateExampleSentences(english, japanese, userProfile, birthday) {
+export async function generateExampleSentences(english, japanese, userProfile="", birthday="") {
   try{
 
-    let content = userProfile ? 
-      `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください(「例文」や「日本語訳」などの言葉は書かないで下さい)\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください` :
-      `${english} (${japanese}) という英単語を使った例文を1つ作ってください。例文(英語)とその例文の日本語訳も書いてください\n\n最後にこの英単語の類語をいくつか教えてください` 
+    // ------------------------ ユーザ毎の生成は一時停止 --------------------------
+    // let content = userProfile ? 
+    //   `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください(「例文」や「日本語訳」などの言葉は書かないで下さい)\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください` :
+    //   `${english} (${japanese}) という英単語を使った例文を1つ作ってください。例文(英語)とその例文の日本語訳、この英単語の類語を書いてください\n\n#出力時に、「例文」や「日本語訳」などの言葉は書かないでください。類語は明示的に類語と書いてください。` 
     
     // const kanjiArray = getKanjiFromBirthday(birthday)
     // if (kanjiArray.length > 0) {
     //   const kanjiString = kanjiArray.join(', ');
     //   content += `\n\n出力する日本語はひがらとカタカナなだけ使ってください。但し、下記の漢字は使っても良いです。\n${kanjiString}`;
     // }
+
+    
+    const content = `${english} (${japanese}) という英単語を使った例文を1つ作ってください。例文(英語)とその例文の日本語訳、この英単語の類語を書いてください\n\n#出力時に、「例文」や「日本語訳」などの言葉は書かないでください。類語は明示的に類語と書いてください。` 
 
 
     const response = await openai.chat.completions.create({

@@ -1,4 +1,4 @@
-import { createUser } from '../../utils/prisma-utils';
+import { createUser } from '../../../utils/prisma-utils';
 import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {

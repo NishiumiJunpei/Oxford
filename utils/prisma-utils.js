@@ -78,6 +78,12 @@ export async function deleteUserWordList(id) {
   });
 }
 
+export async function getWordListById(id) {
+  return await prisma.WordList.findUnique({
+    where: { id },
+  });
+}
+
 
 export async function getWordListByCriteria(criteria) {
   const query = {};
@@ -218,7 +224,7 @@ export async function updateUserWordStatus(userId, wordListId, memorizeStatus) {
   }
 }
 
-export async function saveExampleSentence(userId, wordListId, exampleSentence, imageFilename = '') {
+export async function saveExampleSentenceAndImageForUser(userId, wordListId, exampleSentence, imageFilename = '') {
   // Prisma Client を使用して例文を保存
   await prisma.WordListUserStatus.upsert({
     where: {
@@ -239,6 +245,19 @@ export async function saveExampleSentence(userId, wordListId, exampleSentence, i
     }
   });
 }
+
+export async function saveExampleSentenceAndImage(wordListId, exampleSentence, imageFilename = '') {
+  await prisma.WordList.update({
+    where: {
+      id: wordListId, // 更新するWordListレコードを特定
+    },
+    data: {
+      exampleSentence: exampleSentence, // 例文を更新
+      imageFilename: imageFilename,     // 画像ファイル名を更新（空文字の場合も許容）
+    },
+  });
+}
+
 
 export async function deleteUserWordListStatus(id) {
   return await prisma.wordListUserStatus.delete({
