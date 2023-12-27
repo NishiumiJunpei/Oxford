@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId;
 
-      const { blockId, wordCount, languageDirection } = req.query;
+      const { blockId, wordCount, languageDirection, includeMemorized } = req.query;
       const criteria = {
         blockId: parseInt(blockId),
       };
@@ -48,8 +48,8 @@ export default async function handler(req, res) {
         };
       }));
 
-      console.log('test3', wordStatus)
       wordList = wordList.filter(word => 
+        (parseInt(includeMemorized) == 1 && word.memorizeStatus === 'MEMORIZED') ||
         (wordStatus == 'NOT_MEMORIZED' && word.memorizeStatus === 'NOT_MEMORIZED') ||
         (wordStatus == 'UNKNOWN' && word.memorizeStatus === 'UNKNOWN')
       );
@@ -57,8 +57,6 @@ export default async function handler(req, res) {
       // ランダムに並び替えとwordCountに基づく絞り込み
       wordList = wordList.sort(() => 0.5 - Math.random());
       wordList = wordList.slice(0, parseInt(wordCount));
-
-      console.log('test5', wordList)
 
       res.status(200).json(wordList);
     } catch (error) {

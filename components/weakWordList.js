@@ -3,8 +3,8 @@ import { Avatar, CircularProgress, List, ListItem, ListItemAvatar, ListItemText,
 import axios from 'axios';
 import WordExampleSentenceModal from './wordExampleSentenceModal';
 
-const WeakWordList = () => {
-  const [wordList, setWordList] = useState([]);
+const WeakWordList = ({wordList, setWordList}) => {
+  // const [wordList, setWordList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedWordIndex, setSelectedWordIndex] = useState(-1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,7 +22,8 @@ const WeakWordList = () => {
       setLoading(false);
     };
 
-    fetchWords();
+    if (wordList.length == 0) fetchWords();
+
   }, []);
 
   const handleWordClick = (index) => {
@@ -68,7 +69,7 @@ const WeakWordList = () => {
             </ListItemAvatar>
             <ListItemText 
               primary={word.english} 
-              secondary={showJapanese ? word.japanese : '　'} // 透明な文字で高さを保持
+              secondary={showJapanese ? word.japanese : ' '} // 透明な文字で高さを保持
             />
           </ListItem>
         ))}

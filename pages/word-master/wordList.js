@@ -46,6 +46,7 @@ const WordListPage = () => {
         setUnknownCount(data.unknownCount);
         setWordStoryList(data.wordStoryList);
         setBlock(data.block);
+
       }
       setIsLoading(false); // データ取得後にローディング状態をfalseに設定
     };
@@ -146,8 +147,8 @@ const WordListPage = () => {
 
   const handleSaveStoryCreationDialog = (newStory) => {
     // 新しいストーリーをwordStoryListに追加
+    console.log('test', newStory)
     setWordStoryList(prevList => [...prevList, newStory]);
-    setOpenStoryCreationDialog(false);
   };
 
 
@@ -270,13 +271,12 @@ const WordListPage = () => {
                   <Table>
                     <TableHead>
                       <TableRow>
+                        <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}></TableCell>
                         <TableCell>#</TableCell>
                         <TableCell>{isEnglishToJapanese ? "English" : "Japanese"}</TableCell>
                         <TableCell>{isEnglishToJapanese ? "Japanese" : "English"}</TableCell>
-                        <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>ステータス</TableCell>
-                        <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
-                        {/* <TableCell>アクション</TableCell> */}
-                        <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>その他</TableCell>
+                        <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
+                        {/* <TableCell　sx={{ '@media (max-width: 600px)': { display: 'none' } }}>その他</TableCell> */}
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -290,29 +290,32 @@ const WordListPage = () => {
                             }}
                           onClick={() => handleOpenModalWord(index)} // ここでクリ
                         >
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{isEnglishToJapanese ? word.english : word.japanese}</TableCell>
-                          <TableCell>
-                            {showAnswer ? isEnglishToJapanese ? word.japanese : word.english : "　" }
-                          </TableCell>
                           <TableCell>
                             {word.status === 'MEMORIZED' && <CheckCircleIcon style={{ color: 'green' }} />}
                             {word.status === 'NOT_MEMORIZED' && <WarningIcon style={{ color: 'orange' }} />}
                             {word.status === 'UNKNOWN' && <HelpOutlineIcon style={{ color: 'gray' }} />}
                           </TableCell>
-                          <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
-                            {word.exampleSentence?.length > 30
-                              ? `${word.exampleSentence?.substring(0, 30)}...`
-                              : word.exampleSentence}
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{isEnglishToJapanese ? word.english : word.japanese}</TableCell>
+                          <TableCell>
+                            {showAnswer ? isEnglishToJapanese ? word.japanese : word.english : "　　　　　　　　" }
                           </TableCell>
                           <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
+                            {showAnswer ? 
+                              (word.exampleSentence?.length > 30
+                              ? `${word.exampleSentence?.substring(0, 30)}...`
+                              : word.exampleSentence)
+                              : "　　　　　　　　　　　　　　　"
+                            }
+                          </TableCell>
+                          {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
                             <Typography>
                                 {word.userWordListStatus.lastMemorizedTimeAgo }
                             </Typography>
                             <Typography>
                               {word.userWordListStatus.numMemorized}, {word.userWordListStatus.numNotMemorized}
                             </Typography>
-                          </TableCell>
+                          </TableCell> */}
 
 
                         </TableRow>
@@ -326,14 +329,13 @@ const WordListPage = () => {
 
             {selectedTab === 1 && (
               <>
-
                 <Box sx={{ margin: 3 }}>
                   <Button variant="contained" onClick={handleOpenStoryCreationDialog}>
                     ストーリーを作る
                   </Button>
                 </Box>
 
-                {wordStoryList.length>1 &&(
+                {wordStoryList.length>0 &&(
                   <TableContainer component={Paper}>
                     <Table>
                       <TableHead>

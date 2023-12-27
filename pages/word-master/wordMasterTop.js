@@ -16,7 +16,8 @@ const HomePage = () => {
   const [overallProgress, setOverallProgress] = useState(0); 
   const [isLoading, setIsLoading] = useState(false);
   const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
-
+ const [weakWordList, setWeakWordList] = useState([]);
+ 
 
   const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
 
@@ -123,7 +124,7 @@ const HomePage = () => {
         )}
 
         {tabValue === 1 && (
-          <WeakWordsList /> 
+          <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList}/> 
         )}
 
       </>
