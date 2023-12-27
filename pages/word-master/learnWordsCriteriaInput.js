@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Chip, Button, Box, Typography } from '@mui/material';
+import { Chip, Button, Box, Typography, FormControlLabel, Checkbox } from '@mui/material';
 
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
   const { blockId } = router.query;
   const [languageDirection, setLanguageDirection] = useState('EJ'); // 'EJ' は英→日、'JE' は日→英
   const [wordCount, setWordCount] = useState('ALL'); // '10', '30', 'ALL'
+  const [includeMemorized, setIncludeMemorized] = useState(false); // 新しいステート
   
   const handleSubmit = () => {
     const queryParams = new URLSearchParams({
       blockId,
       wordCount: wordCount === 'ALL' ? 50 : wordCount, // ALLの場合はパラメータを送らない
-      languageDirection // 新しく追加
+      languageDirection, // 新しく追加
+      includeMemorized: includeMemorized ? 1 : 0 // includeMemorizedを追加
     }).toString();
   
     router.push(`/word-master/learnWordsCheck?${queryParams}`);
@@ -34,6 +36,15 @@ const LearnWordsCriteriaInput = () => {
         <Chip label="30" color={wordCount === '30' ? 'primary' : 'default'} onClick={() => setWordCount('30')} />
         <Chip label="ALL" color={wordCount === 'ALL' ? 'primary' : 'default'} onClick={() => setWordCount('ALL')} />
       </Box>
+
+      <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>覚えている単語</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
+        <FormControlLabel
+          control={<Checkbox checked={includeMemorized} onChange={(e) => setIncludeMemorized(e.target.checked)} />}
+          label="含める"
+        />
+      </Box>
+
 
       <Box sx={{ textAlign: 'left' }}>
         <Button variant="outlined" onClick={handleSubmit}>

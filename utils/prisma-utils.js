@@ -81,9 +81,41 @@ export async function deleteUserWordList(id) {
 export async function getWordListById(id) {
   return await prisma.WordList.findUnique({
     where: { id },
+    include: {
+      blocks: {
+        include: {
+          block: {
+            include: {
+              theme: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
+
+export async function getWordListByEnglish(searchTerm) {
+  return await prisma.WordList.findMany({
+    where: {
+      english: {
+        contains: searchTerm,
+      },
+    },
+    include: {
+      blocks: {
+        include: {
+          block: {
+            include: {
+              theme: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
 
 export async function getWordListByCriteria(criteria) {
   const query = {};

@@ -38,7 +38,6 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
               .resize({ width: 800 })
               .jpeg({ quality })
               .toBuffer();
-            console.log('compress lopp')
           }
   
   
@@ -51,6 +50,10 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
         }
          
         console.log('example sentence is created, ', english)
+
+        word.exampleSentence = exampleSentence
+        word.imageUrl = imageUrl
+        return word
         
       } catch (error) {
         console.error('Error during image generation:', error);

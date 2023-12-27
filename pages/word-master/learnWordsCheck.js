@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのイ�
 
 const LearnWordsCheck = () => {
     const router = useRouter();
-    const { blockId, wordCount, languageDirection } = router.query;
+    const { blockId, wordCount, languageDirection, includeMemorized } = router.query;
     const [isLoading, setIsLoading] = useState(false);
     const [wordList, setWordList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,7 +21,7 @@ const LearnWordsCheck = () => {
       // URLクエリパラメータを使用してAPIから単語データを取得する
       const fetchData = async () => {
         setIsLoading(true)
-        const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection }).toString();
+        const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection, includeMemorized }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
         setWordList(data);
@@ -34,7 +34,6 @@ const LearnWordsCheck = () => {
     }, [blockId]); // 依存配列にクエリパラメータを追加
 
     const nextWord = (calledFromHandleAnswer = false) => {
-      console.log(currentIndex, wordList.length -1)
       if (currentIndex < wordList.length - 1) {
         // handleAnswerからの呼び出しの場合、またはnextButtonDisabledがfalseの場合のみ進む
         if (calledFromHandleAnswer || !nextButtonDisabled) {

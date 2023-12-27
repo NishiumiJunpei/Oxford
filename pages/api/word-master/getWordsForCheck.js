@@ -30,7 +30,6 @@ export default async function handler(req, res) {
         }
       });
 
-      // const progressRatio = totalWords > 0 ? Math.round(totalMemorized / totalWords * 100) : 0;
 
       const wordStatus = unknownCount > 0 ? 'UNKNOWN' : 'NOT_MEMORIZED'
       wordList = await Promise.all(wordList.map(async word => {
