@@ -1,5 +1,5 @@
 // pages/api/word-master/getProgressByThemeId.js
-import { getWordListByCriteria, getWordListUserStatus, getTheme } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatus, getTheme, getUserById } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
@@ -11,7 +11,12 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
       const userId = session.userId;
-      const currentChallengeThemeId = req.query.themeId || session.currentChallengeThemeId
+      const user = await getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const currentChallengeThemeId = req.query.themeId || user.currentChallengeThemeId
 
       // テーマに基づいた単語リストを取得
       const wordList = await getWordListByCriteria({ themeId: currentChallengeThemeId });

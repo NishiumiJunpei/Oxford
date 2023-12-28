@@ -1,5 +1,5 @@
 // pages/api/word-master/getWordStoryList.js
-import { getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
+import { getUserById, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
@@ -8,8 +8,13 @@ export default async function handler(req, res) {
     try {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
-      const currentChallengeThemeId = session.currentChallengeThemeId
-      const themeId = req.query.themeId != 'undefined' ? req.query.themeId : currentChallengeThemeId
+      const user = await getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const currentChallengeThemeId = user.currentChallengeThemeId;
+      const themeId = req.query.themeId !== 'undefined' ? req.query.themeId : currentChallengeThemeId;
 
       // getWordStoriesByUserIdAndTheme関数を使ってデータを取得
       const wordStories = await getWordStoriesByUserIdAndThemeId(userId, themeId);

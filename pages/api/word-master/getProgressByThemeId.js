@@ -1,5 +1,5 @@
 // pages/api/word-master/getProgressByThemeId.js
-import { getWordListByCriteria, getWordListUserStatus } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatus, getUserById } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
@@ -8,9 +8,15 @@ export default async function handler(req, res) {
     try {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; 
-      const currentChallengeThemeId = session.currentChallengeThemeId
+      const user = await getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const currentChallengeThemeId = user.currentChallengeThemeId;
       const themeId = (!req.query.themeId && req.query.themeId != 'undefined' ) ? req.query.themeId : currentChallengeThemeId
 
+      console.log('test', session)
       const wordList = await getWordListByCriteria({ themeId });
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
 

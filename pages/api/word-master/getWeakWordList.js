@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
-import { getWordListByCriteria, getWordListUserStatusByWordListId, getUserWordStatusByTheme, getWordStoriesByUserIdAndTheme } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatusByWordListId, getUserById } from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
@@ -8,11 +8,17 @@ export default async function handler(req, res) {
     try {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; // セッションから userId を取得
+      const user = await getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const currentChallengeThemeId = user.currentChallengeThemeId;
 
       const { themeId } = req.query;
 
       const criteria = {
-        themeId: themeId ? themeId : session.currentChallengeThemeId,
+        themeId: themeId ? themeId : currentChallengeThemeId,
       };
 
       const wordList = await getWordListByCriteria(criteria);
