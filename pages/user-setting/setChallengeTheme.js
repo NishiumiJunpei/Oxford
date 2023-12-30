@@ -100,7 +100,7 @@ const SetChallengeTheme = () => {
                 <div style={{ position: 'relative' }}>
                   <CardMedia
                     component="img"
-                    image={`/images/${theme.image}`}
+                    image={`/images/${theme.imageFilename}`}
                     alt={theme.name}
                     style={{ height: '200px', objectFit: 'contain' }}
                   />
