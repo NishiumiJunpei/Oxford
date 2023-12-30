@@ -5,35 +5,36 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#046b1e',
+      main: '#26a96a',
+      light: '#C8E6C9',
+      dark: 'rgb(26,116,107)',
+      contrastText: '#fff',
     },
     secondary: {
       main: '#ff196c',
+      light: 'rgb(225, 71, 137)',
+      dark: 'rgb(178, 17, 75)',
+      contrastText: '#fff',
+    },
+    error: {
+      main: '#d32f2f',
+      light: '#ef5350',
+      dark: '#c62828',
+      contrastText: '#fff',
+    },
+    success: {
+      main: '#2e7d32',
+      light: '#4caf50',
+      dark: '#1b5e20',
+      contrastText: '#fff',
     },
     background: {
-      // default: '#d3f3c7',
-      default: '#a33',
+      default: '#d3f3c7',
     },
     text: {
       primary: 'rgba(67,67,67,0.87)',
-    },
+    }, 
   },
-  // palette: {
-  //   primary: {
-  //     light: '#63a4fff',
-  //     main: '#1976d2',
-  //     dark: '#004ba0',
-  //     contrastText: '#fff',
-  //   },
-  //   secondary: {
-  //     light: '#ff4081',
-  //     main: '#f50057',
-  //     dark: '#c51162',
-  //     contrastText: '#fff',
-  //   },
-    // 他のカラー設定も追加できます
-  // },
-
   typography: {
     fontFamily: [
       '"Helvetica Neue"',

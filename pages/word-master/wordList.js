@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
   TableBody, Paper, Avatar, Box, Chip, LinearProgress, CircularProgress, IconButton, Tabs, Tab, FormControlLabel, Switch, Checkbox } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -33,7 +34,8 @@ const WordListPage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isEnglishToJapanese, setIsEnglishToJapanese] = useState(true);
   const [showAnswer, setShowAnswer] = useState(true);
-  
+  const theme = useTheme();
+
   
   useEffect(() => {
     const fetchData = async () => {
@@ -224,7 +226,7 @@ const WordListPage = () => {
               >
                 <ArrowBackIosIcon />
               </IconButton>
-              <Avatar sx={{ bgcolor: 'secondary.main', ml: 1, mr: 1 }}>{block?.name}</Avatar>
+              <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1 }}>{block?.name}</Avatar>
               <IconButton
                 onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`)}
               >
@@ -241,7 +243,7 @@ const WordListPage = () => {
           {unknownCount > 0 ? (
             <Chip variant="outlined" label="測定中" color="default" icon={<TimerIcon />} />
           ) : progress === 100 ? (
-            <Chip label="マスター" color="success" icon={<CheckCircleIcon />} />
+            <Chip label="マスター" color="primary" icon={<CheckCircleIcon />} />
           ) : (
             <>
               {/* <LinearProgress variant="determinate" value={progress} sx={{ width: '50%' }} /> */}
@@ -284,8 +286,8 @@ const WordListPage = () => {
                         <TableRow 
                           key={index}
                           sx={{ 
-                            backgroundColor: word.status === 'NOT_MEMORIZED' ? '#ffccbc' : 
-                                            word.status === 'UNKNOWN' ? '#f5f5f5' : 'inherit',
+                            backgroundColor: word.status === 'NOT_MEMORIZED' ? theme.palette.primary.light  : 
+                                            word.status === 'UNKNOWN' ? '#808080' : 'inherit',
                             cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
                             }}
                           onClick={() => handleOpenModalWord(index)} // ここでクリ
@@ -355,7 +357,7 @@ const WordListPage = () => {
                             >
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
-                              <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
+                              <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>{item.block.name}</Avatar>
                             </TableCell>
                             <TableCell>
                               {item.storyContent.substring(0, 30)}

@@ -92,7 +92,7 @@ const HomePage = () => {
                     <TableRow key={index}>
                       <TableCell component="th" scope="row">
                         <ListItemButton onClick={() => handleBlockClick(item.block.id)}>
-                          <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main' }}>{item.block.name}</Avatar>
+                          <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>{item.block.name}</Avatar>
                         </ListItemButton>
                       </TableCell>
                       <TableCell align="left">
@@ -100,7 +100,7 @@ const HomePage = () => {
                           {item.unknownCount > 0 ? (
                             <Chip variant="outlined" label="測定中" color="default" icon={<TimerIcon />} />
                           ) : item.progress === 100 ? (
-                            <Chip label="マスター" color="success" icon={<CheckCircleIcon />} />
+                            <Chip label="マスター" color="primary" icon={<CheckCircleIcon />} />
                           ) : (
                             <>
                               <LinearProgress variant="determinate" value={item.progress} sx={{ width: '50%' }} />

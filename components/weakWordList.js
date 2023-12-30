@@ -76,7 +76,7 @@ const WeakWordList = ({wordList, setWordList}) => {
               {currentWords.map((word, index) => (
                 <ListItem button key={word.id} onClick={() => handleWordClick(index)}>
                 <ListItemAvatar>
-                  <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize: '0.75rem', bgcolor: 'secondary.main' }}>
+                  <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize: '0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
                     {word.blocks[0].block.name}
                   </Avatar>
                 </ListItemAvatar>
@@ -102,7 +102,7 @@ const WeakWordList = ({wordList, setWordList}) => {
       <WordExampleSentenceModal
         open={modalOpen}
         onClose={handleCloseModal}
-        wordList={wordList}
+        wordList={currentWords}
         initialIndex={selectedWordIndex}
         updateWordList={updateWordList}
       />
