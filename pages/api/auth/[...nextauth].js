@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google"; 
 import {findUserByEmail} from '../../../utils/prisma-utils'
 import bcrypt from 'bcrypt';
+import { createSignUpToken } from "@/utils/user-utils";
 
 
 
@@ -52,13 +53,14 @@ export const authOptions = {
         const userEmail = user.email;
         const existingUser = await findUserByEmail(userEmail);
 
-        if (existingUser) {
-          // 既存のユーザーであれば、JWTトークンにユーザーIDをセット
+        if (!existingUser) {
+          const token = await createSignUpToken(userEmail); // この関数は独自に実装する必要があります
+
+          const domainUrl = process.env.DOMAIN_URL;
+          return `/auth/signup/inputUserInfo?token=${token}`;
+        } else {
           user.id = existingUser.id; 
           return true;
-        } else {
-          // 新しいユーザーの場合の処理...
-          return `/signup-process?email=${userEmail}`;
         }
       }
       return true;

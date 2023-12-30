@@ -267,7 +267,7 @@ const WordListPage = () => {
             {selectedTab === 0 && (
               <>
                 <StatusFilterIcons/>        
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} sx={{maxHeight: 700, overflowY: 'auto', }}>
                   <Table>
                     <TableHead>
                       <TableRow>

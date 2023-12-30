@@ -1,6 +1,6 @@
 // pages/api/auth/sendPasswordResetEmail.js
 import { findUserByEmail, createPasswordResetToken } from '../../../utils/user-utils';
-import sendPasswordResetEmail from '../../../utils/mail-utils';
+import {sendPasswordResetEmail} from '../../../utils/mail-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {

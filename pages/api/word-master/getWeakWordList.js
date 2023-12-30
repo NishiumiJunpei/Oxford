@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
-import { getWordListByCriteria, getWordListUserStatusByWordListId, getUserById } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatus, getUserById } from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
@@ -14,26 +14,22 @@ export default async function handler(req, res) {
       }
 
       const currentChallengeThemeId = user.currentChallengeThemeId;
+      const themeId = req.query.themeId ? req.query.themeId : currentChallengeThemeId
 
-      const { themeId } = req.query;
-
-      const criteria = {
-        themeId: themeId ? themeId : currentChallengeThemeId,
-      };
-
-      const wordList = await getWordListByCriteria(criteria);
+      const wordList = await getWordListByCriteria({themeId});
+      const wordListUserStatus = await getWordListUserStatus(userId, themeId)
 
       const allWordList = await Promise.all(wordList.map(async word => {
-        const userWordListStatus = await getWordListUserStatusByWordListId(userId, word.id);
+        // const userWordListStatus = await getWordListUserStatusByWordListId(userId, word.id);
+        const status = wordListUserStatus.find(us => us.wordListId === word.id);
 
         return {
           ...word,
-          status: userWordListStatus.memorizeStatus,
-          exampleSentence: userWordListStatus.exampleSentence || word.exampleSentence, // userWordListStatusの例文で上書き
-          imageUrl: await getS3FileUrl(userWordListStatus.imageFilename || word.imageFilename),
-          userWordListStatus,
-          numNotMemorized: userWordListStatus.numNotMemorized,
-          lastNotMemorizedDate: userWordListStatus.lastNotMemorizedDate,
+          status: status.memorizeStatus,
+          exampleSentence: word.exampleSentence, // statusの例文で上書き
+          imageUrl: await getS3FileUrl(word.imageFilename),
+          numNotMemorized: status.numNotMemorized,
+          lastNotMemorizedDate: status.lastNotMemorizedDate,
         };
       }));
 
@@ -48,8 +44,10 @@ export default async function handler(req, res) {
         return b.numNotMemorized - a.numNotMemorized;
       });
 
+      const limitedWeakWordList = weakWordList.slice(0, 50);
+
       res.status(200).json({
-        weakWordList: weakWordList,
+        weakWordList: limitedWeakWordList,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

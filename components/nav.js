@@ -59,17 +59,17 @@ function Nav({ isOpen, onClose, isMobile }) {
             </ListItemIcon>
             <ListItemText primary="英単語マスター" />
           </ListItem>
-          <ListItem button component="a" href="/word-master/myWordList">
+          {/* <ListItem button component="a" href="/word-master/myWordList">
             <ListItemIcon>
-              <BookmarksIcon /> {/* マイ単語帳のアイコン */}
+              <BookmarksIcon /> 
             </ListItemIcon>
             <ListItemText primary="マイ単語帳" />
-          </ListItem>
+          </ListItem> */}
           <ListItem button component="a" href="/user-setting/userProfile">
             <ListItemIcon>
               <SettingsIcon /> {/* マイ単語帳のアイコン */}
             </ListItemIcon>
-            <ListItemText primary="ユーザアカウント" />
+            <ListItemText primary="設定" />
           </ListItem>
           <ListItem button component="a" onClick={handleLogout}>
             <ListItemIcon>

@@ -1,11 +1,50 @@
+import React, { useEffect, useState } from 'react';
 import { getCsrfToken, signIn } from "next-auth/react";
-import { TextField, Button, Container, Typography, Box, Divider, Link } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Divider, Link, CircularProgress } from '@mui/material';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
 
 export default function SignIn({ csrfToken }) {
-  const handleGoogleSignIn = () => {
-    signIn('google', { callbackUrl: '/' }); // GoogleサインインのコールバックURLを指定
-  }
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSignIn = async (e) => {
+    e.preventDefault(); // フォームのデフォルトの送信を防ぐ
+    setIsLoading(true); // ローディング開始
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+        callbackUrl: '/'
+      });
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      window.location.href = result.url; // リダイレクト
+    } catch (error) {
+      setErrorMessage('ログインに失敗しました');
+    } finally {
+      setIsLoading(false); // ローディング終了
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true); // ローディング開始
+    try {
+      await signIn('google', { callbackUrl: '/' });
+    } catch (error) {
+      setErrorMessage('Googleサインインに失敗しました。');
+    } finally {
+      setIsLoading(false); // ローディング終了
+    }
+  };
+
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -21,10 +60,7 @@ export default function SignIn({ csrfToken }) {
           <img src="/logo.png" alt="ロゴ" style={{ maxWidth: '250px', height: 'auto' }} />
         </Box>
 
-        {/* <Typography component="h1" variant="h5">
-          ログイン
-        </Typography> */}
-        <form method="post" action="/api/auth/callback/credentials" style={{ mt: 1, width: '100%' }}>
+        <form method="post" onSubmit={handleSignIn} style={{ mt: 1, width: '100%' }}>
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
           <TextField
             margin="normal"
@@ -51,10 +87,13 @@ export default function SignIn({ csrfToken }) {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={isLoading}
           >
             ログイン
           </Button>
         </form>
+        {isLoading && <CircularProgress />}
+        {errorMessage && <Typography color="error">{errorMessage}</Typography>}
 
         {/* パスワードを忘れた方はこちら */}
         <NextLink href="/auth/forgotPassword" passHref>

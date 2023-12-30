@@ -17,7 +17,8 @@ export default function Home() {
 
   const [words, setWords] = useState([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingTodaysWords, setIsLoadingTodaysWords] = useState(true);
+  const [isLoadingProgressRatio, setIsLoadingProgressRatio] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [themeName, setThemeName] = useState('');
   const [progressRatio, setProgressRatio] = useState(0);
@@ -25,7 +26,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchWords = async () => {
-      setIsLoading(true);
+      setIsLoadingTodaysWords(true);
       try {
         const response = await axios.get('/api/word-master/getTodaysWords');
         setWords(response.data);
@@ -33,11 +34,12 @@ export default function Home() {
       } catch (error) {
         console.error('Failed to fetch words:', error);
       }
-      setIsLoading(false);
+      setIsLoadingTodaysWords(false);
     };
 
     // 新しいAPIを呼び出してテーマと進捗率を取得
     const fetchThemeProgress = async () => {
+      setIsLoadingProgressRatio(true);
       try {
         const response = await axios.get('/api/word-master/getProgressRatio');
         setThemeName(response.data.theme.name);
@@ -45,6 +47,7 @@ export default function Home() {
       } catch (error) {
         console.error('Failed to fetch theme progress:', error);
       }
+      setIsLoadingProgressRatio(false);
     };
 
     fetchWords();
@@ -84,25 +87,36 @@ export default function Home() {
         <title>すーすーEnglish</title>
       </Head>
 
-      {isLoading ? (
+      <>
+        <SubTitleTypography text="チャレンジ中のテーマ"/>
+        {isLoadingProgressRatio && (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
           <CircularProgress />
         </div>
-      ) : currentWord ? (
+        )}
+
+        {themeName && (
         <>
-        <SubTitleTypography text="チャレンジ中のテーマ"/>
-        <Typography variant='h5' component="p" onClick={handleClickTheme} style={{ cursor: 'pointer' }}>
-            {themeName}
-            <OpenInBrowserIcon fontSize="small" style={{ marginLeft: 4, cursor: 'pointer' }} />
-        </Typography>
+          <Typography variant='h5' component="p" onClick={handleClickTheme} style={{ cursor: 'pointer' }}>
+              {themeName}
+              <OpenInBrowserIcon fontSize="small" style={{ marginLeft: 4, cursor: 'pointer' }} />
+          </Typography>
 
-        <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
-          <ProgressCircle value={progressRatio} />
-        </Box>
+          <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
+            <ProgressCircle value={progressRatio} />
+          </Box>
+          </>
+        )}
+      </>
 
-
+      {isLoadingTodaysWords && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+          <CircularProgress />
+        </div>
+      )}
+      {currentWord && (
         <div sx={{marginTop: 5}}>
-          <SubTitleTypography text="今日の単語"/>
+          <SubTitleTypography text="今日の単語"/>          
           <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
             <IconButton onClick={handlePrevious} disabled={currentWordIndex === 0}>
               <ArrowBackIcon />
@@ -136,10 +150,10 @@ export default function Home() {
           </Typography> */}
 
         </div>
-        </>
-      ) : (
-        <p>今日の単語はありません。</p>
+
       )}
+
+
 
       <WordExampleSentenceModal
         open={modalOpen}

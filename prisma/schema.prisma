@@ -22,7 +22,7 @@ enum MemorizeStatus {
 
 model User {
   id                        Int                         @id @default(autoincrement())
-  name                      String
+  name                      String?
   email                     String                      @unique
   password                  String
   birthday                  DateTime?
@@ -49,6 +49,9 @@ model PasswordResetToken {
 model Theme {
   id      Int    @id @default(autoincrement())
   name    String
+  imageFilename     String?
+  activeStatus String?
+  displayOrder Int?
   blocks  Block[]
   users   User[]
 }

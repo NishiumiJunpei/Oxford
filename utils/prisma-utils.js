@@ -2,11 +2,8 @@
 import prisma from '../prisma/prisma';  // Assume prisma.js exports your Prisma client instance
 import { timeAgo } from './utils';
 
-// User related functions
-export async function createUser(data) {
-  return await prisma.user.create({
-    data,
-  });
+export async function getThemes(){
+  return await prisma.theme.findMany()
 }
 
 export async function getUserById(id) {

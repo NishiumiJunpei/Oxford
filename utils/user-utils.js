@@ -1,6 +1,8 @@
 import prisma from '../prisma/prisma';  
 import { randomBytes } from 'crypto';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 
 export async function findUserByEmail(email) {
     try {
@@ -8,7 +10,7 @@ export async function findUserByEmail(email) {
         where: { email },
       });
       if (!user) {
-        throw new Error('ユーザーが見つかりません。');
+        return null
       }
       return user;
     } catch (error) {
@@ -16,6 +18,13 @@ export async function findUserByEmail(email) {
       throw error;
     }
 }
+
+export async function createUser(userData) {
+  return prisma.user.create({
+    data: userData
+  });
+}
+
 
 export async function createPasswordResetToken(userId) {
     try {
@@ -84,4 +93,26 @@ export async function deletePasswordResetToken(id) {
   return await prisma.passwordResetToken.delete({
     where: { id },
   });
+}
+
+
+export async function createSignUpToken(email) {
+  // JWTトークンの生成
+  const token = jwt.sign(
+    { email, timestamp: new Date().getTime() },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' } // 1時間の有効期限
+  );
+
+  return token;
+}
+
+export function verifySignupToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return { valid: true, email: decoded.email };
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return { valid: false, email: null };
+  }
 }

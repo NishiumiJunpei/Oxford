@@ -16,7 +16,6 @@ export default async function handler(req, res) {
       const currentChallengeThemeId = user.currentChallengeThemeId;
       const themeId = (!req.query.themeId && req.query.themeId != 'undefined' ) ? req.query.themeId : currentChallengeThemeId
 
-      console.log('test', session)
       const wordList = await getWordListByCriteria({ themeId });
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
 
