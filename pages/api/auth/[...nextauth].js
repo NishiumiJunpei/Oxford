@@ -2,6 +2,7 @@
 import NextAuth from "next-auth"
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google"; 
 import {findUserByEmail} from '../../../utils/prisma-utils'
 import bcrypt from 'bcrypt';
 
@@ -37,20 +38,31 @@ export const authOptions = {
           return null;
         }
       }
-    })
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    }),
 
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      const isAllowedToSignIn = true
-      if (isAllowedToSignIn) {
-        return true
-      } else {
-        // Return false to display a default error message
-        return false
-        // Or you can return a URL to redirect to:
-        // return '/unauthorized'
+
+      if (account.provider === 'google') {
+        const userEmail = user.email;
+        const existingUser = await findUserByEmail(userEmail);
+
+        if (existingUser) {
+          // 既存のユーザーであれば、JWTトークンにユーザーIDをセット
+          user.id = existingUser.id; 
+          return true;
+        } else {
+          // 新しいユーザーの場合の処理...
+          return `/signup-process?email=${userEmail}`;
+        }
       }
+      return true;
+
     },
     async jwt({ token, user }) {
       if (user) {
