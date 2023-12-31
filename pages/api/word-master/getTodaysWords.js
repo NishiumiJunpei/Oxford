@@ -31,6 +31,8 @@ export default async function handler(req, res) {
             japanese: randomWordStatus.wordList.japanese,
             exampleSentence: randomWordStatus.exampleSentence || null,
             imageUrl: await getS3FileUrl(randomWordStatus.imageFilename),
+            memorizeStatusEJ: randomWordStatus.memorizeStatusEJ,
+            memorizeStatusJE: randomWordStatus.memorizeStatusJE,
           });
 
           // 同じ単語を二度選ばないようにする

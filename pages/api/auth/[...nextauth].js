@@ -11,6 +11,7 @@ import { createSignUpToken } from "@/utils/user-utils";
 
 export const authOptions = {
   // Configure one or more authentication providers
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt"
   },
