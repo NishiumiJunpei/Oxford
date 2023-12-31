@@ -147,22 +147,32 @@ export async function getWordListByCriteria(criteria) {
 }
 
 
-export async function getWordListUserStatus(userId, themeId) {
+export async function getWordListUserStatus(userId, themeId, blockId = '') {
+  let whereClause = {
+    userId: userId
+  };
+
   // themeId が指定されている場合のクエリ条件を設定
-  const whereClause = themeId 
-    ? {
-        userId: userId,
-        wordList: {
-          blocks: {
-            some: {
-              block: {themeId: parseInt(themeId)}
-            }
-          }
+  if (themeId && !blockId) {
+    whereClause.wordList = {
+      blocks: {
+        some: {
+          block: { themeId: parseInt(themeId) }
         }
-      } 
-    : {
-        userId: userId
-      };
+      }
+    };
+  }
+
+  // blockId が指定されている場合のクエリ条件を設定
+  if (blockId) {
+    whereClause.wordList = {
+      blocks: {
+        some: {
+          blockId: parseInt(blockId)
+        }
+      }
+    };
+  }
 
   // Prisma クエリを使用して WordListUserStatus データを取得
   return await prisma.wordListUserStatus.findMany({
@@ -172,6 +182,7 @@ export async function getWordListUserStatus(userId, themeId) {
     }
   });
 }
+
 
 export async function getWordListUserStatusByWordListId(userId, wordListId) {
   const statusRecord = await prisma.wordListUserStatus.findUnique({
@@ -199,7 +210,7 @@ export async function getWordListUserStatusByWordListId(userId, wordListId) {
   };
 }
 
-export async function updateUserWordStatus(userId, wordListId, memorizeStatus) {
+export async function updateUserWordStatus(userId, wordListId, languageDirection, memorizeStatus) {
   const existingRecord = await prisma.wordListUserStatus.findUnique({
     where: {
       userId_wordListId: {
@@ -208,21 +219,34 @@ export async function updateUserWordStatus(userId, wordListId, memorizeStatus) {
       }
     }
   });
-  
+
   const currentTime = new Date();
 
   if (existingRecord) {
     const updatedData = {
-      memorizeStatus: memorizeStatus,
       lastCheckDate: currentTime,
     };
 
-    if (memorizeStatus === 'MEMORIZED') {
-      updatedData.numMemorized = existingRecord.numMemorized + 1;
-      updatedData.lastMemorizedDate = currentTime;
-    } else if (memorizeStatus === 'NOT_MEMORIZED') {
-      updatedData.numNotMemorized = existingRecord.numNotMemorized + 1;
-      updatedData.lastNotMemorizedDate = currentTime;
+    if (languageDirection === 'EJ') {
+      updatedData.memorizeStatusEJ = memorizeStatus;
+      if (memorizeStatus === 'MEMORIZED') {
+        updatedData.lastMemorizedDateEJ = currentTime;
+        if (existingRecord.lastMemorizedDateEJ &&
+            currentTime - existingRecord.lastMemorizedDateEJ > 24 * 60 * 60 * 1000 &&
+            existingRecord.memorizeStatusEJ === 'MEMORIZED') {
+          updatedData.memorizeStatusEJ = 'MEMORIZED2';
+        }
+      }
+    } else if (languageDirection === 'JE') {
+      updatedData.memorizeStatusJE = memorizeStatus;
+      if (memorizeStatus === 'MEMORIZED') {
+        updatedData.lastMemorizedDateJE = currentTime;
+        if (existingRecord.lastMemorizedDateJE &&
+            currentTime - existingRecord.lastMemorizedDateJE > 24 * 60 * 60 * 1000 &&
+            existingRecord.memorizeStatusJE === 'MEMORIZED') {
+          updatedData.memorizeStatusJE = 'MEMORIZED2';
+        }
+      }
     }
 
     return await prisma.wordListUserStatus.update({
@@ -233,18 +257,21 @@ export async function updateUserWordStatus(userId, wordListId, memorizeStatus) {
     const newData = {
       userId,
       wordListId,
-      memorizeStatus,
       lastCheckDate: currentTime,
-      numMemorized: 0,
-      numNotMemorized: 0,
+      memorizeStatusEJ: 'NOT_MEMORIZED',
+      memorizeStatusJE: 'NOT_MEMORIZED',
     };
 
-    if (memorizeStatus === 'MEMORIZED') {
-      newData.numMemorized = 1;
-      newData.lastMemorizedDate = currentTime;
-    } else if (memorizeStatus === 'NOT_MEMORIZED') {
-      newData.numNotMemorized = 1;
-      newData.lastNotMemorizedDate = currentTime;
+    if (languageDirection === 'EJ') {
+      newData.memorizeStatusEJ = memorizeStatus;
+      if (memorizeStatus === 'MEMORIZED') {
+        newData.lastMemorizedDateEJ = currentTime;
+      }
+    } else if (languageDirection === 'JE') {
+      newData.memorizeStatusJE = memorizeStatus;
+      if (memorizeStatus === 'MEMORIZED') {
+        newData.lastMemorizedDateJE = currentTime;
+      }
     }
 
     return await prisma.wordListUserStatus.create({

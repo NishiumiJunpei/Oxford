@@ -20,31 +20,48 @@ export default async function handler(req, res) {
 
       const block = await getBlock(blockId)
       const wordList = await getWordListByCriteria(criteria);
-      const userWordStatus = await getWordListUserStatus(userId, block.theme.id); 
+      const userWordStatus = await getWordListUserStatus(userId, block.theme.id, block.id); 
 
 
-      // 進捗と未知の単語数を計算
-      const memorizedCount = userWordStatus.filter(status => 
-        status.memorizeStatus === 'MEMORIZED' && 
-        status.userId === userId &&
-        wordList.some(word => word.id === status.wordListId)
-      ).length;
+      // progress計算
+      let memorizedCountEJ = 0;
+      let memorizedCountJE = 0;
+    
+      userWordStatus.forEach(status => {
+        // memorizeStatusEJのカウント
+        if (status.memorizeStatusEJ === 'MEMORIZED') {
+          memorizedCountEJ += 1;
+        } else if (status.memorizeStatusEJ === 'MEMORIZED2') {
+          memorizedCountEJ += 2;
+        }
+    
+        // memorizeStatusJEのカウント
+        if (status.memorizeStatusJE === 'MEMORIZED') {
+          memorizedCountJE += 1;
+        } else if (status.memorizeStatusJE === 'MEMORIZED2') {
+          memorizedCountJE += 2;
+        }
+      });
+
+      // progress計算
+      const progress = {
+        EJ: Math.round(memorizedCountEJ / wordList.length * 100),
+        JE: Math.round(memorizedCountJE / wordList.length * 100)
+      }    
 
       const updatedWordList = await Promise.all(wordList.map(async word => {
         const userWordListStatus = await getWordListUserStatusByWordListId(userId, word.id);
 
         return {
           ...word,
-          status: userWordListStatus.memorizeStatus,
+          memorizeStatusEJ: userWordListStatus.memorizeStatusEJ,
+          memorizeStatusJE: userWordListStatus.memorizeStatusJE,
           exampleSentence: word.exampleSentence, // userWordListStatusの例文で上書き
           imageUrl: await getS3FileUrl(word.imageFilename),
-          // exampleSentence: userWordListStatus.exampleSentence || word.exampleSentence, // userWordListStatusの例文で上書き
-          // imageUrl: await getS3FileUrl(userWordListStatus.imageFilename || word.imageFilename),
           userWordListStatus,
         };
       }));
 
-      const progress = Math.round(memorizedCount / wordList.length * 100);
 
       const unknownCount = wordList.filter(word => {
         const status = userWordStatus.find(us => us.wordListId === word.id && us.userId === userId);

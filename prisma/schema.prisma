@@ -17,6 +17,7 @@ enum MemorizeStatus {
   UNKNOWN
   NOT_MEMORIZED
   MEMORIZED
+  MEMORIZED2
   PERFECTLY_MEMORIZED
 }
 
@@ -108,14 +109,16 @@ model WordListUserStatus {
   id                Int             @id @default(autoincrement())
   userId            Int
   wordListId        Int
-  memorizeStatus    MemorizeStatus  @default(UNKNOWN)
-  numMemorized      Int             @default(0)
-  numNotMemorized   Int             @default(0)
+  memorizeStatus    MemorizeStatus  @default(UNKNOWN)  // 削除予定
+  memorizeStatusEJ  MemorizeStatus  @default(NOT_MEMORIZED)
+  memorizeStatusJE  MemorizeStatus  @default(NOT_MEMORIZED)
   exampleSentence   String?
   imageFilename             String?
   lastCheckDate     DateTime?
-  lastMemorizedDate     DateTime?
-  lastNotMemorizedDate     DateTime?
+  lastMemorizedDate     DateTime?  // 削除予定
+  lastNotMemorizedDate     DateTime?  // 削除予定
+  lastMemorizedDateEJ     DateTime?
+  lastMemorizedDateJE     DateTime?
   updatedAt         DateTime        @default(now()) @updatedAt
   user              User            @relation(fields: [userId], references: [id])
   wordList   WordList @relation(fields: [wordListId], references: [id])

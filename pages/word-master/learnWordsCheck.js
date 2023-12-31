@@ -11,7 +11,7 @@ const LearnWordsCheck = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [wordList, setWordList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [showJapanese, setShowJapanese] = useState(false);
+    const [showAnswer, setShowAnswer] = useState(false);
     const [showAnswerButton, setShowAnswerButton] = useState(true);
     const [result, setResult] = useState({ known: 0, unknown: 0 });
     const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -38,7 +38,7 @@ const LearnWordsCheck = () => {
         // handleAnswerからの呼び出しの場合、またはnextButtonDisabledがfalseの場合のみ進む
         if (calledFromHandleAnswer || !nextButtonDisabled) {
           setCurrentIndex(currentIndex + 1);
-          setShowJapanese(false);
+          setShowAnswer(false);
           setShowAnswerButton(true);
           setButtonDisabled(false);
           setNextButtonDisabled(true);
@@ -61,7 +61,7 @@ const LearnWordsCheck = () => {
             setResult({ ...result, known: result.known + 1 });
             nextWord(true); // handleAnswerから呼ばれたことを示す引数を追加
           } else {
-            setShowJapanese(true);
+            setShowAnswer(true);
             setButtonDisabled(true);
             setNextButtonDisabled(false);
           }    
@@ -73,7 +73,7 @@ const LearnWordsCheck = () => {
     };
 
     const handleShowAnswer = () => {
-        setShowJapanese(true);
+        setShowAnswer(true);
         setShowAnswerButton(false);
     };
 
@@ -88,18 +88,8 @@ const LearnWordsCheck = () => {
           await fetch('/api/word-master/updateUserWordStatus', {
             method: 'POST', // 通常、APIへのデータ更新はPOSTまたはPUTメソッドを使用
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED' }),
+            body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED', languageDirection }),
           });
-
-          // const word = wordList[currentIndex];
-          // if (!known && !word.imageUrl){
-          //   axios.post('/api/word-master/createExampleSentenceByGPT', {
-          //     wordListId: wordId, 
-          //     english: word.english, 
-          //     japanese: word.japanese
-          //   });
-  
-          // }
         } catch (error) {
           console.error('Error updating word status:', error);
         }
@@ -113,6 +103,7 @@ const LearnWordsCheck = () => {
 
   const word = wordList[currentIndex];
   const remainingWords = wordList.length - currentIndex; // 残りの問題数
+  console.log('wordList', wordList)
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -141,7 +132,7 @@ const LearnWordsCheck = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [currentIndex, wordList, showJapanese, buttonDisabled, nextButtonDisabled]); // 依存配列に必要な状態や関数を追加
+  }, [currentIndex, wordList, showAnswer, buttonDisabled, nextButtonDisabled]); // 依存配列に必要な状態や関数を追加
 
 
   if (isLoading) {
@@ -170,9 +161,12 @@ const LearnWordsCheck = () => {
         
         <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
         <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
-            {word.english}
+          {languageDirection == 'EJ' ? word.english : word.japanese}
         </Typography>
-        {showJapanese && <Typography variant="subtitle1" sx={{ marginBottom: 2 }}>{word.japanese}</Typography>}
+        {showAnswer &&
+           <Typography variant="subtitle1" sx={{ marginBottom: 2 }}>
+             {languageDirection == 'EJ' ? word.japanese : word.english}
+          </Typography>}
         <Box sx={{ '& > button': { margin: 1 } }}>
             <Button variant="contained" color="primary" onClick={() => handleAnswer(true)} disabled={buttonDisabled}>
                 わかる(j)
@@ -186,7 +180,7 @@ const LearnWordsCheck = () => {
               答えチェック(k)
           </Button>
         </Box>
-        {showJapanese && (
+        {showAnswer && (
             <Button variant="contained" onClick={handleNext} disabled={nextButtonDisabled} sx={{ marginTop: 2 }}>
                 次へ(n)
             </Button>

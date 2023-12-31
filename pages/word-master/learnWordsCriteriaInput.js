@@ -13,7 +13,7 @@ const LearnWordsCriteriaInput = () => {
     const queryParams = new URLSearchParams({
       blockId,
       wordCount: wordCount === 'ALL' ? 50 : wordCount, // ALLの場合はパラメータを送らない
-      languageDirection, // 新しく追加
+      languageDirection,
       includeMemorized: includeMemorized ? 1 : 0 // includeMemorizedを追加
     }).toString();
   
@@ -24,11 +24,11 @@ const LearnWordsCriteriaInput = () => {
     <Box sx={{ width: '100%', maxWidth: 500}}>
       <Typography variant="h5" sx={{mb: 5}}>理解度チェック</Typography>
       
-      {/* <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>モード</Typography>
+      <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>モード</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
         <Chip label="英→日" color={languageDirection === 'EJ' ? 'primary' : 'default'} onClick={() => setLanguageDirection('EJ')} />
         <Chip label="日→英" color={languageDirection === 'JE' ? 'primary' : 'default'} onClick={() => setLanguageDirection('JE')} />
-      </Box> */}
+      </Box>
 
       <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>単語数</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>

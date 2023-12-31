@@ -20,39 +20,40 @@ export default async function handler(req, res) {
       let wordList = await getWordListByCriteria(criteria);
       const wordListUserStatus = await getWordListUserStatus(userId);
 
-      let unknownCount = 0;
-      // let totalWords = wordList.length;
-
-      wordList.forEach(word => {
-        const status = wordListUserStatus.find(us => us.wordListId === word.id);
-        if (!status) {
-          unknownCount++;
-        }
-      });
-
-
-      const wordStatus = unknownCount > 0 ? 'UNKNOWN' : 'NOT_MEMORIZED'
       wordList = await Promise.all(wordList.map(async word => {
         // const status = await getWordListUserStatusByWordListId(userId, word.id);
         const status = wordListUserStatus.find(us => us.wordListId === word.id) || {};
         return { 
           ...word, 
-          memorizeStatus: status.memorizeStatus || 'UNKNOWN',
+          memorizeStatusEJ: status.memorizeStatusEJ || 'NOT_MEMORIZED',
+          memorizeStatusJE: status.memorizeStatusJE || 'NOT_MEMORIZED',
           exampleSentence: word.exampleSentence, // statusの例文で上書き
           imageUrl: await getS3FileUrl(word.imageFilename),
-          // exampleSentence: status.exampleSentence || word.exampleSentence, // statusの例文で上書き
-          // imageUrl: await getS3FileUrl(status.imageFilename || word.imageFilename),
           userWordListStatus: status,
     
         };
       }));
 
-      wordList = wordList.filter(word => 
-        (parseInt(includeMemorized) == 1 && word.memorizeStatus === 'MEMORIZED') ||
-        (wordStatus == 'NOT_MEMORIZED' && word.memorizeStatus === 'NOT_MEMORIZED') ||
-        (wordStatus == 'UNKNOWN' && word.memorizeStatus === 'UNKNOWN')
-      );
-
+      if (languageDirection === 'EJ') {
+        wordList = wordList.filter(word => {
+          // 覚えている単語を含むにチェックが入っていないなら、memorizeStatusEJにNOT_MEMORIZEDが入っているものは除外
+          if (includeMemorized == '0') {
+            return (word.memorizeStatusEJ == 'NOT_MEMORIZED' || word.memorizeStatusEJ == 'MEMORIZED');
+          }
+          // includeMemorizedが1なら、すべての要素を含む
+          return true;
+        });
+      } else if (languageDirection === 'JE') {
+        wordList = wordList.filter(word => {
+          // 覚えている単語を含むにチェックが入っていないなら、memorizeStatusJEにNOT_MEMORIZEDが入っているものは除外
+          if (includeMemorized == '0') {
+            return word.memorizeStatusJE == 'NOT_MEMORIZED' || word.memorizeStatusEJ == 'MEMORIZED';
+          }
+          // includeMemorizedが1なら、すべての要素を含む
+          return true;
+        });
+      }
+      
       // ランダムに並び替えとwordCountに基づく絞り込み
       wordList = wordList.sort(() => 0.5 - Math.random());
       wordList = wordList.slice(0, parseInt(wordCount));
