@@ -25,8 +25,8 @@ export default async function handler(req, res) {
         const status = wordListUserStatus.find(us => us.wordListId === word.id) || {};
         return { 
           ...word, 
-          memorizeStatusEJ: status.memorizeStatusEJ || 'NOT_MEMORIZED',
-          memorizeStatusJE: status.memorizeStatusJE || 'NOT_MEMORIZED',
+          memorizeStatusEJ: status?.memorizeStatusEJ || 'NOT_MEMORIZED',
+          memorizeStatusJE: status?.memorizeStatusJE || 'NOT_MEMORIZED',
           exampleSentence: word.exampleSentence, // statusの例文で上書き
           imageUrl: await getS3FileUrl(word.imageFilename),
           userWordListStatus: status,

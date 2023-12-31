@@ -20,12 +20,15 @@ export default async function handler(req, res) {
 
       const block = await getBlock(blockId)
       const wordList = await getWordListByCriteria(criteria);
-      const userWordStatus = await getWordListUserStatus(userId, block.theme.id, block.id); 
+      const userWordStatus = await getWordListUserStatus(userId, block.theme.id, parseInt(blockId)); 
 
+      console.log('test3', userId, block.theme.id, parseInt(blockId))
+      console.log('test3', userWordStatus)
 
       // progress計算
       let memorizedCountEJ = 0;
       let memorizedCountJE = 0;
+
     
       userWordStatus.forEach(status => {
         // memorizeStatusEJのカウント
@@ -49,19 +52,19 @@ export default async function handler(req, res) {
         JE: Math.round(memorizedCountJE / wordList.length * 100)
       }    
 
+
       const updatedWordList = await Promise.all(wordList.map(async word => {
         const userWordListStatus = userWordStatus.find(us => us.wordListId == word.id)
 
         return {
           ...word,
-          memorizeStatusEJ: userWordListStatus.memorizeStatusEJ,
-          memorizeStatusJE: userWordListStatus.memorizeStatusJE,
+          memorizeStatusEJ: userWordListStatus?.memorizeStatusEJ || 'NOT_MEMORIZED',
+          memorizeStatusJE: userWordListStatus?.memorizeStatusJE || 'NOT_MEMORIZED',
           exampleSentence: word.exampleSentence, // userWordListStatusの例文で上書き
           imageUrl: await getS3FileUrl(word.imageFilename),
           userWordListStatus,
         };
       }));
-
 
       const wordStoryList = await getWordStoriesByUserIdAndBlockId(userId, block.id);
 
