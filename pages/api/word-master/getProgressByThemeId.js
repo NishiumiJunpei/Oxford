@@ -33,36 +33,57 @@ export default async function handler(req, res) {
         return 0;
       });
       
-      let totalMemorized = 0;
+      
+      let totalProgressEJ = 0;
+      let totalProgressJE = 0;
       let totalWords = 0;
 
       const result = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks[0].block.id === block.id);
-        const memorizedCount = wordListUserStatus.filter(status => 
-          status.memorizeStatus === 'MEMORIZED' && 
-          status.userId === userId &&
-          blockWords.some(bw => bw.id === status.wordListId)
-        ).length;
+        const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
 
-        totalMemorized += memorizedCount;
-        totalWords += blockWords.length;
-            
-        const unknownCount = blockWords.filter(bw => {
-          const status = wordListUserStatus.find(us => us.wordListId === bw.id && us.userId === userId);
-          return !status || status.memorizeStatus === 'UNKNOWN';
-        }).length;
+        // progress計算
+        let memorizedCountEJ = 0;
+        let memorizedCountJE = 0;
       
-        const progress = Math.round(memorizedCount / blockWords.length * 100);
+        blockWordListUserStatus.forEach(status => {
+          // memorizeStatusEJのカウント
+          if (status.memorizeStatusEJ === 'MEMORIZED') {
+            memorizedCountEJ += 1;
+          } else if (status.memorizeStatusEJ === 'MEMORIZED2') {
+            memorizedCountEJ += 2;
+          }
+      
+          // memorizeStatusJEのカウント
+          if (status.memorizeStatusJE === 'MEMORIZED') {
+            memorizedCountJE += 1;
+          } else if (status.memorizeStatusJE === 'MEMORIZED2') {
+            memorizedCountJE += 2;
+          }
+        });
+
+        // progress計算
+        const progress = {
+          EJ: Math.round(memorizedCountEJ / blockWords.length * 100),
+          JE: Math.round(memorizedCountJE / blockWords.length * 100)
+        }    
+
+        totalProgressEJ += memorizedCountEJ;
+        totalProgressJE += memorizedCountJE;
+        totalWords += blockWords.length;
+                  
       
         return {
           block,
           progress,
-          unknownCount
         };
       });
                   
-      const overallProgress = totalWords > 0 ? Math.round(totalMemorized / totalWords * 100) : 0;
-
+      const overallProgress = {
+        EJ:  Math.round(totalProgressEJ / totalWords * 100),
+        JE:  Math.round(totalProgressJE / totalWords * 100)
+      }
+      
       result.sort((a, b) => a.block - b.block);
       res.status(200).json({ overallProgress, blocks: result });
     } catch (error) {

@@ -51,7 +51,6 @@ export default async function handler(req, res) {
             .resize({ width: 800 })
             .jpeg({ quality })
             .toBuffer();
-          console.log('compress loop')
         }
 
 

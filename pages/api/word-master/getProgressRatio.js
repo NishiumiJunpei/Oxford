@@ -16,28 +16,44 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: "User not found." });
       }
 
-      const currentChallengeThemeId = req.query.themeId || user.currentChallengeThemeId
+      const themeId = req.query.themeId || user.currentChallengeThemeId
 
       // テーマに基づいた単語リストを取得
-      const wordList = await getWordListByCriteria({ themeId: currentChallengeThemeId });
-      const wordListUserStatus = await getWordListUserStatus(userId);
+      const wordList = await getWordListByCriteria({ themeId });
+      const wordListUserStatus = await getWordListUserStatus(userId, themeId);
 
-      let totalMemorized = 0;
-      let totalWords = wordList.length;
+      let memorizedCountEJ = 0;
+      let memorizedCountJE = 0;
 
-      wordList.forEach(word => {
-        const status = wordListUserStatus.find(us => us.wordListId === word.id);
-        if (status && status.memorizeStatus === 'MEMORIZED') {
-          totalMemorized++;
+      wordList.forEach(word =>{
+        const status = wordListUserStatus.find(us => us.wordListId == word.id)
+        if (status){
+          // memorizeStatusEJのカウント
+          if (status.memorizeStatusEJ === 'MEMORIZED') {
+            memorizedCountEJ += 1;
+          } else if (status.memorizeStatusEJ === 'MEMORIZED2') {
+            memorizedCountEJ += 2;
+          }
+      
+          // memorizeStatusJEのカウント
+          if (status.memorizeStatusJE === 'MEMORIZED') {
+            memorizedCountJE += 1;
+          } else if (status.memorizeStatusJE === 'MEMORIZED2') {
+            memorizedCountJE += 2;
+          }
         }
-      });
 
-      const progressRatio = totalWords > 0 ? Math.round(totalMemorized / totalWords * 100) : 0;
-
+      })
+                  
+      const overallProgress = {
+        EJ:  Math.round(memorizedCountEJ / wordList.length * 100),
+        JE:  Math.round(memorizedCountJE / wordList.length * 100)
+      }
+      
       // テーマの情報を取得
-      const theme = await getTheme(currentChallengeThemeId);
+      const theme = await getTheme(themeId);
 
-      res.status(200).json({ theme, progressRatio });
+      res.status(200).json({ theme, overallProgress });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -25,29 +25,24 @@ export default async function handler(req, res) {
 
         return {
           ...word,
-          status: status.memorizeStatus,
+          memorizeStatusEJ: status.memorizeStatusEJ,
+          memorizeStatusJE: status.memorizeStatusJE,
           exampleSentence: word.exampleSentence, // statusの例文で上書き
           imageUrl: await getS3FileUrl(word.imageFilename),
           numNotMemorized: status.numNotMemorized,
-          lastNotMemorizedDate: status.lastNotMemorizedDate,
         };
       }));
 
-      // memorizeStatusがNOT_MEMORIZEDのデータに絞る
-      const weakWordList = allWordList.filter(word => word.status === 'NOT_MEMORIZED');
-
-      // numNotMemorizedで降順ソートし、同値の場合はlastNotMemorizedDateで昇順ソート
-      weakWordList.sort((a, b) => {
-        if (a.numNotMemorized === b.numNotMemorized) {
-          return new Date(a.lastNotMemorizedDate) - new Date(b.lastNotMemorizedDate);
-        }
-        return b.numNotMemorized - a.numNotMemorized;
-      });
-
-      const limitedWeakWordList = weakWordList.slice(0, 50);
-
+      const notMemorizedEJ = allWordList.filter(word => word.memorizeStatusEJ === 'NOT_MEMORIZED');
+      const memorizedEJ = allWordList.filter(word => word.memorizeStatusEJ === 'MEMORIZED');
+      const notMemorizedJE = allWordList.filter(word => word.memorizeStatusJE === 'NOT_MEMORIZED');
+      const memorizedJE = allWordList.filter(word => word.memorizeStatusJE === 'MEMORIZED');
+      
+      const combinedList = [...notMemorizedEJ, ...memorizedEJ, ...notMemorizedJE, ...memorizedJE];
+      const weakWordList = combinedList.slice(0, 50);
+      
       res.status(200).json({
-        weakWordList: limitedWeakWordList,
+        weakWordList,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

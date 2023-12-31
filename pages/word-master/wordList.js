@@ -151,7 +151,6 @@ const WordListPage = () => {
       setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
       const response = await fetch(`/api/word-master/getWordList?blockId=${blockId}`);
       const data = await response.json();
-      console.log('test', data)
       if (data && data.wordList) { // dataとdata.wordListが存在する場合のみセット
         setWordList(data.wordList);
         setProgress(data.progress);
@@ -194,7 +193,6 @@ const WordListPage = () => {
 
   const handleSaveStoryCreationDialog = (newStory) => {
     // 新しいストーリーをwordStoryListに追加
-    console.log('test', newStory)
     setWordStoryList(prevList => [...prevList, newStory]);
   };
 
@@ -299,7 +297,7 @@ const WordListPage = () => {
             <Chip variant="outlined" label="測定中" color="default" icon={<TimerIcon />} />
           ) :  (
             <Box display="flex" justifyContent="space-between" sx={{ width: '100%' }}>
-              <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
+              <Card sx={{ flex: 1, minWidth: 180, mr: 1 }}> {/* minWidth を追加 */}
                 <CardHeader 
                   title={<Typography variant="subtitle1">英⇨日</Typography>} 
                   titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -313,7 +311,7 @@ const WordListPage = () => {
                   </Typography>
                 </CardContent>
               </Card>
-              <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
+              <Card sx={{ flex: 1, minWidth: 180, mr: 1 }}> {/* minWidth を追加 */}
                 <CardHeader 
                   title={<Typography variant="subtitle1">日⇨英</Typography>} 
                   titleTypographyProps={{ variant: 'subtitle1' }} 

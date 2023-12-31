@@ -50,7 +50,7 @@ export default async function handler(req, res) {
       }    
 
       const updatedWordList = await Promise.all(wordList.map(async word => {
-        const userWordListStatus = await getWordListUserStatusByWordListId(userId, word.id);
+        const userWordListStatus = userWordStatus.find(us => us.wordListId == word.id)
 
         return {
           ...word,
@@ -63,18 +63,11 @@ export default async function handler(req, res) {
       }));
 
 
-      const unknownCount = wordList.filter(word => {
-        const status = userWordStatus.find(us => us.wordListId === word.id && us.userId === userId);
-        return !status || status.memorizeStatus === 'UNKNOWN';
-      }).length;
-
-
       const wordStoryList = await getWordStoriesByUserIdAndBlockId(userId, block.id);
 
       res.status(200).json({
         wordList: updatedWordList,
         progress,
-        unknownCount,
         wordStoryList,
         block,
       });

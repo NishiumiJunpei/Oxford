@@ -17,14 +17,14 @@ const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
       <DialogTitle>{selectedStory.storyTitle}</DialogTitle>
       <DialogContent>
         <Typography variant="subtitle1" gutterBottom>ストーリー</Typography>
-        <Typography variant="body1" style={{ fontSize: '24px' }} gutterBottom>{selectedStory.storyContent}</Typography>
+        <Typography variant="body1" gutterBottom>{selectedStory.storyContent}</Typography>
 
 
         <Typography variant="subtitle1" sx={{marginTop: 5}}>使用された単語</Typography>
         <List>
           {selectedStory.words.map((word, index) => (
             <ListItem key={index}>
-              <Typography variant="body1" className="preformatted-text" style={{ fontSize: '18px' }}>{word}</Typography>
+              <Typography variant="body1" className="preformatted-text">{word}</Typography>
             </ListItem>
           ))}
         </List>

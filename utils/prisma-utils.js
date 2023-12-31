@@ -178,7 +178,11 @@ export async function getWordListUserStatus(userId, themeId, blockId = '') {
   return await prisma.wordListUserStatus.findMany({
     where: whereClause,
     include: {
-      wordList: true  // WordList の詳細を含める
+      wordList: {
+        include: {
+          blocks: true
+        }
+      }
     }
   });
 }
@@ -196,18 +200,15 @@ export async function getWordListUserStatusByWordListId(userId, wordListId) {
 
   if (!statusRecord) {
     return {
-      memorizeStatus: 'UNKNOWN',
+      memorizeStatusEJ: 'NOT_MEMORIZED',
+      memorizeStatusJE: 'NOT_MEMORIZED',
       exampleSentence: null,
       lastMemorizedTimeAgo: null,
       lastNotMemorizedTimeAgo: null
     };
   }
 
-  return {
-    ...statusRecord,
-    lastMemorizedTimeAgo: statusRecord.lastMemorizedDate ? timeAgo(statusRecord.lastMemorizedDate) : null,
-    lastNotMemorizedTimeAgo: statusRecord.lastNotMemorizedDate ? timeAgo(statusRecord.lastNotMemorizedDate) : null
-  };
+  return statusRecord
 }
 
 export async function updateUserWordStatus(userId, wordListId, languageDirection, memorizeStatus) {

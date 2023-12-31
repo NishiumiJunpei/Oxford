@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from 'next/head';
 import CircularProgress from '@mui/material/CircularProgress';
-import {Typography, IconButton, Box} from '@mui/material';
+import {Typography, IconButton, Box, Card, CardHeader, CardContent} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
@@ -21,7 +21,7 @@ export default function Home() {
   const [isLoadingProgressRatio, setIsLoadingProgressRatio] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [themeName, setThemeName] = useState('');
-  const [progressRatio, setProgressRatio] = useState(0);
+  const [progressRatio, setProgressRatio] = useState({});
   
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function Home() {
       try {
         const response = await axios.get('/api/word-master/getProgressRatio');
         setThemeName(response.data.theme.name);
-        setProgressRatio(response.data.progressRatio);
+        setProgressRatio(response.data.overallProgress);
       } catch (error) {
         console.error('Failed to fetch theme progress:', error);
       }
@@ -102,10 +102,27 @@ export default function Home() {
               <OpenInBrowserIcon fontSize="small" style={{ marginLeft: 4, cursor: 'pointer' }} />
           </Typography>
 
-          <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
-            <ProgressCircle value={progressRatio} />
+          <Box display="flex" justifyContent="space-between" sx={{ width: '400px', mt: 3 }}>
+            <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> {/* minWidth を追加 */}
+              <CardHeader 
+                title={<Typography variant="subtitle1">英⇨日</Typography>} 
+                titleTypographyProps={{ variant: 'subtitle1' }} 
+              />
+              <CardContent>
+                <ProgressCircle value={progressRatio.EJ} />
+              </CardContent>
+            </Card>
+            <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> {/* minWidth を追加 */}
+              <CardHeader 
+                title={<Typography variant="subtitle1">日⇨英</Typography>} 
+                titleTypographyProps={{ variant: 'subtitle1' }} 
+              />
+              <CardContent>
+                <ProgressCircle value={progressRatio.JE} />
+              </CardContent>
+            </Card>
           </Box>
-          </>
+        </>
         )}
       </>
 
@@ -115,7 +132,7 @@ export default function Home() {
         </div>
       )}
       {currentWord && (
-        <div sx={{marginTop: 5}}>
+        <Box sx={{marginTop: 5}}>
           <SubTitleTypography text="今日の単語"/>          
           <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
             <IconButton onClick={handlePrevious} disabled={currentWordIndex === 0}>
@@ -149,7 +166,7 @@ export default function Home() {
             <Link href={`/word-master/wordList?blockId=${currentWord.block.id}&theme=${currentWord.block.theme.name}`} style={{color: 'blue'}}>({currentWord.block.theme.name} - {currentWord.block.name})</Link>
           </Typography> */}
 
-        </div>
+        </Box>
 
       )}
 

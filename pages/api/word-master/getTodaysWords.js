@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       const userWordStatus = await getWordListUserStatus(userId, themeId);
 
       const notMemorizedWords = userWordStatus.filter(status => 
-        status.memorizeStatus === 'NOT_MEMORIZED'
+        (status.memorizeStatusEJ !== 'MEMORIZED2' || status.memorizeStatusJE !== 'MEMORIZED2')
       );
 
       // ランダムに10個の単語を選択

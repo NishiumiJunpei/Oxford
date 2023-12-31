@@ -105,7 +105,9 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             </FormControl>
           </Box> */}
   
-            <Box sx={{ marginBottom: 2 }}>
+            <Typography variant="body1" gutterBottom>GPTがあなたが覚えていない単語を組み合わせて、下記の条件にあったストーリーを作ります。</Typography>
+            <Typography variant="body2" gutterBottom>注）GPTが条件にしがってくれないケースもあります。</Typography>
+            <Box sx={{ mb: 2, mt: 5 }}>
               <Typography variant="subtitle1" gutterBottom>ストーリーの長さ</Typography>
               {['Short', 'Medium', 'Long'].map((option) => (
                 <Chip
@@ -131,7 +133,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             </Box>
             <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>登場人物</Typography>
-              {['指定なし', 'ミッキー','ドラえもん','プーさん','ガンダム', '宇宙人', 'おばけ', 'うんち'].map((option) => (
+              {['指定なし', '大統領',,'優しいお姉さん','怖いおじさん', '宇宙人', 'おばけ', 'うんち君'].map((option) => (
                 <Chip
                   key={option}
                   label={option}

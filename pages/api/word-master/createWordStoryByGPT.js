@@ -1,9 +1,10 @@
 // createWordStoryByGPT.js
-import { getWordListByCriteria, getWordListUserStatusByWordListId, getUserById, saveWordStoryByGPT } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatus, getUserById, saveWordStoryByGPT } from '../../../utils/prisma-utils';
 import { calculateAge } from '../../../utils/utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { generateWordStory } from '../../../utils/openai-utils';
+import { shuffleArray } from '@/utils/utils'
 
 
 export default async function handler(req, res) {
@@ -24,18 +25,28 @@ export default async function handler(req, res) {
       blockId: parseInt(blockId)
     };
     const wordList = await getWordListByCriteria(criteria);
+    const userWordStatus = await getWordListUserStatus(userId, '', blockId); 
 
     let updatedWordList = await Promise.all(wordList.map(async word => {
-      const { memorizeStatus } = await getWordListUserStatusByWordListId(userId, word.id);
-      return { ...word, status: memorizeStatus };
+      const status = userWordStatus.find(us => us.wordListId == word.id)
+      return { ...word, status };
     }));
 
-    // 2. memorizeStatusがMEMORIZEDの単語を削除
-    updatedWordList = updatedWordList.filter(word => word.status !== 'MEMORIZED');
+    const notMemorizedEJ = updatedWordList.filter(word => word.status.memorizeStatusEJ === 'NOT_MEMORIZED');
+    const memorizedEJ = updatedWordList.filter(word => word.status.memorizeStatusEJ === 'MEMORIZED');
+    const notMemorizedJE = updatedWordList.filter(word => word.status.memorizeStatusJE === 'NOT_MEMORIZED');
+    const memorizedJE = updatedWordList.filter(word => word.status.memorizeStatusJE === 'MEMORIZED');
+    
+    shuffleArray(notMemorizedEJ)
+    shuffleArray(memorizedEJ)
+    shuffleArray(notMemorizedJE)
+    shuffleArray(memorizedJE)
+
+    const combinedList = [...notMemorizedEJ, ...memorizedEJ, ...notMemorizedJE, ...memorizedJE];
 
     // 3. lengthに基づいて単語を選択
     const wordCount = { 'Short': 5, 'Medium': 10, 'Long': 20 }[length];
-    updatedWordList = updatedWordList.sort(() => 0.5 - Math.random()).slice(0, wordCount);
+    updatedWordList = combinedList.slice(0, wordCount);
 
     // 4. OpenAI APIにプロンプトを渡す
     const response = await generateWordStory(updatedWordList, length, age, userProfile, genre, characters)

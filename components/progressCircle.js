@@ -1,14 +1,30 @@
 import React from 'react';
-import { CircularProgress, Typography, Box } from '@mui/material';
+import { CircularProgress, Typography, Box, useTheme } from '@mui/material';
 
 const ProgressCircle = ({ value }) => {
+  const theme = useTheme();
+  const isOverMax = value > 100;
+  const primaryColor = isOverMax ? theme.palette.primary.dark : theme.palette.primary.main;
+  const baseColor = isOverMax ? theme.palette.primary.main : 'lightgray';
+
+  console.log('base', baseColor)
   return (
     <Box position="relative" display="inline-flex">
-      {/* 灰色の円グラフ（全体） */}
-      <CircularProgress variant="determinate" value={100} size={100} style={{ color: 'lightgray' }} />
+      {/* ベースとなる円グラフ */}
+      <CircularProgress
+        variant="determinate"
+        value={100}
+        size={100}
+        style={{ color: baseColor }}
+      />
       
-      {/* 色付きの円グラフ（進捗部分） */}
-      <CircularProgress variant="determinate" value={value} size={100} style={{ position: 'absolute', left: 0 }} />
+      {/* 進捗を示す円グラフ */}
+      <CircularProgress
+        variant="determinate"
+        value={isOverMax ? value-100 : value}
+        size={100}
+        style={{ color: primaryColor, position: 'absolute', left: 0 }}
+      />
 
       {/* 進捗パーセンテージの表示 */}
       <Box
@@ -21,7 +37,14 @@ const ProgressCircle = ({ value }) => {
         alignItems="center"
         justifyContent="center"
       >
-        <Typography variant="caption" component="div" color="textSecondary">
+        <Typography 
+          variant="caption" 
+          component="div" 
+          style={{
+            fontWeight: isOverMax ? 'bold' : 'normal',
+            color: isOverMax ? theme.palette.primary.dark : 'textSecondary'
+          }}
+        >
           {`${Math.round(value)}%`}
         </Typography>
       </Box>

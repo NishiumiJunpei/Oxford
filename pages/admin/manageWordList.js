@@ -39,7 +39,6 @@ export default function Home() {
     if (wordDetail && wordDetail.id) {
         try {
             const response = await axios.post(`/api/word-master/createExampleSentenceForWordListId`, { wordListId: wordDetail.id });
-            console.log('aaa', response)
             setWordDetail(response.data.wordDetail);
             setIsLoadingWordDetail(false);
           } catch (error) {

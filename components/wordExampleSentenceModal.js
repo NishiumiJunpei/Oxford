@@ -1,7 +1,10 @@
 //wordExampleSentenceModal.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, useTheme,CircularProgress } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton } from '@mui/material';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updateWordList }) => {
     const theme = useTheme();
@@ -88,6 +91,67 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                     />
                 )}
 
+                <Divider sx={{mt: 3, mb: 3}}/>
+                <Typography variant="h6">
+                    ステータス
+                    <Tooltip 
+                        title="理解度テストで正解すると星マークが１つ付きます。さらに24時間以上あとにもう一度連続で正解すると2つ星マークがつきます。" 
+                        arrow
+                    >
+                        <IconButton size="small">
+                        <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                </Typography>
+                <Box sx={{ mt: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="subtitle1">英⇨日</Typography> 
+                        <Box sx={{ ml: 1, ml: 3 }}>
+                        {word?.memorizeStatusEJ === 'NOT_MEMORIZED' && (
+                            <>
+                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                            </>
+                        )}
+                        {word?.memorizeStatusEJ === 'MEMORIZED' && (
+                            <>
+                            <StarIcon style={{ color: 'gold' }} />
+                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                            </>
+                        )}
+                        {word?.memorizeStatusEJ === 'MEMORIZED2' && (
+                            <>
+                            <StarIcon style={{ color: 'gold' }} />
+                            <StarIcon style={{ color: 'gold' }} />
+                            </>
+                        )}
+                        </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                        <Typography variant="subtitle1">日⇨英</Typography> 
+                        <Box sx={{ ml: 1, ml: 3 }}>
+                        {word?.memorizeStatusJE === 'NOT_MEMORIZED' && (
+                            <>
+                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                            </>
+                        )}
+                        {word?.memorizeStatusJE === 'MEMORIZED' && (
+                            <>
+                            <StarIcon style={{ color: 'gold' }} />
+                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                            </>
+                        )}
+                        {word?.memorizeStatusJE === 'MEMORIZED2' && (
+                            <>
+                            <StarIcon style={{ color: 'gold' }} />
+                            <StarIcon style={{ color: 'gold' }} />
+                            </>
+                        )}
+                        </Box>
+                    </Box>
+                </Box>
 
             </DialogContent>
             <DialogActions style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
