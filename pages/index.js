@@ -84,6 +84,7 @@ export default function Home() {
   return (
     <Box maxWidth="lg">
       <Head>
+        <link rel="icon" href="/icon/favicon.ico" type="image/x-icon" />
         <title>すーすーEnglish</title>
       </Head>
 

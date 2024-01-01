@@ -18,7 +18,6 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
         const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${exampleSentence}`;  
         const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(imageDescription));
   
-  
         if (imageUrlAtOpenAI) { 
           // imageUrlAtOpenAIから画像データを取得
           const response = await axios.get(imageUrlAtOpenAI, {
@@ -38,8 +37,7 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
               .resize({ width: 800 })
               .jpeg({ quality })
               .toBuffer();
-          }
-  
+          } 
   
           const imageFilename = `wordData/wordImageCreatedByDALLE3-${wordListId}.png`;
           await uploadImageToS3(compressedImageBuffer, imageFilename); // 画像をS3にアップロード
@@ -49,8 +47,6 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
           await saveExampleSentenceAndImage(wordListId, exampleSentence, imageFilename);
         }
          
-        console.log('example sentence is created, ', english)
-
         word.exampleSentence = exampleSentence
         word.imageUrl = imageUrl
         return word

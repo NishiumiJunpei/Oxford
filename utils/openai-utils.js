@@ -44,12 +44,6 @@ export async function generateExampleSentences(english, japanese, userProfile=""
 // 画像を生成する関数
 export async function generateImage(description) {
   try {
-    // const image = await openai.images.generate({
-    //   model: "dall-e-2", 
-    //   prompt: description ,
-    //   n: 1,
-    //   size: '256x256'
-    // });
     const image = await openai.images.generate({
       model: "dall-e-3", 
       prompt: description ,
@@ -57,13 +51,10 @@ export async function generateImage(description) {
       size: '1024x1024'
     });
 
-
-    // 生成された画像のURLまたはデータを返す
     const ret = image ? image.data[0].url : ''
     return ret; // または適切なプロパティを使用
   } catch (error) {
     console.error('generateImage error:', error);
-    throw error;
   }
 }
 
