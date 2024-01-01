@@ -58,6 +58,7 @@ export default function SignIn({ csrfToken }) {
       >
         <Box sx={{ padding: 0, marginTop: 5, marginBottom: 5, textAlign: 'center' }}>
           <img src="/logo.png" alt="ロゴ" style={{ maxWidth: '250px', height: 'auto' }} />
+          <img src="/icon/powered-by-openai-badge-filled-on-light.svg" alt="OpenAIロゴ" style={{ maxWidth: '200px', height: 'auto', margin: '15px' }} />
         </Box>
 
         <form method="post" onSubmit={handleSignIn} style={{ mt: 1, width: '100%' }}>

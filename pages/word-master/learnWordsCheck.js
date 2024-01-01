@@ -4,11 +4,19 @@ import axios from 'axios';
 import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
+import WordExampleSentenceModal from '@/components/wordExampleSentenceModal';
 
 
 const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
   const router = useRouter();
   const [wordDetail, setWordDetail] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+
+  const handleOpenModalWord = (index) => {
+    setSelectedIndex(index);
+    setOpenModal(true);
+  };
 
 
   // 画像ファイル名の配列
@@ -35,16 +43,15 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
       flexDirection="column" 
       alignItems="center" 
       justifyContent="flex-start" // このプロパティを 'flex-start' に変更
-      height="100vh"
       marginTop={2} // 上にマージンを追加
     >
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{mb: 5}}>
         よくできました！
       </Typography>
-      {/* <img width="300" src={`/images/${randomImage}`} alt="Completion" /> */}
+
       {notMemorizedWordList?.length > 0 && (
         <>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h6" gutterBottom>
             わからなかった単語
           </Typography>
           <TableContainer component={Paper}>
@@ -56,8 +63,8 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
                 </TableRow>
               </TableHead>
               <TableBody>
-                {notMemorizedWordList?.map((word) =>
-                    <TableRow key={word.id} hover onClick={() => setWordDetail(word)}>
+                {notMemorizedWordList?.map((word, index) =>
+                    <TableRow key={word.id} hover onClick={() => handleOpenModalWord(index)} sx={{cursor: 'pointer'}}>
                       <TableCell>{word.english}</TableCell>
                       <TableCell>{word.japanese}</TableCell>
                     </TableRow>
@@ -68,23 +75,22 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
         </>
       )}
 
-        {wordDetail && (
-          <Box sx={{mb: 5}}>
-            <h2>{wordDetail.english}</h2>
-            <p>{wordDetail.japanese}</p>
-            <p> {wordDetail.exampleSentence}</p>
-            {wordDetail.image && <img src={wordDetail.image} alt={wordDetail.english} />}
-
-            {wordDetail?.imageUrl && (
-                <img 
-                    src={wordDetail.imageUrl} 
-                    style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }} 
-                />
-            )}
-
-          </Box>
-        )}
-
+      {wordDetail && (
+        <Box sx={{mb: 5, mt: 5}}>
+          <Typography variant="subtitle1">{wordDetail.english}</Typography>
+          <Typography variant="subtitle1">{wordDetail.japanese}</Typography>
+          <Typography className="preformatted-text" style={{ marginTop: 20 }}>
+              {wordDetail.exampleSentence}
+          </Typography>
+          {wordDetail?.imageUrl && (
+            <img 
+                src={wordDetail.imageUrl} 
+                alt={wordDetail.english} 
+                style={{ marginTop: 10, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
+            />
+          )}
+        </Box>
+      )}
 
       <Link href={`/word-master/wordList?blockId=${blockId}`} passHref>
         <Button variant="default" color="primary" sx={{marginTop: 3}}>
@@ -92,6 +98,13 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
         </Button>
       </Link>
     </Box>
+    <WordExampleSentenceModal
+      open={openModal}
+      onClose={()=>setOpenModal(false)}
+      wordList={notMemorizedWordList}
+      initialIndex={selectedIndex}
+    />
+
   </Container>
   )
 }
@@ -109,8 +122,6 @@ const LearnWordsCheck = () => {
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [nextButtonDisabled, setNextButtonDisabled] = useState(true); // 次へボタンの無効化状態
     const [isFinish, setIsFinish] = useState(false);
-
-    console.log('test', notMemorizedWordList)
   
     useEffect(() => {
       // URLクエリパラメータを使用してAPIから単語データを取得する

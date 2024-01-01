@@ -13,12 +13,11 @@ export default async function handler(req, res) {
         }
 
         const wordList = await getWordListByCriteria({themeId: parseInt(themeId)})
-        console.log('test', wordList.length)
         const updatedBlocks = blocks.map(block =>{
-          const words = wordList.filter(w => w.blocks.some(b => b.blockId == block.id))
-          const notExampleWordWords = words.filter(w => !w.imageFilename)
+        const words = wordList.filter(w => w.blocks.some(b => b.blockId == block.id))
+        const notExampleWordWords = words.filter(w => !w.imageFilename)
 
-          return {
+        return {
             ...block,
             wordNum: words.length,
             notExampleWordNum: notExampleWordWords.length    

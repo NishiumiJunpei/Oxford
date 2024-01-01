@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Dialog, DialogActions, DialogContent, DialogTitle, 
   Button, Chip, FormControl, InputLabel, Select, MenuItem, 
-  Box, Typography, CircularProgress, Divider 
+  Box, Typography, CircularProgress, Divider , Avatar
 } from '@mui/material';
 
 const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
@@ -85,7 +85,13 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
   
     return (
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        <DialogTitle>ストーリー作成</DialogTitle>
+
+        <DialogTitle> 
+          <Box display="flex" alignItems="center">
+            <img src="/icon/openai-logomark.svg" style={{width: '20px', marginRight: '2'}}  />          
+            ストーリー作成
+          </Box>
+        </DialogTitle>
         <DialogContent>
           {/* <Box sx={{ marginBottom: 2 }}>
             <Typography variant="subtitle1" gutterBottom>対象ブロック</Typography>
@@ -104,7 +110,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
               </Select>
             </FormControl>
           </Box> */}
-  
+
             <Typography variant="body1" gutterBottom>GPTがあなたが覚えていない単語を組み合わせて、下記の条件にあったストーリーを作ります。</Typography>
             <Typography variant="body2" gutterBottom>注）GPTが条件にしがってくれないケースもあります。</Typography>
             <Box sx={{ mb: 2, mt: 5 }}>
@@ -165,7 +171,14 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleSubmit} color="primary" disabled={isSubmitDisabled || loading || storyData}>作成</Button>
+            <Button onClick={handleSubmit} 
+              color="primary" 
+              disabled={isSubmitDisabled || loading || storyData}
+            >
+              作成
+            </Button>
+            
+
             <Button onClick={onClose} disabled={loading}>閉じる</Button>
           </DialogActions>
         </Dialog>

@@ -87,7 +87,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                     <img 
                         src={word.imageUrl} 
                         alt={word.english} 
-                        style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }} 
+                        style={{ marginTop: 20, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
                     />
                 )}
 

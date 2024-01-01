@@ -7,7 +7,6 @@ const ProgressCircle = ({ value }) => {
   const primaryColor = isOverMax ? theme.palette.primary.dark : theme.palette.primary.main;
   const baseColor = isOverMax ? theme.palette.primary.main : 'lightgray';
 
-  console.log('base', baseColor)
   return (
     <Box position="relative" display="inline-flex">
       {/* ベースとなる円グラフ */}

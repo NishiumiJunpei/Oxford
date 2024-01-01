@@ -17,8 +17,10 @@ export function enqueueRequest(callback) {
       lastRequestTime = Date.now();
       try {
         const result = await callback();
+        console.log(`Task completed. Remaining tasks in the queue: ${requestQueue.length}`);
         resolve(result);
       } catch (error) {
+        console.log(`Task failed. Remaining tasks in the queue: ${requestQueue.length}`);
         reject(error);
       }
     });
