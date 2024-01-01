@@ -85,6 +85,7 @@ export default function Home() {
                     <TableCell>{word.english}</TableCell>
                     <TableCell>{word.japanese}</TableCell>
                     <TableCell>{item.block?.theme?.name}</TableCell>
+                    <TableCell>{item.block?.id}</TableCell>
                     <TableCell>{item.block?.name}</TableCell>
                   </TableRow>
                 ))

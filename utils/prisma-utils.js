@@ -6,6 +6,14 @@ export async function getThemes(){
   return await prisma.theme.findMany()
 }
 
+export async function getBlocks(themeId){
+  return await prisma.block.findMany({
+    where: {
+      themeId: themeId
+    }
+  })
+}
+
 export async function getUserById(id) {
   return await prisma.user.findUnique({
     where: { id },

@@ -22,8 +22,6 @@ export default async function handler(req, res) {
       const wordList = await getWordListByCriteria(criteria);
       const userWordStatus = await getWordListUserStatus(userId, block.theme.id, parseInt(blockId)); 
 
-      console.log('test3', userId, block.theme.id, parseInt(blockId))
-      console.log('test3', userWordStatus)
 
       // progress計算
       let memorizedCountEJ = 0;

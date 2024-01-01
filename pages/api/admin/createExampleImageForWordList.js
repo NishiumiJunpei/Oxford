@@ -7,7 +7,7 @@ import { authOptions } from '../auth/[...nextauth]';
 const prisma = new PrismaClient();
 
 // ThemeのnameとBlockのnameに基づくWordListデータを抽出し、条件に応じて更新する関数
-async function updateWordList(themeName, blockName) {
+async function updateWordList(blockId) {
   try {
     // 指定されたThemeとBlockに紐づくWordListを取得
     const wordLists = await prisma.wordList.findMany({
@@ -15,10 +15,7 @@ async function updateWordList(themeName, blockName) {
         blocks: {
           some: {
             block: {
-              name: blockName,
-              theme: {
-                name: themeName,
-              },
+              id: blockId
             },
           },
         },
@@ -49,13 +46,12 @@ export default async function handler(req, res) {
   const userId = session.userId;
   if (userId != 1 ) return 'error'
 
-  const {blockName} = req.query
+  const {blockId} = req.query
 
-  const themeName = '英検準１級'
   try{
    
     // 関数の使用例
-    updateWordList(themeName, blockName);
+    updateWordList(parseInt(blockId));
 
     //単体
 //    await createExampleSentenceAndImageByGPT(4284);

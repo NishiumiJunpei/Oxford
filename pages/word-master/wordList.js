@@ -262,35 +262,37 @@ const WordListPage = () => {
         ) : (
           <>
 
-        <Box display="flex" alignItems="center" mt={1} width="100%" sx={{marginBottom: 5}}>
-          <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
-            <Typography variant="h4" component="div" sx={{mr: 5}}>
+        <Box display="flex" width="100%" sx={{flexDirection: { xs: 'column', sm: 'row' }, marginBottom: 2}}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="h4"sx={{mb: 1, mr: 2}}>
                 {block?.theme.name}
             </Typography>
+          </Box>
 
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <IconButton
-                onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) - 1}`)}
-                disabled={blockId === '1'}
-              >
-                <ArrowBackIosIcon />
-              </IconButton>
-              <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1 }}>{block?.name}</Avatar>
-              <IconButton
-                onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`)}
-              >
-                <ArrowForwardIosIcon />
-              </IconButton>
-
-            </Box>
+          <Box display="flex" alignItems="center" justifyContent="flex-start">
+            <IconButton
+              onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) - 1}`)}
+              disabled={blockId === '1'}
+            >
+              <ArrowBackIosIcon />
+            </IconButton>
+            <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1 }}>
+              {block?.name}
+            </Avatar>
+            <IconButton
+              onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`)}
+            >
+              <ArrowForwardIosIcon />
+            </IconButton>
           </Box>
         </Box>
-        
+
+
 
         <SubTitleTypography text="ステータス" />
         <Box display="flex" alignItems="center" sx={{mb: 2}}>
           <Box display="flex" justifyContent="space-between" sx={{ width: '100%' }}>
-            <Card sx={{ flex: 1, minWidth: 180, mr: 1 }}> {/* minWidth を追加 */}
+            <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
               <CardHeader 
                 title={<Typography variant="subtitle1">英⇨日</Typography>} 
                 titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -304,7 +306,7 @@ const WordListPage = () => {
                 </Typography>
               </CardContent>
             </Card>
-            <Card sx={{ flex: 1, minWidth: 180, mr: 1 }}> {/* minWidth を追加 */}
+            <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
               <CardHeader 
                 title={<Typography variant="subtitle1">日⇨英</Typography>} 
                 titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -346,8 +348,8 @@ const WordListPage = () => {
                     <TableCell>#</TableCell>
                     <TableCell>{filterSettings.isEnglishToJapanese ? "English" : "Japanese"}</TableCell>
                     <TableCell>{filterSettings.isEnglishToJapanese ? "Japanese" : "English"}</TableCell>
-                    <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>英→日</TableCell>
-                    <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>日→英</TableCell>
+                    <TableCell>英→日</TableCell>
+                    <TableCell>日→英</TableCell>
                     <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
                   </TableRow>
                 </TableHead>
