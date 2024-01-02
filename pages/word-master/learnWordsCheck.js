@@ -265,10 +265,6 @@ const LearnWordsCheck = () => {
         <FinishLearnWordsCheck blockId={blockId} notMemorizedWordList={notMemorizedWordList}/>
       ):(
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10, height: 'calc(100vh - 10px)' }}>
-          <Button onClick={handleExit} sx={{ position: 'absolute', top: 20, right: 20, zIndex: 1500 }}>
-            <CloseIcon />
-          </Button>
-
           
           <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
           <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>

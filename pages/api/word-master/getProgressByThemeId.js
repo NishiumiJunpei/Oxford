@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       let totalProgressJE = 0;
       let totalWords = 0;
 
-      const result = blocks.map(block => {
+      const updatedBlocks = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks[0].block.id === block.id);
         const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
 
@@ -79,13 +79,35 @@ export default async function handler(req, res) {
         };
       });
                   
+      updatedBlocks.sort((a, b) => a.block - b.block);
+
       const overallProgress = {
         EJ:  Math.round(totalProgressEJ / totalWords * 100),
         JE:  Math.round(totalProgressJE / totalWords * 100)
       }
+
+
+      const blockToLearn = {}
+    
+      // 指定されたパーセンテージ以下で最小のnameを持つ要素を見つける関数
+      const findBlockByProgress = (blocks, progressKey, maxProgress) => {
+        return blocks
+          .filter(item => item.progress[progressKey] < maxProgress)
+          .sort((a, b) => a.block.name.localeCompare(b.block.name) || a.progress[progressKey] - b.progress[progressKey])
+          .find(item => true)?.block || null;
+      }
+    
+      // EJとJEに対して処理を実行
+      blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 100)
+        || findBlockByProgress(updatedBlocks, 'EJ', 150)
+        || findBlockByProgress(updatedBlocks, 'EJ', 200);
+
+        blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 100)
+        || findBlockByProgress(updatedBlocks, 'JE', 150)
+        || findBlockByProgress(updatedBlocks, 'JE', 200);
+        
       
-      result.sort((a, b) => a.block - b.block);
-      res.status(200).json({ overallProgress, blocks: result });
+      res.status(200).json({ overallProgress, blocks: updatedBlocks, blockToLearn });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

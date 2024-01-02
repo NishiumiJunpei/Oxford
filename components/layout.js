@@ -53,7 +53,7 @@ export default function Layout({ children }) {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 0.5,
           transition: 'margin 0.3s',
           width: '100%',
           height: 'auto',

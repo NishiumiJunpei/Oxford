@@ -55,7 +55,7 @@ export const authOptions = {
         const existingUser = await findUserByEmail(userEmail);
 
         if (!existingUser) {
-          const token = await createSignUpToken(userEmail); // この関数は独自に実装する必要があります
+          const token = await createSignUpToken(userEmail); 
 
           const domainUrl = process.env.DOMAIN_URL;
           return `/auth/signup/inputUserInfo?token=${token}`;

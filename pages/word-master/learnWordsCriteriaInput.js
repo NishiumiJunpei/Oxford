@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Chip, Button, Box, Typography, FormControlLabel, Checkbox } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
@@ -19,9 +20,17 @@ const LearnWordsCriteriaInput = () => {
   
     router.push(`/word-master/learnWordsCheck?${queryParams}`);
   };
-  
+ 
+  const handleBack = () =>{
+    router.back()
+  }
+
   return (
     <Box sx={{ width: '100%', maxWidth: 500}}>
+      <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
+        戻る
+      </Button>
+
       <Typography variant="h5" sx={{mb: 5}}>理解度チェック</Typography>
       
       <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>モード</Typography>

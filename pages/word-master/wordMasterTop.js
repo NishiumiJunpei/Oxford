@@ -15,9 +15,10 @@ const HomePage = () => {
   const [data, setData] = useState([]);
   const [tabValue, setTabValue] = useState(0); // タブの状態
   const [overallProgress, setOverallProgress] = useState({}); 
+  const [blockToLearn, setBlockToLearn] = useState({}); 
   const [isLoading, setIsLoading] = useState(false);
   const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
- const [weakWordList, setWeakWordList] = useState([]);
+  const [weakWordList, setWeakWordList] = useState([]);
  
 
   const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
@@ -28,6 +29,7 @@ const HomePage = () => {
       const response = await axios.get(`/api/word-master/getProgressByThemeId?themeId=${themeToFetch}`);
       setData(response.data.blocks);
       setOverallProgress(response.data.overallProgress)
+      setBlockToLearn(response.data.blockToLearn)
       setIsLoading(false);  
     } catch(error){
       console.error('Error fetching words:', error);
@@ -51,7 +53,6 @@ const HomePage = () => {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
-
 
   return (
     <Box maxWidth="lg">
@@ -80,6 +81,15 @@ const HomePage = () => {
                 />
                 <CardContent>
                   <ProgressCircle value={overallProgress.EJ} />
+                  {blockToLearn.EJ?.id && (
+                    <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.EJ.id)}>
+                      学習する
+                      <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
+                        {blockToLearn.EJ.name}
+                      </Avatar>
+                    </Button>
+                  )}
+
                 </CardContent>
               </Card>
               <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> {/* minWidth を追加 */}
@@ -89,6 +99,15 @@ const HomePage = () => {
                 />
                 <CardContent>
                   <ProgressCircle value={overallProgress.JE} />
+                  {blockToLearn.JE?.id && (
+                    <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.JE.id)}>
+                      学習する
+                    <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
+                      {blockToLearn.JE.name}
+                    </Avatar>
+                  </Button>
+                )}
+
                 </CardContent>
               </Card>
             </Box>

@@ -85,7 +85,7 @@ export default function Home() {
     <Box maxWidth="lg">
       <Head>
         <link rel="icon" href="/icon/favicon.ico" type="image/x-icon" />
-        <title>すーすーEnglish</title>
+        <title>susu English</title>
       </Head>
 
       <>
