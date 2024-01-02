@@ -20,8 +20,13 @@ export default async function handler(req, res) {
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
 
       const blocks = wordList.reduce((acc, word) => {
-        if (!acc.some(block => block.id === word.blocks[0].block.id)) {
-          acc.push(word.blocks[0].block);
+        const blocksTemp = word.blocks.find(b => b.block.themeId == themeId)
+        if (blocksTemp){
+          const block = blocksTemp.block
+
+          if (!acc.some(b => b.id === block.id)){
+            acc.push(block)
+          }
         }
         return acc;
       }, []);
@@ -39,7 +44,7 @@ export default async function handler(req, res) {
       let totalWords = 0;
 
       const updatedBlocks = blocks.map(block => {
-        const blockWords = wordList.filter(word => word.blocks[0].block.id === block.id);
+        const blockWords = wordList.filter(word => word.blocks.some(b=> b.block.id === block.id));
         const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
 
         // progress計算

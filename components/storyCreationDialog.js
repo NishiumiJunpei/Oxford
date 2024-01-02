@@ -111,7 +111,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             </FormControl>
           </Box> */}
 
-            <Typography variant="body1" gutterBottom>GPTがあなたが覚えていない単語を組み合わせて、下記の条件にあったストーリーを作ります。</Typography>
+            <Typography variant="body1" gutterBottom>GPTがあなたが覚えていない単語を組み合わせて、条件にあったストーリーを作ります。</Typography>
             <Typography variant="body2" gutterBottom>注）GPTが条件にしがってくれないケースもあります。</Typography>
             <Box sx={{ mb: 2, mt: 5 }}>
               <Typography variant="subtitle1" gutterBottom>ストーリーの長さ</Typography>

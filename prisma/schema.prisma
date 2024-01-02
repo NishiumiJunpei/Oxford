@@ -61,6 +61,7 @@ model Block {
   id        Int         @id @default(autoincrement())
   name      String
   themeId   Int
+  displayOrder Int?
   theme     Theme       @relation(fields: [themeId], references: [id])
   wordLists WordListBlock[]
   WordStoryByGPT            WordStoryByGPT[]
