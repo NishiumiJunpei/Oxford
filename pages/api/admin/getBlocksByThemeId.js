@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         })
 
   
-        updatedBlocks.sort((a, b) => a.name < b.name);
+        updatedBlocks.sort((a, b) => a.displayOrder - b.displayOrder);
         res.status(200).json({ blocks: updatedBlocks });
 
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box } from '@mui/material';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box, Typography } from '@mui/material';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -106,7 +106,9 @@ export default function Home() {
           <p>Id: {wordDetail.id}</p>
           <h2>{wordDetail.english}</h2>
           <p>{wordDetail.japanese}</p>
-          <p> {wordDetail.exampleSentence}</p>
+          <Typography className="preformatted-text">
+          {wordDetail.exampleSentence}
+          </Typography>
           {wordDetail.image && <img src={wordDetail.image} alt={wordDetail.english} />}
 
           {wordDetail?.imageUrl && (

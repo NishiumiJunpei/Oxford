@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typography, Avatar, FormControlLabel,Switch,
-  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Chip,
+import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typography, Avatar, IconButton,Switch,
+  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Tooltip,
   Card, CardHeader, CardContent } from '@mui/material';
-import TimerIcon from '@mui/icons-material/Timer';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WeakWordsList from '../../components/weakWordList'; 
 import ProgressCircle from '@/components/progressCircle';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 
 const HomePage = () => {
@@ -74,11 +73,20 @@ const HomePage = () => {
               <ProgressCircle value={overallProgress} />
             </Box> */}
             <Box display="flex" justifyContent="space-between" sx={{ width: '400px', mt: 5 }}>
-              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> {/* minWidth を追加 */}
-                <CardHeader 
-                  title={<Typography variant="subtitle1">英⇨日</Typography>} 
-                  titleTypographyProps={{ variant: 'subtitle1' }} 
-                />
+              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
+              <CardHeader 
+                title={
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="subtitle1">英⇨日</Typography>
+                    <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                      <IconButton size="small" sx={{ marginLeft: 1 }}>
+                        <HelpOutlineIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                } 
+                titleTypographyProps={{ variant: 'subtitle1' }} 
+              />
                 <CardContent>
                   <ProgressCircle value={overallProgress.EJ} />
                   {blockToLearn.EJ?.id && (
@@ -92,16 +100,25 @@ const HomePage = () => {
 
                 </CardContent>
               </Card>
-              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> {/* minWidth を追加 */}
-                <CardHeader 
-                  title={<Typography variant="subtitle1">日⇨英</Typography>} 
-                  titleTypographyProps={{ variant: 'subtitle1' }} 
-                />
+              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
+              <CardHeader 
+                title={
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="subtitle1">日⇨英</Typography>
+                    <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                      <IconButton size="small" sx={{ marginLeft: 1 }}>
+                        <HelpOutlineIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                } 
+                titleTypographyProps={{ variant: 'subtitle1' }} 
+              />
                 <CardContent>
-                  <ProgressCircle value={overallProgress.JE} />
-                  {blockToLearn.JE?.id && (
-                    <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.JE.id)}>
-                      学習する
+                <ProgressCircle value={overallProgress.JE} />
+                {blockToLearn.JE?.id && (
+                  <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.JE.id)}>
+                    学習する
                     <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
                       {blockToLearn.JE.name}
                     </Avatar>

@@ -57,10 +57,31 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
         // const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
         const url = `https://translate.google.com/?sl=en&tl=ja&text=${englishWord}&op=translate&hl=ja`;
         window.open(url, '_blank');
-      };    
+    };    
+
+
+    useEffect(() =>{
+        // キーボードイベントのハンドラを追加
+        const handleKeyPress = (event) => {
+            if (event.key === 'ArrowLeft') {
+                handlePrev();
+            } else if (event.key === 'ArrowRight') {
+                handleNext();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+
+        // コンポーネントのクリーンアップ時にイベントリスナーを削除
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+
+    },[handlePrev, handleNext]);
+
       
 
-      const word = wordList[index];
+    const word = wordList[index];
 
     return (
         <Dialog
@@ -90,12 +111,16 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                         style={{ marginTop: 20, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
                     />
                 )}
+                <Typography variant="body2" sx={{mb: 2}}>
+                    Created by GPT & DALLE3 / susu English
+                </Typography>
+                
 
                 <Divider sx={{mt: 3, mb: 3}}/>
                 <Typography variant="h6">
                     ステータス
                     <Tooltip 
-                        title="理解度テストで正解すると星マークが１つ付きます。さらに24時間以上あとにもう一度連続で正解すると2つ星マークがつきます。" 
+                        title="理解度テストで正解すると星マークが１つ付きます。24時間後にもう一度連続で正解すると2つ星マークがつきます。" 
                         arrow
                     >
                         <IconButton size="small">

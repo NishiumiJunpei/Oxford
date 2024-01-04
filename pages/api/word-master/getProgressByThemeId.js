@@ -98,10 +98,17 @@ export default async function handler(req, res) {
       const findBlockByProgress = (blocks, progressKey, maxProgress) => {
         return blocks
           .filter(item => item.progress[progressKey] < maxProgress)
-          .sort((a, b) => a.block.name.localeCompare(b.block.name) || a.progress[progressKey] - b.progress[progressKey])
+          .sort((a, b) => {
+            // displayOrderで比較
+            if (a.block.displayOrder !== b.block.displayOrder) {
+              return a.block.displayOrder - b.block.displayOrder;
+            }
+            // displayOrderが同じ場合、progressで比較
+            return a.progress[progressKey] - b.progress[progressKey];
+          })
           .find(item => true)?.block || null;
-      }
-    
+      };
+          
       // EJとJEに対して処理を実行
       blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 100)
         || findBlockByProgress(updatedBlocks, 'EJ', 150)

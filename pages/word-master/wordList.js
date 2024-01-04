@@ -254,13 +254,14 @@ const WordListPage = () => {
   const handleClickLearnByVisual = () =>{
     scrollToWordSection() 
     setSelectedTab(0)
+    setFilterSettings({...filterSettings, showEJOnlyNOT_MEMORIZED: true})
     handleOpenModalWord(0)
   }
   
-  const handleClickLearnForWeakWords = () =>{
+  const handleClickRedSheet = () =>{
     scrollToWordSection() 
     setSelectedTab(0)
-    setFilterSettings({...filterSettings, showEJOnlyNOT_MEMORIZED: true})
+    setFilterSettings({...filterSettings, showEJOnlyNOT_MEMORIZED: true, showAnswer: false})
   }
 
   const handleClickLearnByAIStory = ()=>{
@@ -366,9 +367,10 @@ const WordListPage = () => {
                   <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>ビジュアルで覚える</Typography>
                   <NavigateNextIcon color="secondary"/>
                 </div>
-                <div onClick={handleClickLearnForWeakWords} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
+                <div onClick={handleClickRedSheet
+            } style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
                   <PsychologyAltIcon style={{ marginRight: theme.spacing(1) }} />
-                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>苦手に絞って覚える</Typography>
+                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>赤シート風に隠して覚える</Typography>
                   <NavigateNextIcon color="secondary"/>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: theme.spacing(2) }}>
@@ -429,7 +431,7 @@ const WordListPage = () => {
                       <TableCell>{filterSettings.isEnglishToJapanese ? "Japanese" : "English"}</TableCell>
                       <TableCell>英→日</TableCell>
                       <TableCell>日→英</TableCell>
-                      <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell>
+                      {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -438,14 +440,21 @@ const WordListPage = () => {
                         key={index}
                         sx={{ 
                           backgroundColor: (word.memorizeStatusEJ === 'NOT_MEMORIZED' && word.memorizeStatusJE === 'NOT_MEMORIZED') && theme.palette.secondary.light,
-                          cursor: 'pointer', // カーソルをポインターに設定して、クリック可能であることを示します
+                          cursor: 'pointer', 
                           }}
-                        onClick={() => handleOpenModalWord(index)} // ここでクリ
+                        onClick={() => handleOpenModalWord(index)}
                       >
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{filterSettings.isEnglishToJapanese ? word.english : word.japanese}</TableCell>
                         <TableCell>
-                          {filterSettings.showAnswer ? filterSettings.isEnglishToJapanese ? word.japanese : word.english : "　　　　　　　　" }
+                          <Typography
+                            style={{
+                              backgroundColor: !filterSettings.showAnswer ? 'lightcoral' : 'transparent',
+                              color: !filterSettings.showAnswer ? 'lightcoral' : 'inherit',
+                            }}
+                          >
+                            {filterSettings.isEnglishToJapanese ? word.japanese : word.english}
+                          </Typography>
                         </TableCell>
                         <TableCell>
                           {word.memorizeStatusEJ === 'NOT_MEMORIZED' && (
@@ -489,14 +498,14 @@ const WordListPage = () => {
                         </TableCell>
 
 
-                        <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
+                        {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
                           {filterSettings.showAnswer ? 
                             (word.exampleSentence?.length > 30
                             ? `${word.exampleSentence?.substring(0, 30)}...`
                             : word.exampleSentence)
                             : "　　　　　　　　　　　　　　　"
                           }
-                        </TableCell>
+                        </TableCell> */}
                         {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
                           <Typography>
                               {word.userWordListStatus.lastMemorizedTimeAgo }

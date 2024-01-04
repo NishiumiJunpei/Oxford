@@ -4,6 +4,7 @@ import { useSession, signIn, SessionProvider } from 'next-auth/react';
 import { useRouter } from "next/router";
 import theme from '../styles/theme';
 import Layout from '../components/layout';
+import LayoutAdmin from '../components/layoutAdmin'; // LayoutAdminをインポート
 import '../styles/globals.css'; // グローバルスタイルシート
 
 const MyApp = ({ Component, pageProps: { session, ...pageProps } }) => {
@@ -26,13 +27,17 @@ const InnerApp = ({ Component, pageProps, router }) => {
     }
   }, [session, status, router.pathname]);
 
-  // /public/ または /auth/ パスの場合は Layout を適用しない
   const noLayout = router.pathname.startsWith('/public/') || router.pathname.startsWith('/auth/');
+  const adminLayout = router.pathname.startsWith('/admin/');
 
   return (
     <ThemeProvider theme={theme}>
       {noLayout ? (
         <Component {...pageProps} />
+      ) : adminLayout ? (
+        <LayoutAdmin>
+          <Component {...pageProps} />
+        </LayoutAdmin>
       ) : (
         <Layout>
           <Component {...pageProps} />
