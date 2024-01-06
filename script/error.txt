@@ -1,0 +1,11 @@
+Error processing record with ID 2326.mockingly: TypeError: Cannot read properties of undefined (reading 'replace')
+Error processing record with ID 3691.textile: PrismaClientKnownRequestError: 
+Invalid `prisma.wordList.update()` invocation in
+/Users/junpei.nishiumi/Documents/myApp/MasterEnglish/Oxford/script/updateWordList.js:55:31
+
+  52 // console.log('synonyms:', synonyms)
+  53 
+  54 // Prismaを使用してデータベースを更新
+→ 55 await prisma.wordList.update(
+Server has closed the connection.
+Error processing record with ID 2326.mockingly: SyntaxError: Unterminated string in JSON at position 711

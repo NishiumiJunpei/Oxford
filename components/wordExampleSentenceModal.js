@@ -5,6 +5,8 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, 
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+
 
 const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updateWordList }) => {
     const theme = useTheme();
@@ -28,6 +30,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
         }
     };
 
+    //将来のために残しているが、現在無効中
     const handleExampleSentenceGenerate = async () =>{
         setIsLoading(true); // ローディング開始
         try {
@@ -40,8 +43,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
           const data = response.data;
           const newWordData = {
             ...wordList[index],
-            exampleSentence: data.exampleSentence,
-            imageUrl: data.imageUrl
+            ...data,
           };
           updateWordList(newWordData);
       
@@ -56,10 +58,35 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
     const handleSearch = (englishWord) => {
         // const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
         const url = `https://translate.google.com/?sl=en&tl=ja&text=${englishWord}&op=translate&hl=ja`;
-        window.open(url, '_blank');
+        window.open(url, 'googleTranslation');
     };    
 
+    const handlePlayPhrase = (englishWord) => {
+        const url = `https://playphrase.me/#/search?q=${englishWord}`;
+        window.open(url, 'playphraseWindow');
+    };    
 
+    const playAudio = async (text) => {
+        try {
+          const response = await fetch('/api/common/synthesize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text }),
+          });
+      
+          const data = await response.json();
+          if (data.audioContent) {
+            const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.play();
+          }
+        } catch (error) {
+          console.error('Error during audio playback:', error);
+        }
+      };      
+
+    
     useEffect(() =>{
         // キーボードイベントのハンドラを追加
         const handleKeyPress = (event) => {
@@ -98,11 +125,34 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                 }
             }}
         >
-            <DialogTitle>{word?.english}</DialogTitle>
+            <DialogTitle>
+            {word?.english}
+            <IconButton onClick={() => playAudio(word.english)}>
+                <VolumeUpIcon />
+            </IconButton>
+            </DialogTitle>
             <DialogContent>
                 <Typography variant="subtitle1" style={{ marginTop: 20 }}>{word?.japanese}</Typography>
-                <Typography className="preformatted-text" style={{ marginTop: 20 }}>
-                    {word?.exampleSentence}
+
+                <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
+                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
+                    <IconButton onClick={() => playAudio(word.exampleSentenceE)} size="small">
+                        <VolumeUpIcon />
+                    </IconButton>
+                </Typography>
+
+                <Typography variant="body1">
+                    {word?.exampleSentenceE}
+                </Typography>
+                <Typography variant="body1">
+                    {word?.exampleSentenceJ}
+                </Typography>
+
+                <Typography variant="body2" style={{ marginTop: 20 }}>
+                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
+                </Typography>
+                <Typography variant="body1">
+                    {word?.synonyms}
                 </Typography>
                 {word?.imageUrl && (
                     <>
@@ -207,6 +257,14 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                     style={{ margin: 5, padding: 5, minWidth: 90 }} // 同様にスタイル調整
                 >
                     Google翻訳
+                </Button>
+                <Button 
+                    onClick={() => handlePlayPhrase(word.english)} 
+                    variant="outlined" 
+                    disabled={isLoading}
+                    style={{ margin: 5, padding: 5, minWidth: 90 }} // 同様にスタイル調整
+                >
+                    PlayPhrase.me
                 </Button>
                 </div>
                 <div style={{ width: '100%', textAlign: 'center' }}> 

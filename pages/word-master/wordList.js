@@ -24,6 +24,7 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import HotelIcon from '@mui/icons-material/Hotel';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext' 
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
   const handleRadioChange = (event) => {
@@ -41,6 +42,7 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
     }));
   };
 
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>フィルタ設定</DialogTitle>
@@ -57,6 +59,8 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
               <FormControlLabel value="EtoJ" control={<Radio />} label="英⇨日" />
               <FormControlLabel value="JtoE" control={<Radio />} label="日⇨英" />
               <FormControlLabel value="ImageToE" control={<Radio />} label="画像⇨英" />
+              <FormControlLabel value="VoiceToE" control={<Radio />} label="音声(単語)⇨英" />
+              <FormControlLabel value="VoiceExToE" control={<Radio />} label="音声(例文)⇨英" />
             </RadioGroup>
           </FormControl>
         </Box>
@@ -271,6 +275,28 @@ const WordListPage = () => {
 
   }
 
+  const playAudio = async (text) => {
+    try {
+      const response = await fetch('/api/common/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text }),
+      });
+  
+      const data = await response.json();
+      if (data.audioContent) {
+        const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+      }
+    } catch (error) {
+      console.error('Error during audio playback:', error);
+    }
+  };      
+
+
+
   // フィルタリングされた単語リストを取得
   const filteredWordList = wordList.filter(word => {
     const statusFilter = selectedStatus.length === 0 || selectedStatus.includes(word.status);
@@ -406,9 +432,6 @@ const WordListPage = () => {
           </Button>
         </Box>
 
-        
-
-
         <Box ref={wordSectionRef} style={{minHeight: '100vh'}} sx={{mt: 5}}>
           <SubTitleTypography text="英単語" />
           <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: 3}}>
@@ -423,18 +446,22 @@ const WordListPage = () => {
               <IconButton onClick={() => setFilterDialogOpen(true)}>
                 <FilterListIcon />
               </IconButton>
-              <TableContainer component={Paper} sx={{maxHeight: 700, overflowY: 'auto', }}>
+              <TableContainer component={Paper} sx={{width: '100%', maxHeight: 700, overflowY: 'auto', }}>
                 <Table>
                   <TableHead>
                     <TableRow>
                       <TableCell>#</TableCell>
                       <TableCell>
-                        {filterSettings.displayMode === 'EtoJ' ? "English" : 
-                        filterSettings.displayMode === 'JtoE' ? "Japanese" : "Image"}
-                      </TableCell>
+                        {filterSettings.displayMode === 'EtoJ' ? "英語" : 
+                        filterSettings.displayMode === 'JtoE' ? "日本語" : 
+                        filterSettings.displayMode === 'ImageToE' ? "イメージ" :
+                        filterSettings.displayMode === 'VoiceToE' ? "音声(単語)" : "音声(例文)"}
+                        </TableCell>
                       <TableCell>
-                        {filterSettings.displayMode === 'EtoJ' ? "Japanese" : 
-                        filterSettings.displayMode === 'JtoE' ? "English" : "English"}
+                      {filterSettings.displayMode === 'EtoJ' ? "日本語" : 
+                        filterSettings.displayMode === 'JtoE' ? "英語" : 
+                        filterSettings.displayMode === 'ImageToE' ? "英語" :
+                        filterSettings.displayMode === 'VoiceToE' ? "英語" : "英語"}
                       </TableCell>
                       <TableCell>英→日</TableCell>
                       <TableCell>日→英</TableCell>
@@ -453,16 +480,36 @@ const WordListPage = () => {
                       >
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>
-                          {filterSettings.displayMode === 'EtoJ' ? word.english : 
-                          filterSettings.displayMode === 'JtoE' ? word.japanese : (
-                            <>
-                              <img 
-                                  src={word.imageUrl} 
-                                  alt={word.english} 
-                                  style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }} 
-                              />
-                            </>
-                          )}
+
+                          {filterSettings.displayMode === 'EtoJ' ? (
+                              <Typography variant="body2">{word.english}</Typography>
+                          ) : filterSettings.displayMode === 'JtoE' ? (
+                              <Typography variant="body2">{word.japanese}</Typography>
+                          ) : filterSettings.displayMode === 'ImageToE' ? (
+                              word.imageUrl ? (
+                                  <img 
+                                      src={word.imageUrl} 
+                                      alt={word.english} 
+                                      style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }} 
+                                  />
+                              ) : (
+                                  <Typography variant="body2">画像がありません</Typography>
+                              )
+                          ) : filterSettings.displayMode === 'VoiceToE' ? (
+                            <IconButton onClick={(event) => {
+                                event.stopPropagation();
+                                playAudio(word.english);
+                            }}>
+                                <VolumeUpIcon />
+                            </IconButton>
+                          ) : filterSettings.displayMode === 'VoiceExToE' ? (
+                            <IconButton onClick={(event) => {
+                              event.stopPropagation();
+                              playAudio(word.exampleSentenceE);
+                            }}>
+                              <VolumeUpIcon />
+                            </IconButton>
+                        ) : null }
 
                         </TableCell>
                         <TableCell>
@@ -516,25 +563,6 @@ const WordListPage = () => {
                             </>
                           )}
                         </TableCell>
-
-
-                        {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
-                          {filterSettings.showAnswer ? 
-                            (word.exampleSentence?.length > 30
-                            ? `${word.exampleSentence?.substring(0, 30)}...`
-                            : word.exampleSentence)
-                            : "　　　　　　　　　　　　　　　"
-                          }
-                        </TableCell> */}
-                        {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
-                          <Typography>
-                              {word.userWordListStatus.lastMemorizedTimeAgo }
-                          </Typography>
-                          <Typography>
-                            {word.userWordListStatus.numMemorized}, {word.userWordListStatus.numNotMemorized}
-                          </Typography>
-                        </TableCell> */}
-
 
                       </TableRow>
                     ))}

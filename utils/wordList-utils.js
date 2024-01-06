@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { generateExampleSentences, generateImage } from '@/utils/openai-utils'
 import { getS3FileUrl, uploadImageToS3 } from '@/utils/aws-s3-utils'
-import { getWordListById, saveExampleSentenceAndImage } from '@/utils/prisma-utils'
+import { getWordListById, updateWordList } from '@/utils/prisma-utils'
 import { enqueueRequest } from '@/utils/queue-util';
 
 const sharp = require('sharp');
@@ -12,10 +12,20 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
     try {
         const word = await getWordListById(wordListId)
         const {english, japanese} = word
-        const exampleSentence = await generateExampleSentences(english, japanese);
 
+        // ----------- 例文と類語の生成と保存 ---------------------------
+        let data
+        if (!word.exampleSentenceE){
+          data = await generateExampleSentences(english, japanese);
+          await updateWordList(wordListId, data);
+          word.exampleSentenceE = data.exampleSentenceE
+          word.exampleSentenceJ = data.exampleSentenceE
+          word.synonyms = data.synonyms
+        }
+
+        // ----------- 画像の生成と保存 ---------------------------
         let imageUrl = ''
-        const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${exampleSentence}`;  
+        const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${data.exampleSentenceE}`;  
         const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(imageDescription));
   
         if (imageUrlAtOpenAI) { 
@@ -44,10 +54,11 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
           imageUrl = await getS3FileUrl(imageFilename)
         
           // データベースに画像URLを保存する処理をここに追加
-          await saveExampleSentenceAndImage(wordListId, exampleSentence, imageFilename);
+          await updateWordList(wordListId, {
+            imageFilename: imageFilename
+          });
         }
          
-        word.exampleSentence = exampleSentence
         word.imageUrl = imageUrl
         return word
         

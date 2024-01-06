@@ -112,7 +112,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
           </Box> */}
 
             <Typography variant="body1" gutterBottom>GPTがあなたが覚えていない単語を組み合わせて、条件にあったストーリーを作ります。</Typography>
-            <Typography variant="body2" gutterBottom>注）GPTが条件にしがってくれないケースもあります。</Typography>
+            <Typography variant="body2" gutterBottom>注）GPTが条件に従ってくれないケースもあります。</Typography>
             <Box sx={{ mb: 2, mt: 5 }}>
               <Typography variant="subtitle1" gutterBottom>ストーリーの長さ</Typography>
               {['Short', 'Medium', 'Long'].map((option) => (
@@ -139,7 +139,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             </Box>
             <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>登場人物</Typography>
-              {['指定なし', '大統領',,'優しいお姉さん','怖いおじさん', '宇宙人', 'おばけ', 'うんち君'].map((option) => (
+              {['指定なし', '大統領',,'美人','優しいお兄さん', '宇宙人', 'おばけ', 'うんち君'].map((option) => (
                 <Chip
                   key={option}
                   label={option}
@@ -158,7 +158,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             {storyData && (
             <Box>
                 <Typography variant="subtitle1">ストーリー</Typography>
-                <Typography>{storyData.story}</Typography>
+                <Typography className="preformatted-text">{storyData.story}</Typography>
                 <Typography variant="subtitle1" sx={{marginTop: 5}}>単語：</Typography>
                 <ul>
                 {storyData.words.map((word, index) => (

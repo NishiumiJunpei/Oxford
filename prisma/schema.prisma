@@ -71,8 +71,11 @@ model WordList {
   id              Int              @id @default(autoincrement())
   english         String
   japanese        String
-  exampleSentence String?
+  exampleSentenceE String?
+  exampleSentenceJ String?
+  synonyms        String?
   imageFilename   String?
+  usage           String?
   remark          String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @default(now()) @updatedAt

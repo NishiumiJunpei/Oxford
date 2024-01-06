@@ -25,14 +25,14 @@ export async function uploadImageToS3(imageBuffer, fileName) {
   }
 }
 
-export const getS3FileUrl = async (fileName) => {
-  if (!fileName || fileName.trim() === '') {
+export const getS3FileUrl = async (filename) => {
+  if (!filename || filename.trim() === '') {
     return null;
   }
 
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
-    Key: fileName,
+    Key: filename,
     Expires: 60 * 60 * 5 // URLの有効期限（秒）
   };
 

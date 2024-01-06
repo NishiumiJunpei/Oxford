@@ -58,7 +58,6 @@ export default async function handler(req, res) {
           ...word,
           memorizeStatusEJ: userWordListStatus?.memorizeStatusEJ || 'NOT_MEMORIZED',
           memorizeStatusJE: userWordListStatus?.memorizeStatusJE || 'NOT_MEMORIZED',
-          exampleSentence: word.exampleSentence, // userWordListStatusの例文で上書き
           imageUrl: await getS3FileUrl(word.imageFilename),
           userWordListStatus,
         };

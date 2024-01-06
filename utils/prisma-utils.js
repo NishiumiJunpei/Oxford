@@ -210,7 +210,6 @@ export async function getWordListUserStatusByWordListId(userId, wordListId) {
     return {
       memorizeStatusEJ: 'NOT_MEMORIZED',
       memorizeStatusJE: 'NOT_MEMORIZED',
-      exampleSentence: null,
       lastMemorizedTimeAgo: null,
       lastNotMemorizedTimeAgo: null
     };
@@ -323,15 +322,12 @@ export async function saveExampleSentenceAndImageForUser(userId, wordListId, exa
   });
 }
 
-export async function saveExampleSentenceAndImage(wordListId, exampleSentence, imageFilename = '') {
+export async function updateWordList(wordListId, data) {
   await prisma.WordList.update({
     where: {
       id: wordListId, // 更新するWordListレコードを特定
     },
-    data: {
-      exampleSentence: exampleSentence, // 例文を更新
-      imageFilename: imageFilename,     // 画像ファイル名を更新（空文字の場合も許容）
-    },
+    data: data, // dataオブジェクトの内容で更新
   });
 }
 

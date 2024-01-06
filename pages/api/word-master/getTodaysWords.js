@@ -26,11 +26,8 @@ export default async function handler(req, res) {
 
           // 選択された単語の情報を配列に追加
           selectedWords.push({
-            id: randomWordStatus.wordList.id,
-            english: randomWordStatus.wordList.english,
-            japanese: randomWordStatus.wordList.japanese,
-            exampleSentence: randomWordStatus.exampleSentence || null,
-            imageUrl: await getS3FileUrl(randomWordStatus.imageFilename),
+            ...randomWordStatus.wordList,
+            imageUrl: await getS3FileUrl(randomWordStatus.wordList.imageFilename),
             memorizeStatusEJ: randomWordStatus.memorizeStatusEJ,
             memorizeStatusJE: randomWordStatus.memorizeStatusJE,
           });
@@ -38,7 +35,6 @@ export default async function handler(req, res) {
           // 同じ単語を二度選ばないようにする
           notMemorizedWords.splice(randomIndex, 1);
         }
-
 
         res.status(200).json(selectedWords);
       } else {

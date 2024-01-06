@@ -80,7 +80,6 @@ export default function Home() {
     setWords(updatedWordList);
   };
 
-
   return (
     <Box maxWidth="lg">
       <Head>
@@ -153,9 +152,19 @@ export default function Home() {
             {currentWord.japanese}
           </Typography>
 
-          {currentWord.exampleSentence && (
+          {currentWord.exampleSentenceE && (
             <Typography variant="body1" className="preformatted-text" style={{ marginTop: '10px' }}>
-              {currentWord.exampleSentence}
+              {currentWord.exampleSentenceE}
+            </Typography>
+          )}
+          {currentWord.exampleSentenceJ && (
+            <Typography variant="body1" className="preformatted-text" style={{ marginTop: '10px' }}>
+              {currentWord.exampleSentenceJ}
+            </Typography>
+          )}
+          {currentWord.synonyms && (
+            <Typography variant="body1" className="preformatted-text" style={{ marginTop: '10px' }}>
+              {currentWord.synonyms}
             </Typography>
           )}
           {currentWord.imageUrl && (

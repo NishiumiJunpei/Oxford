@@ -106,8 +106,14 @@ export default function Home() {
           <p>Id: {wordDetail.id}</p>
           <h2>{wordDetail.english}</h2>
           <p>{wordDetail.japanese}</p>
-          <Typography className="preformatted-text">
-          {wordDetail.exampleSentence}
+          <Typography variant="body1">
+            {wordDetail.exampleSentenceE}
+          </Typography>
+          <Typography variant="body1">
+            {wordDetail.exampleSentenceJ}
+          </Typography>
+          <Typography variant="body1">
+            {wordDetail.synonyms}
           </Typography>
           {wordDetail.image && <img src={wordDetail.image} alt={wordDetail.english} />}
 

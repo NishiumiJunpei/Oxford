@@ -195,9 +195,9 @@ export default function Home() {
                     <TableCell>{word.english}</TableCell>
                     <TableCell>{word.japanese}</TableCell>
                     <TableCell>
-                      {(word.exampleSentence?.length > 30
-                          ? `${word.exampleSentence?.substring(0, 30)}...`
-                          : word.exampleSentence)}                     
+                      {(word.exampleSentenceE?.length > 30
+                          ? `${word.exampleSentenceE?.substring(0, 30)}...`
+                          : word.exampleSentenceE)}                     
                     </TableCell>
                   </TableRow>
               )}
@@ -217,7 +217,9 @@ export default function Home() {
           <p>Id: {wordDetail.id}</p>
           <h2>{wordDetail.english}</h2>
           <p>{wordDetail.japanese}</p>
-          <p> {wordDetail.exampleSentence}</p>
+          <p> {wordDetail.exampleSentenceE}</p>
+          <p> {wordDetail.exampleSentenceJ}</p>
+          <p> {wordDetail.synonyms}</p>
           {wordDetail.image && <img src={wordDetail.image} alt={wordDetail.english} />}
 
           {wordDetail?.imageUrl && (

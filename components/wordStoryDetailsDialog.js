@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, List, ListItem, ListItemText } from '@mui/material';
+import SubTitleTypography from './subTitleTypography';
 
 const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
   if (!selectedStory) return null;
@@ -16,11 +17,11 @@ const WordStoryDetailsDialog = ({ open, onClose, onDelete, selectedStory }) => {
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogTitle>{selectedStory.storyTitle}</DialogTitle>
       <DialogContent>
-        <Typography variant="subtitle1" gutterBottom>ストーリー</Typography>
-        <Typography variant="body1" gutterBottom>{selectedStory.storyContent}</Typography>
+        <SubTitleTypography text={"ストーリー"}/>
+        <Typography variant="body1" className="preformatted-text" sx={{mb: 5}}>{selectedStory.storyContent}</Typography>
 
 
-        <Typography variant="subtitle1" sx={{marginTop: 5}}>使用された単語</Typography>
+        <SubTitleTypography text={"使用された単語"}/>
         <List>
           {selectedStory.words.map((word, index) => (
             <ListItem key={index}>

@@ -10,6 +10,7 @@ import { enqueueRequest } from '@/utils/queue-util';
 
 const sharp = require('sharp');
 
+//将来のために残しているが、現在無効中。コード要精査
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     // POSTリクエストからデータを取得
@@ -19,9 +20,9 @@ export default async function handler(req, res) {
 
     try {
       const user = await getUserById(userId);
-      const exampleSentence = await generateExampleSentences(english, japanese, JSON.stringify(user.profile), user.birthday);
+      const data = await generateExampleSentences(english, japanese, JSON.stringify(user.profile), user.birthday);
       let imageUrl = ''
-      const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${exampleSentence}`;
+      const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${data.exampleSentenceE}`;
 
       const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(imageDescription));
 
