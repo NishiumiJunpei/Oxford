@@ -133,7 +133,7 @@ export default function Home() {
       )}
       {currentWord && (
         <Box sx={{marginTop: 5}}>
-          <SubTitleTypography text="今日の単語"/>          
+          <SubTitleTypography text="今日の単語."/>          
           <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
             <IconButton onClick={handlePrevious} disabled={currentWordIndex === 0}>
               <ArrowBackIcon />
