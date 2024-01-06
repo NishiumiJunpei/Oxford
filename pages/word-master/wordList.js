@@ -29,7 +29,7 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
   const handleRadioChange = (event) => {
     setFilterSettings(prev => ({
       ...prev,
-      isEnglishToJapanese: event.target.value === 'EtoJ'
+      displayMode: event.target.value
     }));
   };
 
@@ -51,11 +51,12 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
             <RadioGroup
               aria-label="display-mode"
               name="display-mode"
-              value={filterSettings.isEnglishToJapanese ? 'EtoJ' : 'JtoE'}
+              // value={filterSettings.isEnglishToJapanese ? 'EtoJ' : 'JtoE'}
               onChange={handleRadioChange}
             >
               <FormControlLabel value="EtoJ" control={<Radio />} label="英⇨日" />
               <FormControlLabel value="JtoE" control={<Radio />} label="日⇨英" />
+              <FormControlLabel value="ImageToE" control={<Radio />} label="画像⇨英" />
             </RadioGroup>
           </FormControl>
         </Box>
@@ -142,7 +143,7 @@ const WordListPage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
-    isEnglishToJapanese: true,
+    displayMode: 'EtoJ',
     showAnswer: true,
     showEJOnlyNOT_MEMORIZED: false,
     showJEOnlyNOT_MEMORIZED: false,
@@ -427,8 +428,14 @@ const WordListPage = () => {
                   <TableHead>
                     <TableRow>
                       <TableCell>#</TableCell>
-                      <TableCell>{filterSettings.isEnglishToJapanese ? "English" : "Japanese"}</TableCell>
-                      <TableCell>{filterSettings.isEnglishToJapanese ? "Japanese" : "English"}</TableCell>
+                      <TableCell>
+                        {filterSettings.displayMode === 'EtoJ' ? "English" : 
+                        filterSettings.displayMode === 'JtoE' ? "Japanese" : "Image"}
+                      </TableCell>
+                      <TableCell>
+                        {filterSettings.displayMode === 'EtoJ' ? "Japanese" : 
+                        filterSettings.displayMode === 'JtoE' ? "English" : "English"}
+                      </TableCell>
                       <TableCell>英→日</TableCell>
                       <TableCell>日→英</TableCell>
                       {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell> */}
@@ -445,7 +452,19 @@ const WordListPage = () => {
                         onClick={() => handleOpenModalWord(index)}
                       >
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell>{filterSettings.isEnglishToJapanese ? word.english : word.japanese}</TableCell>
+                        <TableCell>
+                          {filterSettings.displayMode === 'EtoJ' ? word.english : 
+                          filterSettings.displayMode === 'JtoE' ? word.japanese : (
+                            <>
+                              <img 
+                                  src={word.imageUrl} 
+                                  alt={word.english} 
+                                  style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }} 
+                              />
+                            </>
+                          )}
+
+                        </TableCell>
                         <TableCell>
                           <Typography
                             style={{
@@ -453,7 +472,8 @@ const WordListPage = () => {
                               color: !filterSettings.showAnswer ? 'lightcoral' : 'inherit',
                             }}
                           >
-                            {filterSettings.isEnglishToJapanese ? word.japanese : word.english}
+                          {filterSettings.displayMode === 'EtoJ' ? word.japanese : 
+                          filterSettings.displayMode === 'JtoE' ? word.english : word.english}
                           </Typography>
                         </TableCell>
                         <TableCell>
