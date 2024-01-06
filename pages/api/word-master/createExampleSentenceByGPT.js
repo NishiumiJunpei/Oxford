@@ -5,8 +5,7 @@ import { getUserById } from '../../../utils/prisma-utils';
 import { authOptions } from '../auth/[...nextauth]';
 import { generateExampleSentences, generateImage } from '../../../utils/openai-utils'
 import { getS3FileUrl, uploadImageToS3 } from '../../../utils/aws-s3-utils'
-import { saveExampleSentence } from '../../../utils/prisma-utils'
-import { handleRateLimit } from '@/utils/utils';
+import { saveExampleSentenceAndImageForUser } from '../../../utils/prisma-utils'
 import { enqueueRequest } from '@/utils/queue-util';
 
 const sharp = require('sharp');
@@ -59,7 +58,7 @@ export default async function handler(req, res) {
         imageUrl = await getS3FileUrl(imageFilename)
       
         // データベースに画像URLを保存する処理をここに追加
-        await saveExampleSentence(userId, wordListId, exampleSentence, imageFilename);
+        await saveExampleSentenceAndImageForUser(userId, wordListId, exampleSentence, imageFilename);
       }
        
       console.log('example sentence is created, ', english)

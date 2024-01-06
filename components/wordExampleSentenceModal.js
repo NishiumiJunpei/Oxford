@@ -105,15 +105,18 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                     {word?.exampleSentence}
                 </Typography>
                 {word?.imageUrl && (
-                    <img 
-                        src={word.imageUrl} 
-                        alt={word.english} 
-                        style={{ marginTop: 20, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
-                    />
+                    <>
+                        <img 
+                            src={word.imageUrl} 
+                            alt={word.english} 
+                            style={{ marginTop: 20, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
+                        />
+                        <Typography variant="body2" sx={{mb: 2}}>
+                            Created by GPT & DALLE3 / susu English
+                        </Typography>
+
+                    </>
                 )}
-                <Typography variant="body2" sx={{mb: 2}}>
-                    Created by GPT & DALLE3 / susu English
-                </Typography>
                 
 
                 <Divider sx={{mt: 3, mb: 3}}/>
