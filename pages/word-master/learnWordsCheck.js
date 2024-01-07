@@ -264,17 +264,48 @@ const LearnWordsCheck = () => {
       {isFinish ? (
         <FinishLearnWordsCheck blockId={blockId} notMemorizedWordList={notMemorizedWordList}/>
       ):(
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10, height: 'calc(100vh - 10px)' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, height: 'calc(100vh - 10px)' }}>
           
           <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
-          <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
-            {languageDirection == 'EJ' ? word.english : word.japanese}
-          </Typography>
-          {showAnswer &&
-            <Typography variant="subtitle1" sx={{ marginBottom: 2 }}>
-              {languageDirection == 'EJ' ? word.japanese : word.english}
-            </Typography>}
-          <Box sx={{ '& > button': { margin: 1 } }}>
+          {languageDirection == 'EJ' ? (
+            <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
+              {word.english}
+            </Typography>
+          ) : (
+            <>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
+                {word.japanese}
+              </Typography>
+              <Typography variant="subtitle1" sx={{ marginBottom: 2,  fontSize: '1.5rem', color: 'primary.light' }}>
+                ({word.english.substring(0, 2) +
+                word.english.substring(2)
+                  .split('')
+                  .map(char => char === ' ' ? ' ' : '-')
+                  .join('')})
+              </Typography>
+
+            </>
+          )}          
+          {(languageDirection == 'JE' && word.synonyms) && (
+            <>
+              <Typography variant="body2" style={{ marginTop: 20 }}>
+                <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
+              </Typography>
+              <Typography variant="h5" sx={{ marginBottom: 2, fontSize: '1.5rem'}}>
+                {word.synonyms}
+              </Typography>
+
+            </>
+          )}
+
+          <Box sx={{backgroundColor: '#d3d3d3', height: '200px', width: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            {showAnswer &&
+              <Typography variant="subtitle1" sx={{  fontSize: '1.5rem' }}>
+                {languageDirection == 'EJ' ? word.japanese : word.english}
+              </Typography>}
+          </Box>
+
+          <Box sx={{ '& > button': { marginTop: 10, mr: 2, ml: 2, mb: 5 } }}>
               <Button variant="contained" color="primary" onClick={() => handleAnswer(true)} disabled={buttonDisabled}>
                   わかる(j)
               </Button>
