@@ -55,12 +55,6 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
       
     }
 
-    const handleSearch = (englishWord) => {
-        // const url = `https://www.google.com/search?tbm=isch&q=${englishWord}`;
-        const url = `https://translate.google.com/?sl=en&tl=ja&text=${englishWord}&op=translate&hl=ja`;
-        window.open(url, 'googleTranslation');
-    };    
-
     const handlePlayPhrase = (englishWord) => {
         const url = `https://playphrase.me/#/search?q=${englishWord}`;
         window.open(url, 'playphraseWindow');
@@ -250,14 +244,6 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                     </div>
                 )}
                 
-                <Button 
-                    onClick={() => handleSearch(word.english)} 
-                    variant="outlined" 
-                    disabled={isLoading}
-                    style={{ margin: 5, padding: 5, minWidth: 90 }} // 同様にスタイル調整
-                >
-                    Google翻訳
-                </Button>
                 <Button 
                     onClick={() => handlePlayPhrase(word.english)} 
                     variant="outlined" 

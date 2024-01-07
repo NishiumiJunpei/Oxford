@@ -1,11 +1,46 @@
-Error processing record with ID 2326.mockingly: TypeError: Cannot read properties of undefined (reading 'replace')
-Error processing record with ID 3691.textile: PrismaClientKnownRequestError: 
-Invalid `prisma.wordList.update()` invocation in
-/Users/junpei.nishiumi/Documents/myApp/MasterEnglish/Oxford/script/updateWordList.js:55:31
+Error processing record with ID 6960.pedigree: PrismaClientKnownRequestError: 
+Invalid `prisma.WordList.update()` invocation in
+/Users/junpei.nishiumi/Documents/myApp/MasterEnglish/Oxford/script/updateWordList_ExSyno.js:37:25
 
-  52 // console.log('synonyms:', synonyms)
-  53 
-  54 // Prismaを使用してデータベースを更新
-→ 55 await prisma.wordList.update(
+  34 }
+  35 
+  36 async function updateWordList(wordListId, data) {
+→ 37   await prisma.WordList.update(
 Server has closed the connection.
-Error processing record with ID 2326.mockingly: SyntaxError: Unterminated string in JSON at position 711
+Error processing record with ID 7580.neurosis: PrismaClientKnownRequestError: 
+Invalid `prisma.WordList.update()` invocation in
+/Users/junpei.nishiumi/Documents/myApp/MasterEnglish/Oxford/script/updateWordList_ExSyno.js:37:25
+
+  34 }
+  35 
+  36 async function updateWordList(wordListId, data) {
+→ 37   await prisma.WordList.update(
+Server has closed the connection.
+Error processing record with ID 7900.slander: SyntaxError: Unterminated string in JSON at position 86
+Error processing record with ID 8216.constipation: PrismaClientValidationError: 
+Invalid `prisma.WordList.update()` invocation in
+/Users/junpei.nishiumi/Documents/myApp/MasterEnglish/Oxford/script/updateWordList_ExSyno.js:37:25
+
+  34 }
+  35 
+  36 async function updateWordList(wordListId, data) {
+→ 37   await prisma.WordList.update({
+         where: {
+           id: 8216
+         },
+         data: {
+           exampleSentenceE: "I suffer from constipation.",
+           exampleSentenceJ: "私は便秘に悩んでいます。",
+           synonyms: {
+             synonyms: [
+             ~~~~~~~~
+               "obstipation",
+               "bowel obstruction",
+               "blockage"
+             ],
+       ?     set?: String | Null
+           }
+         }
+       })
+
+Unknown argument `synonyms`. Available options are marked with ?.
