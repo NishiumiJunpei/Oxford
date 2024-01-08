@@ -14,9 +14,8 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
         const {english, japanese} = word
 
         // ----------- 例文と類語の生成と保存 ---------------------------
-        let data
         if (!word.exampleSentenceE){
-          data = await generateExampleSentences(english, japanese);
+          const data = await generateExampleSentences(english, japanese);
           await updateWordList(wordListId, data);
           word.exampleSentenceE = data.exampleSentenceE
           word.exampleSentenceJ = data.exampleSentenceE
@@ -25,7 +24,7 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
 
         // ----------- 画像の生成と保存 ---------------------------
         let imageUrl = ''
-        const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${data.exampleSentenceE}`;  
+        const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${word.exampleSentenceE}`;  
         const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(imageDescription));
   
         if (imageUrlAtOpenAI) { 
