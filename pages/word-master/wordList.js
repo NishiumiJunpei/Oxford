@@ -447,7 +447,7 @@ const WordListPage = () => {
               <IconButton onClick={() => setFilterDialogOpen(true)}>
                 <FilterListIcon />
               </IconButton>
-              <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 700, maxHeight: 700, overflowY: 'auto', overflowX: 'auto'}}>
+              <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 700, overflowY: 'auto', overflowX: 'auto'}}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -459,13 +459,19 @@ const WordListPage = () => {
                         filterSettings.displayMode === 'VoiceToE' ? "音声(単語)" :
                         filterSettings.displayMode === 'VoiceExToE' ? "音声(例文)" : "例文(英)"}
                         </TableCell>
-                      <TableCell>
-                      {filterSettings.displayMode === 'EtoJ' ? "日本語" : 
-                        filterSettings.displayMode === 'JtoE' ? "英語" : 
-                        filterSettings.displayMode === 'ImageToE' ? "英語" :
-                        filterSettings.displayMode === 'VoiceToE' ? "英語" :
-                        filterSettings.displayMode === 'VoiceExToE' ? "英語" : "例文(日)"}
-                      </TableCell>
+                        <TableCell
+                            sx={{
+                              [theme.breakpoints.down('sm')]: {
+                                display: filterSettings.displayMode === 'ExJtoExE' ? 'none' : 'table-cell',
+                              },
+                            }}
+                            >
+                          {filterSettings.displayMode === 'EtoJ' ? "日本語" : 
+                            filterSettings.displayMode === 'JtoE' ? "英語" : 
+                            filterSettings.displayMode === 'ImageToE' ? "英語" :
+                            filterSettings.displayMode === 'VoiceToE' ? "英語" :
+                            filterSettings.displayMode === 'VoiceExToE' ? "英語" : "例文(日)"}
+                        </TableCell>
                       <TableCell>英→日</TableCell>
                       <TableCell>日→英</TableCell>
                       {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell> */}
@@ -517,19 +523,23 @@ const WordListPage = () => {
                             ) : null }
 
                         </TableCell>
-                        <TableCell>
-                          <Typography
+                        <TableCell
                             sx={{
-                              backgroundColor: filterSettings.showAnswer ? 'lightcoral' : 'transparent',
-                              color: filterSettings.showAnswer ? 'lightcoral' : 'inherit',
-                              '&:hover': {
-                                backgroundColor: 'transparent', // マウスオーバー時の背景色
+                              [theme.breakpoints.down('sm')]: {
+                                display: filterSettings.displayMode === 'ExJtoExE' ? 'none' : 'table-cell',
                               },
                             }}
-                            // style={{
-                            //   backgroundColor: !filterSettings.showAnswer ? 'lightcoral' : 'transparent',
-                            //   color: !filterSettings.showAnswer ? 'lightcoral' : 'inherit',
-                            // }}
+                            >
+                          <Typography
+                            sx={{
+                              backgroundColor: filterSettings.showAnswer ? 'transparent' : 'lightcoral',
+                              color: filterSettings.showAnswer ? 'inherit' : 'lightcoral',
+                              '@media (hover: hover)': {
+                                '&:hover': {
+                                  backgroundColor: 'transparent', // マウスオーバー時の背景色
+                                },
+                              },
+                            }}
                           >
                           {filterSettings.displayMode === 'EtoJ' ? word.japanese : 
                           filterSettings.displayMode === 'JtoE' ? word.english : 
