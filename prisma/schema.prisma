@@ -65,6 +65,8 @@ model Block {
   theme     Theme       @relation(fields: [themeId], references: [id])
   wordLists WordListBlock[]
   WordStoryByGPT            WordStoryByGPT[]
+  @@index([themeId])
+
 }
 
 model WordList {
@@ -90,6 +92,8 @@ model WordListBlock {
   block       Block     @relation(fields: [blockId], references: [id])
 
   @@id([wordListId, blockId])
+  @@index([blockId])
+  @@index([wordListId])
 }
 
 
@@ -125,6 +129,8 @@ model WordListUserStatus {
   wordList   WordList @relation(fields: [wordListId], references: [id], onDelete: Cascade)
 
   @@unique([userId, wordListId])
+  @@index([userId, wordListId])
+
 }
 
 

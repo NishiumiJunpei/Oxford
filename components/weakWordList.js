@@ -75,11 +75,11 @@ const WeakWordList = ({wordList, setWordList}) => {
           <List> 
               {currentWords.map((word, index) => (
                 <ListItem button key={word.id} onClick={() => handleWordClick(index)}>
-                <ListItemAvatar>
+                {/* <ListItemAvatar>
                   <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize: '0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
                     {word.blocks[0].block.name}
                   </Avatar>
-                </ListItemAvatar>
+                </ListItemAvatar> */}
                 <ListItemText 
                   primary={word.english} 
                   secondary={showJapanese ? word.japanese : '　'} // 透明な文字で高さを保持

@@ -61,6 +61,7 @@ export const authOptions = {
           return `/auth/signup/inputUserInfo?token=${token}`;
         } else {
           user.id = existingUser.id; 
+          user.currentChallengeThemeId = existingUser.currentChallengeThemeId;
           return true;
         }
       }
@@ -70,12 +71,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.userId = user.id;
+        token.currentChallengeThemeId = user.currentChallengeThemeId
       }
       return token;
     },
     async session({ session, token }) {
       if (token.userId) {
         session.userId = token.userId;
+        session.currentChallengeThemeId = token.currentChallengeThemeId
       }
       return session;
     },    

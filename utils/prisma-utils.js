@@ -10,6 +10,9 @@ export async function getBlocks(themeId){
   return await prisma.block.findMany({
     where: {
       themeId: themeId
+    },
+    orderBy: {
+      displayOrder: 'asc' // 'asc' は昇順を意味します
     }
   })
 }
@@ -144,28 +147,76 @@ export async function getWordListByCriteria(criteria) {
   return await prisma.wordList.findMany({
     where: query,
     include: {
-      blocks: {
-        include: {
-          block: true  // Block の詳細を含める
-        }
+      blocks: true
       }
-    }
-  
   });
 }
 
+
+// export async function getWordListUserStatus(userId, themeId, blockId = '') {
+//   let whereClause = {
+//     userId: userId
+//   };
+
+//   // themeId が指定されている場合のクエリ条件を設定
+//   if (themeId && !blockId) {
+//     whereClause.wordList = {
+//       blocks: {
+//         some: {
+//           block: { themeId: parseInt(themeId) }
+//         }
+//       }
+//     };
+//   }
+
+//   // blockId が指定されている場合のクエリ条件を設定
+//   if (blockId) {
+//     whereClause.wordList = {
+//       blocks: {
+//         some: {
+//           blockId: parseInt(blockId)
+//         }
+//       }
+//     };
+//   }
+
+//   // Prisma クエリを使用して WordListUserStatus データを取得
+//   return await prisma.wordListUserStatus.findMany({
+//     where: whereClause,
+//     include: {
+//       wordList: {
+//         include: {
+//           blocks: true
+//         }
+//       }
+//     }
+//   });
+// }
 
 export async function getWordListUserStatus(userId, themeId, blockId = '') {
   let whereClause = {
     userId: userId
   };
 
-  // themeId が指定されている場合のクエリ条件を設定
+  // themeId が指定されている場合
   if (themeId && !blockId) {
+    // まず関連するBlockのIDを取得
+    const relatedBlockIds = await prisma.block.findMany({
+      where: {
+        themeId: parseInt(themeId),
+      },
+      select: {
+        id: true, // ここではBlockのIDのみが必要
+      }
+    }).then(blocks => blocks.map(block => block.id));
+
+    // 取得したBlockのIDを使用してWordListUserStatusを検索
     whereClause.wordList = {
       blocks: {
         some: {
-          block: { themeId: parseInt(themeId) }
+          blockId: {
+            in: relatedBlockIds // 取得したIDのリストを使用
+          }
         }
       }
     };

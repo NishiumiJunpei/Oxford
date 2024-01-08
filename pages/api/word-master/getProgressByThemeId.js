@@ -1,42 +1,44 @@
 // pages/api/word-master/getProgressByThemeId.js
-import { getWordListByCriteria, getWordListUserStatus, getUserById } from '../../../utils/prisma-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getWordListByCriteria, getWordListUserStatus, getUserById, getBlocks } from '../../../utils/prisma-utils';
+import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-      const userId = session.userId; 
-      const user = await getUserById(userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found." });
-      }
+      console.time("Total Request Time");
 
-      const currentChallengeThemeId = user.currentChallengeThemeId;
+      const {userId, currentChallengeThemeId} = await getUserFromSession(req, res);
+
       const themeId = (!req.query.themeId && req.query.themeId != 'undefined' ) ? req.query.themeId : currentChallengeThemeId
-
+      console.time("getWordListByCriteria");
       const wordList = await getWordListByCriteria({ themeId });
+      console.timeEnd("getWordListByCriteria");
+      console.time("getWordListUserStatus");
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
+      console.timeEnd("getWordListUserStatus");
+      console.time("getBlocks");
+      const blocks = await getBlocks(themeId);
+      console.timeEnd("getBlocks");
 
-      const blocks = wordList.reduce((acc, word) => {
-        const blocksTemp = word.blocks.find(b => b.block.themeId == themeId)
-        if (blocksTemp){
-          const block = blocksTemp.block
+      console.time("集計処理");
+      // const blocks = wordList.reduce((acc, word) => {
+      //   const blocksTemp = word.blocks.find(b => b.block.themeId == themeId)
+      //   if (blocksTemp){
+      //     const block = blocksTemp.block
 
-          if (!acc.some(b => b.id === block.id)){
-            acc.push(block)
-          }
-        }
-        return acc;
-      }, []);
+      //     if (!acc.some(b => b.id === block.id)){
+      //       acc.push(block)
+      //     }
+      //   }
+      //   return acc;
+      // }, []);
 
       // blocksをblock.nameの昇順で並び替え
-      blocks.sort((a, b) => {
-        if (parseInt(a.name) < parseInt(b.name)) return -1;
-        if (parseInt(a.name) > parseInt(b.name)) return 1;
-        return 0;
-      });
+      // blocks.sort((a, b) => {
+      //   if (parseInt(a.name) < parseInt(b.name)) return -1;
+      //   if (parseInt(a.name) > parseInt(b.name)) return 1;
+      //   return 0;
+      // });
       
       
       let totalProgressEJ = 0;
@@ -44,7 +46,7 @@ export default async function handler(req, res) {
       let totalWords = 0;
 
       const updatedBlocks = blocks.map(block => {
-        const blockWords = wordList.filter(word => word.blocks.some(b=> b.block.id === block.id));
+        const blockWords = wordList.filter(word => word.blocks.some(b=> b.blockId === block.id));
         const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
 
         // progress計算
@@ -119,7 +121,9 @@ export default async function handler(req, res) {
         || findBlockByProgress(updatedBlocks, 'JE', 200);
         
       
+      console.timeEnd("集計処理");
       res.status(200).json({ overallProgress, blocks: updatedBlocks, blockToLearn });
+      console.timeEnd("Total Request Time");
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
