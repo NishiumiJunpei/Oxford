@@ -88,6 +88,10 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                 handlePrev();
             } else if (event.key === 'ArrowRight') {
                 handleNext();
+            } else if (event.key === 'c') {
+                onClose();
+            } else if (event.key === 'Space' || event.key === ' ') {
+                onClose();
             }
         };
 

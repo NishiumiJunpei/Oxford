@@ -122,7 +122,9 @@ const LearnWordsCheck = () => {
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [nextButtonDisabled, setNextButtonDisabled] = useState(true); // 次へボタンの無効化状態
     const [isFinish, setIsFinish] = useState(false);
-  
+    const [openModal, setOpenModal] = useState(false);
+
+
     useEffect(() => {
       // URLクエリパラメータを使用してAPIから単語データを取得する
       const fetchData = async () => {
@@ -182,7 +184,8 @@ const LearnWordsCheck = () => {
 
     const handleShowAnswer = () => {
         setShowAnswer(true);
-        setShowAnswerButton(false);
+        // setShowAnswerButton(false);
+        setOpenModal(true)        
     };
 
     const handleNext = () => {
@@ -288,7 +291,7 @@ const LearnWordsCheck = () => {
           )}          
           {(languageDirection == 'JE' && word.synonyms) && (
             <>
-              <Typography variant="body2" style={{ marginTop: 20 }}>
+              <Typography variant="body2" style={{ marginTop: 2 }}>
                 <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
               </Typography>
               <Typography variant="h5" sx={{ marginBottom: 2, fontSize: '1.5rem'}}>
@@ -305,7 +308,7 @@ const LearnWordsCheck = () => {
               </Typography>}
           </Box>
 
-          <Box sx={{ '& > button': { marginTop: 10, mr: 2, ml: 2, mb: 5 } }}>
+          <Box sx={{ '& > button': { marginTop: 5, mr: 2, ml: 2, mb: 2 } }}>
               <Button variant="contained" color="primary" onClick={() => handleAnswer(true)} disabled={buttonDisabled}>
                   わかる(j)
               </Button>
@@ -323,8 +326,14 @@ const LearnWordsCheck = () => {
                   次へ(n)
               </Button>
           )}
-      </Box>
 
+          <WordExampleSentenceModal 
+            open={openModal}
+            onClose={()=>setOpenModal(false)}
+            wordList={[{...word}]}
+            initialIndex={0}
+          />
+      </Box>
       )}
     </>
 );

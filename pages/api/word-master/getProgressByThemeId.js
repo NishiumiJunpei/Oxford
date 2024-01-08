@@ -99,12 +99,12 @@ export default async function handler(req, res) {
         return blocks
           .filter(item => item.progress[progressKey] < maxProgress)
           .sort((a, b) => {
-            // displayOrderで比較
-            if (a.block.displayOrder !== b.block.displayOrder) {
-              return a.block.displayOrder - b.block.displayOrder;
+            // progressで比較
+            if (a.progress[progressKey] !== b.progress[progressKey]) {
+              return a.progress[progressKey] - b.progress[progressKey];
             }
-            // displayOrderが同じ場合、progressで比較
-            return a.progress[progressKey] - b.progress[progressKey];
+            // progressが同じ場合、displayOrderで比較
+            return a.block.displayOrder - b.block.displayOrder;
           })
           .find(item => true)?.block || null;
       };
