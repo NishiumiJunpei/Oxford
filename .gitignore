@@ -29,6 +29,9 @@ yarn-error.log*
 .env*.local
 .env
 
+.db_backup/*
+
+
 /etc/secrets/*
 
 /script/*

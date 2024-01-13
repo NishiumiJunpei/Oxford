@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getSession, signIn } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { Card, CardMedia, CardContent, Typography, Button, Grid, Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from '@mui/material';
 import UserSettingMenu from '@/components/userSettingMenu';
 import {challengeThemes} from '@/utils/variables'
@@ -11,6 +11,7 @@ const SetChallengeTheme = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const { data: session, status, update } = useSession()
 
   useEffect(() => {
     const fetchCurrentChallengeThemeId = async () => {
@@ -41,6 +42,7 @@ const SetChallengeTheme = () => {
       setOpenSnackbar(true);
       setCurrentChallengeThemeId(selectedThemeId); // 現在チャレンジ中のテーマIDを更新
       await getSession();  // セッションを再取得
+      update({ currentChallengeThemeId: selectedThemeId })      
 
 
     } catch (error) {

@@ -5,41 +5,13 @@ import { getUserFromSession } from '@/utils/session-utils';
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      console.time("Total Request Time");
-
       const {userId, currentChallengeThemeId} = await getUserFromSession(req, res);
 
       const themeId = (!req.query.themeId && req.query.themeId != 'undefined' ) ? req.query.themeId : currentChallengeThemeId
-      console.time("getWordListByCriteria");
       const wordList = await getWordListByCriteria({ themeId });
-      console.timeEnd("getWordListByCriteria");
-      console.time("getWordListUserStatus");
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
-      console.timeEnd("getWordListUserStatus");
-      console.time("getBlocks");
       const blocks = await getBlocks(themeId);
-      console.timeEnd("getBlocks");
 
-      console.time("集計処理");
-      // const blocks = wordList.reduce((acc, word) => {
-      //   const blocksTemp = word.blocks.find(b => b.block.themeId == themeId)
-      //   if (blocksTemp){
-      //     const block = blocksTemp.block
-
-      //     if (!acc.some(b => b.id === block.id)){
-      //       acc.push(block)
-      //     }
-      //   }
-      //   return acc;
-      // }, []);
-
-      // blocksをblock.nameの昇順で並び替え
-      // blocks.sort((a, b) => {
-      //   if (parseInt(a.name) < parseInt(b.name)) return -1;
-      //   if (parseInt(a.name) > parseInt(b.name)) return 1;
-      //   return 0;
-      // });
-      
       
       let totalProgressEJ = 0;
       let totalProgressJE = 0;
@@ -121,7 +93,6 @@ export default async function handler(req, res) {
         || findBlockByProgress(updatedBlocks, 'JE', 200);
         
       
-      console.timeEnd("集計処理");
       res.status(200).json({ overallProgress, blocks: updatedBlocks, blockToLearn });
       console.timeEnd("Total Request Time");
     } catch (error) {

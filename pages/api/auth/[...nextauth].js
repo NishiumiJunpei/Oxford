@@ -68,18 +68,26 @@ export const authOptions = {
       return true;
 
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, session, trigger }) {
       if (user) {
         token.userId = user.id;
         token.currentChallengeThemeId = user.currentChallengeThemeId
       }
+      if (trigger === "update" && session?.currentChallengeThemeId) {
+        token.currentChallengeThemeId = session.currentChallengeThemeId
+      }
+
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token, trigger, newSession }) {
       if (token.userId) {
         session.userId = token.userId;
         session.currentChallengeThemeId = token.currentChallengeThemeId
       }
+      if (trigger === "update" && newSession?.currentChallengeThemeId) {
+        session.currentChallengeThemeId = newSession.currentChallengeThemeId
+      }
+
       return session;
     },    
     async redirect({ url, baseUrl }) {
