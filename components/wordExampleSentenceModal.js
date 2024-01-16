@@ -88,7 +88,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                 handlePrev();
             } else if (event.key === 'ArrowRight') {
                 handleNext();
-            } else if (event.key === 'Space' || event.key === ' ') {
+            } else if (event.key === 'Space' || event.key === ' '|| event.key === 'k') {
                 onClose();
             }
         };
@@ -150,7 +150,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                 <Typography variant="body1">
                     {word?.synonyms}
                 </Typography>
-                {word?.imageUrl && (
+                {word?.imageUrl ? (
                     <>
                         <img 
                             src={word.imageUrl} 
@@ -160,8 +160,13 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                         <Typography variant="body2" sx={{mb: 2}}>
                             Created by GPT & DALLE3 / susu English
                         </Typography>
-
                     </>
+                ) : (
+                    <div style={{ marginTop: 20, width: '80%', height: '50%', backgroundColor: '#d3d3d3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Typography variant="body1">
+                            画像準備中
+                        </Typography>
+                    </div>
                 )}
                 
 

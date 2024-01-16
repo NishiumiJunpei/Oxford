@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
   TableBody, Paper, Avatar, Box, Chip, CircularProgress, IconButton, 
   Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,
-  Dialog, DialogTitle, DialogContent, DialogActions, FormGroup, FormControl, RadioGroup, Radio } from '@mui/material';
+  Dialog, DialogTitle, DialogContent, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TimerIcon from '@mui/icons-material/Timer';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -16,7 +16,6 @@ import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SubTitleTypography from '@/components/subTitleTypography';
-import SpeedIcon from '@mui/icons-material/Speed';
 import ImageIcon from '@mui/icons-material/Image';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
@@ -25,6 +24,7 @@ import PsychologyIcon from '@mui/icons-material/Psychology';
 import HotelIcon from '@mui/icons-material/Hotel';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext' 
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
   const handleRadioChange = (event) => {
@@ -352,9 +352,19 @@ const WordListPage = () => {
               <Box display="flex" justifyContent="space-between" sx={{ width: '100%' }}>
                 <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
                   <CardHeader 
-                    title={<Typography variant="subtitle1">英⇨日</Typography>} 
+                    title={
+                      <Box display="flex" alignItems="center">
+                        <Typography variant="subtitle1">英⇨日</Typography>
+                        <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                          <IconButton size="small" sx={{ marginLeft: 1 }}>
+                            <HelpOutlineIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    } 
                     titleTypographyProps={{ variant: 'subtitle1' }} 
                   />
+
                   <CardContent>
                     <Typography 
                       variant="h3" 
@@ -366,7 +376,16 @@ const WordListPage = () => {
                 </Card>
                 <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
                   <CardHeader 
-                    title={<Typography variant="subtitle1">日⇨英</Typography>} 
+                    title={
+                      <Box display="flex" alignItems="center">
+                        <Typography variant="subtitle1">日⇨英</Typography>
+                        <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                          <IconButton size="small" sx={{ marginLeft: 1 }}>
+                            <HelpOutlineIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    } 
                     titleTypographyProps={{ variant: 'subtitle1' }} 
                   />
                   <CardContent>

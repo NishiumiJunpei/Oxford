@@ -217,6 +217,11 @@ const LearnWordsCheck = () => {
 
   useEffect(() => {
     const handleKeyPress = (event) => {
+      if (openModal) {
+        // openModalがtrueの場合は何もしない
+        return;
+      }
+
       switch (event.key) {
         case 'j':
           if (!buttonDisabled) {
@@ -236,13 +241,16 @@ const LearnWordsCheck = () => {
           break;
       }
     };
-  
-    window.addEventListener('keydown', handleKeyPress);
-  
+
+    // openModalがfalseのときのみイベントリスナーを追加
+    if (!openModal) {
+      window.addEventListener('keydown', handleKeyPress);
+    }
+    
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [currentIndex, wordList, showAnswer, buttonDisabled, nextButtonDisabled]); // 依存配列に必要な状態や関数を追加
+  }, [currentIndex, wordList, showAnswer, buttonDisabled, nextButtonDisabled, openModal]); // 依存配列に必要な状態や関数を追加
 
 
   if (isLoading) {
