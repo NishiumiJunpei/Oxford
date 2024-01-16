@@ -41,8 +41,8 @@ const HomePage = () => {
   }, []);
   
   
-  const handleBlockClick = (blockId) => {
-    router.push(`/word-master/wordList?blockId=${blockId}`);
+  const handleBlockClick = (blockId, languageDirection) => {
+    router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection}`);
   };
 
   const handleActionClick = (blockId) => {
@@ -90,7 +90,7 @@ const HomePage = () => {
                 <CardContent>
                   <ProgressCircle value={overallProgress.EJ} />
                   {blockToLearn.EJ?.id && (
-                    <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.EJ.id)}>
+                    <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.EJ.id, 'EJ')}>
                       学習する
                       <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
                         {blockToLearn.EJ.name}
@@ -117,7 +117,7 @@ const HomePage = () => {
                 <CardContent>
                 <ProgressCircle value={overallProgress.JE} />
                 {blockToLearn.JE?.id && (
-                  <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.JE.id)}>
+                  <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.JE.id, 'JE')}>
                     学習する
                     <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
                       {blockToLearn.JE.name}

@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
-  TableBody, Paper, Avatar, Box, Chip, CircularProgress, IconButton, 
+  TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, 
   Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,
   Dialog, DialogTitle, DialogContent, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import TimerIcon from '@mui/icons-material/Timer';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -34,6 +33,13 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
     }));
   };
 
+  const handleRadioFilterChange = (event) => {
+    setFilterSettings(prev => ({
+      ...prev,
+      filterOption: event.target.value
+    }));
+  };
+
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     setFilterSettings(prev => ({
@@ -44,85 +50,144 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
 
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose}
+      sx={{
+        '& .MuiDialog-paper': {
+          width: '100%', // モバイルデバイス用の全幅
+          maxWidth: 'none', // maxWidthを無効化
+          '@media (min-width: 600px)': { // 600px以上のデバイスに適用されるスタイル
+            maxWidth: '50%', // デスクトップでの最大幅
+          },
+        },
+      }}
+
+      >
       <DialogTitle>フィルタ設定</DialogTitle>
       <DialogContent>
-        <Box>
-          <SubTitleTypography text="表示モード"/>
-          <FormControl component="fieldset">
-            <RadioGroup
-              aria-label="display-mode"
-              name="display-mode"
-              value={filterSettings.displayMode}
-              onChange={handleRadioChange}
-            >
-              <FormControlLabel value="EtoJ" control={<Radio />} label="英⇨日" />
-              <FormControlLabel value="JtoE" control={<Radio />} label="日⇨英" />
-              <FormControlLabel value="ImageToE" control={<Radio />} label="画像⇨英" />
-              <FormControlLabel value="VoiceToE" control={<Radio />} label="音声(単語)⇨英" />
-              <FormControlLabel value="VoiceExToE" control={<Radio />} label="音声(例文)⇨英" />
-              <FormControlLabel value="ExJtoExE" control={<Radio />} label="例文(日)⇨例文(例)" />
-            </RadioGroup>
-          </FormControl>
-        </Box>
-
-        <Box>
-          <SubTitleTypography text="答え"/>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filterSettings.showAnswer}
-                onChange={handleCheckboxChange}
-                name="showAnswer"
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={3}>
+            <Box>
+              <SubTitleTypography text="表示モード"/>
+              <FormControl component="fieldset">
+                <RadioGroup
+                  aria-label="display-mode"
+                  name="display-mode"
+                  value={filterSettings.displayMode}
+                  onChange={handleRadioChange}
+                >
+                  <FormControlLabel value="EtoJ" control={<Radio />} label="英⇨日" />
+                  <FormControlLabel value="JtoE" control={<Radio />} label="日⇨英" />
+                  <FormControlLabel value="ImageToE" control={<Radio />} label="画像⇨英" />
+                  <FormControlLabel value="VoiceToE" control={<Radio />} label="音声(単語)⇨英" />
+                  <FormControlLabel value="VoiceExToE" control={<Radio />} label="音声(例文)⇨英" />
+                  <FormControlLabel value="ExJtoExE" control={<Radio />} label="例文(日)⇨例文(例)" />
+                </RadioGroup>
+              </FormControl>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box>
+              <SubTitleTypography text="答え"/>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={filterSettings.showAnswer}
+                    onChange={handleCheckboxChange}
+                    name="showAnswer"
+                  />
+                }
+                label="表示する"
               />
-            }
-            label="表示する"
-          />
 
-        </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box>
+              <SubTitleTypography text="絞り込み"/>
+              <FormControl component="fieldset">
+                <RadioGroup
+                  aria-label="filter"
+                  name="filter"
+                  value={filterSettings.filterOption}
+                  onChange={handleRadioFilterChange}
+                >
+                  <Typography>英⇨日</Typography>
+                  <FormControlLabel 
+                    value="showEJOnlyNOT_MEMORIZED" 
+                    control={<Radio />} 
+                    label={
+                      <>
+                        <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                        <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
+                        のみ表示
+                      </>
+                    } 
+                  />
+                  <FormControlLabel 
+                    value="showEJOnlyMEMORIZED" 
+                    control={<Radio />} 
+                    label={
+                      <>
+                        <StarIcon style={{ color: 'gold' }}/>
+                        <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
+                        のみ表示
+                      </>
+                    } 
+                  />
+                  <FormControlLabel 
+                    value="showEJOnlyMEMORIZED2" 
+                    control={<Radio />} 
+                    label={
+                      <>
+                        <StarIcon style={{ color: 'gold' }}/>
+                        <StarIcon style={{ color: 'gold' }}/>
+                        のみ表示
+                      </>
+                    } 
+                  />
 
-        <Box>
-          <SubTitleTypography text="絞り込み"/>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={filterSettings.showEJOnlyNOT_MEMORIZED}
-                  onChange={handleCheckboxChange}
-                  name="showEJOnlyNOT_MEMORIZED"
-                />
-              }
-              label={
-                <>
-                  英⇨日
-                  <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                  <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
-                  のみ表示
-                </>
-              }
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={filterSettings.showJEOnlyNOT_MEMORIZED}
-                  onChange={handleCheckboxChange}
-                  name="showJEOnlyNOT_MEMORIZED"
-                />
-              }
-              label={
-                <>
-                 日⇨英 
-                 <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                  <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
-                  のみ表示
-                </>
-              }
-            />
-          </FormGroup>
-        </Box>
+                  <Typography>日⇨英</Typography>
+                  <FormControlLabel 
+                    value="showJEOnlyNOT_MEMORIZED" 
+                    control={<Radio />} 
+                    label={
+                      <>
+                      <StarBorderIcon style={{ color: '#D3D3D3' }}/>
+                      <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
+                      のみ表示
+                      </>
+                    } 
+                  />
+                  <FormControlLabel 
+                    value="showJEOnlyMEMORIZED" 
+                    control={<Radio />} 
+                    label={
+                      <>
+                      <StarIcon style={{ color: 'gold' }}/>
+                      <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
+                      のみ表示
+                      </>
+                    } 
+                  />
+                  <FormControlLabel 
+                    value="showJEOnlyMEMORIZED2" 
+                    control={<Radio />} 
+                    label={
+                      <>
+                      <StarIcon style={{ color: 'gold' }}/>
+                      <StarIcon style={{ color: 'gold' }}/>
+                      のみ表示
+                      </>
+                    } 
+                  />
+                </RadioGroup>
+              </FormControl>
 
+            </Box>
+          </Grid>
+        </Grid>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{justifyContent: 'center'}}>
         <Button onClick={onClose}>閉じる</Button>
       </DialogActions>
     </Dialog>
@@ -135,7 +200,6 @@ const WordListPage = () => {
   const router = useRouter();
   const { blockId } = router.query;
   const [wordList, setWordList] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState([]);
   const [modalOpenWord, setModalOpenWord] = useState(false);// 例文確認用のモーダル用の状態
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [progress, setProgress] = useState(null);
@@ -145,16 +209,17 @@ const WordListPage = () => {
   const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
   const [block, setBlock] = useState(null);
+  const [blocks, setBlocks] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
     displayMode: 'EtoJ',
     showAnswer: true,
-    showEJOnlyNOT_MEMORIZED: false,
-    showJEOnlyNOT_MEMORIZED: false,
+    filterOption: 'showEJOnlyNOT_MEMORIZED',
   });
   const theme = useTheme();
   const wordSectionRef = useRef(null);
+  const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
 
   
   useEffect(() => {
@@ -167,6 +232,7 @@ const WordListPage = () => {
         setProgress(data.progress);
         setWordStoryList(data.wordStoryList);
         setBlock(data.block);
+        setBlocks(data.blocks);
 
       }
       setIsLoading(false); // データ取得後にローディング状態をfalseに設定
@@ -177,12 +243,27 @@ const WordListPage = () => {
     }
   }, [blockId]);
 
+  useEffect(() => {
+    // URLが変わったときに状態を更新
+    if (router.query.languageDirection !== languageDirection) {
+      setLanguageDirection(router.query.languageDirection || 'EJ');
+    }
+  }, [router.query.languageDirection]);
+
+
 
   const handleBack = () => {
     router.push(`/word-master/wordMasterTop`);
   };
 
 
+  const handleBlockMoveClick = (increment) => {
+    const newDisplayOrder = block.displayOrder + increment;
+    const newBlock = blocks.find(b => b.displayOrder === newDisplayOrder);
+    if (newBlock) {
+      router.push(`/word-master/wordList?blockId=${newBlock.id}`);
+    }
+  }
 
   const handleOpenModalWord = (index) => {
     setSelectedIndex(index);
@@ -245,14 +326,6 @@ const WordListPage = () => {
     setSelectedTab(newValue);
   };
 
-  const handleOpenFilterDialog = () => {
-    setFilterDialogOpen(true);
-  };
-
-  const handleCloseFilterDialog = () => {
-    setFilterDialogOpen(false);
-  };
-
   const scrollToWordSection = () => {
     wordSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -260,14 +333,45 @@ const WordListPage = () => {
   const handleClickLearnByVisual = () =>{
     scrollToWordSection() 
     setSelectedTab(0)
-    setFilterSettings({...filterSettings, showEJOnlyNOT_MEMORIZED: true})
+    if (languageDirection == 'EJ'){
+      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
+      setFilterSettings({
+        ...filterSettings, 
+        filterOption: clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED'
+      })
+
+    }else if (languageDirection == 'JE'){
+      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
+      setFilterSettings({
+        ...filterSettings, 
+        filterOption: clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED'
+      })
+
+    }
     handleOpenModalWord(0)
   }
   
   const handleClickRedSheet = () =>{
     scrollToWordSection() 
     setSelectedTab(0)
-    setFilterSettings({...filterSettings, showEJOnlyNOT_MEMORIZED: true, showAnswer: false})
+    if (languageDirection == 'EJ'){
+      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
+      setFilterSettings({
+        ...filterSettings, 
+        filterOption: clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED',
+        showAnswer: false
+      })
+
+    }else if (languageDirection == 'JE'){
+      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
+      setFilterSettings({
+        ...filterSettings, 
+        filterOption: clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED',
+        showAnswer: false
+
+      })
+
+    }
   }
 
   const handleClickLearnByAIStory = ()=>{
@@ -300,10 +404,12 @@ const WordListPage = () => {
 
   // フィルタリングされた単語リストを取得
   const filteredWordList = wordList.filter(word => {
-    const statusFilter = selectedStatus.length === 0 || selectedStatus.includes(word.status);
-    const ejFilter = filterSettings.showEJOnlyNOT_MEMORIZED ? word.memorizeStatusEJ === 'NOT_MEMORIZED' : true;
-    const jeFilter = filterSettings.showJEOnlyNOT_MEMORIZED ? word.memorizeStatusJE === 'NOT_MEMORIZED' : true;
-    return statusFilter && ejFilter && jeFilter;
+    return (filterSettings.filterOption === 'showEJOnlyNOT_MEMORIZED' ? word.memorizeStatusEJ === 'NOT_MEMORIZED' :
+         filterSettings.filterOption === 'showEJOnlyMEMORIZED' ? word.memorizeStatusEJ === 'MEMORIZED' :
+         filterSettings.filterOption === 'showEJOnlyMEMORIZED2' ? word.memorizeStatusEJ === 'MEMORIZED2' :
+         filterSettings.filterOption === 'showJEOnlyNOT_MEMORIZED' ? word.memorizeStatusJE === 'NOT_MEMORIZED' :
+         filterSettings.filterOption === 'showJEOnlyMEMORIZED' ? word.memorizeStatusJE === 'MEMORIZED' :
+         filterSettings.filterOption === 'showJEOnlyMEMORIZED2' ? word.memorizeStatusJE === 'MEMORIZED2' : true);
   });
   
   return (
@@ -328,8 +434,7 @@ const WordListPage = () => {
 
               <Box display="flex" alignItems="center" justifyContent="flex-start">
                 <IconButton
-                  onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) - 1}`)}
-                  disabled={blockId === '1'}
+                  onClick={() => handleBlockMoveClick(-1)}
                 >
                   <ArrowBackIosIcon />
                 </IconButton>
@@ -337,8 +442,8 @@ const WordListPage = () => {
                   {block?.name}
                 </Avatar>
                 <IconButton
-                  onClick={() => router.push(`/word-master/wordList?&blockId=${parseInt(blockId, 10) + 1}`)}
-                >
+                  onClick={() => handleBlockMoveClick(1)}
+                  >
                   <ArrowForwardIosIcon />
                 </IconButton>
               </Box>
@@ -346,61 +451,64 @@ const WordListPage = () => {
 
 
         {progress && (
-          <>
+          <Box sx={{mt: 10}}>
             <SubTitleTypography text="ステータス" />
-            <Box display="flex" alignItems="center" sx={{mb: 2}}>
-              <Box display="flex" justifyContent="space-between" sx={{ width: '100%' }}>
-                <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
-                  <CardHeader 
-                    title={
-                      <Box display="flex" alignItems="center">
-                        <Typography variant="subtitle1">英⇨日</Typography>
-                        <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
-                          <IconButton size="small" sx={{ marginLeft: 1 }}>
-                            <HelpOutlineIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    } 
-                    titleTypographyProps={{ variant: 'subtitle1' }} 
-                  />
+            <Box display="flex" flexDirection={{ sm: 'column', md: 'row' }} sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
+              <Card 
+                sx={{ marginBottom: 2, flex: '1 0 50%', border: languageDirection === 'EJ' ? `2px solid ${theme.palette.primary.main}` : 'none', cursor: 'pointer'}}
+                onClick={()=>setLanguageDirection('EJ')}
+                >
+                <CardHeader 
+                  title={
+                    <Box display="flex" alignItems="center">
+                      <Typography variant="subtitle1">英⇨日</Typography>
+                      <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                        <IconButton size="small" sx={{ marginLeft: 1 }}>
+                          <HelpOutlineIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  } 
+                  titleTypographyProps={{ variant: 'subtitle1' }} 
+                />
 
-                  <CardContent>
-                    <Typography 
-                      variant="h3" 
-                      color={Math.round(progress?.EJ) < 100 ? 'textPrimary' : 'primary'} // 条件による色の変更
-                    >
-                      {`${Math.round(progress?.EJ)}%`}
-                    </Typography>
-                  </CardContent>
-                </Card>
-                <Card sx={{ flex: 1, minWidth: 150, mr: 1 }}> {/* minWidth を追加 */}
-                  <CardHeader 
-                    title={
-                      <Box display="flex" alignItems="center">
-                        <Typography variant="subtitle1">日⇨英</Typography>
-                        <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
-                          <IconButton size="small" sx={{ marginLeft: 1 }}>
-                            <HelpOutlineIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    } 
-                    titleTypographyProps={{ variant: 'subtitle1' }} 
-                  />
-                  <CardContent>
-                    <Typography 
-                      variant="h3" 
-                      color={Math.round(progress?.JE) < 100 ? 'textPrimary' : 'primary'} // 条件による色の変更
-                    >
-                      {`${Math.round(progress?.JE)}%`}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-          
-            </Box>
-          </>
+                <CardContent>
+                  <Typography 
+                    variant="h3" 
+                    color={Math.round(progress?.EJ) < 100 ? 'textPrimary' : 'primary'} // 条件による色の変更
+                  >
+                    {`${Math.round(progress?.EJ)}%`}
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card 
+                sx={{ marginBottom: 2, flex: '1 0 50%', border: languageDirection === 'JE' ? `2px solid ${theme.palette.primary.main}` : 'none', cursor: 'pointer'}}
+                onClick={()=>setLanguageDirection('JE')}
+                >
+                <CardHeader 
+                  title={
+                    <Box display="flex" alignItems="center">
+                      <Typography variant="subtitle1">日⇨英</Typography>
+                      <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                        <IconButton size="small" sx={{ marginLeft: 1 }}>
+                          <HelpOutlineIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  } 
+                  titleTypographyProps={{ variant: 'subtitle1' }} 
+                />
+                <CardContent>
+                  <Typography 
+                    variant="h3" 
+                    color={Math.round(progress?.JE) < 100 ? 'textPrimary' : 'primary'} // 条件による色の変更
+                  >
+                    {`${Math.round(progress?.JE)}%`}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>          
+          </Box>
         )}
 
         <Box sx={{mt: 10}}>
@@ -693,7 +801,7 @@ const WordListPage = () => {
       />
       <FilterDialog
         open={filterDialogOpen}
-        onClose={handleCloseFilterDialog}
+        onClose={()=>setFilterDialogOpen(false)}
         filterSettings={filterSettings}
         setFilterSettings={setFilterSettings}
       />

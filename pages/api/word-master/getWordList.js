@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
-import { getBlock, getWordListByCriteria, getWordListUserStatus, getWordListUserStatusByWordListId, getWordStoriesByUserIdAndBlockId } from '../../../utils/prisma-utils';
+import { getBlock, getWordListByCriteria, getWordListUserStatus, findBlockByDisplayOrderAndThemeId, getWordStoriesByUserIdAndBlockId, getBlocks } from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId; // セッションから userId を取得
 
-      const { blockId } = req.query;
+      const { blockId, moveBlock } = req.query;
       if (!blockId) {
         return res.status(400).json({ error: 'Theme and block are required' });
       }
@@ -18,7 +18,9 @@ export default async function handler(req, res) {
         blockId: parseInt(blockId)
       };
 
-      const block = await getBlock(blockId)
+      const block = await getBlock(parseInt(blockId));
+      const blocks = await getBlocks(block.theme.id)      
+
       const wordList = await getWordListByCriteria(criteria);
       const userWordStatus = await getWordListUserStatus(userId, block.theme.id, parseInt(blockId)); 
 
@@ -70,6 +72,7 @@ export default async function handler(req, res) {
         progress,
         wordStoryList,
         block,
+        blocks,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

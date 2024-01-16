@@ -58,6 +58,15 @@ export async function getBlock(blockId) {
   });
 }
 
+export async function findBlockByDisplayOrderAndThemeId(displayOrder, themeId) {
+  return await prisma.block.findFirst({
+    where: {
+      themeId: themeId,
+      displayOrder: displayOrder
+    },
+    include: { theme: true } // theme を含める場合
+  });
+}
 
 
 // UserWordList related functions
