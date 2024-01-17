@@ -33,7 +33,7 @@ export const getS3FileUrl = async (filename) => {
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: filename,
-    Expires: 60 * 60 * 5 // URLの有効期限（秒）
+    Expires: 60 * 60 * 24 * 3 // URLの有効期限（秒）
   };
 
   try {

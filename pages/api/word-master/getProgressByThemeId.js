@@ -94,7 +94,6 @@ export default async function handler(req, res) {
         
       
       res.status(200).json({ overallProgress, blocks: updatedBlocks, blockToLearn });
-      console.timeEnd("Total Request Time");
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

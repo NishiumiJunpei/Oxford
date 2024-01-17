@@ -30,6 +30,12 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
         }
     };
 
+    const handleClose = () => {
+        setIndex(initialIndex);
+        onClose();
+    };
+
+
     //将来のために残しているが、現在無効中
     const handleExampleSentenceGenerate = async () =>{
         setIsLoading(true); // ローディング開始
@@ -128,7 +134,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
             </IconButton>
             </DialogTitle>
             <DialogContent>
-                <Typography variant="subtitle1" style={{ marginTop: 20 }}>{word?.japanese}</Typography>
+                <Typography variant="subtitle1" style={{ marginTop: 10 }}>{word?.japanese}</Typography>
 
                 <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
                     <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
@@ -234,34 +240,7 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
 
             </DialogContent>
             <DialogActions style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
-                <div style={{ width: '100%', textAlign: 'center', marginBottom: 5 }}> 
-
-                {isLoading ? (
-                    <CircularProgress /> // ローディングインジケーターの表示
-                ) : (
-                    <div>
-                        {/* <Button 
-                            onClick={handleExampleSentenceGenerate} 
-                            variant="outlined" 
-                            disabled={isLoading}
-                            style={{ margin: 5, padding: 5, minWidth: 90 }} // ボタンのスタイルを調整
-                            >
-                            例文生成
-                        </Button>                 */}
-                    </div>
-                )}
-                
-                <Button 
-                    onClick={() => handlePlayPhrase(word.english)} 
-                    variant="outlined" 
-                    disabled={isLoading}
-                    style={{ margin: 5, padding: 5, minWidth: 90 }} // 同様にスタイル調整
-                >
-                    PlayPhrase.me
-                </Button>
-                </div>
                 <div style={{ width: '100%', textAlign: 'center' }}> 
-                {/* 前へ、次へ、閉じるのボタンをここに配置 */}
                     <Button 
                     onClick={handlePrev} 
                     disabled={(index <= 0) || isLoading}
@@ -277,12 +256,12 @@ const WordExampleSentenceModal = ({ open, onClose, wordList, initialIndex, updat
                     次へ
                     </Button>
                     <Button 
-                    onClick={onClose}
+                    onClick={handleClose}
                     style={{ margin: 5, padding: 5, minWidth: 90 }}
                     >
                     閉じる
                     </Button>
-            </div>
+                </div>
             </DialogActions>
         </Dialog>
     );
