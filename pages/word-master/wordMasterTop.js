@@ -7,6 +7,7 @@ import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typograph
 import WeakWordsList from '../../components/weakWordList'; 
 import ProgressCircle from '@/components/progressCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import SrWordList from '@/components/srWordList';
 
 
 const HomePage = () => {
@@ -18,10 +19,10 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
   const [weakWordList, setWeakWordList] = useState([]);
+  const [srWordList, setSrWordList] = useState([]);
  
 
   const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
-
   const fetchData = async (themeToFetch) => {
     try{
       setIsLoading(true);
@@ -39,6 +40,19 @@ const HomePage = () => {
   useEffect(() => {
     fetchData(themeId);
   }, []);
+
+  useEffect(() => {
+    // URLからtabの値を取得し、タブの状態を設定
+    const tabFromUrl = parseInt(router.query.tab, 10);
+    if (!isNaN(tabFromUrl)) {
+      setTabValue(tabFromUrl);
+    }
+  
+    // themeIdが変更されたときにデータをフェッチ
+    if (themeId) {
+      fetchData(themeId);
+    }
+  }, [router.query, themeId]);
   
   
   const handleBlockClick = (blockId, languageDirection) => {
@@ -51,6 +65,7 @@ const HomePage = () => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    router.push(`/?tab=${newValue}`, undefined, { shallow: true });
   };
 
   return (
@@ -65,6 +80,7 @@ const HomePage = () => {
         <Tabs value={tabValue} onChange={handleTabChange} sx={{ marginLeft: 2 }}>
           <Tab label="学習進捗" />
           <Tab label="苦手単語" />
+          <Tab label="間隔反復" />
         </Tabs>
 
         {tabValue === 0 && (
@@ -182,6 +198,10 @@ const HomePage = () => {
 
         {tabValue === 1 && (
           <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList}/> 
+        )}
+
+        {tabValue === 2 && (
+          <SrWordList srWordList={srWordList} setSrWordList={setSrWordList}/>
         )}
 
       </>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Avatar, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Container, Switch, FormControlLabel, Pagination } from '@mui/material';
+import { Avatar, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Container, Switch, FormControlLabel, Pagination, Typography, Box } from '@mui/material';
 import axios from 'axios';
 import WordExampleSentenceModal from './wordExampleSentenceModal';
 
@@ -97,7 +97,13 @@ const WeakWordList = ({wordList, setWordList}) => {
           />
 
         </>
-      ) : (<></>)}      
+      ) : (
+      <>
+        <Box sx={{mt: 5}}>
+          <Typography variant="subtitile1">苦手単語はありません</Typography>
+        </Box>
+      </>
+      )}      
 
       <WordExampleSentenceModal
         open={modalOpen}

@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import Link from 'next/link';
+import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link } from '@mui/material';
+// import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
 import WordExampleSentenceModal from '@/components/wordExampleSentenceModal';
 
 
-const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
+const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection}) =>{
   const router = useRouter();
-  const [wordDetail, setWordDetail] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false)
 
   const handleOpenModalWord = (index) => {
     setSelectedIndex(index);
@@ -36,6 +37,31 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
   // ランダムに画像を選択
   const randomImage = images[Math.floor(Math.random() * images.length)];
 
+
+  const handleClickSetSrWords = async () => {
+    setLoading(true)
+    try {
+      const srStartTime = new Date().toISOString(); // 現在時刻をISO文字列としてセット
+      const wordListIds = notMemorizedWordList.map(word => word.id);
+
+      const response = await axios.post('/api/word-master/setSrWords', {
+        wordListIds,
+        srStartTime,
+        srLanguageDirection: languageDirection,
+      });
+
+      if (response.status === 200) {
+        setMessage('登録できました。');
+        setLoading(false)
+      }
+    } catch (error) {
+      console.log('error', error)
+      setMessage('登録に失敗しました。');
+      setLoading(false)
+
+    }    
+  };
+
   return (
     <Container maxWidth="sm">
     <Box 
@@ -49,7 +75,7 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
         よくできました！
       </Typography>
 
-      {notMemorizedWordList?.length > 0 && (
+      {notMemorizedWordList?.length > 0 ? (
         <>
           <Typography variant="h6" gutterBottom>
             わからなかった単語
@@ -72,24 +98,26 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList}) =>{
               </TableBody>
             </Table>
           </TableContainer>
-        </>
-      )}
 
-      {wordDetail && (
-        <Box sx={{mb: 5, mt: 5}}>
-          <Typography variant="subtitle1">{wordDetail.english}</Typography>
-          <Typography variant="subtitle1">{wordDetail.japanese}</Typography>
-          <Typography className="preformatted-text" style={{ marginTop: 20 }}>
-              {wordDetail.exampleSentence}
-          </Typography>
-          {wordDetail?.imageUrl && (
-            <img 
-                src={wordDetail.imageUrl} 
-                alt={wordDetail.english} 
-                style={{ marginTop: 10, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
-            />
+          <Box sx={{mt: 5, display: 'flex', justifyContent: 'center'}}>
+            <Button variant="contained" color="secondary" onClick={handleClickSetSrWords} disabled={loading || message}>間隔反復をセットする</Button>
+          </Box>
+          {message && (
+            <Box>
+              <Typography variant="body1">
+                    {message} 
+                <Link href={`/word-master/wordMasterTop?tab=2`} passHref>
+                    (間隔反復の単語リスト)
+                </Link>
+              </Typography>
+            </Box>
           )}
-        </Box>
+
+        </>
+      ) : (
+        <>
+          <img width="300" src={`/images/${randomImage}`} alt="Completion" />
+        </>
       )}
 
       <Link href={`/word-master/wordList?blockId=${blockId}`} passHref>
@@ -273,7 +301,7 @@ const LearnWordsCheck = () => {
   return (
     <>
       {isFinish ? (
-        <FinishLearnWordsCheck blockId={blockId} notMemorizedWordList={notMemorizedWordList}/>
+        <FinishLearnWordsCheck blockId={blockId} notMemorizedWordList={notMemorizedWordList} languageDirection={languageDirection}/>
       ):(
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, height: 'calc(100vh - 10px)' }}>
           

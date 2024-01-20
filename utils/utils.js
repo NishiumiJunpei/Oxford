@@ -82,8 +82,28 @@ export const getKanjiFromBirthday = (birthday) => {
 
 export const timeAgo = (date) => {
   const now = new Date();
-  const pastDate = new Date(date);
-  const differenceInTime = now.getTime() - pastDate.getTime();
+  const compareDate = new Date(date);
+  let differenceInTime = compareDate.getTime() - now.getTime();
+
+  // 未来の日付の場合
+  if (differenceInTime > 0) {
+    const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+    const differenceInHours = Math.floor(differenceInTime / (1000 * 3600));
+    const differenceInMinutes = Math.floor(differenceInTime / (1000 * 60));
+
+    if (differenceInDays > 0) {
+      return `${differenceInDays}日後`;
+    } else if (differenceInHours > 0) {
+      return `${differenceInHours}時間後`;
+    } else if (differenceInMinutes > 0) {
+      return `${differenceInMinutes}分後`;
+    } else {
+      return '数分後';
+    }
+  }
+
+  // 過去の日付の場合
+  differenceInTime = Math.abs(differenceInTime);
   const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
   const differenceInHours = Math.floor(differenceInTime / (1000 * 3600));
   const differenceInMinutes = Math.floor(differenceInTime / (1000 * 60));
@@ -97,7 +117,8 @@ export const timeAgo = (date) => {
   } else {
     return '数分前';
   }
-}
+};
+
 
 
 // 配列をランダムに並び替える関数
@@ -107,4 +128,9 @@ export function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]]; // 要素の交換
   }
   return array;
+}
+
+
+export function addMinutesToDate(date, minutes) {
+  return new Date(date.getTime() + minutes * 60000);
 }

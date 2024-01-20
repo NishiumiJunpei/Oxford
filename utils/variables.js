@@ -15,3 +15,12 @@ export const challengeThemes = [
   ];
 
 
+export const srTiming = [
+  10,           //10分後
+  60 * 5,       //5時間後
+  60 * 24,      //24時間後 (1日)
+  60 * 24 * 5,  //5日後
+]
+
+
+

@@ -25,8 +25,8 @@ export default async function handler(req, res) {
 
         return {
           ...word,
-          memorizeStatusEJ: status?.memorizeStatusEJ || 'NOT_MEMORIZED',
-          memorizeStatusJE: status?.memorizeStatusJE || 'NOT_MEMORIZED',
+          memorizeStatusEJ: status?.memorizeStatusEJ,
+          memorizeStatusJE: status?.memorizeStatusJE,
           imageUrl: await getS3FileUrl(word.imageFilename),
         };
       }));

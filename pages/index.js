@@ -193,3 +193,12 @@ export default function Home() {
     </Box>
   );
 }
+
+export async function getServerSideProps(context) {
+  return {
+    redirect: {
+      destination: '/word-master/wordMasterTop', // リダイレクト先
+      permanent: false, // 一時的なリダイレクト（trueの場合は永続的）
+    },
+  }
+}

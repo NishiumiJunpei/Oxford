@@ -32,17 +32,18 @@ export default async function handler(req, res) {
       return { ...word, status };
     }));
 
-    const notMemorizedEJ = updatedWordList.filter(word => word.status.memorizeStatusEJ === 'NOT_MEMORIZED');
-    const memorizedEJ = updatedWordList.filter(word => word.status.memorizeStatusEJ === 'MEMORIZED');
-    const notMemorizedJE = updatedWordList.filter(word => word.status.memorizeStatusJE === 'NOT_MEMORIZED');
-    const memorizedJE = updatedWordList.filter(word => word.status.memorizeStatusJE === 'MEMORIZED');
+    const notMemorizedEJ = updatedWordList.filter(word => word.status?.memorizeStatusEJ === 'NOT_MEMORIZED');
+    const memorizedEJ = updatedWordList.filter(word => word.status?.memorizeStatusEJ === 'MEMORIZED');
+    const notMemorizedJE = updatedWordList.filter(word => word.status?.memorizeStatusJE === 'NOT_MEMORIZED');
+    const memorizedJE = updatedWordList.filter(word => word.status?.memorizeStatusJE === 'MEMORIZED');
     
     shuffleArray(notMemorizedEJ)
     shuffleArray(memorizedEJ)
     shuffleArray(notMemorizedJE)
     shuffleArray(memorizedJE)
+    shuffleArray(updatedWordList)
 
-    const combinedList = [...notMemorizedEJ, ...memorizedEJ, ...notMemorizedJE, ...memorizedJE];
+    const combinedList = [...notMemorizedEJ, ...memorizedEJ, ...notMemorizedJE, ...memorizedJE, ...updatedWordList];
 
     // 3. lengthに基づいて単語を選択
     const wordCount = { 'Short': 5, 'Medium': 10, 'Long': 20 }[length];

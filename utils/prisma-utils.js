@@ -1,6 +1,8 @@
 // utils/prisma-utils.js
 import prisma from '../prisma/prisma';  // Assume prisma.js exports your Prisma client instance
 import { timeAgo } from './utils';
+import { addMinutesToDate } from './utils';
+import { srTiming } from './variables';
 
 export async function getThemes(){
   return await prisma.theme.findMany()
@@ -435,3 +437,87 @@ export const deleteWordStoryByGPT = async (id) => {
     },
   });
 };
+
+
+export const setSrForWordListUserStatus = async(userId, wordListId, srStartTime, srLanguageDirection) =>{
+  try {
+    await prisma.wordListUserStatus.updateMany({
+      where: {
+        userId: userId,
+        wordListId: wordListId,
+      },
+      data: {
+        srCount: 0,
+        srStartTime: srStartTime,
+        srNextTime: addMinutesToDate(new Date(srStartTime), srTiming[0]),
+        srLanguageDirection: srLanguageDirection,
+        srStatus: "ACTIVE",
+      }
+    });
+  } catch (error) {
+    throw new Error(`Failed to update WordListUserStatus: ${error.message}`);
+  }
+
+}
+export async function getActiveSrWordListsForUser(userId) {
+  const activeWordListUserStatuses = await prisma.wordListUserStatus.findMany({
+    where: {
+      userId: userId,
+      srStatus: 'ACTIVE',
+    },
+    include: {
+      wordList: true, // WordListも取得する
+    }
+  });
+
+  // WordListとWordListUserStatusのデータを組み合わせる
+  return activeWordListUserStatuses.map(({ wordList, ...status }) => ({
+    ...wordList,
+    status: {
+      ...status,
+      wordList: undefined, // 重複を避けるため、このプロパティは除去
+    }
+  })).filter(item => item !== null);
+}
+
+
+export async function updateSrWordListUserStatus(ids, action) {
+  if (action === 'PROGRESS') {
+    for (const id of ids) {
+      const status = await prisma.wordListUserStatus.findUnique({
+        where: { id }
+      });
+
+      if (status) {
+        let srNextTime;
+        let srStatus = 'ACTIVE';
+        const srCount = (status.srCount ?? 0) + 1;
+
+        if (srCount >= srTiming.length) {
+          srNextTime = null;
+          srStatus = 'NOT_ACTIVE';
+        } else {
+          srNextTime = addMinutesToDate(status.srStartTime, srTiming[srCount]);
+        }
+
+        await prisma.wordListUserStatus.update({
+          where: { id },
+          data: { srNextTime, srCount, srStatus }
+        });
+      }
+    }
+  } else if (action === 'DELETE') {
+    for (const id of ids) {
+      await prisma.wordListUserStatus.update({
+        where: { id },
+        data: {
+          srStartTime: null,
+          srNextTime: null,
+          srStatus: null,
+          srLanguageDirection: null,
+          srCount: null
+        }
+      });
+    }
+  }
+}

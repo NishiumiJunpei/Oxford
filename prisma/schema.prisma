@@ -120,18 +120,23 @@ model WordListUserStatus {
   wordListId        Int
   memorizeStatusEJ  MemorizeStatus  @default(NOT_MEMORIZED)
   memorizeStatusJE  MemorizeStatus  @default(NOT_MEMORIZED)
-  exampleSentence   String?
-  imageFilename             String?
-  lastCheckDate     DateTime?
+  exampleSentence         String?
+  imageFilename           String?
+  lastCheckDate           DateTime?
   lastMemorizedDateEJ     DateTime?
   lastMemorizedDateJE     DateTime?
-  updatedAt         DateTime        @default(now()) @updatedAt
+  notMemorizedNum         Int?
+  srStartTime           DateTime?
+  srNextTime            DateTime?
+  srCount               Int? 
+  srLanguageDirection   String?
+  srStatus              String? 
+  updatedAt             DateTime    @default(now()) @updatedAt
   user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   wordList   WordList @relation(fields: [wordListId], references: [id], onDelete: Cascade)
 
   @@unique([userId, wordListId])
   @@index([userId, wordListId])
-
 }
 
 
