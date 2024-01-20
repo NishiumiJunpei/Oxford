@@ -29,22 +29,6 @@ const SrWordList = ({srWordList, setSrWordList}) => {
     fetchSrWordList();
   }, []);
 
-
-  //   useEffect(() => {
-  //   const fetchSrWordList = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await axios.get('/api/word-master/getSrWordList');
-  //       setSrWordList(response.data.srWordList);
-  //     } catch (error) {
-  //       console.error('Error fetching SR word list:', error);
-  //     }
-  //     setLoading(false);
-  //   };
-
-  //   fetchSrWordList();
-  // }, []);
-
   const handleListItemClick = (words, index) => {
     setFilteredWordList(words);
     setSelectedIndex(index);
@@ -73,7 +57,6 @@ const SrWordList = ({srWordList, setSrWordList}) => {
     } catch (error) {
       console.error('Error updating word list:', error);
     } finally {
-      setButtonDisabledState(prevState => ({...prevState, [timeIndex]: false}));
       checkAllButtonsPressed();
     }
   };
@@ -140,7 +123,7 @@ const SrWordList = ({srWordList, setSrWordList}) => {
               <Box sx={{display: 'flex', justifyContent: 'start'}}>
                 <Button 
                   onClick={() => handleButtonClick(words.map(word=>word.status.id), 'PROGRESS', timeIndex)} 
-                  disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)}
+                  disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)} //前者は一回押したら無効化のため、後者は5分後にならないと押せないようにするため
                   sx={{margin: 1}}
                   variant="outlined"
                   color="secondary"

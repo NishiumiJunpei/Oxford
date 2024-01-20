@@ -8,6 +8,8 @@ import WeakWordsList from '../../components/weakWordList';
 import ProgressCircle from '@/components/progressCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SrWordList from '@/components/srWordList';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import { useTheme } from '@mui/material/styles';
 
 
 const HomePage = () => {
@@ -17,10 +19,11 @@ const HomePage = () => {
   const [overallProgress, setOverallProgress] = useState({}); 
   const [blockToLearn, setBlockToLearn] = useState({}); 
   const [isLoading, setIsLoading] = useState(false);
-  const [showMaster, setShowMaster] = useState(true); // デフォルトでは「マスター」を表示
   const [weakWordList, setWeakWordList] = useState([]);
   const [srWordList, setSrWordList] = useState([]);
- 
+  const [srWordCount, setSrWordCount] = useState(0); // 追加: 復習すべき単語の数を格納するstate
+  const theme = useTheme(); // テーマフックの使用
+
 
   const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
   const fetchData = async (themeToFetch) => {
@@ -53,7 +56,22 @@ const HomePage = () => {
       fetchData(themeId);
     }
   }, [router.query, themeId]);
-  
+
+  useEffect(() => {
+    // タブ値が変更されたときに実行
+    const fetchSrWordsToReview = async () => {
+      try {
+        const currentTime = new Date().toISOString(); // 現在時刻をISO形式で取得
+        const response = await axios.get(`/api/word-master/checkSrWordsToReview?currentTime=${currentTime}`);
+        setSrWordCount(response.data.count); // 復習すべき単語の数を設定
+      } catch (error) {
+        console.error('Error fetching SrWordsToReview:', error);
+      }
+    };
+
+    fetchSrWordsToReview();
+  }, [tabValue]); // タブの値が変更されるたびに実行
+
   
   const handleBlockClick = (blockId, languageDirection) => {
     router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection}`);
@@ -80,7 +98,10 @@ const HomePage = () => {
         <Tabs value={tabValue} onChange={handleTabChange} sx={{ marginLeft: 2 }}>
           <Tab label="学習進捗" />
           <Tab label="苦手単語" />
-          <Tab label="間隔反復" />
+          <Tab 
+            label="間隔反復" 
+            icon={srWordCount > 0 ? (<PriorityHighIcon sx={{ color: theme.palette.error.main }}/>) : (<></>)} 
+            iconPosition="end" />
         </Tabs>
 
         {tabValue === 0 && (
