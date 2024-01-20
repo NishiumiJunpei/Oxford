@@ -1,4 +1,4 @@
-import { getUserById } from '../../../utils/prisma-utils';
+import { getTheme, getUserById } from '../../../utils/prisma-utils';
 import { updateExampleSentenceForUser } from '../../../utils/prisma-utils'
 import { getUserFromSession } from '@/utils/session-utils';
 import { generateExampleSentenceForUser } from '@/utils/openai-utils';
@@ -19,7 +19,13 @@ export default async function handler(req, res) {
   
 
         const user = await getUserById(userId);
-        const exampleSentenceForUser = await generateExampleSentenceForUser(user, english, japanese);
+        const theme = await getTheme(user.currentChallengeThemeId)
+
+        if (!user.profileKeyword && !user.interestKeyword) {
+          res.status(200).json({ exampleSentenceForUser: 'ユーザのプロフィール、興味が登録されていません' });
+        }
+
+        const exampleSentenceForUser = await generateExampleSentenceForUser(user, english, japanese, theme.levelKeyword);
       
         await updateExampleSentenceForUser(userId, wordListId, exampleSentenceForUser);
        

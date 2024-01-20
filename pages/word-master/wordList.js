@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
   TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, 
   Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,
-  Dialog, DialogTitle, DialogContent, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
@@ -194,7 +194,33 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
   );
 };
 
+const SrIntroDialog = ({ open, onClose, blockId }) => {
+  const router = useRouter();
 
+  const handleCheckUnderstanding = () => {
+    router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>間隔反復</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          理解度チェックをして、間違えた単語に対して間隔反復が行えます。
+        </DialogContentText>
+        <DialogContentText>
+          ※間隔反復は、10分後、1時間後、5時間後、翌日、など間隔をあけて復習して効率的に記憶する方法です
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>キャンセル</Button>
+        <Button color="primary" onClick={handleCheckUnderstanding}>
+          理解度チェック
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 const WordListPage = () => {
   const router = useRouter();
@@ -220,7 +246,10 @@ const WordListPage = () => {
   const theme = useTheme();
   const wordSectionRef = useRef(null);
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
+  const [tabForWordDetailDialog, setTabForWordDetailDialog] = useState(0);
+  const [openSrIntroDialog, setOpenSrIntroDialog] = useState(false);
 
+  
   
   useEffect(() => {
     const fetchData = async () => {
@@ -374,10 +403,37 @@ const WordListPage = () => {
     }
   }
 
-  const handleClickLearnByAIStory = ()=>{
-    scrollToWordSection() 
-    setSelectedTab(1)
+  const handleClickSR = () =>{
+    setOpenSrIntroDialog(true)
+  }
 
+  const handleAILearningLink = (index)=>{
+    if (index == 0){
+      scrollToWordSection() 
+      setSelectedTab(1)  
+    }else if (index == 1 || index == 2){
+      scrollToWordSection() 
+      setSelectedTab(0)
+      if (languageDirection == 'EJ'){
+        const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
+        setFilterSettings({
+          ...filterSettings, 
+          filterOption: clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED'
+        })
+  
+      }else if (languageDirection == 'JE'){
+        const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
+        setFilterSettings({
+          ...filterSettings, 
+          filterOption: clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED'
+        })
+  
+      }
+      handleOpenModalWord(0)
+  
+      setTabForWordDetailDialog(index)
+
+    }
   }
 
   const playAudio = async (text) => {
@@ -522,15 +578,15 @@ const WordListPage = () => {
                   <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>ビジュアルで覚える</Typography>
                   <NavigateNextIcon color="secondary"/>
                 </div>
-                <div onClick={handleClickRedSheet
-            } style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
+                <div onClick={handleClickRedSheet} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
                   <PsychologyAltIcon style={{ marginRight: theme.spacing(1) }} />
                   <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>赤シート風に隠して覚える</Typography>
                   <NavigateNextIcon color="secondary"/>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: theme.spacing(2) }}>
+                <div onClick={handleClickSR} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
                   <HotelIcon style={{ marginRight: theme.spacing(1) }} />
-                  <Typography>間隔反復で覚える（準備中）</Typography>
+                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>間隔反復で覚える</Typography>
+                  <NavigateNextIcon color="secondary"/>
                 </div>
               </CardContent>
             </Card>
@@ -538,18 +594,20 @@ const WordListPage = () => {
             <Card sx={{ marginBottom: 2, flex: '1 0 50%' }}>
               <CardHeader title={<Typography variant="subtitle1">AI学習</Typography>} />
               <CardContent>
-                <div onClick={handleClickLearnByAIStory} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
+                <div onClick={()=>handleAILearningLink(0)} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
                   <AutoStoriesIcon style={{ marginRight: theme.spacing(1) }} />
-                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>AI作のストーリー</Typography>
+                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>AI作ストーリー</Typography>
                   <NavigateNextIcon color="secondary"/>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center',  marginBottom: theme.spacing(2) }}>
+                <div onClick={()=>handleAILearningLink(1)} style={{ display: 'flex', alignItems: 'center',  cursor: 'pointer', marginBottom: theme.spacing(2) }}>
                   <SmartToyIcon style={{ marginRight: theme.spacing(1) }} />
-                  <Typography color="GrayText">パーソナライズ例文（準備中）</Typography>
+                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>パーソナライズ例文</Typography>
+                  <NavigateNextIcon color="secondary"/>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center',  marginBottom: theme.spacing(2) }}>
+                <div onClick={()=>handleAILearningLink(2)} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: theme.spacing(2) }}>
                   <PsychologyIcon style={{ marginRight: theme.spacing(1) }} />
-                  <Typography color="GrayText">AIチャット（準備中）</Typography>
+                  <Typography style={{ textDecoration: 'underline', color: theme.palette.secondary.main }}>AIレビュー</Typography>
+                  <NavigateNextIcon color="secondary"/>
                 </div>
               </CardContent>
             </Card>
@@ -785,6 +843,7 @@ const WordListPage = () => {
         wordList={filteredWordList}
         initialIndex={selectedIndex}
         updateWordList={updateWordList}
+        initialTabValue={tabForWordDetailDialog || 0}
       />
 
       <StoryCreationDialog 
@@ -805,7 +864,12 @@ const WordListPage = () => {
         filterSettings={filterSettings}
         setFilterSettings={setFilterSettings}
       />
-      
+     <SrIntroDialog
+        open={openSrIntroDialog}
+        onClose={()=>setOpenSrIntroDialog(false)}
+        blockId={blockId}
+      />
+
     </Box>
   );
 };

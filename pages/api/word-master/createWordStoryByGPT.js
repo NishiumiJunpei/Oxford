@@ -1,8 +1,6 @@
 // createWordStoryByGPT.js
-import { getWordListByCriteria, getWordListUserStatus, getUserById, saveWordStoryByGPT } from '../../../utils/prisma-utils';
-import { calculateAge } from '../../../utils/utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getWordListByCriteria, getWordListUserStatus, getUserById, saveWordStoryByGPT, getTheme } from '../../../utils/prisma-utils';
+import { getUserFromSession } from '@/utils/session-utils';
 import { generateWordStory } from '../../../utils/openai-utils';
 import { shuffleArray } from '@/utils/utils'
 
@@ -12,20 +10,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  const { userId } = await getUserFromSession(req, res);
   const { blockId, length, genre, characters } = req.body;
-  const session = await getServerSession(req, res, authOptions);
-  const userId = session.userId; 
   const user = await getUserById(userId);
-  const userProfile = JSON.stringify(user.profile)
-  const age = calculateAge(user.birthday);
   
-
   try {
     const criteria = {
       blockId: parseInt(blockId)
     };
     const wordList = await getWordListByCriteria(criteria);
     const userWordStatus = await getWordListUserStatus(userId, '', blockId); 
+    const theme = await getTheme(user.currentChallengeThemeId)
 
     let updatedWordList = await Promise.all(wordList.map(async word => {
       const status = userWordStatus.find(us => us.wordListId == word.id)
@@ -50,7 +45,7 @@ export default async function handler(req, res) {
     updatedWordList = combinedList.slice(0, wordCount);
 
     // 4. OpenAI APIにプロンプトを渡す
-    const response = await generateWordStory(updatedWordList, length, age, userProfile, genre, characters)
+    const response = await generateWordStory(updatedWordList, length, genre, characters, theme.levelKeyword)
 
     // 5. DBに登録
     const words = updatedWordList.map(word => `${word.english} (${word.japanese})`)

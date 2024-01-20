@@ -1,15 +1,17 @@
 //WordDetailDialog.js
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, 
-    useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField } from '@mui/material';
+    useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField, Link } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 
-const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList }) => {
+const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue }) => {
+    const router = useRouter();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [index, setIndex] = useState(initialIndex);
@@ -23,6 +25,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     useEffect(() => {
         setIndex(initialIndex);
     }, [initialIndex]);
+
+    useEffect(() => {
+        setTabValue(initialTabValue);
+    }, [initialTabValue]);
 
     useEffect(() => {
         if (wordList[index]?.userWordListStatus) {
@@ -309,7 +315,9 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             {tabValue === 1 && (
                 <DialogContent>
                     <Typography variant="body1">
-                        あなたのプロフィールや興味をもとにGPTが例文を作ります。
+                        あなたのプロフィールや興味
+                        (<Link onClick={()=>router.push("/user-setting/userProfile")} sx={{color: '#0000EE', cursor:'pointer'}} >設定</Link>)
+                        をもとにGPTが例文を作ります。
                     </Typography>
                     <Button variant="outlined" onClick={createExampleSentenceForUser} disabled={IsLoadingES}>
                         例文生成
@@ -346,7 +354,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                         value={userSentence}
                         onChange={(e) => setUserSentence(e.target.value)}
                         margin="normal"
-                        inputProps={{ maxLength: 100 }}
+                        inputProps={{ maxLength: 200 }}
                     />
                     <Button variant="outlined" onClick={createReviewByAI} disabled={IsloadingReview}>
                         AIレビュー
