@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, CircularProgress, List, ListItem, ListItemText, Typography, Box, Button, Divider , Switch, FormControlLabel } from '@mui/material';
-import WordExampleSentenceModal from './wordExampleSentenceModal';
+import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
 
 
@@ -148,7 +148,7 @@ const SrWordList = ({srWordList, setSrWordList}) => {
         <Typography variant="subtitle1">対象データはありません</Typography>
       )}
 
-      <WordExampleSentenceModal
+      <WordDetailDialog
         open={modalOpenWord}
         onClose={() => setModalOpenWord(false)}
         wordList={filteredWordList}

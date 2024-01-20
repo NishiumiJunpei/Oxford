@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link } from '@mui/material';
 // import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
-import WordExampleSentenceModal from '@/components/wordExampleSentenceModal';
+import WordDetailDialog from '@/components/wordDetailDialog';
 
 
 const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection}) =>{
@@ -126,7 +126,7 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection
         </Button>
       </Link>
     </Box>
-    <WordExampleSentenceModal
+    <WordDetailDialog
       open={openModal}
       onClose={()=>setOpenModal(false)}
       wordList={notMemorizedWordList}
@@ -363,7 +363,7 @@ const LearnWordsCheck = () => {
               </Button>
           )}
 
-          <WordExampleSentenceModal 
+          <WordDetailDialog 
             open={openModal}
             onClose={()=>setOpenModal(false)}
             wordList={[{...word}]}

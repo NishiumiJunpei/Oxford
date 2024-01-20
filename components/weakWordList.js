@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Container, Switch, FormControlLabel, Pagination, Typography, Box } from '@mui/material';
 import axios from 'axios';
-import WordExampleSentenceModal from './wordExampleSentenceModal';
+import WordDetailDialog from './wordDetailDialog';
 
 const ITEMS_PER_PAGE = 8; // 1ページあたりのアイテム数
 
@@ -105,7 +105,7 @@ const WeakWordList = ({wordList, setWordList}) => {
       </>
       )}      
 
-      <WordExampleSentenceModal
+      <WordDetailDialog
         open={modalOpen}
         onClose={handleCloseModal}
         wordList={currentWords}

@@ -28,6 +28,8 @@ model User {
   password                  String
   birthday                  DateTime?
   profile                   String?
+  profileKeyword            String?
+  interestKeyword           String?
   googleId                  String?                     @unique
   currentChallengeThemeId   Int?
   currentChallengeTheme     Theme?                      @relation(fields: [currentChallengeThemeId], references: [id])
@@ -48,13 +50,14 @@ model PasswordResetToken {
 }
 
 model Theme {
-  id      Int    @id @default(autoincrement())
-  name    String
-  imageFilename     String?
-  activeStatus String?
-  displayOrder Int?
-  blocks  Block[]
-  users   User[]
+  id              Int    @id @default(autoincrement())
+  name            String
+  imageFilename   String?
+  activeStatus    String?
+  displayOrder    Int?
+  levelKeyword    String?
+  blocks          Block[]
+  users           User[]
 }
 
 model Block {
@@ -120,8 +123,10 @@ model WordListUserStatus {
   wordListId        Int
   memorizeStatusEJ  MemorizeStatus  @default(NOT_MEMORIZED)
   memorizeStatusJE  MemorizeStatus  @default(NOT_MEMORIZED)
-  exampleSentence         String?
+  exampleSentenceForUser  String?
   imageFilename           String?
+  userSentence            String?
+  reviewByAI              String?
   lastCheckDate           DateTime?
   lastMemorizedDateEJ     DateTime?
   lastMemorizedDateJE     DateTime?

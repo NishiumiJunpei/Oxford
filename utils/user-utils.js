@@ -116,3 +116,64 @@ export function verifySignupToken(token) {
     return { valid: false, email: null };
   }
 }
+
+
+export async function updateUserProfileKeyword(userId, profileKeyword, action) {
+  // ユーザーを検索
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  let updatedKeywords = [];
+  if (user.profileKeyword) {
+    updatedKeywords = user.profileKeyword.split(',');
+  }
+
+  if (action === 'UPDATE') {
+    // キーワードを追加
+    updatedKeywords.push(profileKeyword);
+  } else if (action === 'DELETE') {
+    // キーワードを削除
+    updatedKeywords = updatedKeywords.filter(kw => kw !== profileKeyword);
+  }
+
+  // キーワードを更新
+  await prisma.user.update({
+    where: { id: userId },
+    data: { profileKeyword: updatedKeywords.join(',') },
+  });
+}
+
+export async function updateUserInterestKeyword(userId, interestKeyword, action) {
+  // ユーザーを検索
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  let updatedKeywords = [];
+  if (user.interestKeyword) {
+    updatedKeywords = user.interestKeyword.split(',');
+  }
+
+  if (action === 'UPDATE') {
+    // キーワードを追加
+    updatedKeywords.push(interestKeyword);
+  } else if (action === 'DELETE') {
+    // キーワードを削除
+    updatedKeywords = updatedKeywords.filter(kw => kw !== interestKeyword);
+  }
+
+  // キーワードを更新
+  await prisma.user.update({
+    where: { id: userId },
+    data: { interestKeyword: updatedKeywords.join(',') },
+  });
+}

@@ -7,7 +7,7 @@ import {Typography, IconButton, Box, Card, CardHeader, CardContent} from '@mui/m
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
-import WordExampleSentenceModal from '@/components/wordExampleSentenceModal';
+import WordDetailDialog from '@/components/wordDetailDialog';
 import ProgressCircle from '@/components/progressCircle';
 import SubTitleTypography from '@/components/subTitleTypography';
 
@@ -182,7 +182,7 @@ export default function Home() {
 
 
 
-      <WordExampleSentenceModal
+      <WordDetailDialog
         open={modalOpen}
         onClose={toggleModal}
         wordList={words}

@@ -9,7 +9,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import WordExampleSentenceModal from '../../components/wordExampleSentenceModal';
+import WordDetailDialog from '../../components/wordDetailDialog';
 import StoryCreationDialog from '../../components/storyCreationDialog'
 import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -779,7 +779,7 @@ const WordListPage = () => {
         </>
       )}
       </Box>
-      <WordExampleSentenceModal
+      <WordDetailDialog
         open={modalOpenWord}
         onClose={() => setModalOpenWord(false)}
         wordList={filteredWordList}

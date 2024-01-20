@@ -164,46 +164,6 @@ export async function getWordListByCriteria(criteria) {
 }
 
 
-// export async function getWordListUserStatus(userId, themeId, blockId = '') {
-//   let whereClause = {
-//     userId: userId
-//   };
-
-//   // themeId が指定されている場合のクエリ条件を設定
-//   if (themeId && !blockId) {
-//     whereClause.wordList = {
-//       blocks: {
-//         some: {
-//           block: { themeId: parseInt(themeId) }
-//         }
-//       }
-//     };
-//   }
-
-//   // blockId が指定されている場合のクエリ条件を設定
-//   if (blockId) {
-//     whereClause.wordList = {
-//       blocks: {
-//         some: {
-//           blockId: parseInt(blockId)
-//         }
-//       }
-//     };
-//   }
-
-//   // Prisma クエリを使用して WordListUserStatus データを取得
-//   return await prisma.wordListUserStatus.findMany({
-//     where: whereClause,
-//     include: {
-//       wordList: {
-//         include: {
-//           blocks: true
-//         }
-//       }
-//     }
-//   });
-// }
-
 export async function getWordListUserStatus(userId, themeId, blockId = '') {
   let whereClause = {
     userId: userId
@@ -362,27 +322,78 @@ export async function updateUserWordStatus(userId, wordListId, languageDirection
   }
 }
 
-export async function saveExampleSentenceAndImageForUser(userId, wordListId, exampleSentence, imageFilename = '') {
-  // Prisma Client を使用して例文を保存
-  await prisma.WordListUserStatus.upsert({
-    where: {
-      userId_wordListId: { // 修正: userId_wordListId を使用
-        userId: userId,
-        wordListId: wordListId // 修正: wordListId を使用
+export async function updateExampleSentenceForUser(userId, wordListId, exampleSentenceForUser) {
+  try {
+    const existingRecord = await prisma.wordListUserStatus.findUnique({
+      where: {
+        userId_wordListId: {
+          userId: userId,
+          wordListId: wordListId
+        }
       }
-    },
-    update: {
-      exampleSentence: exampleSentence,
-      imageFilename: imageFilename || null
-    },
-    create: {
-      userId: userId,
-      wordListId: wordListId, // 修正: wordListId を使用
-      exampleSentence: exampleSentence,
-      imageFilename: imageFilename || null
+    });
+
+    if (existingRecord) {
+      return await prisma.wordListUserStatus.update({
+        where: {
+          id: existingRecord.id
+        },
+        data: {
+          exampleSentenceForUser: exampleSentenceForUser
+        }
+      });
+    } else {
+      return await prisma.wordListUserStatus.create({
+        data: {
+          userId: userId,
+          wordListId: wordListId,
+          exampleSentenceForUser: exampleSentenceForUser
+        }
+      });
     }
-  });
+  } catch (error) {
+    console.error('Error in updateExampleSentenceForUser:', error);
+    throw error;
+  }
 }
+
+export async function updateUserSentenceReviewByAI(userId, wordListId, userSentence, reviewByAI) {
+  try {
+    const existingRecord = await prisma.wordListUserStatus.findUnique({
+      where: {
+        userId_wordListId: {
+          userId: userId,
+          wordListId: wordListId
+        }
+      }
+    });
+
+    if (existingRecord) {
+      return await prisma.wordListUserStatus.update({
+        where: {
+          id: existingRecord.id
+        },
+        data: {
+          userSentence: userSentence,
+          reviewByAI: reviewByAI
+        }
+      });
+    } else {
+      return await prisma.wordListUserStatus.create({
+        data: {
+          userId: userId,
+          wordListId: wordListId,
+          userSentence: userSentence,
+          reviewByAI: reviewByAI
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error in updateUserSentenceReviewByAI:', error);
+    throw error;
+  }
+}
+
 
 export async function updateWordList(wordListId, data) {
   await prisma.WordList.update({

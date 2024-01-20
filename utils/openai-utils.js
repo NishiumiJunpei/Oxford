@@ -9,19 +9,6 @@ const openai = new OpenAI({
 
 export async function generateExampleSentences(english, japanese, userProfile="", birthday="") {
   try{
-
-    // ------------------------ ユーザ毎の生成は一時停止 --------------------------
-    // let content = userProfile ? 
-    //   `${english} (${japanese}) という英単語を使った例文を1つ作ってください。プロフィールを参考に私が使う例文(英語)とその例文の日本語訳も書いてください(「例文」や「日本語訳」などの言葉は書かないで下さい)\n\n私のプロフィール\n${userProfile}\n最後にこの英単語の類語をいくつか教えてください` :
-    //   `${english} (${japanese}) という英単語を使った例文を1つ作ってください。例文(英語)とその例文の日本語訳、この英単語の類語を書いてください\n\n#出力時に、「例文」や「日本語訳」などの言葉は書かないでください。類語は明示的に類語と書いてください。` 
-    
-    // const kanjiArray = getKanjiFromBirthday(birthday)
-    // if (kanjiArray.length > 0) {
-    //   const kanjiString = kanjiArray.join(', ');
-    //   content += `\n\n出力する日本語はひがらとカタカナなだけ使ってください。但し、下記の漢字は使っても良いです。\n${kanjiString}`;
-    // }
-
-
     const content = `Given the English word '${english}' (${japanese}), create one example sentence using this word. Then provide a plain text translation of this sentence in Japanese and a list of synonyms for the word. Format your response as a JSON object with keys 'e' for the English sentence, 'j' for the Japanese translation, and 's' for the list of synonyms. Do not include labels such as 'Example' or 'Translation', and explicitly mark the list as synonyms.`;
 
     const response = await openai.chat.completions.create({
@@ -44,6 +31,7 @@ export async function generateExampleSentences(english, japanese, userProfile=""
     throw error; // このエラーを上位の関数に伝播させます
   }
 }
+
 
 // 画像を生成する関数
 export async function generateImage(description) {
@@ -86,3 +74,57 @@ export async function generateWordStory(wordList, length, age, userProfile, genr
     return response.choices[0].message.content;
           
 }
+
+
+export async function generateExampleSentenceForUser(user, english, japanese) {
+  try{
+    const { profileKeyword, interestKeyword } = user;
+    // キーワードのリストを作成し、ランダムに1つ選択します
+    const keywords = [...profileKeyword.split(','), ...interestKeyword.split(',')];
+    const selectedKeyword = keywords[Math.floor(Math.random() * keywords.length)].trim();
+
+    console.log('selectedKeyword', selectedKeyword)
+    // プロンプトを作成します
+    const content = `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and elaborate on the context or situation.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-1106",
+      // model: "gpt-4",
+      messages: [{role: 'assistant', content }],
+      temperature: 0.5,
+      max_tokens: 100,
+    });
+
+    const exampleSentenceForuser = response.choices[0].message.content
+
+    return exampleSentenceForuser;
+
+  } catch (error) {
+    console.error('generateExampleSentences error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+
+export async function generateReviewByAI(english, japanese, userSentence, levelKeyword) {
+  try {
+    // レビューのプロンプトを作成
+    // const content = `Please review the following English sentence with the perspective of word usage accuracy. The user's English level is indicated by '${levelKeyword}'. Sentence: '${userSentence}'. Provide feedback on the usage of words and suggest a model answer if there are areas for improvement.`;
+    const content = `次の英文を${english}(${japanese})の使い方の正確さの観点から、日本語でレビューしてください。ユーザーの英語レベルは'${levelKeyword}'と示されています。文: '${userSentence}'。単語の使い方に関するフィードバックを提供し、改善の余地がある場合は英語の模範文章を提案してください。`;
+
+    // OpenAIのAPIを呼び出し
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-1106",
+      messages: [{ role: 'assistant', content }],
+      temperature: 0.1,
+      max_tokens: 300,
+    });
+
+    const reviewByAI = response.choices[0].message.content;
+    return reviewByAI;
+
+  } catch (error) {
+    console.error('generateReviewByAI error:', error);
+    throw error; // エラーを上位の関数に伝播させます
+  }
+}
+
