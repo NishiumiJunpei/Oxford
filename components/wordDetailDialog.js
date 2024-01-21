@@ -53,6 +53,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
     const handleClose = () => {
         setIndex(initialIndex);
+        setTabValue(0)
+        setExampleSentenceForUser('')
+        setUserSentence('')
+        setReviewByAI('')
         onClose();
     };
 
@@ -171,7 +175,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     return (
         <Dialog
             open={open}
-            onClose={onClose}
+            onClose={handleClose}
             fullScreen={fullScreen}
             PaperProps={{
                 sx: {
