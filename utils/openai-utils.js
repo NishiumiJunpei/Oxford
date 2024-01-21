@@ -84,17 +84,18 @@ export async function generateExampleSentenceForUser(user, english, japanese, le
     const selectedKeyword = keywords[Math.floor(Math.random() * keywords.length)].trim();
 
     // プロンプトを作成します
-    const content = `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and be the level of ${levelKeyword}`;
+    // const content = `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and be the level of ${levelKeyword}`;
+    const content = `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and be the level of ${levelKeyword}. After the example sentence, add two line breaks and then provide an explanation in Japanese about the usage of '${english}' in the sentence.`;
 
     const response = await openai.chat.completions.create({
-      // model: "gpt-3.5-turbo-1106",
-      model: "gpt-4",
+      model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       temperature: 0.5,
-      max_tokens: 70,
+      max_tokens: 300,
     });
 
     const exampleSentenceForUser = response.choices[0].message.content
+    // console.log('exampleSentenceForUser', exampleSentenceForUser, selectedKeyword)
 
     return exampleSentenceForUser;
 
@@ -108,15 +109,14 @@ export async function generateReviewByAI(english, japanese, userSentence, levelK
   try {
     // レビューのプロンプトを作成
     // const content = `Please review the following English sentence with the perspective of word usage accuracy. The user's English level is indicated by '${levelKeyword}'. Sentence: '${userSentence}'. Provide feedback on the usage of words and suggest a model answer if there are areas for improvement.`;
-    const content = `次の英文を${english}(${japanese})の使い方の正確さの観点から、日本語でレビューしてください。レビューは'${levelKeyword}'のレベルに適した英文になっているかも見てください。文: '${userSentence}'。単語の使い方に関するフィードバックを提供し、改善の余地がある場合は${english}を使った模範文章を提案してください。`;
+    const content = `次の英文を${english}(${japanese})の使い方の正確さの観点から、日本語でレビューしてください。レビューは'${levelKeyword}'のレベルに適した英文になっているかも見てください。文: '${userSentence}'。単語の使い方に関するフィードバックを提供し、改善の余地がある場合は${english}を使った文章を提案してください。`;
 
     // OpenAIのAPIを呼び出し
     const response = await openai.chat.completions.create({
-      // model: "gpt-3.5-turbo-1106",
-      model: "gpt-4",
+      model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{ role: 'assistant', content }],
       temperature: 0.1,
-      max_tokens: 300,
+      max_tokens: 400,
     });
 
     const reviewByAI = response.choices[0].message.content;

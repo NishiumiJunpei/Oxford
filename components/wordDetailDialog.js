@@ -167,6 +167,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
       
 
     const word = wordList[index];
+
     return (
         <Dialog
             open={open}
@@ -333,7 +334,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 }}
                             />
                         ) : (
-                            <Typography>
+                            <Typography className="preformatted-text">
                                 {exampleSentenceForUser}
                             </Typography>
                         )}
