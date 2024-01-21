@@ -27,7 +27,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     }, [initialIndex]);
 
     useEffect(() => {
-        setTabValue(initialTabValue);
+        setTabValue(initialTabValue || 0);
     }, [initialTabValue]);
 
     useEffect(() => {
@@ -90,7 +90,6 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                 japanese: wordList[index].japanese,
             });
 
-            console.log('test', response)
             const updatedWord = {
                 ...wordList[index],
                 userWordListStatus: {
@@ -100,7 +99,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             };    
             updateWordList(updatedWord);
 
-            setExampleSentenceForUser(response.data.exampleSentenceForuser);
+            setExampleSentenceForUser(response.data.exampleSentenceForUser);
 
         } catch (error) {
             console.error('Error creating example sentence:', error);
@@ -168,7 +167,6 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
       
 
     const word = wordList[index];
-
     return (
         <Dialog
             open={open}
@@ -317,7 +315,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                     <Typography variant="body1">
                         あなたのプロフィールや興味
                         (<Link onClick={()=>router.push("/user-setting/userProfile")} sx={{color: '#0000EE', cursor:'pointer'}} >設定</Link>)
-                        をもとにGPTが例文を作ります。
+                        に関連する例文をGPTが作ります。
                     </Typography>
                     <Button variant="outlined" onClick={createExampleSentenceForUser} disabled={IsLoadingES}>
                         例文生成

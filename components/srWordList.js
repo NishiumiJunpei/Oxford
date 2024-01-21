@@ -5,7 +5,7 @@ import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
 
 
-const SrWordList = ({srWordList, setSrWordList}) => {
+const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [loading, setLoading] = useState(false);
   const [modalOpenWord, setModalOpenWord] = useState(false);
   const [filteredWordList, setFilteredWordList] = useState([]);
@@ -48,7 +48,7 @@ const SrWordList = ({srWordList, setSrWordList}) => {
         const newSrWordList = { ...srWordList };
         Object.entries(newSrWordList).forEach(([key, words]) => {
           if (key === Object.keys(srWordList)[timeIndex]) {
-            newSrWordList[key] = words.filter(word => !wordIds.includes(word.status.id));
+            newSrWordList[key] = words.filter(word => !wordIds.includes(word.userWordListStatus?.id));
           }
         });
         setSrWordList(newSrWordList);
@@ -113,8 +113,8 @@ const SrWordList = ({srWordList, setSrWordList}) => {
               {words.map((word, wordIndex) => (
                 <ListItem button key={word.id} onClick={() => handleListItemClick(words, wordIndex)}>
                   <ListItemText 
-                    primary={word.status.srLanguageDirection === 'JE' ? word.japanese : word.english} 
-                    secondary={switchStates[timeIndex] ? (word.status.srLanguageDirection === 'JE' ? word.english : word.japanese) : '　'} // 全角スペースで高さを保持
+                    primary={word.userWordListStatus?.srLanguageDirection === 'JE' ? word.japanese : word.english} 
+                    secondary={switchStates[timeIndex] ? (word.userWordListStatus?.srLanguageDirection === 'JE' ? word.english : word.japanese) : '　'} // 全角スペースで高さを保持
                   />
                 </ListItem>  
 
@@ -122,7 +122,7 @@ const SrWordList = ({srWordList, setSrWordList}) => {
               </List>
               <Box sx={{display: 'flex', justifyContent: 'start'}}>
                 <Button 
-                  onClick={() => handleButtonClick(words.map(word=>word.status.id), 'PROGRESS', timeIndex)} 
+                  onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 
                   disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)} //前者は一回押したら無効化のため、後者は5分後にならないと押せないようにするため
                   sx={{margin: 1}}
                   variant="outlined"
@@ -131,7 +131,7 @@ const SrWordList = ({srWordList, setSrWordList}) => {
                     反復済み
                 </Button>
                 <Button 
-                  onClick={() => handleButtonClick(words.map(word=>word.status.id), 'DELETE', timeIndex)} 
+                  onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'DELETE', timeIndex)} 
                   disabled={buttonDisabledState[timeIndex]}
                   sx={{margin: 1}}
                   color="inherit"
@@ -153,6 +153,7 @@ const SrWordList = ({srWordList, setSrWordList}) => {
         onClose={() => setModalOpenWord(false)}
         wordList={filteredWordList}
         initialIndex={selectedIndex}
+        updateWordList={updateWordList}
       />
     </Container>
   );

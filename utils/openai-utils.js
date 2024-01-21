@@ -94,9 +94,9 @@ export async function generateExampleSentenceForUser(user, english, japanese, le
       max_tokens: 70,
     });
 
-    const exampleSentenceForuser = response.choices[0].message.content
+    const exampleSentenceForUser = response.choices[0].message.content
 
-    return exampleSentenceForuser;
+    return exampleSentenceForUser;
 
   } catch (error) {
     console.error('generateExampleSentences error:', error);

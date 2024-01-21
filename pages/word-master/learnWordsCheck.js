@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのイ�
 import WordDetailDialog from '@/components/wordDetailDialog';
 
 
-const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection}) =>{
+const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection, updateWordList}) =>{
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -121,8 +121,8 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection
       )}
 
       <Link href={`/word-master/wordList?blockId=${blockId}`} passHref>
-        <Button variant="default" color="primary" sx={{marginTop: 3}}>
-          戻る
+        <Button variant="default" color="link" sx={{marginTop: 3}}>
+          英単語マスタートップへ
         </Button>
       </Link>
     </Box>
@@ -131,6 +131,7 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection
       onClose={()=>setOpenModal(false)}
       wordList={notMemorizedWordList}
       initialIndex={selectedIndex}
+      updateWordList={updateWordList}
     />
 
   </Container>
@@ -240,6 +241,22 @@ const LearnWordsCheck = () => {
     };
 
 
+    const updateWordList = (newWordData) => {
+      const updatedWordList = wordList.map(wordItem => 
+        wordItem.id === newWordData.id ? newWordData : wordItem
+      );
+      setWordList(updatedWordList);
+    };
+      
+    const updateWordListForNotMemorized = (newWordData) => {
+      const updatedWordList = notMemorizedWordList.map(wordItem => 
+        wordItem.id === newWordData.id ? newWordData : wordItem
+      );
+      setNotMemorizedWordList(updatedWordList);
+    };
+  
+    
+
   const word = wordList[currentIndex];
   const remainingWords = wordList.length - currentIndex; // 残りの問題数
 
@@ -301,7 +318,12 @@ const LearnWordsCheck = () => {
   return (
     <>
       {isFinish ? (
-        <FinishLearnWordsCheck blockId={blockId} notMemorizedWordList={notMemorizedWordList} languageDirection={languageDirection}/>
+        <FinishLearnWordsCheck 
+          blockId={blockId} 
+          notMemorizedWordList={notMemorizedWordList} 
+          languageDirection={languageDirection}
+          updateWordList={updateWordListForNotMemorized}
+        />
       ):(
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, height: 'calc(100vh - 10px)' }}>
           
@@ -368,6 +390,7 @@ const LearnWordsCheck = () => {
             onClose={()=>setOpenModal(false)}
             wordList={[{...word}]}
             initialIndex={0}
+            updateWordList={updateWordList}
           />
       </Box>
       )}

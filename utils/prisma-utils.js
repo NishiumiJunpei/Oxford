@@ -482,10 +482,10 @@ export async function getActiveSrWordListsForUser(userId) {
   });
 
   // WordListとWordListUserStatusのデータを組み合わせる
-  return activeWordListUserStatuses.map(({ wordList, ...status }) => ({
+  return activeWordListUserStatuses.map(({ wordList, ...userWordListStatus }) => ({
     ...wordList,
-    status: {
-      ...status,
+    userWordListStatus: {
+      ...userWordListStatus,
       wordList: undefined, // 重複を避けるため、このプロパティは除去
     }
   })).filter(item => item !== null);

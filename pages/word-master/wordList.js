@@ -279,6 +279,13 @@ const WordListPage = () => {
     }
   }, [router.query.languageDirection]);
 
+  useEffect(()=>{
+    setFilterSettings({
+      ...filterSettings, 
+      displayMode: languageDirection == 'EJ' ? 'EtoJ' : 'JtoE'
+    })
+
+  }, [languageDirection])
 
 
   const handleBack = () => {

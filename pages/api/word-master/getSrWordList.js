@@ -14,8 +14,8 @@ export default async function handler(req, res) {
 
         return {
           ...word,
-          memorizeStatusEJ: word.status?.memorizeStatusEJ,
-          memorizeStatusJE: word.status?.memorizeStatusJE,
+          memorizeStatusEJ: word.userWordListStatus?.memorizeStatusEJ,
+          memorizeStatusJE: word.userWordListStatus?.memorizeStatusJE,
           imageUrl: await getS3FileUrl(word.imageFilename),
         };
       }));
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
       // srNextTimeが同一の要素をグループ化
       const groupedWordList = updatedWordList.reduce((acc, curr) => {
-        const key = curr.status.srNextTime.toISOString(); // ISO Stringとしてキーを生成
+        const key = curr.userWordListStatus.srNextTime.toISOString(); // ISO Stringとしてキーを生成
         if (!acc[key]) {
           acc[key] = [];
         }

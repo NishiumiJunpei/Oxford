@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { AppBar, Toolbar, Button, ListItemButton, LinearProgress, Box, Typography, Avatar, IconButton,Switch,
+import { AppBar, Toolbar, Button, ListItem, LinearProgress, Box, Typography, Avatar, IconButton,Switch,
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Tooltip,
-  Card, CardHeader, CardContent } from '@mui/material';
+  Card, CardHeader, CardContent, Link } from '@mui/material';
 import WeakWordsList from '../../components/weakWordList'; 
 import ProgressCircle from '@/components/progressCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -12,8 +12,9 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useTheme } from '@mui/material/styles';
 
 
-const HomePage = () => {
+const WordMasterTop = () => {
   const router = useRouter();
+  const theme = useTheme(); // テーマフックの使用
   const [data, setData] = useState([]);
   const [tabValue, setTabValue] = useState(0); // タブの状態
   const [overallProgress, setOverallProgress] = useState({}); 
@@ -22,7 +23,6 @@ const HomePage = () => {
   const [weakWordList, setWeakWordList] = useState([]);
   const [srWordList, setSrWordList] = useState([]);
   const [srWordCount, setSrWordCount] = useState(0); // 追加: 復習すべき単語の数を格納するstate
-  const theme = useTheme(); // テーマフックの使用
 
 
   const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
@@ -50,8 +50,7 @@ const HomePage = () => {
     if (!isNaN(tabFromUrl)) {
       setTabValue(tabFromUrl);
     }
-  
-    // themeIdが変更されたときにデータをフェッチ
+
     if (themeId) {
       fetchData(themeId);
     }
@@ -74,7 +73,8 @@ const HomePage = () => {
 
   
   const handleBlockClick = (blockId, languageDirection) => {
-    router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection}`);
+    console.log('langu', languageDirection)
+    router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection || 'EJ'}`);
   };
 
   const handleActionClick = (blockId) => {
@@ -85,6 +85,26 @@ const HomePage = () => {
     setTabValue(newValue);
     router.push(`/?tab=${newValue}`, undefined, { shallow: true });
   };
+
+  const updateWordListForWeak = (newWordData) => {
+    const updatedWordList = weakWordList.map(wordItem => 
+      wordItem.id === newWordData.id ? newWordData : wordItem
+    );
+    setWeakWordList(updatedWordList);
+  };
+
+  const updateWordListForSR = (newWordData) => {
+    const updatedWordList = Object.entries(srWordList).reduce((acc, [srNextTime, words]) => {
+      const updatedWords = words.map(wordItem => 
+        wordItem.id === newWordData.id ? newWordData : wordItem
+      );
+      acc[srNextTime] = updatedWords;
+      return acc;
+    }, {});
+  
+    setSrWordList(updatedWordList);
+  };
+  
 
   return (
     <Box maxWidth="lg">
@@ -186,28 +206,32 @@ const HomePage = () => {
                 </TableHead>
                 <TableBody>
                   {data.map((item, index) => (
-                    <TableRow Button  key={index} onClick={() => handleBlockClick(item.block.id)} sx={{cursor: 'pointer'}}>
+                    <TableRow key={index} sx={{cursor: 'pointer'}}>
                       <TableCell component="th" scope="row">
-                        <ListItemButton >
+                        <ListItem >
                           <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>{item.block.name}</Avatar>
-                        </ListItemButton>
+                        </ListItem>
                       </TableCell>
 
                       <TableCell component="th" scope="row">
                         <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'} >
-                          {`${Math.round(item.progress?.EJ)}%`}
+                          <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
+                            {`${Math.round(item.progress?.EJ)}%`}
+                          </Link>
                         </Typography>
                       </TableCell>
                       <TableCell component="th" scope="row">
                         <Typography variant="subtitle1" color={Math.round(item.progress?.JE) < 100 ? 'textPrimary' : 'primary'} >
-                          {`${Math.round(item.progress?.JE)}%`}
+                          <Link onClick={() => handleBlockClick(item.block.id, 'JE')}>
+                            {`${Math.round(item.progress?.JE)}%`}
+                          </Link>
                         </Typography>
                       </TableCell>
 
                       <TableCell align="left">
-                        <Button variant="text" color="inherit" onClick={() => handleActionClick(item.block.id)}>
+                        <Link variant="text" color="inherit" onClick={() => handleActionClick(item.block.id)}>
                           理解度チェック
-                        </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -218,11 +242,11 @@ const HomePage = () => {
         )}
 
         {tabValue === 1 && (
-          <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList}/> 
+          <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList} updateWordList={updateWordListForWeak}/> 
         )}
 
         {tabValue === 2 && (
-          <SrWordList srWordList={srWordList} setSrWordList={setSrWordList}/>
+          <SrWordList srWordList={srWordList} setSrWordList={setSrWordList} updateWordList={updateWordListForSR}/> 
         )}
 
       </>
@@ -232,4 +256,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default WordMasterTop;
