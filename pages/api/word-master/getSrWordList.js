@@ -7,11 +7,10 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const { userId } = await getUserFromSession(req, res);
+      const currentTime = new Date(req.query.currentTime); // フロントエンドから渡される前提
+
       const wordList = await getActiveSrWordListsForUser(userId);
-
-
       const updatedWordList = await Promise.all(wordList.map(async word => {
-
         return {
           ...word,
           memorizeStatusEJ: word.userWordListStatus?.memorizeStatusEJ,
@@ -43,7 +42,27 @@ export default async function handler(req, res) {
       }, {});
           
 
-      res.status(200).json({ srWordList });
+      // srCountオブジェクトの初期化
+      const srCount = {
+        total: 0,
+        overdue: 0
+      };
+
+      const uniqueSrNextTimes = []
+      updatedWordList.forEach(word => {
+        const srNextTime = new Date(word.userWordListStatus.srNextTime).getTime(); // Dateをタイムスタンプに変換
+        if (!uniqueSrNextTimes.includes(srNextTime)) {
+          uniqueSrNextTimes.push(srNextTime)
+          // 5分前を過ぎているかチェック
+          if (currentTime - srNextTime > 5 * 60 * 1000) { // 5分 = 5 * 60秒 * 1000ミリ秒
+            srCount.overdue += 1;
+          }
+        }
+      });
+      
+      srCount.total = uniqueSrNextTimes.length;
+
+      res.status(200).json({ srWordList, srCount });
     } catch (error) {
         console.log('error', error)
       res.status(500).json({ error: error.message });

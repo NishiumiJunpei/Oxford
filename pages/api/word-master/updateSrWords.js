@@ -7,11 +7,12 @@ export default async function handler(req, res) {
     try {
       const { userId } = await getUserFromSession(req, res);
       const { wordListUserStatusIds, action } = req.body;
+      const currentTime = new Date(req.body.currentTime);
 
       // 文字列のIDを整数に変換
       const ids = wordListUserStatusIds.map(id => parseInt(id));
 
-      await updateSrWordListUserStatus(ids, action);
+      await updateSrWordListUserStatus(ids, action, currentTime);
 
       res.status(200).json({ message: 'updated successfully.' });
     } catch (error) {

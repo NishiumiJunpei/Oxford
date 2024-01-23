@@ -13,12 +13,15 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [buttonDisabledState, setButtonDisabledState] = useState({}); // ボタンの状態を管理
   const [switchStates, setSwitchStates] = useState({}); // 各反復タイミングごとのスイッチの状態
+  const [srCount, setSrCount] = useState({})
   
   const fetchSrWordList = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/word-master/getSrWordList');
+      const currentTime =  new Date().toISOString()
+      const response = await axios.get(`/api/word-master/getSrWordList?currentTime=${currentTime}`);
       setSrWordList(response.data.srWordList);
+      setSrCount(response.data.srCount)
     } catch (error) {
       console.error('Error fetching SR word list:', error);
     }
@@ -41,7 +44,8 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     try {
       await axios.post('/api/word-master/updateSrWords', {
         wordListUserStatusIds: wordIds,
-        action
+        action,
+        currentTime: new Date().toISOString()
       });
 
       if (action === 'DELETE') {
@@ -57,14 +61,13 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     } catch (error) {
       console.error('Error updating word list:', error);
     } finally {
-      checkAllButtonsPressed();
+      checkAllButtonsPressed(timeIndex);
     }
   };
 
-  const checkAllButtonsPressed = () => {
+  const checkAllButtonsPressed = (timeIndex) => {
     const allButtonsPressed = Object.entries(srWordList).every(([srNextTime, words], index) => {
-      console.log('allButtonsPressed', index, isButtonDisabled(srNextTime) , buttonDisabledState[index])
-      return isButtonDisabled(srNextTime) || buttonDisabledState[index];
+      return index == timeIndex || isButtonDisabled(srNextTime) || buttonDisabledState[index];
     });
   
     if (allButtonsPressed) {
@@ -78,6 +81,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     return `${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}時${date.getMinutes()}分`;
   };
 
+  //5分前になるまではtrue(=ボタン無効化)を返す
   const isButtonDisabled = (srNextTime) => {
     const currentTime = new Date();
     const nextTime = new Date(srNextTime);
@@ -96,55 +100,65 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
       {loading ? (
         <CircularProgress />
       ) : Object.keys(srWordList).length > 0 ? (
-        Object.entries(srWordList).map(([srNextTime, words], timeIndex) => (
-          <Box sx={{maxWidth: 600}}>
-            <Box key={timeIndex} sx={{ mt: 2,padding: 3, bgcolor: !isButtonDisabled(srNextTime) ? 'secondary.light' : 'default' }}>
-              <Typography variant="subtitle2" color="GrayText">
-                反復タイミング
-              </Typography>
-              <Typography variant="h6" color={new Date(srNextTime) < new Date() ? "error" : "inherit"}>
-                {formatDate(srNextTime)} {timeAgo(srNextTime) && `(${timeAgo(srNextTime)})`}
-              </Typography>
+        <>
+          {srCount.overdue > 0 && (
+            <Box sx={{mt: 3, mb: 3}}>
+              <Typography variant="subtitle1" color="GrayText">期限切れ件数</Typography>
+              <Typography variant="h5" color="error">{srCount.overdue}件</Typography>
 
-              <FormControlLabel
-                control={<Switch checchecked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
-                label="答えを表示"
-              />
-              <List>
-              {words.map((word, wordIndex) => (
-                <ListItem button key={word.id} onClick={() => handleListItemClick(words, wordIndex)}>
-                  <ListItemText 
-                    primary={word.userWordListStatus?.srLanguageDirection === 'JE' ? word.japanese : word.english} 
-                    secondary={switchStates[timeIndex] ? (word.userWordListStatus?.srLanguageDirection === 'JE' ? word.english : word.japanese) : '　'} // 全角スペースで高さを保持
-                  />
-                </ListItem>  
-
-              ))}
-              </List>
-              <Box sx={{display: 'flex', justifyContent: 'start'}}>
-                <Button 
-                  onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 
-                  disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)} //前者は一回押したら無効化のため、後者は5分後にならないと押せないようにするため
-                  sx={{margin: 1}}
-                  variant="outlined"
-                  color="secondary"
-                > 
-                    反復済み
-                </Button>
-                <Button 
-                  onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'DELETE', timeIndex)} 
-                  disabled={buttonDisabledState[timeIndex]}
-                  sx={{margin: 1}}
-                  color="inherit"
-                >
-                    削除
-                </Button>
-
-              </Box>
             </Box>
-            <Divider sx={{mt: 5, mb: 5}}/>
-          </Box>
-        ))
+          )}          
+          {Object.entries(srWordList).map(([srNextTime, words], timeIndex) => (
+            <Box sx={{maxWidth: 600}}>
+              <Box key={timeIndex} sx={{ mt: 2,padding: 3, bgcolor: !isButtonDisabled(srNextTime) ? 'secondary.light' : 'default' }}>
+                <Typography variant="subtitle2" color="GrayText">
+                  反復タイミング
+                </Typography>
+                <Typography variant="h6" color={new Date(srNextTime) < new Date() ? "error" : "inherit"}>
+                  {formatDate(srNextTime)} {timeAgo(srNextTime) && `(${timeAgo(srNextTime)})`}
+                </Typography>
+
+                <FormControlLabel
+                  control={<Switch checchecked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
+                  label="答えを表示"
+                />
+                <List>
+                {words.map((word, wordIndex) => (
+                  <ListItem button key={word.id} onClick={() => handleListItemClick(words, wordIndex)}>
+                    <ListItemText 
+                      primary={word.userWordListStatus?.srLanguageDirection === 'JE' ? word.japanese : word.english} 
+                      secondary={switchStates[timeIndex] ? (word.userWordListStatus?.srLanguageDirection === 'JE' ? word.english : word.japanese) : '　'} // 全角スペースで高さを保持
+                    />
+                  </ListItem>  
+
+                ))}
+                </List>
+                <Box sx={{display: 'flex', justifyContent: 'start'}}>
+                  <Button 
+                    onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 
+                    disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)} //前者は一回押したら無効化のため、後者は5分後にならないと押せないようにするため
+                    sx={{margin: 1}}
+                    variant="outlined"
+                    color="secondary"
+                  > 
+                      反復済み
+                  </Button>
+                  <Button 
+                    onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'DELETE', timeIndex)} 
+                    disabled={buttonDisabledState[timeIndex]}
+                    sx={{margin: 1}}
+                    color="inherit"
+                  >
+                      削除
+                  </Button>
+
+                </Box>
+              </Box>
+              <Divider sx={{mt: 5, mb: 5}}/>
+            </Box>
+          ))}
+        </>
+
       ) : (
         <Typography variant="subtitle1">対象データはありません</Typography>
       )}

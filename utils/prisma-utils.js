@@ -492,7 +492,7 @@ export async function getActiveSrWordListsForUser(userId) {
 }
 
 
-export async function updateSrWordListUserStatus(ids, action) {
+export async function updateSrWordListUserStatus(ids, action, currentTime) {
   if (action === 'PROGRESS') {
     for (const id of ids) {
       const status = await prisma.wordListUserStatus.findUnique({
@@ -508,7 +508,8 @@ export async function updateSrWordListUserStatus(ids, action) {
           srNextTime = null;
           srStatus = 'NOT_ACTIVE';
         } else {
-          srNextTime = addMinutesToDate(status.srStartTime, srTiming[srCount]);
+          
+          srNextTime = addMinutesToDate(currentTime, srTiming[srCount] - srTiming[srCount - 1]);
         }
 
         await prisma.wordListUserStatus.update({

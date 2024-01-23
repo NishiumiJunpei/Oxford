@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { getKanjiFromBirthday } from "./utils";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -95,7 +94,7 @@ export async function generateExampleSentenceForUser(user, english, japanese, le
       model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       temperature: 0.5,
-      max_tokens: 300,
+      max_tokens: 500,
     });
 
     const exampleSentenceForUser = response.choices[0].message.content
@@ -120,7 +119,7 @@ export async function generateReviewByAI(english, japanese, userSentence, levelK
       model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{ role: 'assistant', content }],
       temperature: 0.1,
-      max_tokens: 400,
+      max_tokens: 500,
     });
 
     const reviewByAI = response.choices[0].message.content;

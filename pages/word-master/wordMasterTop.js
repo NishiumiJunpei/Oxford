@@ -69,7 +69,7 @@ const WordMasterTop = () => {
     };
 
     fetchSrWordsToReview();
-  }, [tabValue]); // タブの値が変更されるたびに実行
+  }, [tabValue, srWordList]); // タブの値が変更されるたびに実行
 
   
   const handleBlockClick = (blockId, languageDirection) => {
