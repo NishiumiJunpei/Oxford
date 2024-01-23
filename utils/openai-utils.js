@@ -7,13 +7,12 @@ const openai = new OpenAI({
 
 
 
-export async function generateExampleSentences(english, japanese, userProfile="", birthday="") {
+export async function generateExampleSentences(english, japanese) {
   try{
     const content = `Given the English word '${english}' (${japanese}), create one example sentence using this word. Then provide a plain text translation of this sentence in Japanese and a list of synonyms for the word. Format your response as a JSON object with keys 'e' for the English sentence, 'j' for the Japanese translation, and 's' for the list of synonyms. Do not include labels such as 'Example' or 'Translation', and explicitly mark the list as synonyms.`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-1106",
-      // model: "gpt-4",
+      model: "gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       temperature: 0.5,
       response_format: { "type": "json_object" },
@@ -79,14 +78,19 @@ export async function generateWordStory(wordList, length, genre, characters, lev
 export async function generateExampleSentenceForUser(user, english, japanese, levelKeyword) {
   try{
     const { profileKeyword, interestKeyword } = user;
-    // キーワードのリストを作成し、ランダムに1つ選択します
-    const keywords = [...profileKeyword.split(','), ...interestKeyword.split(',')];
-    const selectedKeyword = keywords[Math.floor(Math.random() * keywords.length)].trim();
 
-    // プロンプトを作成します
-    // const content = `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and be the level of ${levelKeyword}`;
-    const content = `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and be the level of ${levelKeyword}. After the example sentence, add two line breaks and then provide an explanation in Japanese about the usage of '${english}' in the sentence.`;
+    const useProfile = Math.random() < 0.5; // 50%の確率でtrueかfalse
 
+    // 選択されたカテゴリのキーワードを配列に変換し、ランダムに1つ選ぶ
+    const selectedCategoryKeywords = useProfile ? profileKeyword.split(',') : interestKeyword.split(',');
+    const selectedKeyword = selectedCategoryKeywords[Math.floor(Math.random() * selectedCategoryKeywords.length)].trim();
+
+    const content = useProfile ? 
+            `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be relevant to a person whose profile matches '${selectedKeyword}' and be the level of ${levelKeyword}. After the example sentence, add two line breaks and then provide an explanation in Japanese about the usage of '${english}' in the sentence.`
+            :
+            `Given the English word '${english}' (${japanese}), create a detailed and longer example sentence using this word. The sentence should be related to the keyword '${selectedKeyword}' and be the level of ${levelKeyword}. After the example sentence, add two line breaks and then provide an explanation in Japanese about the usage of '${english}' in the sentence.`;
+
+    console.log('keyword', selectedKeyword)
     const response = await openai.chat.completions.create({
       model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],

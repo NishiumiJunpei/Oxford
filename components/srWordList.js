@@ -63,6 +63,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
 
   const checkAllButtonsPressed = () => {
     const allButtonsPressed = Object.entries(srWordList).every(([srNextTime, words], index) => {
+      console.log('allButtonsPressed', index, isButtonDisabled(srNextTime) , buttonDisabledState[index])
       return isButtonDisabled(srNextTime) || buttonDisabledState[index];
     });
   

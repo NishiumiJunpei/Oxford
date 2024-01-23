@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link } from '@mui/material';
+import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link, Avatar } from '@mui/material';
 // import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
 import WordDetailDialog from '@/components/wordDetailDialog';
 
 
-const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection, updateWordList}) =>{
+const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, updateWordList}) =>{
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -120,11 +120,22 @@ const FinishLearnWordsCheck = ({blockId, notMemorizedWordList, languageDirection
         </>
       )}
 
-      <Link href={`/word-master/wordList?blockId=${blockId}`} passHref>
-        <Button variant="default" color="link" sx={{marginTop: 3}}>
-          英単語マスタートップへ
-        </Button>
-      </Link>
+      <Box display="flex" alignItems="center" justifyContent="flex-start" sx={{mt: 5, mb: 5}}>
+        <Link href={`/word-master/wordMasterTop`} passHref>
+          <Button variant="default" color="link" sx={{marginTop: 3}}>
+            英単語マスタートップへ
+          </Button>
+        </Link>
+        <Link href={`/word-master/wordList?blockId=${block.id}`} passHref>
+          <Button variant="default" color="link" sx={{marginTop: 3}}>
+            <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1, width: 32, height: 32, fontSize: '1rem' }}>
+              {block?.name}
+            </Avatar>  
+            へ戻る
+          </Button>
+        </Link>
+      </Box>
+
     </Box>
     <WordDetailDialog
       open={openModal}
@@ -143,6 +154,7 @@ const LearnWordsCheck = () => {
     const { blockId, wordCount, languageDirection, includeMemorized } = router.query;
     const [isLoading, setIsLoading] = useState(false);
     const [wordList, setWordList] = useState([]);
+    const [block, setBlock] = useState();
     const [notMemorizedWordList, setNotMemorizedWordList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showAnswer, setShowAnswer] = useState(false);
@@ -161,7 +173,8 @@ const LearnWordsCheck = () => {
         const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection, includeMemorized }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
-        setWordList(data);
+        setWordList(data.wordList);
+        setBlock(data.block);
         setIsLoading(false)
       };
   
@@ -319,7 +332,7 @@ const LearnWordsCheck = () => {
     <>
       {isFinish ? (
         <FinishLearnWordsCheck 
-          blockId={blockId} 
+          block={block} 
           notMemorizedWordList={notMemorizedWordList} 
           languageDirection={languageDirection}
           updateWordList={updateWordListForNotMemorized}
