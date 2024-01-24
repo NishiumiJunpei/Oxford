@@ -72,6 +72,8 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   
     if (allButtonsPressed) {
       fetchSrWordList(); // APIを再コール
+      setSwitchStates({})
+      setButtonDisabledState({})
     }
   };
   
