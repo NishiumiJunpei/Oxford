@@ -53,19 +53,18 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     const wordsString = wordList.map(word => `${word.english} (${word.japanese})`).join(', ');
     const lengthMapping = { 'Short': 50, 'Medium': 150, 'Long': 300 };
     const maxCharacters = lengthMapping[length];
-    // const content = `下記の単語を使い、プロフィールを考慮して、指定された条件に基づいて物語を作ってください。物語は英語で出力し、この年齢が理解できるレベルの言葉・漢字を使って日本語訳も書いてください。\n#プロフィール\n${userProfile}\n#単語:${wordsString}\n#条件\n物語の単語数上限：${maxCharacters}字\nジャンル：${genre}\n登場人物：${characters}`;
-    const content = `指定された単語を使用して、与えられた条件に基づき英語の物語を作成します。各部分の日本語訳も含めてください。英語の文が2つ続いたら、その後に両方の日本語訳を挿入してください。物語は${levelKeyword}のレベルにしてください。
+
+    const content = `指定された単語を使用して、与えられた条件に基づき英語の物語を作成します。物語は、特に${genre}ジャンルに沿った内容でお願いします。各部分の日本語訳も含めてください。英語の文が2つ続いたら、その後に両方の日本語訳を挿入してください。物語の難易度は${levelKeyword}のレベルにしてください。
     #使用する単語: ${wordsString}    
     #物語の単語数上限: ${maxCharacters}字
     #ジャンル: ${genre}
     #登場人物: ${characters}`;
-        
 
     // 以下に、APIへのリクエストを行うコードが続きます。        
     const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
         messages: [{ role: 'assistant', content }],
-        temperature: 0.5,
+        temperature: 0.7,
         max_tokens: 1000,
     });
     
