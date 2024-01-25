@@ -31,12 +31,12 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     }, [initialTabValue]);
 
     useEffect(() => {
-        if (wordList[index]?.userWordListStatus) {
+        if (open && wordList[index]?.userWordListStatus) {
             setExampleSentenceForUser(wordList[index].userWordListStatus.exampleSentenceForUser || '');
             setUserSentence(wordList[index].userWordListStatus.userSentence || '');
             setReviewByAI(wordList[index].userWordListStatus.reviewByAI || '');
         }
-    }, [index, wordList]);
+    }, [index, wordList, open]);
     
 
     const handleNext = () => {
