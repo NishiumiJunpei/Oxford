@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box, Snackbar, Alert, Typography } from '@mui/material';
 
 export default function Home() {
   const [themes, setThemes] = useState([]);
@@ -185,7 +185,7 @@ export default function Home() {
                 <TableCell>ID</TableCell>
                 <TableCell>English</TableCell>
                 <TableCell>Japanese</TableCell>
-                <TableCell>Example</TableCell>
+                <TableCell>Image</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -195,9 +195,9 @@ export default function Home() {
                     <TableCell>{word.english}</TableCell>
                     <TableCell>{word.japanese}</TableCell>
                     <TableCell>
-                      {(word.exampleSentenceE?.length > 30
-                          ? `${word.exampleSentenceE?.substring(0, 30)}...`
-                          : word.exampleSentenceE)}                     
+                      {(word.imageFilename
+                          ? `　`
+                          : <Typography color="error">なし</Typography>)}                     
                     </TableCell>
                   </TableRow>
               )}
