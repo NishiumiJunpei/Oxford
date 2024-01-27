@@ -16,28 +16,43 @@ export default async function handler(req, res) {
       let totalProgressEJ = 0;
       let totalProgressJE = 0;
       let totalWords = 0;
+      const currentTime = new Date();
 
       const updatedBlocks = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks.some(b=> b.blockId === block.id));
-        const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
+        // const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
 
         // progress計算
         let memorizedCountEJ = 0;
         let memorizedCountJE = 0;
+
+        //理解度チェックやる余地がああるか
+        let numAbleToProgressEJ = 0
+        let numAbleToProgressJE = 0
       
-        blockWordListUserStatus.forEach(status => {
+        // blockWordListUserStatus.forEach(status => {
+        blockWords.forEach(word => {
+          const status = wordListUserStatus.find (us => us.wordListId == word.id)
+
           // memorizeStatusEJのカウント
-          if (status.memorizeStatusEJ === 'MEMORIZED') {
+          if (status?.memorizeStatusEJ === 'MEMORIZED') {
             memorizedCountEJ += 1;
-          } else if (status.memorizeStatusEJ === 'MEMORIZED2') {
+            numAbleToProgressEJ =  (status.lastMemorizedDateEJ.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ
+
+          } else if (status?.memorizeStatusEJ === 'MEMORIZED2') {
             memorizedCountEJ += 2;
+          } else{
+            numAbleToProgressEJ +=1
           }
       
           // memorizeStatusJEのカウント
-          if (status.memorizeStatusJE === 'MEMORIZED') {
+          if (status?.memorizeStatusJE === 'MEMORIZED') {
             memorizedCountJE += 1;
-          } else if (status.memorizeStatusJE === 'MEMORIZED2') {
+            numAbleToProgressJE =  (status.lastMemorizedDateJE.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE
+          } else if (status?.memorizeStatusJE === 'MEMORIZED2') {
             memorizedCountJE += 2;
+          } else{
+            numAbleToProgressJE += 1
           }
         });
 
@@ -50,11 +65,16 @@ export default async function handler(req, res) {
         totalProgressEJ += memorizedCountEJ;
         totalProgressJE += memorizedCountJE;
         totalWords += blockWords.length;
-                  
+          
+        const numAbleToProgress =  {
+          EJ: numAbleToProgressEJ, 
+          JE: numAbleToProgressJE
+        }
       
         return {
           block,
           progress,
+          numAbleToProgress
         };
       });
                   
@@ -68,9 +88,10 @@ export default async function handler(req, res) {
 
       const blockToLearn = {}
     
-      // 指定されたパーセンテージ以下で最小のnameを持つ要素を見つける関数
+      // 指定されたパーセンテージ以下で最小のprogressを持つ要素を見つける関数
       const findBlockByProgress = (blocks, progressKey, maxProgress) => {
         return blocks
+          .filter(item => item.numAbleToProgress[progressKey] > 0)
           .filter(item => item.progress[progressKey] < maxProgress)
           .sort((a, b) => {
             // progressで比較
