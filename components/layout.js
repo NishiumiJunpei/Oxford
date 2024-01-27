@@ -8,7 +8,7 @@ const drawerWidth = 240;
 
 export default function Layout({ children }) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [initialRender, setInitialRender] = useState(true);

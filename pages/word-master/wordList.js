@@ -516,7 +516,7 @@ const WordListPage = () => {
         {progress && (
           <Box sx={{mt: 10}}>
             <SubTitleTypography text="ステータス" />
-            <Box display="flex" flexDirection={{ sm: 'column', md: 'row' }} sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
+            <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
               <Card 
                 sx={{ marginBottom: 2, flex: '1 0 50%', border: languageDirection === 'EJ' ? `2px solid ${theme.palette.primary.main}` : 'none', cursor: 'pointer'}}
                 onClick={()=>setLanguageDirection('EJ')}
@@ -576,7 +576,7 @@ const WordListPage = () => {
 
         <Box sx={{mt: 10}}>
           <SubTitleTypography text="学習する"/>
-          <Box display="flex" flexDirection={{ sm: 'column', md: 'row' }} sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
+          <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
             <Card sx={{ marginBottom: 2, flex: '1 0 50%'}}>
               <CardHeader title={<Typography variant="subtitle1">キホン学習</Typography>} />
               <CardContent>
