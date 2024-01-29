@@ -488,7 +488,7 @@ const WordListPage = () => {
         </div>
         ) : (
           <>
-            <Box display="flex" width="100%" sx={{flexDirection: { xs: 'column', sm: 'row' }, marginBottom: 2}}>
+            <Box display="flex" width="100%" sx={{flexDirection: { xs: 'column', sm: 'row' }}}>
               <Box display="flex" alignItems="center">
                 <Typography variant="h4"sx={{mb: 1, mr: 2}}>
                     {block?.theme.name}
@@ -514,7 +514,7 @@ const WordListPage = () => {
 
 
         {progress && (
-          <Box sx={{mt: 10}}>
+          <Box sx={{mt: 3}}>
             <SubTitleTypography text="ステータス" />
             <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
               <Card 
@@ -574,8 +574,13 @@ const WordListPage = () => {
           </Box>
         )}
 
-        <Box sx={{mt: 10}}>
+        <Box sx={{mt: 3}}>
           <SubTitleTypography text="学習する"/>
+
+          <Button variant="contained" color="secondary" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>
+              理解度チェック
+          </Button>
+
           <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
             <Card sx={{ marginBottom: 2, flex: '1 0 50%'}}>
               <CardHeader title={<Typography variant="subtitle1">キホン学習</Typography>} />
@@ -620,9 +625,6 @@ const WordListPage = () => {
             </Card>
           </Box>
 
-          <Button variant="contained" color="secondary" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>
-              理解度チェック
-          </Button>
         </Box>
 
         <Box ref={wordSectionRef} style={{minHeight: '100vh'}} sx={{mt: 5}}>
