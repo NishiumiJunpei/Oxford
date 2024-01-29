@@ -20,7 +20,6 @@ export default async function handler(req, res) {
 
       const updatedBlocks = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks.some(b=> b.blockId === block.id));
-        // const blockWordListUserStatus = wordListUserStatus.filter(us => us.wordList?.blocks?.some(b => b.blockId == block.id))
 
         // progress計算
         let memorizedCountEJ = 0;
@@ -30,7 +29,6 @@ export default async function handler(req, res) {
         let numAbleToProgressEJ = 0
         let numAbleToProgressJE = 0
       
-        // blockWordListUserStatus.forEach(status => {
         blockWords.forEach(word => {
           const status = wordListUserStatus.find (us => us.wordListId == word.id)
 
