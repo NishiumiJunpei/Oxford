@@ -263,7 +263,7 @@ export async function updateUserWordStatus(userId, wordListId, languageDirection
         //24時間以内に２連続正解すると、その後、MEMORIZED2になりづらくなるので、更新しない
         if (existingRecord.memorizeStatusEJ === 'NOT_MEMORIZED' || 
         (existingRecord.memorizeStatusEJ === 'MEMORIZED' && !existingRecord.lastMemorizedDateEJ) ||
-        (existingRecord.memorizeStatusEJ === 'MEMORIZED' && (existingRecord.lastMemorizedDateEJ.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000))) {
+        (existingRecord.memorizeStatusEJ === 'MEMORIZED' && (existingRecord.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000))) {
           updatedData.lastMemorizedDateEJ = currentTime;
         }
 
@@ -279,7 +279,7 @@ export async function updateUserWordStatus(userId, wordListId, languageDirection
         //24時間以内に２連続正解すると、その後、MEMORIZED2になりづらくなるので、更新しない
         if (existingRecord.memorizeStatusJE === 'NOT_MEMORIZED' || 
         (existingRecord.memorizeStatusJE === 'MEMORIZED' && !existingRecord.lastMemorizedDateJE) ||
-        (existingRecord.memorizeStatusJE === 'MEMORIZED' && (existingRecord.lastMemorizedDateJE.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000))) {
+        (existingRecord.memorizeStatusJE === 'MEMORIZED' && (existingRecord.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000))) {
           updatedData.lastMemorizedDateJE = currentTime;
         }
 
