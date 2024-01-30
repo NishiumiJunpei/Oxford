@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       const wordList = wordLists[i];
 
       if (!wordList.exampleSentenceE){
-        await createExampleSentenceAndImageByGPT(wordList.id)
+        // await createExampleSentenceAndImageByGPT(wordList.id)
         console.log(`Completed: ${i} / ${wordLists.length} --- ${wordList.id}.${wordList.english}`)  
       }
 

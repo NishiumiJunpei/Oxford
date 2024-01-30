@@ -6,10 +6,18 @@ export default async function handler(req, res) {
     try {
       const client = new TextToSpeechClient();
       const text = req.body.text;
+      const lang = req.body.lang
+
+      const languageCode = lang == 'en' ? 'en-US' : 
+                          lang == 'ja' ? 'ja-JP' : 'en-US'
+                    
+      const name = lang == 'en' ? 'en-US-Neural2-D' : 
+                          lang == 'ja' ? 'ja-JP-Neural2-B' : 'en-US-Neural2-D'
 
       const request = {
         input: { text: text },
-        voice: { languageCode: 'en-US', ssmlGender: 'NEUTRAL' },
+        voice: { languageCode,  name},
+        // voice: { languageCode, ssmlGender: 'NEUTRAL', name: 'en-US-Neural2-A' },
         audioConfig: { audioEncoding: 'MP3' },
       };
 

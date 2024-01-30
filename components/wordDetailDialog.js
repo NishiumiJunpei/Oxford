@@ -60,12 +60,12 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
         onClose();
     };
 
-    const playAudio = async (text) => {
+    const playAudio = async (text, lang = 'en') => {
         try {
           const response = await fetch('/api/common/synthesize', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text }),
+            body: JSON.stringify({ text, lang }),
           });
       
           const data = await response.json();
@@ -208,12 +208,24 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             {tabValue === 0 && (
                 <DialogContent>
-                    <Typography variant="subtitle1" style={{ marginTop: 10 }}>{word?.japanese}</Typography>
+                    <Typography variant="body2" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
+                        <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
+                        <IconButton onClick={() => playAudio(word.japanese, 'ja')} size="small">
+                            <VolumeUpIcon />
+                        </IconButton>
+                    </Typography>
+                    <Typography variant="body1">
+                        {word?.japanese}
+                    </Typography>
+
 
                     <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
                         <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
                         <IconButton onClick={() => playAudio(word.exampleSentenceE)} size="small">
-                            <VolumeUpIcon />
+                        <VolumeUpIcon /><Typography variant="body2">(英)</Typography>
+                        </IconButton>
+                        <IconButton onClick={() => playAudio(word.exampleSentenceJ, 'ja')} size="small">
+                            <VolumeUpIcon /><Typography variant="body2">(日)</Typography>
                         </IconButton>
                     </Typography>
 
@@ -226,6 +238,9 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
                     <Typography variant="body2" style={{ marginTop: 20 }}>
                         <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
+                        <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
+                            <VolumeUpIcon />
+                        </IconButton>
                     </Typography>
                     <Typography variant="body1">
                         {word?.synonyms}
