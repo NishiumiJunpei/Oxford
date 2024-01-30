@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link, Avatar } from '@mui/material';
+import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link, Avatar, IconButton } from '@mui/material';
 // import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
 import WordDetailDialog from '@/components/wordDetailDialog';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 
 const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, updateWordList}) =>{
@@ -267,66 +268,94 @@ const LearnWordsCheck = () => {
       );
       setNotMemorizedWordList(updatedWordList);
     };
-  
+
+    const playAudio = (text, lang = 'en') => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const response = await fetch('/api/common/synthesize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, lang }),
+          });
     
-
-  const word = wordList[currentIndex];
-  const remainingWords = wordList.length - currentIndex; // 残りの問題数
-
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (openModal) {
-        // openModalがtrueの場合は何もしない
-        return;
-      }
-
-      switch (event.key) {
-        case 'j':
-          if (!buttonDisabled) {
-            handleAnswer(true);
+          const data = await response.json();
+          if (data.audioContent) {
+            const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.play();
+    
+            audio.onended = () => {
+              resolve();
+            };
           }
+        } catch (error) {
+          console.error('Error during audio playback:', error);
+          reject(error);
+        }
+      });
+    };
+        
+  
+      
+
+    const word = wordList[currentIndex];
+    const remainingWords = wordList.length - currentIndex; // 残りの問題数
+
+    useEffect(() => {
+      const handleKeyPress = (event) => {
+        if (openModal) {
+          // openModalがtrueの場合は何もしない
+          return;
+        }
+
+        switch (event.key) {
+          case 'j':
+            if (!buttonDisabled) {
+              handleAnswer(true);
+            }
+              break;
+          case 'k':
+            handleShowAnswer();
             break;
-        case 'k':
-          handleShowAnswer();
-          break;
-        case 'l':
-          handleAnswer(false);
-          break;
-        case 'n':
-          handleNext();
-          break;
-        default:
-          break;
+          case 'l':
+            handleAnswer(false);
+            break;
+          case 'n':
+            handleNext();
+            break;
+          default:
+            break;
+        }
+      };
+
+      // openModalがfalseのときのみイベントリスナーを追加
+      if (!openModal) {
+        window.addEventListener('keydown', handleKeyPress);
       }
-    };
+      
+      return () => {
+        window.removeEventListener('keydown', handleKeyPress);
+      };
+    }, [currentIndex, wordList, showAnswer, buttonDisabled, nextButtonDisabled, openModal]); // 依存配列に必要な状態や関数を追加
 
-    // openModalがfalseのときのみイベントリスナーを追加
-    if (!openModal) {
-      window.addEventListener('keydown', handleKeyPress);
+
+    if (isLoading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'start'}}>
+          <CircularProgress />
+        </div>
+
+      )
     }
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [currentIndex, wordList, showAnswer, buttonDisabled, nextButtonDisabled, openModal]); // 依存配列に必要な状態や関数を追加
 
-
-  if (isLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'start'}}>
-        <CircularProgress />
-      </div>
-
-    )
-  }
-
-  if (wordList.length === 0) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'start' }}>
-        <Typography>対象データがありません。</Typography>
-      </Box>
-    );
-  }
+    if (wordList.length === 0) {
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'start' }}>
+          <Typography>対象データがありません。</Typography>
+        </Box>
+      );
+    }
 
   return (
     <>
@@ -342,9 +371,14 @@ const LearnWordsCheck = () => {
           
           <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
           {languageDirection == 'EJ' ? (
-            <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
-              {word.english}
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'start', alignItems: 'ceter', marginBottom: 2 }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>
+                {word.english}
+              </Typography>
+              <IconButton onClick={() => playAudio(word?.english)} size="small">
+                  <VolumeUpIcon />
+              </IconButton>
+            </Box>
           ) : (
             <>
               <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: '2rem', color: 'primary.main' }}>

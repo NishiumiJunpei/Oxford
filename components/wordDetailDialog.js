@@ -8,7 +8,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StopIcon from '@mui/icons-material/Stop';
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue }) => {
     const router = useRouter();
@@ -21,6 +22,8 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     const [exampleSentenceForUser, setExampleSentenceForUser] = useState('');
     const [userSentence, setUserSentence] = useState('');
     const [reviewByAI, setReviewByAI] = useState('');
+    const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+
 
     useEffect(() => {
         setIndex(initialIndex);
@@ -52,6 +55,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     };
 
     const handleClose = () => {
+        setIsAutoPlaying(false)
         setIndex(initialIndex);
         setTabValue(0)
         setExampleSentenceForUser('')
@@ -60,25 +64,33 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
         onClose();
     };
 
-    const playAudio = async (text, lang = 'en') => {
-        try {
-          const response = await fetch('/api/common/synthesize', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, lang }),
-          });
+    const playAudio = (text, lang = 'en') => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const response = await fetch('/api/common/synthesize', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text, lang }),
+            });
       
-          const data = await response.json();
-          if (data.audioContent) {
-            const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audio = new Audio(audioUrl);
-            audio.play();
+            const data = await response.json();
+            if (data.audioContent) {
+              const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
+              const audioUrl = URL.createObjectURL(audioBlob);
+              const audio = new Audio(audioUrl);
+              audio.play();
+      
+              audio.onended = () => {
+                resolve();
+              };
+            }
+          } catch (error) {
+            console.error('Error during audio playback:', error);
+            reject(error);
           }
-        } catch (error) {
-          console.error('Error during audio playback:', error);
-        }
-    };      
+        });
+      };
+      
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -141,6 +153,64 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             setIsLoadingReview(false);
         }
     };
+
+
+    const handleAutoPlay = () => {
+        setIsAutoPlaying(!isAutoPlaying);
+    };
+
+    let autoPlaying = isAutoPlaying;
+    useEffect(() => {
+        autoPlaying = isAutoPlaying;
+      
+        return () => {
+          autoPlaying = false;
+        };
+      }, [isAutoPlaying]);
+      
+    useEffect(() => {
+        let isCancelled = false;
+
+        const autoPlaySequence = async () => {
+            let currentIndex = index;
+          
+            while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
+                await playAudio(wordList[currentIndex].english);
+                await new Promise(r => setTimeout(r, 500));
+                if (!autoPlaying) break;
+                await playAudio(wordList[currentIndex].japanese, 'ja');
+                await new Promise(r => setTimeout(r, 500));
+                if (!autoPlaying) break;
+                await playAudio(wordList[currentIndex].exampleSentenceE);
+                await new Promise(r => setTimeout(r, 500));
+                if (!autoPlaying) break;
+                await playAudio(wordList[currentIndex].exampleSentenceJ, 'ja');
+                await new Promise(r => setTimeout(r, 500));
+                if (!autoPlaying) break;
+                        
+
+                if (currentIndex+1 >= wordList.length) {
+                    setIsAutoPlaying(false);
+                    break;
+                }else{
+                    setIndex(index + 1);
+                    currentIndex++
+                }
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        };
+            
+      
+        if (isAutoPlaying) {
+          setTabValue(0);
+          autoPlaySequence();
+        }
+      
+        return () => {
+          isCancelled = true;
+        };
+      }, [isAutoPlaying, index, wordList]);
+      
 
 
     useEffect(() =>{
@@ -400,26 +470,38 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             <DialogActions style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
                 <div style={{ width: '100%', textAlign: 'center' }}> 
+
                     <Button 
-                    onClick={handlePrev} 
-                    disabled={(index <= 0)}
-                    style={{ margin: 5, padding: 5, minWidth: 90 }}
+                        onClick={handleAutoPlay} 
+                        style={{ margin: 5, padding: 5, minWidth: 90 }}
+                        variant="outlined"
+                        endIcon={!isAutoPlaying ? <PlayArrowIcon/> : <StopIcon/>}
                     >
-                    前へ
+                        自動再生
+                    </Button>
+
+                    <Button 
+                        onClick={handlePrev} 
+                        disabled={index <= 0 || isAutoPlaying}
+                        style={{ margin: 5, padding: 5, minWidth: 90 }}
+                    >
+                        前へ
                     </Button>
                     <Button 
-                    onClick={handleNext} 
-                    disabled={(index >= wordList.length - 1)}
-                    style={{ margin: 5, padding: 5, minWidth: 90 }}
+                        onClick={handleNext} 
+                        disabled={index >= wordList.length - 1 || isAutoPlaying}
+                        style={{ margin: 5, padding: 5, minWidth: 90 }}
                     >
-                    次へ
+                        次へ
                     </Button>
                     <Button 
-                    onClick={handleClose}
-                    style={{ margin: 5, padding: 5, minWidth: 90 }}
+                        onClick={handleClose}
+                        style={{ margin: 5, padding: 5, minWidth: 90 }}
                     >
-                    閉じる
+                        閉じる
                     </Button>
+
+
                 </div>
             </DialogActions>
         </Dialog>
