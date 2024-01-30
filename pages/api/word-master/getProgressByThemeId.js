@@ -35,7 +35,7 @@ export default async function handler(req, res) {
           // memorizeStatusEJのカウント
           if (status?.memorizeStatusEJ === 'MEMORIZED') {
             memorizedCountEJ += 1;
-            numAbleToProgressEJ =  (status.lastMemorizedDateEJ.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ
+            numAbleToProgressEJ =  (status.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ
 
           } else if (status?.memorizeStatusEJ === 'MEMORIZED2') {
             memorizedCountEJ += 2;
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
           // memorizeStatusJEのカウント
           if (status?.memorizeStatusJE === 'MEMORIZED') {
             memorizedCountJE += 1;
-            numAbleToProgressJE =  (status.lastMemorizedDateJE.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE
+            numAbleToProgressJE =  (status.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE
           } else if (status?.memorizeStatusJE === 'MEMORIZED2') {
             memorizedCountJE += 2;
           } else{
