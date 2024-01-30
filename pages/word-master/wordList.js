@@ -241,7 +241,7 @@ const WordListPage = () => {
   const [filterSettings, setFilterSettings] = useState({
     displayMode: 'EtoJ',
     showAnswer: true,
-    filterOption: 'showEJOnlyNOT_MEMORIZED',
+    filterOption: '',
   });
   const theme = useTheme();
   const wordSectionRef = useRef(null);
@@ -249,7 +249,6 @@ const WordListPage = () => {
   const [tabForWordDetailDialog, setTabForWordDetailDialog] = useState(0);
   const [openSrIntroDialog, setOpenSrIntroDialog] = useState(false);
 
-  
   
   useEffect(() => {
     const fetchData = async () => {
@@ -366,48 +365,41 @@ const WordListPage = () => {
     wordSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleClickLearnByVisual = () =>{
-    scrollToWordSection() 
-    setSelectedTab(0)
+  const setFilterBasedOnStatus = ()=>{
     if (languageDirection == 'EJ'){
       const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
+      const allMemorized2 = wordList.every(word => word.memorizeStatusEJ == 'MEMORIZED2');
       setFilterSettings({
         ...filterSettings, 
-        filterOption: clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED'
+        filterOption: allMemorized2 ? '' :
+                      clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED'
       })
 
     }else if (languageDirection == 'JE'){
       const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
+      const allMemorized2 = wordList.every(word => word.memorizeStatusJE == 'MEMORIZED2');
       setFilterSettings({
         ...filterSettings, 
-        filterOption: clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED'
+        filterOption: allMemorized2 ? '' :
+                      clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED'
       })
 
     }
+  }
+
+  const handleClickLearnByVisual = () =>{
+    scrollToWordSection() 
+    setSelectedTab(0)
+    setFilterBasedOnStatus()
     handleOpenModalWord(0)
   }
   
   const handleClickRedSheet = () =>{
     scrollToWordSection() 
     setSelectedTab(0)
-    if (languageDirection == 'EJ'){
-      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
-      setFilterSettings({
-        ...filterSettings, 
-        filterOption: clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED',
-        showAnswer: false
-      })
+    setFilterBasedOnStatus()
+    setFilterSettings({...filterSettings, showAnswer: false})
 
-    }else if (languageDirection == 'JE'){
-      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
-      setFilterSettings({
-        ...filterSettings, 
-        filterOption: clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED',
-        showAnswer: false
-
-      })
-
-    }
   }
 
   const handleClickSR = () =>{
@@ -421,27 +413,23 @@ const WordListPage = () => {
     }else if (index == 1 || index == 2){
       scrollToWordSection() 
       setSelectedTab(0)
-      if (languageDirection == 'EJ'){
-        const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
-        setFilterSettings({
-          ...filterSettings, 
-          filterOption: clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED'
-        })
-  
-      }else if (languageDirection == 'JE'){
-        const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
-        setFilterSettings({
-          ...filterSettings, 
-          filterOption: clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED'
-        })
-  
-      }
+      setFilterBasedOnStatus()
+
       handleOpenModalWord(0)
   
       setTabForWordDetailDialog(index)
 
     }
   }
+
+  const handleRemoveFilter = () =>{
+    setFilterSettings({
+      displayMode: 'EtoJ',
+      showAnswer: true,
+      filterOption: '',
+    })
+  }
+
 
   const playAudio = async (text) => {
     try {
@@ -638,9 +626,15 @@ const WordListPage = () => {
 
           {selectedTab === 0 && (
             <>
-              <IconButton onClick={() => setFilterDialogOpen(true)}>
-                <FilterListIcon />
-              </IconButton>
+              <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
+                <IconButton onClick={() => setFilterDialogOpen(true)}>
+                  <FilterListIcon />
+                </IconButton>
+                <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
+                  フィルター解除
+                </Button>
+
+              </Box>
               <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 700, overflowY: 'auto', overflowX: 'auto'}}>
                 <Table>
                   <TableHead>

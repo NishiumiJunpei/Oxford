@@ -10,6 +10,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SrWordList from '@/components/srWordList';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useTheme } from '@mui/material/styles';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 
 const WordMasterTop = () => {
@@ -216,14 +217,26 @@ const WordMasterTop = () => {
                       <TableCell component="th" scope="row">
                         <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'} >
                           <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
-                            {`${Math.round(item.progress?.EJ)}%`}
+                            { Math.round(item.progress?.EJ) == 200 ? (
+                              <WorkspacePremiumIcon fontSize='large' color='success' />
+                            ) : (
+                              <>
+                                {`${Math.round(item.progress?.EJ)}%`}
+                              </>                              
+                            )}
                           </Link>
                         </Typography>
                       </TableCell>
                       <TableCell component="th" scope="row">
                         <Typography variant="subtitle1" color={Math.round(item.progress?.JE) < 100 ? 'textPrimary' : 'primary'} >
                           <Link onClick={() => handleBlockClick(item.block.id, 'JE')}>
-                            {`${Math.round(item.progress?.JE)}%`}
+                            { Math.round(item.progress?.JE) == 200 ? (
+                              <WorkspacePremiumIcon fontSize='large' color='success' />
+                            ) : (
+                              <>
+                                {`${Math.round(item.progress?.JE)}%`}
+                              </>                              
+                            )}
                           </Link>
                         </Typography>
                       </TableCell>

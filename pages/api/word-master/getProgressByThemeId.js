@@ -92,7 +92,13 @@ export default async function handler(req, res) {
           .filter(item => item.numAbleToProgress[progressKey] > 0)
           .filter(item => item.progress[progressKey] < maxProgress)
           .sort((a, b) => {
-            // progressで比較
+            // progressが0の場合は最後にする
+            if (a.progress[progressKey] === 0 && b.progress[progressKey] !== 0) {
+              return 1; // aが0でbが0ではない場合、aを後ろに
+            } else if (b.progress[progressKey] === 0 && a.progress[progressKey] !== 0) {
+              return -1; // bが0でaが0ではない場合、bを後ろに
+            }
+            // progressで昇順
             if (a.progress[progressKey] !== b.progress[progressKey]) {
               return a.progress[progressKey] - b.progress[progressKey];
             }
@@ -103,11 +109,13 @@ export default async function handler(req, res) {
       };
           
       // EJとJEに対して処理を実行
-      blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 100)
+      blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 50)
+        || findBlockByProgress(updatedBlocks, 'EJ', 100)
         || findBlockByProgress(updatedBlocks, 'EJ', 150)
         || findBlockByProgress(updatedBlocks, 'EJ', 200);
 
-        blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 100)
+        blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 50)
+        || findBlockByProgress(updatedBlocks, 'JE', 100)
         || findBlockByProgress(updatedBlocks, 'JE', 150)
         || findBlockByProgress(updatedBlocks, 'JE', 200);
         
