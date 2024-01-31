@@ -304,6 +304,7 @@ const LearnWordsCheck = () => {
     const word = wordList[currentIndex];
     const remainingWords = wordList.length - currentIndex; // 残りの問題数
 
+    console.log('wordList', wordList)
     useEffect(() => {
       const handleKeyPress = (event) => {
         if (openModal) {

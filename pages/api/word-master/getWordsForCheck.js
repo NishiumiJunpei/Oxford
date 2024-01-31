@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       let wordList = await getWordListByCriteria(criteria);
       const block = await getBlock(parseInt(blockId));
 
-      const wordListUserStatus = await getWordListUserStatusByWordListIds(userId, wordList.map(w => w.id), languageDirection, includeMemorized);
+      const wordListUserStatus = await getWordListUserStatusByWordListIds(userId, wordList.map(w => w.id));
       wordList = await Promise.all(wordList.map(async word => {
         // const status = await getWordListUserStatusByWordListId(userId, word.id);
         const status = wordListUserStatus.find(us => us.wordListId === word.id) || {};
