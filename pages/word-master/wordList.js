@@ -502,7 +502,7 @@ const WordListPage = () => {
 
 
         {progress && (
-          <Box sx={{mt: 3}}>
+          <Box sx={{mt: 5}}>
             <SubTitleTypography text="ステータス" />
             <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
               <Card 
@@ -562,7 +562,7 @@ const WordListPage = () => {
           </Box>
         )}
 
-        <Box sx={{mt: 3}}>
+        <Box sx={{mt: 5}}>
           <SubTitleTypography text="学習する"/>
 
           <Button variant="contained" color="secondary" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>

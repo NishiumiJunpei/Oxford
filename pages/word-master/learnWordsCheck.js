@@ -8,7 +8,7 @@ import WordDetailDialog from '@/components/wordDetailDialog';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 
-const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, updateWordList}) =>{
+const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, updateWordList, themeAllWordsFlag}) =>{
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -127,14 +127,16 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, 
             英単語マスタートップへ
           </Button>
         </Link>
-        <Link href={`/word-master/wordList?blockId=${block.id}`} passHref>
-          <Button variant="default" color="link" sx={{marginTop: 3}}>
-            <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1, width: 32, height: 32, fontSize: '1rem' }}>
-              {block?.name}
-            </Avatar>  
-            へ戻る
-          </Button>
-        </Link>
+        {themeAllWordsFlag == '0' &&(
+          <Link href={`/word-master/wordList?blockId=${block.id}`} passHref>
+            <Button variant="default" color="link" sx={{marginTop: 3}}>
+              <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1, width: 32, height: 32, fontSize: '1rem' }}>
+                {block?.name}
+              </Avatar>  
+              へ戻る
+            </Button>
+          </Link>
+        )}
       </Box>
 
     </Box>
@@ -152,7 +154,7 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, 
 
 const LearnWordsCheck = () => {
     const router = useRouter();
-    const { blockId, wordCount, languageDirection, includeMemorized } = router.query;
+    const { blockId, wordCount, languageDirection, includeMemorized, themeAllWordsFlag, themeId } = router.query;
     const [isLoading, setIsLoading] = useState(false);
     const [wordList, setWordList] = useState([]);
     const [block, setBlock] = useState();
@@ -171,7 +173,7 @@ const LearnWordsCheck = () => {
       // URLクエリパラメータを使用してAPIから単語データを取得する
       const fetchData = async () => {
         setIsLoading(true)
-        const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection, includeMemorized }).toString();
+        const queryParams = new URLSearchParams({ blockId, wordCount, languageDirection, includeMemorized, themeAllWordsFlag, themeId }).toString();
         const response = await fetch(`/api/word-master/getWordsForCheck?${queryParams}`);
         const data = await response.json();
         setWordList(data.wordList);

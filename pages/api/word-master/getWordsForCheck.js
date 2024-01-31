@@ -1,5 +1,5 @@
 // pages/api/word-master/getWordsForCheck.js
-import { getWordListByCriteria, getWordListUserStatus, getBlock } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatus, getBlock, getWordListUserStatusByWordListIds } from '../../../utils/prisma-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { getS3FileUrl } from '@/utils/aws-s3-utils';
@@ -10,17 +10,14 @@ export default async function handler(req, res) {
       const session = await getServerSession(req, res, authOptions);
       const userId = session.userId;
 
-      const { blockId, wordCount, languageDirection, includeMemorized } = req.query;
-      const criteria = {
-        blockId: parseInt(blockId),
-      };
-
+      const { blockId, wordCount, languageDirection, includeMemorized, themeAllWordsFlag, themeId } = req.query;
+      const criteria = themeAllWordsFlag == '1' ? { themeId: parseInt(themeId) } : { blockId: parseInt(blockId) }
 
       // テーマに基づいた単語リストを取得
       let wordList = await getWordListByCriteria(criteria);
-      const wordListUserStatus = await getWordListUserStatus(userId);
       const block = await getBlock(parseInt(blockId));
 
+      const wordListUserStatus = await getWordListUserStatusByWordListIds(userId, wordList.map(w => w.id), languageDirection, includeMemorized);
       wordList = await Promise.all(wordList.map(async word => {
         // const status = await getWordListUserStatusByWordListId(userId, word.id);
         const status = wordListUserStatus.find(us => us.wordListId === word.id) || {};
@@ -53,11 +50,12 @@ export default async function handler(req, res) {
           return true;
         });
       }
-      
+
       // ランダムに並び替えとwordCountに基づく絞り込み
       wordList = wordList.sort(() => 0.5 - Math.random());
       wordList = wordList.slice(0, parseInt(wordCount));
 
+      
       res.status(200).json({wordList, block});
     } catch (error) {
       res.status(500).json({ error: error.message });

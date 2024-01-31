@@ -1,21 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Chip, Button, Box, Typography, FormControlLabel, Checkbox } from '@mui/material';
+import { Chip, Button, Box, Typography, FormControlLabel, Checkbox, CircularProgress, Avatar } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
   const { blockId } = router.query;
   const [languageDirection, setLanguageDirection] = useState('EJ'); // 'EJ' は英→日、'JE' は日→英
-  const [wordCount, setWordCount] = useState('ALL'); // '10', '30', 'ALL'
-  const [includeMemorized, setIncludeMemorized] = useState(false); // 新しいステート
+  const [wordCount, setWordCount] = useState('50'); // '10', '30', '50'
+  const [includeMemorized, setIncludeMemorized] = useState(false); 
+  const [themeAllWordsFlag, setThemeAllWordsFlag] = useState(false); 
+  const [block, setBlock] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
+
   
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
+      const response = await fetch(`/api/word-master/getBlock?blockId=${blockId}`);
+      const data = await response.json();
+      if (data) { // dataとdata.wordListが存在する場合のみセット
+        setBlock(data.block);
+      }
+      setIsLoading(false); // データ取得後にローディング状態をfalseに設定
+    };
+
+    if (blockId) {
+      fetchData();
+    }
+  }, [blockId]);
+
   const handleSubmit = () => {
     const queryParams = new URLSearchParams({
       blockId,
-      wordCount: wordCount === 'ALL' ? 50 : wordCount, // ALLの場合はパラメータを送らない
+      wordCount,
       languageDirection,
-      includeMemorized: includeMemorized ? 1 : 0 // includeMemorizedを追加
+      includeMemorized: includeMemorized ? 1 : 0, // includeMemorizedを追加
+      themeAllWordsFlag: themeAllWordsFlag ? 1 : 0,
+      themeId: block.theme.id,
     }).toString();
   
     router.push(`/word-master/learnWordsCheck?${queryParams}`);
@@ -30,8 +52,28 @@ const LearnWordsCriteriaInput = () => {
       <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
         戻る
       </Button>
+      {isLoading && (
+      <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+      )}
 
-      <Typography variant="h5" sx={{mb: 5}}>理解度チェック</Typography>
+      <Box display="flex" width="100%" sx={{flexDirection: { xs: 'column', sm: 'row' }}}>
+        <Box display="flex" alignItems="center">
+          <Typography variant="h4"sx={{mb: 1, mr: 2}}>
+              {block?.theme.name}
+          </Typography>
+        </Box>
+        <Box display="flex" alignItems="center" justifyContent="flex-start">
+          <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1 }}>
+            {block?.name}
+          </Avatar>
+        </Box>
+      </Box>
+
+
+
+      <Typography variant="h6" sx={{mb: 5, mt: 2}} color='primary'>理解度チェック</Typography>
       
       <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>モード</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
@@ -43,17 +85,22 @@ const LearnWordsCriteriaInput = () => {
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
         <Chip label="10" color={wordCount === '10' ? 'primary' : 'default'} onClick={() => setWordCount('10')} />
         <Chip label="30" color={wordCount === '30' ? 'primary' : 'default'} onClick={() => setWordCount('30')} />
-        <Chip label="ALL" color={wordCount === 'ALL' ? 'primary' : 'default'} onClick={() => setWordCount('ALL')} />
+        <Chip label="50" color={wordCount === '50' ? 'primary' : 'default'} onClick={() => setWordCount('50')} />
       </Box>
 
-      <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>覚えている単語</Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
+      <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>対象単語</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 1 }}>
         <FormControlLabel
           control={<Checkbox checked={includeMemorized} onChange={(e) => setIncludeMemorized(e.target.checked)} />}
-          label="含める"
+          label="覚えている単語も含める"
         />
       </Box>
-
+      <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
+        <FormControlLabel
+          control={<Checkbox checked={themeAllWordsFlag} onChange={(e) => setThemeAllWordsFlag(e.target.checked)} />}
+          label={`「${block?.theme.name}」の全体`}
+        />
+      </Box>
 
       <Box sx={{ textAlign: 'left' }}>
         <Button variant="outlined" onClick={handleSubmit}>
