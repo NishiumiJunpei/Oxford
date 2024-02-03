@@ -512,7 +512,7 @@ const WordListPage = () => {
                 <CardHeader 
                   title={
                     <Box display="flex" alignItems="center">
-                      <Typography variant="subtitle1">英単語を理解できる</Typography>
+                      <Typography variant="subtitle1">理解できる</Typography>
                       <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
@@ -539,7 +539,7 @@ const WordListPage = () => {
                 <CardHeader 
                   title={
                     <Box display="flex" alignItems="center">
-                      <Typography variant="subtitle1">英単語を使える</Typography>
+                      <Typography variant="subtitle1">使える</Typography>
                       <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />

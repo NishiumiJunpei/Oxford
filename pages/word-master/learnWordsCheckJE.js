@@ -712,6 +712,13 @@ const LearnWordsCheck = () => {
                       <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
                         {word.userWordListStatus.answerJE || streamAnswerJE}
                       </Typography>
+
+                      <Box sx={{mb: 2}}>
+                        <IconButton onClick={() => playAudio(word.userWordListStatus.answerJE || streamAnswerJE)} size="small">
+                            <VolumeUpIcon />
+                        </IconButton>
+                      </Box>
+
                       <Box sx={{display: 'flex', alignItems: 'center'}}>
                         <IconButton onClick={()=>setOpenModal(true)} disableRipple={true}>
                           <Typography variant="subtitle1">

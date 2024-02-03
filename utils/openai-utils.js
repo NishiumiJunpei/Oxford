@@ -163,6 +163,7 @@ export async function generateQuestionJE(english, japanese, user, levelKeyword) 
 
     const content = `
     Create one example sentence using the word, ${english}(${japanese}), in English that a person who is interested on ${randomKeywords} might use.
+    ${english} is required to use in the sentence.
     Then, create a Japanese translation of that sentence. 
     Provide just Japanese sentence, not include English sentence.
     `;
@@ -171,7 +172,7 @@ export async function generateQuestionJE(english, japanese, user, levelKeyword) 
       model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-0125-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       stream: true,
-      temperature: 0.2,
+      temperature: 1,
 
     });
 

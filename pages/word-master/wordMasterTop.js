@@ -130,12 +130,12 @@ const WordMasterTop = () => {
             {/* <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
               <ProgressCircle value={overallProgress} />
             </Box> */}
-            <Box display="flex" justifyContent="space-between" sx={{ width: '500px', mt: 5 }}>
-              <Card sx={{ flex: 1, minWidth: 200, mr: 1 }}> 
+            <Box display="flex" justifyContent="space-between" sx={{ width: '400px', mt: 5 }}>
+              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
               <CardHeader 
                 title={
                   <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1">英単語を理解できる</Typography>
+                    <Typography variant="subtitle1">理解できる</Typography>
                     <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
@@ -158,11 +158,11 @@ const WordMasterTop = () => {
 
                 </CardContent>
               </Card>
-              <Card sx={{ flex: 1, minWidth: 200, mr: 1 }}> 
+              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
               <CardHeader 
                 title={
                   <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1">英単語を使える</Typography>
+                    <Typography variant="subtitle1">使える</Typography>
                     <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
@@ -200,8 +200,8 @@ const WordMasterTop = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell align="left" style={{ fontWeight: 'bold', width: '10%' }}>ブロック</TableCell>
-                    <TableCell align="left" style={{ fontWeight: 'bold', width: '15%' }}>英単語を理解できる</TableCell>
-                    <TableCell align="left" style={{ fontWeight: 'bold', width: '15%' }}>英単語を使える</TableCell>
+                    <TableCell align="left" style={{ fontWeight: 'bold', width: '15%' }}>理解できる</TableCell>
+                    <TableCell align="left" style={{ fontWeight: 'bold', width: '15%' }}>使える</TableCell>
                     <TableCell align="left" style={{ fontWeight: 'bold', width: '60%' }}>アクション</TableCell>
                   </TableRow>
                 </TableHead>

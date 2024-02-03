@@ -402,7 +402,48 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             {tabValue === 1 && (
                 <DialogContent>
-                    <Typography variant="body1">
+                    <Typography variant="subtitle1">問題</Typography>
+                    <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '150px', position: 'relative' }}>
+                        {word.userWordListStatus.questionJE ? (
+                            <>
+                                <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
+                                {word.userWordListStatus.questionJE}
+                                </Typography>
+                                <Typography variant="body2" sx={{mb:1}}>[使う単語]</Typography>
+                                <Box sx={{display: 'flex', justifyContent: 'start', mb: 2}}>
+                                    <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                                        {word.english} / {word.japanese} 
+                                    </Typography>
+                                </Box>
+                                <Box sx={{mb: 2}}>
+                                    <IconButton onClick={() => playAudio(word.userWordListStatus.questionJE, 'ja')} size="small">
+                                        <VolumeUpIcon />
+                                    </IconButton>
+                                </Box>
+
+                            </>
+                        ) : (
+                            <Typography>
+                                問題が生成されていません。理解度チェックで生成できます。
+                            </Typography>
+                        )}
+                    </Paper>
+
+                    <Typography variant="subtitle1">モデルアンサー</Typography>
+                    <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '100px', position: 'relative' }}>
+                      <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
+                        {word.userWordListStatus.answerJE}
+                      </Typography>
+
+                        <Box sx={{mb: 2}}>
+                            <IconButton onClick={() => playAudio(word.userWordListStatus.answerJE)} size="small">
+                                <VolumeUpIcon />
+                            </IconButton>
+                        </Box>
+                    </Paper>
+
+
+                    {/* <Typography variant="body1">
                         あなたのプロフィールや興味
                         (<Link onClick={()=>router.push("/user-setting/userProfile")} sx={{color: '#0000EE', cursor:'pointer'}} >設定</Link>)
                         に関連する例文をGPTが作ります。
@@ -427,7 +468,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 {exampleSentenceForUser}
                             </Typography>
                         )}
-                    </Paper>
+                    </Paper> */}
                 </DialogContent>
             )}
 
