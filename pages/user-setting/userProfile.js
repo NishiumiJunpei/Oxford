@@ -84,7 +84,7 @@ const UserProfile = () => {
 
   // キーワードの追加
   const handleAddKeyword = () => {
-    if (newProfile && profileKeywords.length < 3) {
+    if (newProfile && profileKeywords.length < 10) {
       updateProfileKeyword(newProfile, 'UPDATE');
       setNewProfile('');
     }
@@ -112,7 +112,7 @@ const UserProfile = () => {
 
   // キーワードの追加
   const handleAddInterest = () => {
-    if (newInterest && interestKeywords.length < 5) {
+    if (newInterest && interestKeywords.length < 10) {
       updateInterestKeyword(newInterest, 'UPDATE');
       setNewInterest('');
     }
@@ -176,7 +176,7 @@ const UserProfile = () => {
               </Button>
             </Grid>
           </Grid>
-          <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：大学生、営業職、母親 (最大3つまで)</Typography>
+          <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：大学生、営業職、母親 (最大10個まで)</Typography>
           <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {profileKeywords.map((keyword, index) => (
               <Chip
@@ -206,7 +206,7 @@ const UserProfile = () => {
               </Button>
             </Grid>
           </Grid>
-          <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：旅行、読書、映画鑑賞 (最大5つまで)</Typography>
+          <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：旅行、読書、映画鑑賞 (最大10個まで)</Typography>
           <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {interestKeywords.map((keyword, index) => (
               <Chip
