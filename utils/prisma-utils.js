@@ -573,7 +573,7 @@ export async function updateQuestionJE(userId, wordListId, questionJE) {
           questionJE: questionJE, // 更新するフィールドをquestionJEに設定
           answerJE: '',
           userAnswerJE: '',
-          reviewScoreJE: '',
+          reviewScoreJE: 0,
           reviewCommentJE: '',
         }
       });
@@ -586,7 +586,7 @@ export async function updateQuestionJE(userId, wordListId, questionJE) {
           questionJE: questionJE, // 登録するフィールドにquestionJEを設定
           answerJE: '',
           userAnswerJE: '',
-          reviewScoreJE: '',
+          reviewScoreJE: 0,
           reviewCommentJE: '',
 
         }
