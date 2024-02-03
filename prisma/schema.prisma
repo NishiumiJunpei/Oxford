@@ -123,6 +123,11 @@ model WordListUserStatus {
   wordListId        Int
   memorizeStatusEJ  MemorizeStatus  @default(NOT_MEMORIZED)
   memorizeStatusJE  MemorizeStatus  @default(NOT_MEMORIZED)
+  questionJE        String?
+  answerJE          String?
+  userAnswerJE      String?
+  reviewScoreJE     Int?
+  reviewCommentJE   String?
   exampleSentenceForUser  String?
   imageFilename           String?
   userSentence            String?

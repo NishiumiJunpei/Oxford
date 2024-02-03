@@ -62,7 +62,7 @@ export async function generateWordStory(wordList, length, genre, characters, lev
 
     // 以下に、APIへのリクエストを行うコードが続きます。        
     const response = await openai.chat.completions.create({
-        model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
+        model: "gpt-4-0125-preview", // gpt-4, gpt-3.5-turbo-1106
         messages: [{ role: 'assistant', content }],
         temperature: 0.7,
         max_tokens: 1000,
@@ -90,7 +90,7 @@ export async function generateExampleSentenceForUser(user, english, japanese, le
 
     console.log('keyword', selectedKeyword)
     const response = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
+      model: "gpt-4-0125-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       temperature: 0.5,
       max_tokens: 500,
@@ -115,7 +115,7 @@ export async function generateReviewByAI(english, japanese, userSentence, levelK
 
     // OpenAIのAPIを呼び出し
     const response = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview", // gpt-4, gpt-3.5-turbo-1106
+      model: "gpt-4-0125-preview", // gpt-4, gpt-3.5-turbo-1106
       messages: [{ role: 'assistant', content }],
       temperature: 0.1,
       max_tokens: 500,
@@ -127,6 +127,142 @@ export async function generateReviewByAI(english, japanese, userSentence, levelK
   } catch (error) {
     console.error('generateReviewByAI error:', error);
     throw error; // エラーを上位の関数に伝播させます
+  }
+}
+
+
+
+function selectRandomKeywords(keywords) {
+  // ランダムに1か2を選択
+  const count = Math.floor(Math.random() * 2) + 1;
+  const selectedKeywords = [];
+
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * keywords.length);
+    // 選ばれたキーワードが既に配列に含まれていないかチェック
+    if (!selectedKeywords.includes(keywords[randomIndex])) {
+      selectedKeywords.push(keywords[randomIndex]);
+    } else {
+      // 既に含まれている場合は、異なるキーワードを選択する
+      i--; // ループカウンターをデクリメントして再選択
+    }
+  }
+
+  // 選ばれたキーワードをカンマ区切りの文字列に変換
+  return selectedKeywords.join(',');
+}
+
+
+export async function generateQuestionJE(english, japanese, user, levelKeyword) {
+  try{
+    const { profileKeyword, interestKeyword } = user;
+    const keywords = [...profileKeyword.split(',').map(k => k.trim()), ...interestKeyword.split(',').map(k => k.trim())];
+    
+    const randomKeywords = selectRandomKeywords(keywords);
+
+
+    const content = `
+    Create one example sentence using the word, ${english}(${japanese}), in English that a person who is interested on ${randomKeywords} might use.
+    Then, create a Japanese translation of that sentence. 
+    Provide just Japanese sentence, not include English sentence.
+    `;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-0125-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      stream: true,
+      temperature: 0.2,
+
+    });
+
+    return response
+
+  } catch (error) {
+    console.error('generateQuestionJE error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+
+export async function generateAnswerJE(english, japanese, questionJE, levelKeyword) {
+  try{
+    const content = `
+    Please translate the following sentences into English. Please be sure to use the English word "${english}". 
+    Also, please translate using English words that a person at the level of EIKEN Level 1 would understand.
+    ${questionJE}
+    Provide just translated English sentence.
+    `;
+        
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      stream: true,
+      temperature: 0.2,
+
+    });
+
+    return response
+
+  } catch (error) {
+    console.error('generateAnswerJE error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+export async function generateReviewScoreJE(english, japanese, questionJE, answerJE, userAnswerJE, levelKeyword) {
+  try{
+
+    const content = `Review the English translation of a Japanese question to assess its appropriateness and accuracy based on the provided level keyword. 
+    Question in Japanese: "${questionJE}"
+    English Translation (User's Answer): "${userAnswerJE}"
+    Word required to be included: "${english}"
+    Level Keyword: "${levelKeyword}"
+    Provide a score between 1 and 4, where 1 is "Not at all appropriate", 2 is "Slightly inappropriate", 3 is "Appropriate", and 4 is "Very appropriate".
+    Just provide the score number from 1 to 4.
+    `;
+    
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      temperature: 0.2,
+    });
+
+    return response.choices[0].message.content;
+
+
+
+  } catch (error) {
+    console.error('generateReviewScoreCommentJE error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+
+
+export async function generateReviewCommentJE(english, japanese, questionJE, answerJE, userAnswerJE, levelKeyword) {
+  try{
+
+    const content = `Review the English translation of a Japanese question to assess its appropriateness and accuracy based on the provided level keyword. 
+    Question in Japanese: "${questionJE}"
+    English Translation (User's Answer): "${userAnswerJE}"
+    Word required to be included: "${english}"
+    Level Keyword: "${levelKeyword}"
+    Provide comments in Japanese on the translation quality and how it can be improved. Model Answer in English: "${answerJE}".
+    `;
+    
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      stream: true,
+      temperature: 0.2,
+    });
+
+    return response
+
+
+
+  } catch (error) {
+    console.error('generateReviewScoreCommentJE error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
   }
 }
 

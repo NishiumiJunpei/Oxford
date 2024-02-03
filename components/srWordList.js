@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, CircularProgress, List, ListItem, ListItemText, Typography, Box, Button, Divider , Switch, FormControlLabel } from '@mui/material';
+import { Container, CircularProgress, List, ListItem, ListItemText, Typography, Box, Button, Divider , Switch, FormControlLabel,
+  Table, TableBody, TableCell, TableRow } from '@mui/material';
 import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
 
@@ -111,7 +112,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
             </Box>
           )}          
           {Object.entries(srWordList).map(([srNextTime, words], timeIndex) => (
-            <Box sx={{maxWidth: 600}}>
+            <Box >
               <Box key={timeIndex} sx={{ mt: 2,padding: 3, bgcolor: !isButtonDisabled(srNextTime) ? 'secondary.light' : 'default' }}>
                 <Typography variant="subtitle2" color="GrayText">
                   反復タイミング
@@ -124,7 +125,44 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                   control={<Switch checchecked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
                   label="答えを表示"
                 />
-                <List>
+
+                <Table>
+                  <TableBody>
+                    {words.map((word, wordIndex) => (
+                      <TableRow
+                        key={word.id}
+                        hover
+                        onClick={() => handleListItemClick(words, wordIndex)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <TableCell sx={{width: '40%'}}>
+                          {word.userWordListStatus?.srLanguageDirection === 'EJ' ? word.english : (
+                            <>
+                              <Typography variant='subtitle1' fontWeight={600}>
+                                {word.userWordListStatus.questionJE}
+                              </Typography>
+                              <Typography variant='body1'>
+                                ({word.english} / {word.japanese})
+                              </Typography>
+                            </>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {switchStates[timeIndex] ? (word.userWordListStatus?.srLanguageDirection === 'EJ' ? word.japanese : (                            
+                            <>
+                               <Typography variant='subtitle1' fontWeight={600}>
+                                {word.userWordListStatus.answerJE}
+                              </Typography>
+
+                            </>
+                          )) : '　'} {/* 全角スペースで高さを保持 */}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {/* <List>
                 {words.map((word, wordIndex) => (
                   <ListItem button key={word.id} onClick={() => handleListItemClick(words, wordIndex)}>
                     <ListItemText 
@@ -134,7 +172,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                   </ListItem>  
 
                 ))}
-                </List>
+                </List> */}
                 <Box sx={{display: 'flex', justifyContent: 'start'}}>
                   <Button 
                     onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 

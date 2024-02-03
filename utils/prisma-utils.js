@@ -550,3 +550,87 @@ export async function updateSrWordListUserStatus(ids, action, currentTime) {
     }
   }
 }
+
+
+export async function updateQuestionJE(userId, wordListId, questionJE) {
+  try {
+    const existingRecord = await prisma.wordListUserStatus.findUnique({
+      where: {
+        userId_wordListId: {
+          userId: userId,
+          wordListId: wordListId
+        }
+      }
+    });
+
+    if (existingRecord) {
+      // 既存のレコードがある場合は、questionJEとanswerJEを更新します。
+      return await prisma.wordListUserStatus.update({
+        where: {
+          id: existingRecord.id
+        },
+        data: {
+          questionJE: questionJE, // 更新するフィールドをquestionJEに設定
+          answerJE: '',
+          userAnswerJE: '',
+          reviewScoreJE: '',
+          reviewCommentJE: '',
+        }
+      });
+    } else {
+      // 既存のレコードがない場合は、新しくレコードを作成します。
+      return await prisma.wordListUserStatus.create({
+        data: {
+          userId: userId,
+          wordListId: wordListId,
+          questionJE: questionJE, // 登録するフィールドにquestionJEを設定
+          answerJE: '',
+          userAnswerJE: '',
+          reviewScoreJE: '',
+          reviewCommentJE: '',
+
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error in updateQuestionAnswerJE:', error);
+    throw error;
+  }
+}
+
+export async function updatewordListUserStatusById(wordListUserStatusId, data) {
+  try {
+    // `data`オブジェクトから受け取ったキーと値をそのまま更新データとして使用
+    return await prisma.wordListUserStatus.update({
+      where: {
+        id: wordListUserStatusId
+      },
+      data: data // 直接dataオブジェクトを使用
+    });
+  } catch (error) {
+    console.error('Error in updatewordListUserStatusById:', error);
+    throw error;
+  }
+}
+
+
+export async function updateReviewScoreCommentJE(wordListUserStatusId, reviewScoreJE, reviewCommentJE) {
+  try {
+
+    return await prisma.wordListUserStatus.update({
+      where: {
+        id: wordListUserStatusId
+      },
+      data: {
+        reviewScoreJE: reviewScoreJE,
+        reviewCommentJE: reviewCommentJE 
+      }
+    });
+
+
+    } catch (error) {
+    console.error('Error in updateReviewScoreCommentJE:', error);
+    throw error;
+  }
+}
+

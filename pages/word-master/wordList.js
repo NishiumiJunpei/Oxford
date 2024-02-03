@@ -512,7 +512,7 @@ const WordListPage = () => {
                 <CardHeader 
                   title={
                     <Box display="flex" alignItems="center">
-                      <Typography variant="subtitle1">英⇨日</Typography>
+                      <Typography variant="subtitle1">英単語を理解できる</Typography>
                       <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
@@ -539,7 +539,7 @@ const WordListPage = () => {
                 <CardHeader 
                   title={
                     <Box display="flex" alignItems="center">
-                      <Typography variant="subtitle1">日⇨英</Typography>
+                      <Typography variant="subtitle1">英単語を使える</Typography>
                       <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
@@ -565,7 +565,8 @@ const WordListPage = () => {
         <Box sx={{mt: 5}}>
           <SubTitleTypography text="学習する"/>
 
-          <Button variant="contained" color="secondary" onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`)} sx={{marginBottom: 3}}>
+          <Button variant="contained" color="secondary" 
+            onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{marginBottom: 3}}>
               理解度チェック
           </Button>
 

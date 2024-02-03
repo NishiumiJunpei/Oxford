@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Nav from './nav';
 import { useTheme } from '@mui/material/styles';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 export default function Layout({ children }) {
   const theme = useTheme();
@@ -39,7 +39,6 @@ export default function Layout({ children }) {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2 }}
             >
               <MenuIcon />
             </IconButton>
@@ -53,7 +52,6 @@ export default function Layout({ children }) {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 0.5,
           transition: 'margin 0.3s',
           width: '100%',
           height: 'auto',
@@ -62,6 +60,7 @@ export default function Layout({ children }) {
             marginTop: '56px', // AppBarの高さに合わせて調整する
           }),
           marginLeft: !isMobile ? `${drawerWidth}px` : 0,
+          paddingLeft: isMobile ? '10px': '20px',
         }}
       >
         {children}

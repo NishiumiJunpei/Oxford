@@ -6,8 +6,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
   const { blockId } = router.query;
-  const [languageDirection, setLanguageDirection] = useState('EJ'); // 'EJ' は英→日、'JE' は日→英
-  const [wordCount, setWordCount] = useState('50'); // '10', '30', '50'
+  const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ'); // 'EJ' は英→日、'JE' は日→英
+  const [wordCount, setWordCount] = useState(router.query.languageDirection == 'JE' ? '5' : '50'); // '10', '30', '50'
   const [includeMemorized, setIncludeMemorized] = useState(false); 
   const [themeAllWordsFlag, setThemeAllWordsFlag] = useState(false); 
   const [block, setBlock] = useState(null);
@@ -40,7 +40,11 @@ const LearnWordsCriteriaInput = () => {
       themeId: block.theme.id,
     }).toString();
   
-    router.push(`/word-master/learnWordsCheck?${queryParams}`);
+    if (languageDirection == 'EJ') {
+      router.push(`/word-master/learnWordsCheckEJ?${queryParams}`);      
+    }else{
+      router.push(`/word-master/learnWordsCheckJE?${queryParams}`);      
+    }
   };
  
   const handleBack = () =>{
@@ -83,6 +87,7 @@ const LearnWordsCriteriaInput = () => {
 
       <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>単語数</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
+        <Chip label="5" color={wordCount === '5' ? 'primary' : 'default'} onClick={() => setWordCount('5')} />
         <Chip label="10" color={wordCount === '10' ? 'primary' : 'default'} onClick={() => setWordCount('10')} />
         <Chip label="30" color={wordCount === '30' ? 'primary' : 'default'} onClick={() => setWordCount('30')} />
         <Chip label="50" color={wordCount === '50' ? 'primary' : 'default'} onClick={() => setWordCount('50')} />
