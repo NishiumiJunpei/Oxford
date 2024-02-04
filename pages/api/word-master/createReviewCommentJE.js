@@ -10,10 +10,10 @@ export default async function handler(req, res) {
 
     try {
         const { userId } = await getUserFromSession(req, res);
-        const { wordListUserStatusId, english, japanese, questionJE, answerJE, userAnswerJE } = req.body;
+        const { wordListId, english, japanese, questionJE, answerJE, userAnswerJE } = req.body;
 
         // 必須パラメータのチェック
-        if (!wordListUserStatusId || !english || !japanese || !questionJE || !answerJE || !userAnswerJE) {
+        if (!wordListId || !english || !japanese || !questionJE || !answerJE || !userAnswerJE) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         } 
     
         if (collectedData){
-          await updatewordListUserStatusById(wordListUserStatusId, {reviewCommentJE: collectedData});
+          await updatewordListUserStatusById(wordListId, userId, {reviewCommentJE: collectedData});
         }
         
         res.end()

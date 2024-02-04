@@ -136,7 +136,7 @@ const WordMasterTop = () => {
                 title={
                   <Box display="flex" alignItems="center">
                     <Typography variant="subtitle1">理解できる</Typography>
-                    <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                    <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
                       </IconButton>
@@ -163,7 +163,7 @@ const WordMasterTop = () => {
                 title={
                   <Box display="flex" alignItems="center">
                     <Typography variant="subtitle1">使える</Typography>
-                    <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                    <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
                       </IconButton>
@@ -243,7 +243,7 @@ const WordMasterTop = () => {
 
                       <TableCell align="left">
                         <Link variant="text" color="inherit" onClick={() => handleActionClick(item.block.id)}>
-                          理解度チェック
+                          アセスメント
                         </Link>
                       </TableCell>
                     </TableRow>

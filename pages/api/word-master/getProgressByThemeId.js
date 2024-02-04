@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         let memorizedCountEJ = 0;
         let memorizedCountJE = 0;
 
-        //理解度チェックやる余地がああるか
+        //アセスメントやる余地がああるか
         let numAbleToProgressEJ = 0
         let numAbleToProgressJE = 0
       

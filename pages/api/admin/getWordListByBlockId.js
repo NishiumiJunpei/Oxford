@@ -1,11 +1,20 @@
 import { getWordListByCriteria } from '../../../utils/prisma-utils'; // getUserById 関数のインポート
+import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
       try {  
 
         const blockId = parseInt(req.query.blockId)
-        const wordList = await getWordListByCriteria({blockId});
+        let wordList = await getWordListByCriteria({blockId});
+
+        wordList = await Promise.all(wordList.map(async word => {
+          return {
+            ...word,
+            imageUrl: await getS3FileUrl(word.imageFilename),
+          };
+        }));
+  
 
         if (!wordList) {
           return res.status(404).json({ error: 'wordList not found' });

@@ -368,6 +368,7 @@ const LearnWordsCheck = () => {
           notMemorizedWordList={notMemorizedWordList} 
           languageDirection={languageDirection}
           updateWordList={updateWordListForNotMemorized}
+          themeAllWordsFlag={themeAllWordsFlag}
         />
       ):(
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, height: 'calc(100vh - 10px)' }}>

@@ -10,9 +10,9 @@ export default async function handler(req, res) {
 
   try {
     const { userId } = await getUserFromSession(req, res);
-    const { wordListUserStatusId, questionJE, english, japanese } = req.body;
+    const { wordListId, questionJE, english, japanese } = req.body;
 
-    if (!wordListUserStatusId || !english || !japanese || !questionJE) {
+    if (!wordListId || !english || !japanese || !questionJE) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     } 
 
     if (collectedData){
-      await updatewordListUserStatusById(wordListUserStatusId, {answerJE: collectedData});
+      await updatewordListUserStatusById(wordListId, userId, {answerJE: collectedData});
     }
     
     res.end()

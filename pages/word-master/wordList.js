@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
-  TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, 
+  TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, List, ListItem, ListItemText,
   Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -206,7 +206,7 @@ const SrIntroDialog = ({ open, onClose, blockId }) => {
       <DialogTitle>間隔反復</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          理解度チェックをして、間違えた単語に対して間隔反復が行えます。
+          アセスメントをして、間違えた単語に対して間隔反復が行えます。
         </DialogContentText>
         <DialogContentText>
           ※間隔反復は、10分後、1時間後、5時間後、翌日、など間隔をあけて復習して効率的に記憶する方法です
@@ -215,7 +215,7 @@ const SrIntroDialog = ({ open, onClose, blockId }) => {
       <DialogActions>
         <Button onClick={onClose}>キャンセル</Button>
         <Button color="primary" onClick={handleCheckUnderstanding}>
-          理解度チェック
+          アセスメント
         </Button>
       </DialogActions>
     </Dialog>
@@ -248,6 +248,7 @@ const WordListPage = () => {
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
   const [tabForWordDetailDialog, setTabForWordDetailDialog] = useState(0);
   const [openSrIntroDialog, setOpenSrIntroDialog] = useState(false);
+  const [progressDetail, setProgressDetail] = useState(null)
 
   
   useEffect(() => {
@@ -258,6 +259,7 @@ const WordListPage = () => {
       if (data && data.wordList) { // dataとdata.wordListが存在する場合のみセット
         setWordList(data.wordList);
         setProgress(data.progress);
+        setProgressDetail(data.progressDetail);
         setWordStoryList(data.wordStoryList);
         setBlock(data.block);
         setBlocks(data.blocks);
@@ -463,6 +465,7 @@ const WordListPage = () => {
          filterSettings.filterOption === 'showJEOnlyMEMORIZED2' ? word.memorizeStatusJE === 'MEMORIZED2' : true);
   });
   
+  console.log(progressDetail)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -504,7 +507,7 @@ const WordListPage = () => {
         {progress && (
           <Box sx={{mt: 5}}>
             <SubTitleTypography text="ステータス" />
-            <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>
+            <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch', minWidth: '400px' }}>
               <Card 
                 sx={{ marginBottom: 2, flex: '1 0 50%', border: languageDirection === 'EJ' ? `2px solid ${theme.palette.primary.main}` : 'none', cursor: 'pointer'}}
                 onClick={()=>setLanguageDirection('EJ')}
@@ -512,8 +515,8 @@ const WordListPage = () => {
                 <CardHeader 
                   title={
                     <Box display="flex" alignItems="center">
-                      <Typography variant="subtitle1">理解できる</Typography>
-                      <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                      <Typography variant="subtitle1" color="primary" sx={{fontWeight: 600}}>理解できる</Typography>
+                      <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
                         </IconButton>
@@ -522,7 +525,6 @@ const WordListPage = () => {
                   } 
                   titleTypographyProps={{ variant: 'subtitle1' }} 
                 />
-
                 <CardContent>
                   <Typography 
                     variant="h3" 
@@ -539,8 +541,8 @@ const WordListPage = () => {
                 <CardHeader 
                   title={
                     <Box display="flex" alignItems="center">
-                      <Typography variant="subtitle1">使える</Typography>
-                      <Tooltip title="理解度チェックですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                      <Typography variant="subtitle1" color="primary" sx={{fontWeight: 600}}>使える</Typography>
+                      <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
                         </IconButton>
@@ -558,7 +560,26 @@ const WordListPage = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Box>          
+            </Box>
+
+            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} dense>
+              <ListItem>
+                <ListItemText primary="全単語数" />
+                <ListItemText sx={{ pl: 2, }} primaryTypographyProps={{fontSize: '1.3rem', fontWeight: 600, color: theme.palette.primary.main}} primary={`${progressDetail[languageDirection].wordTotalNum}`} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="正解した単語数" />
+                <ListItemText sx={{ pl: 2, }} primaryTypographyProps={{fontSize: '1.3rem', fontWeight: 600, color: theme.palette.primary.main}} primary={`${progressDetail[languageDirection].memorizedNum}（＋${progressDetail[languageDirection].memorizedNumNew}）`} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="２連続で正解した単語数" />
+                <ListItemText sx={{ pl: 2, }} primaryTypographyProps={{fontSize: '1.3rem', fontWeight: 600, color: theme.palette.primary.main}} primary={`${progressDetail[languageDirection].memorized2Num}（＋${progressDetail[languageDirection].memorized2NumNew}）`} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primaryTypographyProps={{fontSize: '0.8rem', color: theme.palette.text}} primary="※()内は過去１週間で増えた数です" />
+              </ListItem>
+            </List>
+
           </Box>
         )}
 
@@ -567,7 +588,7 @@ const WordListPage = () => {
 
           <Button variant="contained" color="secondary" 
             onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{marginBottom: 3}}>
-              理解度チェック
+              アセスメント
           </Button>
 
           <Box display="flex" flexDirection='row' sx={{ gap: theme.spacing(2), alignItems: 'stretch' }}>

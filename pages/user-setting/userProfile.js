@@ -144,8 +144,8 @@ const UserProfile = () => {
         <UserSettingMenu/>
 
         <Box sx={{ maxWidth: '600px', margin: 'auto' }}> 
-          <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={userInfo.email} disabled />
-          <TextField label="名前" variant="outlined" fullWidth margin="normal" name="name" value={userInfo.name} onChange={handleChange} />
+          <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={userInfo.email} disabled autoComplete='off'/>
+          <TextField label="名前" variant="outlined" fullWidth margin="normal" name="name" value={userInfo.name} onChange={handleChange} autoComplete='off'/>
           {/* <TextField
               label="誕生日"
               type="date"
@@ -168,6 +168,7 @@ const UserProfile = () => {
                 value={newProfile}
                 onChange={(e) => setNewProfile(e.target.value)}
                 inputProps={{ maxLength: 15 }}
+                autoComplete='off'
               />
             </Grid>
             <Grid item>
@@ -198,6 +199,7 @@ const UserProfile = () => {
                 value={newInterest}
                 onChange={(e) => setNewInterest(e.target.value)}
                 inputProps={{ maxLength: 15 }}
+                autoComplete='off'
               />
             </Grid>
             <Grid item>

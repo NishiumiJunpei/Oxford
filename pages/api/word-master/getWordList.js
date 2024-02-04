@@ -67,9 +67,37 @@ export default async function handler(req, res) {
 
       const wordStoryList = await getWordStoriesByUserIdAndBlockId(userId, block.id);
 
+
+      //progressDetail作成処理（EJ、JEの単語数、正解数、２連続性回数、過去１週間追加分）
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 1週間前の日付を設定
+
+      const progressDetail = {
+        EJ:{
+          wordTotalNum: updatedWordList.length,
+          memorizedNum: updatedWordList.filter(w => (w.memorizeStatusEJ == 'MEMORIZED' || w.memorizeStatusEJ == 'MEMORIZED2') ).length,
+          memorized2Num: updatedWordList.filter(w => w.memorizeStatusEJ == 'MEMORIZED2').length,
+          memorizedNumNew: updatedWordList.filter(w => w.memorizeStatusEJ == 'MEMORIZED'
+                && new Date(w.userWordListStatus.lastMemorizedDateEJ) >= oneWeekAgo).length,
+          memorized2NumNew: updatedWordList.filter(w => w.memorizeStatusEJ == 'MEMORIZED2' 
+                && new Date(w.userWordListStatus.lastMemorizedDateEJ) >= oneWeekAgo).length,
+        },
+        JE:{
+          wordTotalNum: updatedWordList.length,
+          memorizedNum: updatedWordList.filter(w => (w.memorizeStatusJE == 'MEMORIZED' || w.memorizeStatusJE == 'MEMORIZED2') ).length,
+          memorized2Num: updatedWordList.filter(w => w.memorizeStatusJE == 'MEMORIZED2').length,
+          memorizedNumNew: updatedWordList.filter(w => w.memorizeStatusJE == 'MEMORIZED'
+                && new Date(w.userWordListStatus.lastMemorizedDateJE) >= oneWeekAgo).length,
+          memorized2NumNew: updatedWordList.filter(w => w.memorizeStatusJE == 'MEMORIZED2' 
+                && new Date(w.userWordListStatus.lastMemorizedDateJE) >= oneWeekAgo).length,
+
+        }
+      }
+
       res.status(200).json({
         wordList: updatedWordList,
         progress,
+        progressDetail,
         wordStoryList,
         block,
         blocks,

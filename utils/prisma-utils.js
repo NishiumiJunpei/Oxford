@@ -598,12 +598,15 @@ export async function updateQuestionJE(userId, wordListId, questionJE) {
   }
 }
 
-export async function updatewordListUserStatusById(wordListUserStatusId, data) {
+export async function updatewordListUserStatusById(wordListId, userId, data) {
   try {
     // `data`オブジェクトから受け取ったキーと値をそのまま更新データとして使用
     return await prisma.wordListUserStatus.update({
       where: {
-        id: wordListUserStatusId
+        userId_wordListId: {
+          userId: userId,
+          wordListId: wordListId
+        }
       },
       data: data // 直接dataオブジェクトを使用
     });

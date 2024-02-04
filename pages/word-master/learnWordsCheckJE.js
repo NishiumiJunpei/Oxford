@@ -65,6 +65,8 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, updateWordList, the
     }    
   };
 
+  console.log('test', themeAllWordsFlag)
+
   return (
     <Container maxWidth="lg">
     <Box sx={{mt: 5}}>
@@ -179,6 +181,8 @@ const LearnWordsCheck = () => {
     const [streamReviewCommentJE, setStreamReviewCommentJE] = useState('');
     const [streamReviewScoreJE, setStreamReviewScoreJE] = useState('');
     const [tabValue, setTabValue] = useState(0)
+    const [errorMsg, setErrorMsg] = useState('')
+    const [readyToAIReview, setReadyToAIReview] = useState(false)
 
 
 
@@ -212,6 +216,8 @@ const LearnWordsCheck = () => {
           setUserAnswerJE('')
           setStreamReviewCommentJE('')
           setStreamReviewScoreJE('')
+          setErrorMsg('')
+          setReadyToAIReview(false)
 
           setCurrentIndex(currentIndex + 1);
           
@@ -234,6 +240,7 @@ const LearnWordsCheck = () => {
             setKnownButtonDisabled(true);
             setNextButtonDisabled(false);
             setNotMemorizedWordList([...notMemorizedWordList, {...word}])
+            setReadyToAIReview(false)
           }    
         }
         else{
@@ -310,6 +317,7 @@ const LearnWordsCheck = () => {
     const handleCreateQuestion = async () => {
       setIsLoadingQuestionJE(true);
       setStreamQuestionJE('');
+      setErrorMsg('')
       const newWordData = wordList.find(wordItem => wordItem.id === word.id);
       if (newWordData) {
         // userWordListStatus内のreviewScoreJEだけを更新する新しいオブジェクトを作成
@@ -389,7 +397,7 @@ const LearnWordsCheck = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            wordListUserStatusId: word.userWordListStatus.id, 
+            wordListId: word.id, 
             english: word.english,
             japanese: word.japanese,
             questionJE: questionJE
@@ -440,6 +448,7 @@ const LearnWordsCheck = () => {
       } catch (error) {
         console.error('Error creating answer:', error);
       } finally {
+        setReadyToAIReview(true)
       }
     };
     
@@ -447,18 +456,21 @@ const LearnWordsCheck = () => {
     const handleCreateReview = async (userAnswerJE) =>{
       setStreamReviewScoreJE('')
       setStreamReviewCommentJE('')
-      createReviewScore(word.id, userAnswerJE)
-      createReviewComment(word.id, userAnswerJE)
+      if (word.userWordListStatus.questionJE && word.userWordListStatus.answerJE && userAnswerJE){
+        createReviewScore(word.id, userAnswerJE)
+        createReviewComment(word.id, userAnswerJE)  
+      }else {
+        setErrorMsg('エラーが発生しました。問題生成からやり直してください')
+      }
     }
     
-
     const createReviewScore = async (wordListId, userAnswerJE) => {
       try {
         const response = await fetch('/api/word-master/createReviewScoreJE', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            wordListUserStatusId: word.userWordListStatus.id, // 仮にword.idをwordListUserStatusIdとして使用
+            wordListId: word.id, // 仮にword.idをwordListUserStatusIdとして使用
             english: word.english,
             japanese: word.japanese,
             questionJE: word.userWordListStatus.questionJE, // APIから受け取ったquestionJE
@@ -503,7 +515,7 @@ const LearnWordsCheck = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            wordListUserStatusId: word.userWordListStatus.id, // 仮にword.idをwordListUserStatusIdとして使用
+            wordListId: word.id, // 仮にword.idをwordListUserStatusIdとして使用
             english: word.english,
             japanese: word.japanese,
             questionJE: word.userWordListStatus.questionJE, // APIから受け取ったquestionJE
@@ -603,10 +615,13 @@ const LearnWordsCheck = () => {
           <Typography variant="h6" sx={{ marginBottom: 2 }}>残りの問題数: {remainingWords}</Typography>
 
           <Box sx={{mb:1}}>
-            <Button onClick={handleCreateQuestion} disabled={isLoading} variant="outlined">
+            <Button onClick={handleCreateQuestion} disabled={isLoading || knownButtonDisabled} variant="outlined">
               問題生成
             </Button>
           </Box>
+          {errorMsg && (
+            <Typography color="error">{errorMsg}</Typography>
+          )}
 
           <Paper sx={{ mt: 2, p: 2, bgcolor: 'grey.100', minHeight: '200px', position: 'relative' }}>
             {isLoadingQuestionJE && (
@@ -638,7 +653,7 @@ const LearnWordsCheck = () => {
           </Paper>
 
           
-          {(streamQuestionJE != '' || word.userWordListStatus.questionJE) && (
+          {(streamQuestionJE != '' || word.userWordListStatus.questionJE) && !errorMsg && (
             <>
             <Box sx={{ '& > button': { marginTop: 5, mr: 2, ml: 2, mb: 2 } }}>
               <Button variant="contained" color="primary" onClick={() => handleAnswer(true)} disabled={knownButtonDisabled}>
@@ -673,7 +688,7 @@ const LearnWordsCheck = () => {
                 />
                 <Button variant="contained" 
                   onClick={() => handleCreateReview(userAnswerJE)} 
-                  disabled={isLoadingReviewJE || !userAnswerJE} 
+                  disabled={isLoadingReviewJE || !userAnswerJE || !readyToAIReview} 
                   sx={{mb: 2}}>
                   AIレビュー
                 </Button>

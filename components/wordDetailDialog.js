@@ -404,10 +404,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                 <DialogContent>
                     <Typography variant="subtitle1">問題</Typography>
                     <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '150px', position: 'relative' }}>
-                        {word.userWordListStatus.questionJE ? (
+                        {word.userWordListStatus?.questionJE ? (
                             <>
                                 <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
-                                {word.userWordListStatus.questionJE}
+                                {word.userWordListStatus?.questionJE}
                                 </Typography>
                                 <Typography variant="body2" sx={{mb:1}}>[使う単語]</Typography>
                                 <Box sx={{display: 'flex', justifyContent: 'start', mb: 2}}>
@@ -416,7 +416,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                     </Typography>
                                 </Box>
                                 <Box sx={{mb: 2}}>
-                                    <IconButton onClick={() => playAudio(word.userWordListStatus.questionJE, 'ja')} size="small">
+                                    <IconButton onClick={() => playAudio(word.userWordListStatus?.questionJE, 'ja')} size="small">
                                         <VolumeUpIcon />
                                     </IconButton>
                                 </Box>
@@ -424,7 +424,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             </>
                         ) : (
                             <Typography>
-                                問題が生成されていません。理解度チェックで生成できます。
+                                問題が生成されていません。アセスメント(日⇨英)で生成できます。
                             </Typography>
                         )}
                     </Paper>
@@ -432,15 +432,49 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                     <Typography variant="subtitle1">モデルアンサー</Typography>
                     <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '100px', position: 'relative' }}>
                       <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
-                        {word.userWordListStatus.answerJE}
+                        {word.userWordListStatus?.answerJE}
                       </Typography>
-
+                      {word.userWordListStatus?.answerJE && (
                         <Box sx={{mb: 2}}>
-                            <IconButton onClick={() => playAudio(word.userWordListStatus.answerJE)} size="small">
+                            <IconButton onClick={() => playAudio(word.userWordListStatus?.answerJE)} size="small">
                                 <VolumeUpIcon />
                             </IconButton>
                         </Box>
+                      )}
                     </Paper>
+
+                    {word.userWordListStatus?.userAnswerJE  && (
+                        <>
+                            <Typography variant="subtitle1">あなたの回答</Typography>
+
+                            <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '100px', position: 'relative' }}>
+                                <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
+                                    {word.userWordListStatus?.userAnswerJE}
+                                </Typography>
+                            </Paper>
+                        </>
+                    )}
+
+                    {!!word.userWordListStatus?.reviewScoreJE && (
+                        <>
+                            <Typography variant="subtitle1">AIレビュー</Typography>
+                            <Box sx={{display: 'flex', alignItems: 'flex-end', mt: 3}}>
+                                <Typography variant="h5" color="secondary" >
+                                    {word.userWordListStatus?.reviewScoreJE === 1 ? '1.全く適切でない' :
+                                    word.userWordListStatus?.reviewScoreJE === 2 ? '2.やや適切でない' :
+                                    word.userWordListStatus?.reviewScoreJE === 3 ? '3.やや適切' :
+                                    word.userWordListStatus?.reviewScoreJE === 4 ? '4.非常に適切 (最高スコア)' : '採点不可'}
+                                </Typography>
+                            </Box>
+
+                            <Paper sx={{ mt: 2, mb: 10, p: 2, bgcolor: 'grey.100', minHeight: '200px', position: 'relative' }}>
+                                <Typography variant="body1">{`${word.userWordListStatus?.reviewCommentJE}`}</Typography>
+                            </Paper>
+                            </>
+
+                    )}
+
+
 
 
                     {/* <Typography variant="body1">

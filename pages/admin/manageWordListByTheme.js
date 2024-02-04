@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box, Snackbar, Alert, Typography } from '@mui/material';
+import { Grid, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box, Snackbar, Alert, Typography, Divider } from '@mui/material';
 
 export default function Home() {
   const [themes, setThemes] = useState([]);
@@ -13,6 +13,7 @@ export default function Home() {
   const [isLoadingWordList, setIsLoadingWordList] = useState(false);
   const [isLoadingWordDetail, setIsLoadingWordDetail] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbarの表示状態
+  const [showWordListWithDetail, setShowWordListWithDetail] = useState(false)
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -84,6 +85,8 @@ export default function Home() {
 
   const fetchWordList = async (blockId) => {
     setIsLoadingWordList(true);
+    setShowWordListWithDetail(false)
+
     try {
       const response = await axios.get(`/api/admin/getWordListByBlockId?blockId=${blockId}`);
       setWordList(response.data.wordList);
@@ -92,6 +95,14 @@ export default function Home() {
     }
     setIsLoadingWordList(false);
   };
+
+  const handleClickWordListByBlock = async (blockId) =>{
+    await fetchWordList(blockId)
+    setShowWordListWithDetail(true)
+
+  }
+
+
 
   // themesの表示
   const displayThemes = () => (
@@ -124,7 +135,7 @@ export default function Home() {
   const displayBlocks = () => (
     <>
     <h3>ブロック</h3>
-    <TableContainer component={Paper} sx={{mb: 5}}>
+    <TableContainer component={Paper} sx={{mb: 5, maxHeight: 700, overflow: 'auto'}}>
       <Table>
         <TableHead>
           <TableRow>
@@ -132,6 +143,7 @@ export default function Home() {
             <TableCell>Name</TableCell>
             <TableCell>単語数</TableCell>
             <TableCell>画像なし</TableCell>
+            <TableCell>単語リスト</TableCell>
             <TableCell>例文生成</TableCell>
           </TableRow>
         </TableHead>
@@ -143,8 +155,13 @@ export default function Home() {
               <TableCell>{block.wordNum}</TableCell>
               <TableCell>{block.notExampleWordNum}</TableCell>
               <TableCell>
+                <Button onClick={()=>handleClickWordListByBlock(block.id)}>
+                  単語一覧(詳細付き)表示
+                </Button>
+              </TableCell>
+              <TableCell>
                 <Button onClick={()=>createExampleSentenceBatch(block.id)}>
-                  例文生成
+                  一括例文生成
                 </Button>
               </TableCell>
             </TableRow>
@@ -168,6 +185,55 @@ export default function Home() {
 
   );
 
+  const displayWordListWithDetail = () =>(
+      <>
+        {wordList.map((wordDetail, index) => (
+          <>
+          <Grid container sx={{mb: 5}} key={index}>
+            <Grid item xs={6}>
+              <Typography>Id: {wordDetail.id}</Typography>
+              <h2>{wordDetail.english}</h2>
+              <Typography>意味：{wordDetail.japanese}</Typography>
+              <Typography> 例文：{wordDetail.exampleSentenceE}</Typography>
+              <Typography> ({wordDetail.exampleSentenceJ})</Typography>
+              <Typography> 類語：{wordDetail.synonyms}</Typography>
+              {/* {wordDetail.usage} */}
+              {wordDetail.usage && (
+                <>
+                  <Typography> この単語を使うシチュエーション</Typography>
+                  {JSON.parse(wordDetail.usage).map((element, index)=>(
+                    <>
+                      <Typography sx={{fontWeight: 700}}>{index+1}.{element.situation}</Typography>
+                      <Typography>{element.exampleE}</Typography>
+                      <Typography>{element.exampleJ}</Typography>
+                    </>
+                  ))}
+
+                </>
+              )}
+
+            </Grid>
+            <Grid item xs={6}>
+                {wordDetail?.imageUrl && (
+                    <img 
+                        src={wordDetail.imageUrl} 
+                        style={{ marginTop: 20, maxWidth: '70%', maxHeight: '70%', objectFit: 'contain' }} 
+                    />
+                )}
+                {/* <Box>
+                  <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
+                      GPT例文生成
+                  </Button>
+                </Box> */}
+              </Grid>
+          </Grid>    
+          <Divider/>
+          </>      
+        ))}
+      
+      </>
+  )
+
   return (
     <>
 
@@ -178,32 +244,36 @@ export default function Home() {
         <CircularProgress />
       ) : (
         <Box sx={{mb: 5}}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>English</TableCell>
-                <TableCell>Japanese</TableCell>
-                <TableCell>Image</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {wordList.map((word, index) =>
-                  <TableRow key={`${word.id}-${index}`} hover onClick={() => getWordDetail(word.id)}>
-                    <TableCell>{word.id}</TableCell>
-                    <TableCell>{word.english}</TableCell>
-                    <TableCell>{word.japanese}</TableCell>
-                    <TableCell>
-                      {(word.imageFilename
-                          ? `　`
-                          : <Typography color="error">なし</Typography>)}                     
-                    </TableCell>
+
+          {showWordListWithDetail ? displayWordListWithDetail() : (
+            <TableContainer component={Paper}  sx={{mb: 5, maxHeight: 600, overflow: 'auto'}}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>English</TableCell>
+                    <TableCell>Japanese</TableCell>
+                    <TableCell>Image</TableCell>
                   </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {wordList.map((word, index) =>
+                      <TableRow key={`${word.id}-${index}`} hover onClick={() => getWordDetail(word.id)}>
+                        <TableCell>{word.id}</TableCell>
+                        <TableCell>{word.english}</TableCell>
+                        <TableCell>{word.japanese}</TableCell>
+                        <TableCell>
+                          {(word.imageFilename
+                              ? `　`
+                              : <Typography color="error">なし</Typography>)}                     
+                        </TableCell>
+                      </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+          )}
         </Box>
       )}
 
@@ -225,13 +295,15 @@ export default function Home() {
           {wordDetail?.imageUrl && (
               <img 
                   src={wordDetail.imageUrl} 
-                  style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }} 
+                  style={{ marginTop: 20, maxWidth: '30%', maxHeight: '50%', objectFit: 'contain' }} 
               />
           )}
+          <Box>
+            <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
+                GPT例文生成
+            </Button>
 
-          <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
-              GPT例文生成
-          </Button>
+          </Box>
 
         </Box>
       )}

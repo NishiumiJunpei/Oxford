@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Chip, Button, Box, Typography, FormControlLabel, Checkbox, CircularProgress, Avatar } from '@mui/material';
+import { Chip, Button, Box, Typography, FormControlLabel, Checkbox, CircularProgress, Avatar, Link } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ProfileKeywordsSettingDialog from '@/components/profileKeywordsSettingDialog';
 
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
@@ -12,8 +13,10 @@ const LearnWordsCriteriaInput = () => {
   const [themeAllWordsFlag, setThemeAllWordsFlag] = useState(false); 
   const [block, setBlock] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
+  const [noKeyword, setNoKeyword] = useState(false)
+  const [openProfileKeywordsSettingDialog, setOpenProfileKeywordsSettingDialog] = useState(false)  
 
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
@@ -30,6 +33,29 @@ const LearnWordsCriteriaInput = () => {
     }
   }, [blockId]);
 
+  
+
+  useEffect(() => {
+    const fetchUserData = async () =>{
+      setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
+      const response = await fetch(`/api/user-setting/getUserInfo`);
+      const data = await response.json();
+      if (data) {
+        console.log('user', data.user)
+        const {interestKeywords, profileKeywords} = data
+        if (interestKeywords && profileKeywords){
+          setNoKeyword(false)
+        }else{
+          setNoKeyword(true)
+        }
+      }
+      setIsLoading(false); // データ取得後にローディング状態をfalseに設定
+    }
+    fetchUserData()
+
+  }, [openProfileKeywordsSettingDialog, setOpenProfileKeywordsSettingDialog]);
+
+  
   const handleSubmit = () => {
     const queryParams = new URLSearchParams({
       blockId,
@@ -77,13 +103,21 @@ const LearnWordsCriteriaInput = () => {
 
 
 
-      <Typography variant="h6" sx={{mb: 5, mt: 2}} color='primary'>理解度チェック</Typography>
+      <Typography variant="h6" sx={{mb: 5, mt: 2}} color='primary'>アセスメント</Typography>
       
       <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>モード</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
         <Chip label="英→日" color={languageDirection === 'EJ' ? 'primary' : 'default'} onClick={() => setLanguageDirection('EJ')} />
         <Chip label="日→英" color={languageDirection === 'JE' ? 'primary' : 'default'} onClick={() => setLanguageDirection('JE')} />
       </Box>
+      {languageDirection == 'JE' && (
+        <Box sx={{mb: 2}}>
+          <Link sx={{cursor: 'pointer'}} onClick={()=>setOpenProfileKeywordsSettingDialog(true)}>
+            プロフィール・興味のキーワード設定
+          </Link>
+        </Box>
+      )}
+
 
       <Typography variant="subtitle1" color="GrayText" sx={{mb: 2}}>単語数</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1, marginBottom: 5 }}>
@@ -108,10 +142,21 @@ const LearnWordsCriteriaInput = () => {
       </Box>
 
       <Box sx={{ textAlign: 'left' }}>
-        <Button variant="outlined" onClick={handleSubmit}>
+        <Button variant="outlined" onClick={handleSubmit} disabled={languageDirection == 'JE' && noKeyword}>
           スタート
         </Button>
-      </Box>  
+      </Box>
+      {languageDirection == 'JE' && noKeyword && (
+      <Typography color="error">
+        プロフィール・興味のキーワードを設定してください。
+      </Typography>
+      )}
+
+      <ProfileKeywordsSettingDialog
+        open={openProfileKeywordsSettingDialog}
+        onClose={()=>setOpenProfileKeywordsSettingDialog(false)}
+      />
+
     </Box>
 
   );

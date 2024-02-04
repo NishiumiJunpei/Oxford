@@ -10,10 +10,10 @@ export default async function handler(req, res) {
 
     try {
         const { userId } = await getUserFromSession(req, res);
-        const { wordListUserStatusId, english, japanese, questionJE, answerJE, userAnswerJE } = req.body;
+        const { wordListId, english, japanese, questionJE, answerJE, userAnswerJE } = req.body;
 
         // 必須パラメータのチェック
-        if (!wordListUserStatusId || !english || !japanese || !questionJE || !answerJE || !userAnswerJE) {
+        if (!wordListId || !english || !japanese || !questionJE || !answerJE || !userAnswerJE) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         const score = await generateReviewScoreJE(english, japanese, questionJE, answerJE, userAnswerJE, theme.levelKeyword);
 
         if (parseInt(score) >=1 && parseInt(score) <= 4){
-          await updatewordListUserStatusById(wordListUserStatusId, {reviewScoreJE: parseInt(score)});
+          await updatewordListUserStatusById(wordListId, userId, {reviewScoreJE: parseInt(score), userAnswerJE: userAnswerJE});
           res.status(200).json({ score });
         }else{
           res.status(400).json({ error: 'GPT処理でエラーが発生しました: ' + error.message });

@@ -19,8 +19,8 @@ export default async function handler(req, res) {
   
         // const formattedBirthday = user.birthday ? user.birthday.toISOString().split('T')[0] : ''
         const { email, name, currentChallengeThemeId, profileKeyword, interestKeyword } = user;
-        const profileKeywordsArray = profileKeyword.split(',');
-        const interestKeywordsArray = interestKeyword.split(',');
+        const profileKeywordsArray = profileKeyword ? profileKeyword.split(',') : ''
+        const interestKeywordsArray = interestKeyword ? interestKeyword.split(',') : ''
         
         res.status(200).json({ 
           email, 
