@@ -1,14 +1,12 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 import { getWordListByEnglish} from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
+      const { userId } = await getUserFromSession(req, res);
       const { english } = req.query
-      const session = await getServerSession(req, res, authOptions);
-      const userId = session.userId; // セッションから userId を取得
 
       if (userId != '1') return null
 
@@ -17,6 +15,7 @@ export default async function handler(req, res) {
         return {
           ...word,
           imageUrl: await getS3FileUrl(word.imageFilename),
+          usage: word.usage ? JSON.parse(word.usage) : '',
         };
       }))
 

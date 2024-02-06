@@ -1,14 +1,12 @@
 // pages/api/word-master/getWordsForCheck.js
 import { getWordListByCriteria, getWordListUserStatus, getBlock, getWordListUserStatusByWordListIds } from '../../../utils/prisma-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 import { getS3FileUrl } from '@/utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-      const userId = session.userId;
+      const { userId } = await getUserFromSession(req, res);
 
       const { blockId, wordCount, languageDirection, includeMemorized, themeAllWordsFlag, themeId } = req.query;
       const criteria = themeAllWordsFlag == '1' ? { themeId: parseInt(themeId) } : { blockId: parseInt(blockId) }
@@ -26,6 +24,7 @@ export default async function handler(req, res) {
           memorizeStatusEJ: status?.memorizeStatusEJ || 'NOT_MEMORIZED',
           memorizeStatusJE: status?.memorizeStatusJE || 'NOT_MEMORIZED',
           imageUrl: await getS3FileUrl(word.imageFilename),
+          usage: word.usage ? JSON.parse(word.usage) : '',
           userWordListStatus: status,
     
         };

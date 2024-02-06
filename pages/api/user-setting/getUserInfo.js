@@ -1,16 +1,10 @@
 import { getUserById } from '../../../utils/prisma-utils'; // getUserById 関数のインポート
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
       try {
-        const session = await getServerSession(req, res, authOptions);
-        if (!session || !session.userId) {
-          return res.status(401).json({ error: 'Unauthorized' });
-        }
-  
-        const userId = session.userId; // セッションから userId を取得
+        const { userId } = await getUserFromSession(req, res);
         const user = await getUserById(userId); // prisma-utils.js からの関数を使用
 
         if (!user) {

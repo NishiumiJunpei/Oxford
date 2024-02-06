@@ -3,13 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, 
-    useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField, Link } from '@mui/material';
+    useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField, Grid,
+    Accordion, AccordionActions, AccordionSummary, AccordionDetails } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue }) => {
     const router = useRouter();
@@ -249,7 +251,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             fullScreen={fullScreen}
             PaperProps={{
                 sx: {
-                    width: fullScreen ? '100%' : '50%', // モバイルでは100%、それ以外では70%
+                    width: fullScreen ? '100%' : '90%', // モバイルでは100%、それ以外では70%
                     height: '90%',
                     maxWidth: '100%',
                     maxHeight: '100%',
@@ -278,62 +280,95 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             {tabValue === 0 && (
                 <DialogContent>
-                    <Typography variant="body2" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
-                        <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
-                        <IconButton onClick={() => playAudio(word.japanese, 'ja')} size="small">
-                            <VolumeUpIcon />
-                        </IconButton>
-                    </Typography>
-                    <Typography variant="body1">
-                        {word?.japanese}
-                    </Typography>
-
-
-                    <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
-                        <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
-                        <IconButton onClick={() => playAudio(word.exampleSentenceE)} size="small">
-                        <VolumeUpIcon /><Typography variant="body2">(英)</Typography>
-                        </IconButton>
-                        <IconButton onClick={() => playAudio(word.exampleSentenceJ, 'ja')} size="small">
-                            <VolumeUpIcon /><Typography variant="body2">(日)</Typography>
-                        </IconButton>
-                    </Typography>
-
-                    <Typography variant="body1">
-                        {word?.exampleSentenceE}
-                    </Typography>
-                    <Typography variant="body1">
-                        {word?.exampleSentenceJ}
-                    </Typography>
-
-                    <Typography variant="body2" style={{ marginTop: 20 }}>
-                        <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
-                        <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
-                            <VolumeUpIcon />
-                        </IconButton>
-                    </Typography>
-                    <Typography variant="body1">
-                        {word?.synonyms}
-                    </Typography>
-                    {word?.imageUrl ? (
-                        <>
-                            <img 
-                                src={word.imageUrl} 
-                                alt={word.english} 
-                                style={{ marginTop: 20, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
-                            />
-                            <Typography variant="body2" sx={{mb: 2}}>
-                                Created by GPT & DALLE3 / susu English
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
+                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
+                                <IconButton onClick={() => playAudio(word.japanese, 'ja')} size="small">
+                                    <VolumeUpIcon />
+                                </IconButton>
                             </Typography>
-                        </>
-                    ) : (
-                        <div style={{ marginTop: 20, width: '80%', height: '50%', backgroundColor: '#d3d3d3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <Typography variant="body1">
-                                画像準備中
+                                {word?.japanese}
                             </Typography>
-                        </div>
-                    )}
-                    
+
+                            <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
+                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
+                                <IconButton onClick={() => playAudio(word.exampleSentenceE)} size="small">
+                                <VolumeUpIcon /><Typography variant="body2">(英)</Typography>
+                                </IconButton>
+                                <IconButton onClick={() => playAudio(word.exampleSentenceJ, 'ja')} size="small">
+                                    <VolumeUpIcon /><Typography variant="body2">(日)</Typography>
+                                </IconButton>
+                            </Typography>
+
+                            <Typography variant="body1">
+                                {word?.exampleSentenceE}
+                            </Typography>
+                            <Typography variant="body1">
+                                {word?.exampleSentenceJ}
+                            </Typography>
+
+                            <Typography variant="body2" style={{ marginTop: 20 }}>
+                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
+                                <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
+                                    <VolumeUpIcon />
+                                </IconButton>
+                            </Typography>
+                            <Typography variant="body1">
+                                {word?.synonyms}
+                            </Typography>
+
+                            {word?.usage && (
+                            <>
+                                <Typography variant="body2" style={{ marginTop: 20, }}>
+                                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>シチュエーション</span>
+                                    {/* <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
+                                        <VolumeUpIcon />
+                                    </IconButton> */}
+                                </Typography>
+                                <Typography variant="body1">
+                                    {word?.usage.map((u, index)=>(
+                                        <Accordion key={index}>
+                                            <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
+                                                <Typography variant="body1">{index+1}.{u.situation}</Typography>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                <Typography variant="body1">{u.exampleE}</Typography>
+                                                <Typography variant="body1">{u.exampleJ}</Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    ))}
+                                </Typography>
+                            </>
+                            )}
+
+
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            {word?.imageUrl ? (
+                                <>
+                                    <img 
+                                        src={word.imageUrl} 
+                                        alt={word.english} 
+                                        style={{ marginTop: 20, maxWidth: '100%', maxHeight: '80%', objectFit: 'contain' }} 
+                                    />
+                                    <Typography variant="body2" sx={{mb: 2}}>
+                                        Created by GPT & DALLE3 / susu English
+                                    </Typography>
+                                </>
+                            ) : (
+                                <div style={{ marginTop: 20, width: '80%', height: '50%', backgroundColor: '#d3d3d3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Typography variant="body1">
+                                        画像準備中
+                                    </Typography>
+                                </div>
+                            )}
+                            
+                        </Grid>
+
+                    </Grid>
+
 
                     <Divider sx={{mt: 3, mb: 3}}/>
                     <Typography variant="h6">

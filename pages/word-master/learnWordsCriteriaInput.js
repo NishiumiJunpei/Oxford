@@ -41,7 +41,6 @@ const LearnWordsCriteriaInput = () => {
       const response = await fetch(`/api/user-setting/getUserInfo`);
       const data = await response.json();
       if (data) {
-        console.log('user', data.user)
         const {interestKeywords, profileKeywords} = data
         if (interestKeywords && profileKeywords){
           setNoKeyword(false)

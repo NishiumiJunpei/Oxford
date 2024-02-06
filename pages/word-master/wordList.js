@@ -465,7 +465,7 @@ const WordListPage = () => {
          filterSettings.filterOption === 'showJEOnlyMEMORIZED2' ? word.memorizeStatusJE === 'MEMORIZED2' : true);
   });
   
-  console.log(progressDetail)
+  console.log(wordList)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>

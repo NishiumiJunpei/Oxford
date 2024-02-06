@@ -1,5 +1,4 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 import { deleteWordStoryByGPT } from '../../../utils/prisma-utils';
 
 export default async function handler(req, res) {
@@ -7,10 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  const { userId } = await getUserFromSession(req, res);
 
   const { id } = req.body; // ストーリーのIDをリクエストボディから取得
   try {

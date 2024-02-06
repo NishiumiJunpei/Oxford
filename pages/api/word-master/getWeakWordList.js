@@ -1,13 +1,11 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 import { getWordListByCriteria, getWordListUserStatus, getUserById } from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-      const userId = session.userId; // セッションから userId を取得
+      const { userId } = await getUserFromSession(req, res);
       const user = await getUserById(userId);
       if (!user) {
         return res.status(404).json({ error: "User not found." });
@@ -28,6 +26,7 @@ export default async function handler(req, res) {
           memorizeStatusEJ: status?.memorizeStatusEJ,
           memorizeStatusJE: status?.memorizeStatusJE,
           imageUrl: await getS3FileUrl(word.imageFilename),
+          usage: word.usage ? JSON.parse(word.usage) : '',
           userWordListStatus: status,
         };
       }));

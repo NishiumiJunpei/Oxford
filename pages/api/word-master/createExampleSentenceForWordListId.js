@@ -1,6 +1,5 @@
 import { createExampleSentenceAndImageByGPT } from '../../../utils/wordList-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -8,8 +7,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const session = await getServerSession(req, res, authOptions);
-  const userId = session.userId;
+  const { userId } = await getUserFromSession(req, res);
+
   if (userId != 1 ) {
     // Return an appropriate error message and status code
     return res.status(403).json({ message: 'Unauthorized' });

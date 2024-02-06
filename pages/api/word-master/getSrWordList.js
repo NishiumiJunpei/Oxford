@@ -16,6 +16,7 @@ export default async function handler(req, res) {
           memorizeStatusEJ: word.userWordListStatus?.memorizeStatusEJ,
           memorizeStatusJE: word.userWordListStatus?.memorizeStatusJE,
           imageUrl: await getS3FileUrl(word.imageFilename),
+          usage: word.usage ? JSON.parse(word.usage) : '',
         };
       }));
 

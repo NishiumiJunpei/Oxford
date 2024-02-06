@@ -1,16 +1,11 @@
 // pages/api/word-master/getProgressByThemeId.js
 import { getWordListByCriteria, getWordListUserStatus, getTheme, getUserById } from '../../../utils/prisma-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-      if (!session || !session.userId) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-      const userId = session.userId;
+      const { userId } = await getUserFromSession(req, res);
       const user = await getUserById(userId);
       if (!user) {
         return res.status(404).json({ error: "User not found." });

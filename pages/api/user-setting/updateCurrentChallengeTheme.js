@@ -1,17 +1,10 @@
 import { updateUser } from '../../../utils/prisma-utils';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-
-      if (!session || !session.userId) {
-        return res.status(401).json({ error: "You must be signed in to update the information." });
-      }
-
-      const userId = session.userId; // セッションから userId を取得
+      const { userId } = await getUserFromSession(req, res);
       const { challengeThemeId } = req.body;
 
       // 更新するデータを定義

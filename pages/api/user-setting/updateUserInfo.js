@@ -1,17 +1,11 @@
 import { updateUser } from '../../../utils/prisma-utils';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const session = await getServerSession(req, res, authOptions);
+      const { userId } = await getUserFromSession(req, res);
 
-      if (!session || !session.userId) {
-        return res.status(401).json({ error: "You must be signed in to update the information." });
-      }
-
-      const userId = session.userId; // セッションから userId を取得
       const birthday = new Date(req.body.birthday);
       const updatedData = {
         name: req.body.name,

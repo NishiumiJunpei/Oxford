@@ -74,7 +74,6 @@ const WordMasterTop = () => {
 
   
   const handleBlockClick = (blockId, languageDirection) => {
-    console.log('langu', languageDirection)
     router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection || 'EJ'}`);
   };
 

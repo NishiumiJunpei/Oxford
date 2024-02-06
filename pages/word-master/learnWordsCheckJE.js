@@ -65,7 +65,6 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, updateWordList, the
     }    
   };
 
-  console.log('test', themeAllWordsFlag)
 
   return (
     <Container maxWidth="lg">

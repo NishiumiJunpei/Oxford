@@ -1,28 +1,14 @@
 // pages/api/word-master/updateUserWordStatus.js
 
 import { updateUserWordStatus } from '../../../utils/prisma-utils';
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "../auth/[...nextauth]"
+import { getUserFromSession } from '@/utils/session-utils';
 
 
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-        const session = await getServerSession(req, res, authOptions)
-
-        if (session) {
-          res.send({
-            content:
-              "This is protected content. You can access this content because you are signed in.",
-          })
-        } else {
-          res.send({
-            error: "You must be signed in to view the protected content on this page.",
-          })
-        }
-      
-      const userId = session.userId; // セッションから userId を取得
+      const { userId } = await getUserFromSession(req, res);
       const { wordId, status, languageDirection } = req.body;
 
       const response = await updateUserWordStatus(userId, wordId, languageDirection, status);

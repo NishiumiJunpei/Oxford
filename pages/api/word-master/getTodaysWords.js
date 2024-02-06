@@ -1,13 +1,11 @@
 import { getUserById, getWordListUserStatus } from '../../../utils/prisma-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
 import { getS3FileUrl } from '@/utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-      const userId = session.userId;
+      const { userId } = await getUserFromSession(req, res);
       const user = await getUserById(userId)
       const themeId = user.currentChallengeThemeId
 
@@ -28,6 +26,7 @@ export default async function handler(req, res) {
           selectedWords.push({
             ...randomWordStatus.wordList,
             imageUrl: await getS3FileUrl(randomWordStatus.wordList.imageFilename),
+            usage: randomWordStatus.wordList.usage ? JSON.parse(randomWordStatus.wordList.usage) : '',
             memorizeStatusEJ: randomWordStatus.memorizeStatusEJ,
             memorizeStatusJE: randomWordStatus.memorizeStatusJE,
           });
