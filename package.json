@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@google-cloud/text-to-speech": "^5.0.1",
     "@mui/icons-material": "^5.14.16",
+    "@mui/lab": "^5.0.0-alpha.164",
     "@mui/material": "^5.14.16",
     "@notionhq/client": "^2.2.13",
     "@prisma/client": "^5.5.2",

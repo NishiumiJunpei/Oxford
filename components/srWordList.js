@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, CircularProgress, Typography, Box, Button, Divider , Switch, FormControlLabel, Badge,
-  Table, TableBody, TableCell, TableRow, Chip } from '@mui/material';
+  Table, TableBody, TableCell, TableRow, Chip, IconButton } from '@mui/material';
 import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
-
+import SrTimingDialog  from './srTimingDialog';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { formatDate } from '@/utils/utils';
 
 const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [loading, setLoading] = useState(false);
   const [modalOpenWord, setModalOpenWord] = useState(false);
+  const [openSrTimingDialog, setOpenSrTimingDialog] = useState(false);
   const [filteredWordList, setFilteredWordList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -16,14 +19,15 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [switchStates, setSwitchStates] = useState({}); // 各反復タイミングごとのスイッチの状態
   const [srCount, setSrCount] = useState({})
   const [mode, setMode] = useState('EJ')
- 
+  const [dialogSrNextTime, setDialogSrNextTime] = useState('');
+  const [dialogWords, setDialogWords] = useState([]);
+   
   
   const fetchSrWordList = async () => {
     setLoading(true);
     try {
       const currentTime =  new Date().toISOString()
       const response = await axios.get(`/api/word-master/getSrWordList?currentTime=${currentTime}`);
-      console.log('test', response.data)
       setSrWordList(response.data.srWordList);
       setSrCount(response.data.srCount)
     } catch (error) {
@@ -81,12 +85,6 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     }
   };
   
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}時${date.getMinutes()}分`;
-  };
-
   //5分前になるまではtrue(=ボタン無効化)を返す
   const isButtonDisabled = (srNextTime) => {
     const currentTime = new Date();
@@ -100,6 +98,13 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
       [timeIndex]: !prevStates[timeIndex]
     }));
   };
+
+  const handleOpenInNewClick = (srNextTime, words) => {
+    setDialogSrNextTime(srNextTime); // ダイアログに渡すsrNextTimeを設定
+    setDialogWords(words); // ダイアログに渡すwordsを設定
+    setOpenSrTimingDialog(true); // SrTimingDialogを開く
+  };
+
 
   return (
     <Container>
@@ -143,17 +148,24 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
           </Box>
 
           {Object.entries(srWordList[mode]).map(([srNextTime, words], timeIndex) => (
-            <Box >
+            <Box key={timeIndex}>
               <Box key={timeIndex} sx={{ mt: 2,padding: 3, bgcolor: !isButtonDisabled(srNextTime) ? 'secondary.light' : 'default' }}>
                 <Typography variant="subtitle2" color="GrayText">
-                  反復タイミング
-                </Typography>
-                <Typography variant="h6" color={new Date(srNextTime) < new Date() ? "error" : "inherit"}>
-                  {formatDate(srNextTime)} {timeAgo(srNextTime) && `(${timeAgo(srNextTime)})`}
+                    反復タイミング
                 </Typography>
 
+                <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
+                  <Typography variant="h6" color={new Date(srNextTime) < new Date() ? "error" : "inherit"} >
+                    {formatDate(srNextTime)} {timeAgo(srNextTime) && `(${timeAgo(srNextTime)})`}
+                  </Typography>
+                  <IconButton onClick={() => handleOpenInNewClick(srNextTime, words)}>
+                    <OpenInNewIcon/>
+                  </IconButton>
+                </Box>
+
+
                 <FormControlLabel
-                  control={<Switch checchecked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
+                  control={<Switch checked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
                   label="答えを表示"
                 />
 
@@ -241,6 +253,14 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
         initialIndex={selectedIndex}
         updateWordList={updateWordList}
       />
+
+      <SrTimingDialog
+        open={openSrTimingDialog}
+        onClose={()=>setOpenSrTimingDialog(false)}
+        srNextTime={dialogSrNextTime} // ダイアログにsrNextTimeを渡す
+        words={dialogWords} // ダイアログにwordsを渡す
+      />
+
     </Container>
   );
 };
