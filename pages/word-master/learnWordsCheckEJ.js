@@ -107,7 +107,7 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, 
             <Box>
               <Typography variant="body1">
                     {message} 
-                <Link href={`/word-master/wordMasterTop?tab=2`} passHref>
+                <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
                     (間隔反復の単語リスト)
                 </Link>
               </Typography>

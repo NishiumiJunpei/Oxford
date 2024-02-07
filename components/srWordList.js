@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, CircularProgress, List, ListItem, ListItemText, Typography, Box, Button, Divider , Switch, FormControlLabel,
-  Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Container, CircularProgress, Typography, Box, Button, Divider , Switch, FormControlLabel, Badge,
+  Table, TableBody, TableCell, TableRow, Chip } from '@mui/material';
 import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
 
@@ -15,12 +15,15 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [buttonDisabledState, setButtonDisabledState] = useState({}); // ボタンの状態を管理
   const [switchStates, setSwitchStates] = useState({}); // 各反復タイミングごとのスイッチの状態
   const [srCount, setSrCount] = useState({})
+  const [mode, setMode] = useState('EJ')
+ 
   
   const fetchSrWordList = async () => {
     setLoading(true);
     try {
       const currentTime =  new Date().toISOString()
       const response = await axios.get(`/api/word-master/getSrWordList?currentTime=${currentTime}`);
+      console.log('test', response.data)
       setSrWordList(response.data.srWordList);
       setSrCount(response.data.srCount)
     } catch (error) {
@@ -102,16 +105,44 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     <Container>
       {loading ? (
         <CircularProgress />
-      ) : Object.keys(srWordList).length > 0 ? (
+      ) : Object.keys(srWordList).length > 0 && Object.keys(srWordList[mode]).length > 0 ? (
         <>
-          {srCount.overdue > 0 && (
+          {srCount.overdueTotal > 0 && (
             <Box sx={{mt: 3, mb: 3}}>
               <Typography variant="subtitle1" color="GrayText">期限切れ件数</Typography>
-              <Typography variant="h5" color="error">{srCount.overdue}件</Typography>
+              <Typography variant="h5" color="error">{srCount.overdueTotal}件</Typography>
 
             </Box>
           )}          
-          {Object.entries(srWordList).map(([srNextTime, words], timeIndex) => (
+
+          <Box sx={{mt: 3, mb: 3, display: 'flex', gap: 2}}>
+            <Badge
+              badgeContent={srCount.overdueEJ} // 「理解できる」に関連する期限切れの数
+              color="error" // バッジの色
+              invisible={srCount.overdueEJ == 0}
+            >
+              <Chip
+                label="理解できる"
+                onClick={() => setMode('EJ')}
+                color={mode === 'EJ' ? 'primary' : 'default'}
+                clickable
+              />
+            </Badge>
+            <Badge
+              badgeContent={srCount.overdueJE} // 「使える」に関連する期限切れの数
+              color="error" // バッジの色
+              invisible={srCount.overdueJE == 0}
+            >
+              <Chip
+                label="使える"
+                onClick={() => setMode('JE')}
+                color={mode === 'JE' ? 'primary' : 'default'}
+                clickable
+              />
+            </Badge>
+          </Box>
+
+          {Object.entries(srWordList[mode]).map(([srNextTime, words], timeIndex) => (
             <Box >
               <Box key={timeIndex} sx={{ mt: 2,padding: 3, bgcolor: !isButtonDisabled(srNextTime) ? 'secondary.light' : 'default' }}>
                 <Typography variant="subtitle2" color="GrayText">

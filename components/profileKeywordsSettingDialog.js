@@ -134,7 +134,7 @@ const ProfileKeywordsSettingDialog = ({ open, onClose }) => {
                     />
                     </Grid>
                     <Grid item>
-                    <Button variant="outlined" color="primary" onClick={handleAddKeyword} disabled={profileKeywords.length >= 3 || IsloadingProfile}>
+                    <Button variant="outlined" color="primary" onClick={handleAddKeyword} disabled={profileKeywords.length >= 10 || IsloadingProfile}>
                         セット
                     </Button>
                     </Grid>
@@ -165,7 +165,7 @@ const ProfileKeywordsSettingDialog = ({ open, onClose }) => {
                     />
                     </Grid>
                     <Grid item>
-                    <Button variant="outlined" color="primary" onClick={handleAddInterest} disabled={interestKeywords.length >= 5 || IsloadingInterest}>
+                    <Button variant="outlined" color="primary" onClick={handleAddInterest} disabled={interestKeywords.length >= 10 || IsloadingInterest}>
                         セット
                     </Button>
                     </Grid>

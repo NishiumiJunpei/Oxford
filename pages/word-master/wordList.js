@@ -516,11 +516,11 @@ const WordListPage = () => {
                   title={
                     <Box display="flex" alignItems="center">
                       <Typography variant="subtitle1" color="primary" sx={{fontWeight: 600}}>理解できる</Typography>
-                      <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                      {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
                         </IconButton>
-                      </Tooltip>
+                      </Tooltip> */}
                     </Box>
                   } 
                   titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -542,11 +542,11 @@ const WordListPage = () => {
                   title={
                     <Box display="flex" alignItems="center">
                       <Typography variant="subtitle1" color="primary" sx={{fontWeight: 600}}>使える</Typography>
-                      <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                      {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                         <IconButton size="small" sx={{ marginLeft: 1 }}>
                           <HelpOutlineIcon />
                         </IconButton>
-                      </Tooltip>
+                      </Tooltip> */}
                     </Box>
                   } 
                   titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -658,7 +658,7 @@ const WordListPage = () => {
 
               </Box>
               <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 700, overflowY: 'auto', overflowX: 'auto'}}>
-                <Table>
+                <Table sx={{ minWidth: 650 }} >
                   <TableHead>
                     <TableRow>
                       <TableCell>#</TableCell>
@@ -682,8 +682,8 @@ const WordListPage = () => {
                             filterSettings.displayMode === 'VoiceToE' ? "英語" :
                             filterSettings.displayMode === 'VoiceExToE' ? "英語" : "例文(日)"}
                         </TableCell>
-                      <TableCell>英→日</TableCell>
-                      <TableCell>日→英</TableCell>
+                      <TableCell>理解できる</TableCell>
+                      <TableCell>使える</TableCell>
                       {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell> */}
                     </TableRow>
                   </TableHead>

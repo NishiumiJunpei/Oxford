@@ -112,7 +112,7 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, updateWordList, the
             <Box>
               <Typography variant="body1">
                     {message} 
-                <Link href={`/word-master/wordMasterTop?tab=2`} passHref>
+                <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
                     (間隔反復の単語リスト)
                 </Link>
               </Typography>
@@ -217,9 +217,10 @@ const LearnWordsCheck = () => {
           setStreamReviewScoreJE('')
           setErrorMsg('')
           setReadyToAIReview(false)
+          setTabValue(0)
 
           setCurrentIndex(currentIndex + 1);
-          
+        
         }
       } else {
         setIsFinish(true)
@@ -240,6 +241,8 @@ const LearnWordsCheck = () => {
             setNextButtonDisabled(false);
             setNotMemorizedWordList([...notMemorizedWordList, {...word}])
             setReadyToAIReview(false)
+            setTabValue(1)
+            setShowAnswer(true)
           }    
         }
         else{
@@ -758,6 +761,8 @@ const LearnWordsCheck = () => {
             wordList={[{...word}]}
             initialIndex={0}
             updateWordList={updateWordList}
+            tabDisabledAIReview={true}
+            tabDisabledPersonalizedEx={true}
           />
       </Box>
       )}

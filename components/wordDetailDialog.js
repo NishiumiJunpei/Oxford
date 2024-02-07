@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, 
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, Link,
     useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField, Grid,
     Accordion, AccordionActions, AccordionSummary, AccordionDetails } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -12,8 +12,9 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ProfileKeywordsSettingDialog from './profileKeywordsSettingDialog';
 
-const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue }) => {
+const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue, tabDisabledPersonalizedEx, tabDisabledAIReview }) => {
     const router = useRouter();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -25,6 +26,14 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     const [userSentence, setUserSentence] = useState('');
     const [reviewByAI, setReviewByAI] = useState('');
     const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('')
+    const [streamQuestionJE, setStreamQuestionJE] = useState('');
+    const [streamAnswerJE, setStreamAnswerJE] = useState('');
+    const [isLoadingQuestionJE, setIsLoadingQuestionJE] = useState(false);
+    const [noKeyword, setNoKeyword] = useState(false)
+    const [openProfileKeywordsSettingDialog, setOpenProfileKeywordsSettingDialog] = useState(false)  
+    const [accordionExpanded, setAccordionExpanded] = useState(false);
+
 
 
     useEffect(() => {
@@ -43,16 +52,40 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
         }
     }, [index, wordList, open]);
     
-
+    useEffect(() => {
+        const fetchUserData = async () =>{
+        //   setIsLoading(true); // データ取得開始前にローディング状態をtrueに設定
+          const response = await fetch(`/api/user-setting/getUserInfo`);
+          const data = await response.json();
+          if (data) {
+            const {interestKeywords, profileKeywords} = data
+            if (interestKeywords && profileKeywords){
+              setNoKeyword(false)
+            }else{
+              setNoKeyword(true)
+            }
+          }
+        //   setIsLoading(false); // データ取得後にローディング状態をfalseに設定
+        }
+        fetchUserData()
+    
+    }, [openProfileKeywordsSettingDialog, setOpenProfileKeywordsSettingDialog]);
+    
     const handleNext = () => {
         if (index < wordList.length - 1) {
             setIndex(index + 1);
+            setStreamQuestionJE('')
+            setStreamAnswerJE('')
+            setAccordionExpanded(false)            
         }
     };
 
     const handlePrev = () => {
         if (index > 0) {
             setIndex(index - 1);
+            setStreamQuestionJE('')
+            setStreamAnswerJE('')
+            setAccordionExpanded(false)            
         }
     };
 
@@ -63,6 +96,9 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
         setExampleSentenceForUser('')
         setUserSentence('')
         setReviewByAI('')
+        setStreamQuestionJE('')
+        setStreamAnswerJE('')
+        setAccordionExpanded(false)            
         onClose();
     };
 
@@ -214,7 +250,152 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
       }, [isAutoPlaying, index, wordList]);
       
 
+    const handleCreateQuestion = async () => {
+        setIsLoadingQuestionJE(true);
+        setStreamQuestionJE('');
+        setErrorMsg('')
+        const newWordData = wordList.find(wordItem => wordItem.id === word.id);
+        if (newWordData) {
+          // userWordListStatus内のreviewScoreJEだけを更新する新しいオブジェクトを作成
+          const updatedWordData = {
+            ...newWordData,
+            userWordListStatus: {
+              ...newWordData.userWordListStatus,
+              questionJE: '',
+              answerJE: '',
+              userAnswerJE: '',
+              reviewScoreJE: '',
+              reviewCommentJE: '',
+            },
+          };
+          updateWordList(updatedWordData);
+        }
+  
+        try {
+          const response = await fetch('/api/word-master/createQuestionJE', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              wordListId: word.id, 
+              english: word.english,
+              japanese: word.japanese,
+            }),
+          });
+  
+          setIsLoadingQuestionJE(false);
+          if (response.body) {
+            const reader = response.body.getReader();
+            let receivedLength = 0; // 受信したデータの長さ
+            let chunks = []; // 受信したチャンクを保存する配列
+            let collectionData = ''
+  
+            while(true) {
+              const {done, value} = await reader.read();
+      
+              if (done) {
+                break;
+              }
+      
+              chunks.push(value);
+              receivedLength += value.length;
+      
+              // テキストとしてデータをデコード
+              let decoder = new TextDecoder("utf-8");
+              const chunkText = decoder.decode(value, {stream: true});
+              collectionData += chunkText
+              setStreamQuestionJE((prevData) => [...prevData, chunkText]);
+             }
+  
+             const newWordData = wordList.find(wordItem => wordItem.id === word.id);
+             if (newWordData) {
+               // userWordListStatus内のreviewScoreJEだけを更新する新しいオブジェクトを作成
+               const updatedWordData = {
+                 ...newWordData,
+                 userWordListStatus: {
+                   ...newWordData.userWordListStatus,
+                   questionJE: collectionData,
+                 },
+               };
+               updateWordList(updatedWordData);
+              }
+  
+            handleCreateAnswer(collectionData)
+  
+          }
+  
+      
+        } catch (error) {
+          console.error('Error creating question:', error);
+        } finally {
+          setIsLoadingQuestionJE(false);
+        }
+    };
+  
+    const handleCreateAnswer = async (questionJE) => {
+        try {
+          const response = await fetch('/api/word-master/createAnswerJE', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              wordListId: word.id, 
+              english: word.english,
+              japanese: word.japanese,
+              questionJE: questionJE
+            }),
+          });
+  
+          if (response.body) {
+            const reader = response.body.getReader();
+            let receivedLength = 0; // 受信したデータの長さ
+            let chunks = []; // 受信したチャンクを保存する配列
+            let collectionData = ''
+  
+            setStreamAnswerJE('');
+            while(true) {
+              const {done, value} = await reader.read();
+      
+              if (done) {
+                break;
+              }
+      
+              chunks.push(value);
+              receivedLength += value.length;
+      
+              // テキストとしてデータをデコード
+              let decoder = new TextDecoder("utf-8");
+              const chunkText = decoder.decode(value, {stream: true});
+              collectionData += chunkText
+              setStreamAnswerJE((prevData) => [...prevData, chunkText]);
+             }
+  
+             const newWordData = wordList.find(wordItem => wordItem.id === word.id);
+             if (newWordData) {
+               // userWordListStatus内のreviewScoreJEだけを更新する新しいオブジェクトを作成
+               const updatedWordData = {
+                 ...newWordData,
+                 userWordListStatus: {
+                   ...newWordData.userWordListStatus,
+                   questionJE, questionJE,
+                   answerJE: collectionData,
+                 },
+               };
+               updateWordList(updatedWordData);
+              }
+  
+          }        
+  
+      
+        } catch (error) {
+          console.error('Error creating answer:', error);
+        } finally {
+        }
+      };
+  
 
+      const handleChangeAccordion = (panel) => (event, isExpanded) => {
+        setAccordionExpanded(isExpanded ? panel : false);
+      };
+    
     useEffect(() =>{
         // キーボードイベントのハンドラを追加
         const handleKeyPress = (event) => {
@@ -274,8 +455,8 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                 textColor="primary"
             >
                 <Tab label="キホン" />
-                <Tab label="パーソナライズ例文" />
-                <Tab label="AIレビュー" />
+                <Tab label="パーソナライズ例文" disabled={tabDisabledPersonalizedEx || false}/>
+                <Tab label="AIレビュー" disabled={tabDisabledAIReview || false}/>
             </Tabs>
 
             {tabValue === 0 && (
@@ -329,7 +510,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 </Typography>
                                 <Typography variant="body1">
                                     {word?.usage.map((u, index)=>(
-                                        <Accordion key={index}>
+                                        <Accordion key={index} expanded={accordionExpanded === `panel${index}`} onChange={handleChangeAccordion(`panel${index}`)}>
                                             <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
                                                 <Typography variant="body1">{index+1}.{u.situation}</Typography>
                                             </AccordionSummary>
@@ -437,12 +618,36 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             {tabValue === 1 && (
                 <DialogContent>
-                    <Typography variant="subtitle1">問題</Typography>
+
+                    <Box sx={{mb: 2}}>
+                        <Link sx={{cursor: 'pointer'}} color={theme.palette.link.main} onClick={()=>setOpenProfileKeywordsSettingDialog(true)}>
+                            プロフィール・興味のキーワード設定
+                        </Link>
+                        {noKeyword && (
+                            <Typography color="error">
+                                プロフィール・興味のキーワードを設定してください。
+                            </Typography>
+                        )}
+                    </Box>
+
+                    <Box sx={{mb:1}}>
+                        <Button onClick={handleCreateQuestion} disabled={isLoadingQuestionJE || noKeyword} variant="outlined" >
+                            問題生成
+                        </Button>
+                    </Box>
+                    {errorMsg && (
+                        <Typography color="error">{errorMsg}</Typography>
+                    )}
                     <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '150px', position: 'relative' }}>
-                        {word.userWordListStatus?.questionJE ? (
+                        {isLoadingQuestionJE && (
+                            <CircularProgress size={24} />          
+                        )}
+
+                        {(word.userWordListStatus?.questionJE || streamQuestionJE != '') && (
                             <>
+                                <Typography variant="body2" sx={{mb:2}}>この文を英語にしてください。</Typography>
                                 <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
-                                {word.userWordListStatus?.questionJE}
+                                    {word.userWordListStatus?.questionJE || streamQuestionJE}
                                 </Typography>
                                 <Typography variant="body2" sx={{mb:1}}>[使う単語]</Typography>
                                 <Box sx={{display: 'flex', justifyContent: 'start', mb: 2}}>
@@ -457,17 +662,13 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 </Box>
 
                             </>
-                        ) : (
-                            <Typography>
-                                問題が生成されていません。アセスメント(日⇨英)で生成できます。
-                            </Typography>
                         )}
                     </Paper>
 
                     <Typography variant="subtitle1">モデルアンサー</Typography>
                     <Paper sx={{ mb: 4, p: 2, bgcolor: 'grey.100', minHeight: '100px', position: 'relative' }}>
                       <Typography variant="h6"sx={{mb:2, fontWeight: 700}} color="primary">
-                        {word.userWordListStatus?.answerJE}
+                        {word.userWordListStatus?.answerJE || streamAnswerJE}
                       </Typography>
                       {word.userWordListStatus?.answerJE && (
                         <Box sx={{mb: 2}}>
@@ -586,6 +787,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                         style={{ margin: 5, padding: 5, minWidth: 90 }}
                         variant="outlined"
                         endIcon={!isAutoPlaying ? <PlayArrowIcon/> : <StopIcon/>}
+                        disabled={tabValue == 1 || tabValue == 2}
                     >
                         自動再生
                     </Button>
@@ -610,10 +812,14 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                     >
                         閉じる
                     </Button>
-
-
                 </div>
             </DialogActions>
+
+            <ProfileKeywordsSettingDialog
+                open={openProfileKeywordsSettingDialog}
+                onClose={()=>setOpenProfileKeywordsSettingDialog(false)}
+            />
+
         </Dialog>
     );
 };

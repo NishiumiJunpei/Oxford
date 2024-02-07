@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Chip, Button, Box, Typography, FormControlLabel, Checkbox, CircularProgress, Avatar, Link } from '@mui/material';
+import { Chip, Button, Box, Typography, FormControlLabel, Checkbox, CircularProgress, Avatar, useTheme,Link } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ProfileKeywordsSettingDialog from '@/components/profileKeywordsSettingDialog';
 
 const LearnWordsCriteriaInput = () => {
   const router = useRouter();
+  const theme = useTheme();
   const { blockId } = router.query;
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ'); // 'EJ' は英→日、'JE' は日→英
   const [wordCount, setWordCount] = useState(router.query.languageDirection == 'JE' ? '5' : '50'); // '10', '30', '50'
@@ -111,7 +112,7 @@ const LearnWordsCriteriaInput = () => {
       </Box>
       {languageDirection == 'JE' && (
         <Box sx={{mb: 2}}>
-          <Link sx={{cursor: 'pointer'}} onClick={()=>setOpenProfileKeywordsSettingDialog(true)}>
+          <Link sx={{cursor: 'pointer'}} color={theme.palette.link.main} onClick={()=>setOpenProfileKeywordsSettingDialog(true)}>
             プロフィール・興味のキーワード設定
           </Link>
         </Box>

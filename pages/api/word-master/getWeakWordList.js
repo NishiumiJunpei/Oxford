@@ -32,13 +32,15 @@ export default async function handler(req, res) {
       }));
 
       const notMemorizedEJ = allWordList.filter(word => word.memorizeStatusEJ === 'NOT_MEMORIZED');
-      const memorizedEJ = allWordList.filter(word => word.memorizeStatusEJ === 'MEMORIZED');
-      const notMemorizedJE = allWordList.filter(word => word.memorizeStatusJE === 'NOT_MEMORIZED');
-      const memorizedJE = allWordList.filter(word => word.memorizeStatusJE === 'MEMORIZED');
+      // const memorizedEJ = allWordList.filter(word => word.memorizeStatusEJ === 'MEMORIZED');
+      // const notMemorizedJE = allWordList.filter(word => word.memorizeStatusJE === 'NOT_MEMORIZED');
+      // const memorizedJE = allWordList.filter(word => word.memorizeStatusJE === 'MEMORIZED');
       
-      const combinedList = [...notMemorizedEJ, ...memorizedEJ, ...notMemorizedJE, ...memorizedJE];
-      const weakWordList = combinedList.slice(0, 50);
-      
+      // const combinedList = [...notMemorizedEJ, ...memorizedEJ, ...notMemorizedJE, ...memorizedJE];
+      // const weakWordList = combinedList.slice(0, 50);
+
+      const weakWordList = notMemorizedEJ.slice(0, 50);
+
       res.status(200).json({
         weakWordList,
       });

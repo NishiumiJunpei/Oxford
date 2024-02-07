@@ -22,7 +22,7 @@ const WordMasterTop = () => {
   const [blockToLearn, setBlockToLearn] = useState({}); 
   const [isLoading, setIsLoading] = useState(false);
   const [weakWordList, setWeakWordList] = useState([]);
-  const [srWordList, setSrWordList] = useState([]);
+  const [srWordList, setSrWordList] = useState({});
   const [srWordCount, setSrWordCount] = useState(0); // 追加: 復習すべき単語の数を格納するstate
 
 
@@ -115,13 +115,13 @@ const WordMasterTop = () => {
       ) : (
       <>
 
-        <Tabs value={tabValue} onChange={handleTabChange} sx={{ marginLeft: 2 }}>
+        <Tabs value={tabValue} onChange={handleTabChange} >
           <Tab label="学習進捗" />
-          <Tab label="苦手単語" />
           <Tab 
             label="間隔反復" 
             icon={srWordCount > 0 ? (<PriorityHighIcon sx={{ color: theme.palette.error.main }}/>) : (<></>)} 
             iconPosition="end" />
+          <Tab label="苦手単語" />
         </Tabs>
 
         {tabValue === 0 && (
@@ -135,11 +135,11 @@ const WordMasterTop = () => {
                 title={
                   <Box display="flex" alignItems="center">
                     <Typography variant="subtitle1">理解できる</Typography>
-                    <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                    {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                   </Box>
                 } 
                 titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -162,11 +162,11 @@ const WordMasterTop = () => {
                 title={
                   <Box display="flex" alignItems="center">
                     <Typography variant="subtitle1">使える</Typography>
-                    <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
+                    {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                   </Box>
                 } 
                 titleTypographyProps={{ variant: 'subtitle1' }} 
@@ -185,15 +185,7 @@ const WordMasterTop = () => {
                 </CardContent>
               </Card>
             </Box>
-      
-
-
-
-            {/* <FormControlLabel
-              control={<Switch checked={showMaster} onChange={() => setShowMaster(!showMaster)} />}
-              label="マスターを表示"
-              sx={{ mt: 5 }}
-            /> */}
+    
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
@@ -254,12 +246,15 @@ const WordMasterTop = () => {
         )}
 
         {tabValue === 1 && (
+          <SrWordList srWordList={srWordList} setSrWordList={setSrWordList} updateWordList={updateWordListForSR}/> 
+        )}
+
+
+      {tabValue === 2 && (
           <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList} updateWordList={updateWordListForWeak}/> 
         )}
 
-        {tabValue === 2 && (
-          <SrWordList srWordList={srWordList} setSrWordList={setSrWordList} updateWordList={updateWordListForSR}/> 
-        )}
+
 
       </>
       )}
