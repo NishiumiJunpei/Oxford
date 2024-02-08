@@ -135,33 +135,33 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     };
 
 
-    const createExampleSentenceForUser = async () => {
-        setIsLoadingES(true);
-        try {
-            const response = await axios.post('/api/word-master/createExampleSentenceForUser', {
-                wordListId: wordList[index].id,
-                english: wordList[index].english,
-                japanese: wordList[index].japanese,
-            });
+    // const createExampleSentenceForUser = async () => {
+    //     setIsLoadingES(true);
+    //     try {
+    //         const response = await axios.post('/api/word-master/createExampleSentenceForUser', {
+    //             wordListId: wordList[index].id,
+    //             english: wordList[index].english,
+    //             japanese: wordList[index].japanese,
+    //         });
 
-            const updatedWord = {
-                ...wordList[index],
-                userWordListStatus: {
-                    ...wordList[index].userWordListStatus,
-                    exampleSentenceForUser: response.data.exampleSentenceForUser
-                }
-            };    
-            updateWordList(updatedWord);
+    //         const updatedWord = {
+    //             ...wordList[index],
+    //             userWordListStatus: {
+    //                 ...wordList[index].userWordListStatus,
+    //                 exampleSentenceForUser: response.data.exampleSentenceForUser
+    //             }
+    //         };    
+    //         updateWordList(updatedWord);
 
-            setExampleSentenceForUser(response.data.exampleSentenceForUser);
+    //         setExampleSentenceForUser(response.data.exampleSentenceForUser);
 
-        } catch (error) {
-            console.error('Error creating example sentence:', error);
-            setExampleSentenceForUser('エラーが発生しました。');
-        } finally {
-            setIsLoadingES(false);
-        }
-    };
+    //     } catch (error) {
+    //         console.error('Error creating example sentence:', error);
+    //         setExampleSentenceForUser('エラーが発生しました。');
+    //     } finally {
+    //         setIsLoadingES(false);
+    //     }
+    // };
 
     const createReviewByAI = async () => {
         setIsLoadingReview(true);
@@ -214,17 +214,17 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
           
             while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
                 await playAudio(wordList[currentIndex].english);
-                await new Promise(r => setTimeout(r, 500));
-                if (!autoPlaying) break;
+                // await new Promise(r => setTimeout(r, 500));
+                // if (!autoPlaying) break;
                 await playAudio(wordList[currentIndex].japanese, 'ja');
-                await new Promise(r => setTimeout(r, 500));
-                if (!autoPlaying) break;
-                await playAudio(wordList[currentIndex].exampleSentenceE);
-                await new Promise(r => setTimeout(r, 500));
-                if (!autoPlaying) break;
-                await playAudio(wordList[currentIndex].exampleSentenceJ, 'ja');
-                await new Promise(r => setTimeout(r, 500));
-                if (!autoPlaying) break;
+                // await new Promise(r => setTimeout(r, 500));
+                // if (!autoPlaying) break;
+                // await playAudio(wordList[currentIndex].exampleSentenceE);
+                // await new Promise(r => setTimeout(r, 500));
+                // if (!autoPlaying) break;
+                // await playAudio(wordList[currentIndex].exampleSentenceJ, 'ja');
+                // await new Promise(r => setTimeout(r, 500));
+                // if (!autoPlaying) break;
                         
 
                 if (currentIndex+1 >= wordList.length) {

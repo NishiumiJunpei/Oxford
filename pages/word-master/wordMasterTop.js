@@ -94,15 +94,27 @@ const WordMasterTop = () => {
   };
 
   const updateWordListForSR = (newWordData) => {
-    const updatedWordList = Object.entries(srWordList).reduce((acc, [srNextTime, words]) => {
-      const updatedWords = words.map(wordItem => 
-        wordItem.id === newWordData.id ? newWordData : wordItem
-      );
-      acc[srNextTime] = updatedWords;
-      return acc;
-    }, {});
-  
-    setSrWordList(updatedWordList);
+    const updatedSrWordList = { ...srWordList };
+
+    Object.keys(updatedSrWordList['EJ']).forEach(date => {
+      const index = updatedSrWordList['EJ'][date].findIndex(item => item.id === newWordData.id);
+      if (index !== -1) {
+        // idが一致するデータが見つかった場合、新しいデータで置き換える
+        updatedSrWordList['EJ'][date][index] = newWordData;
+      }
+    });
+
+
+    Object.keys(updatedSrWordList['JE']).forEach(date => {
+      const index = updatedSrWordList['JE'][date].findIndex(item => item.id === newWordData.id);
+      if (index !== -1) {
+        // idが一致するデータが見つかった場合、新しいデータで置き換える
+        updatedSrWordList['JE'][date][index] = newWordData;
+      }
+    });
+
+    // srWordListの状態を更新
+    setSrWordList(updatedSrWordList);
   };
   
 
