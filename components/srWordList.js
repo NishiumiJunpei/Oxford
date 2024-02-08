@@ -105,6 +105,12 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     setOpenSrTimingDialog(true); // SrTimingDialogを開く
   };
 
+  const handleModeChipClick = (mode) =>{
+    setMode(mode)
+    setSwitchStates({})
+    setButtonDisabledState({})
+  }
+
 
   return (
     <Container>
@@ -128,7 +134,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
             >
               <Chip
                 label="理解できる"
-                onClick={() => setMode('EJ')}
+                onClick={() => handleModeChipClick('EJ')}
                 color={mode === 'EJ' ? 'primary' : 'default'}
                 clickable
               />
@@ -140,7 +146,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
             >
               <Chip
                 label="使える"
-                onClick={() => setMode('JE')}
+                onClick={() => handleModeChipClick('JE')}
                 color={mode === 'JE' ? 'primary' : 'default'}
                 clickable
               />

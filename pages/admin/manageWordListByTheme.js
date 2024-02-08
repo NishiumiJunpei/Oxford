@@ -201,7 +201,7 @@ export default function Home() {
               {wordDetail.usage && (
                 <>
                   <Typography> この単語を使うシチュエーション</Typography>
-                  {JSON.parse(wordDetail.usage).map((element, index)=>(
+                  {wordDetail.usage.map((element, index)=>(
                     <>
                       <Typography sx={{fontWeight: 700}}>{index+1}.{element.situation}</Typography>
                       <Typography>{element.exampleE}</Typography>

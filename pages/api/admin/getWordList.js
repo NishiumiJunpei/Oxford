@@ -22,6 +22,7 @@ export default async function handler(req, res) {
         return {
           ...word,
           imageUrl: await getS3FileUrl(word.imageFilename),
+          usage: word.usage ? JSON.parse(word.usage) : '',
         };
       }));
 
