@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Box, Typography } from '@mui/material';
+import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, 
+  Box, Typography, Grid } from '@mui/material';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -102,34 +103,76 @@ export default function Home() {
 
 
       {wordDetail && (
-        <Box sx={{mb: 5}}>
-          <p>Id: {wordDetail.id}</p>
-          <h2>{wordDetail.english}</h2>
-          <p>{wordDetail.japanese}</p>
-          <Typography variant="body1">
-            {wordDetail.exampleSentenceE}
-          </Typography>
-          <Typography variant="body1">
-            {wordDetail.exampleSentenceJ}
-          </Typography>
-          <Typography variant="body1">
-            {wordDetail.synonyms}
-          </Typography>
-          {wordDetail.image && <img src={wordDetail.image} alt={wordDetail.english} />}
+        // <Box sx={{mb: 5}}>
+        //   <p>Id: {wordDetail.id}</p>
+        //   <h2>{wordDetail.english}</h2>
+        //   <p>{wordDetail.japanese}</p>
+        //   <Typography variant="body1">
+        //     {wordDetail.exampleSentenceE}
+        //   </Typography>
+        //   <Typography variant="body1">
+        //     {wordDetail.exampleSentenceJ}
+        //   </Typography>
+        //   <Typography variant="body1">
+        //     {wordDetail.synonyms}
+        //   </Typography>
+        //   {wordDetail.image && <img src={wordDetail.image} alt={wordDetail.english} />}
 
-          {wordDetail?.imageUrl && (
-              <img 
-                  src={wordDetail.imageUrl} 
-                  style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }} 
-              />
+        //   {wordDetail?.imageUrl && (
+        //       <img 
+        //           src={wordDetail.imageUrl} 
+        //           style={{ marginTop: 20, maxWidth: '100%', maxHeight: '50%', objectFit: 'contain' }} 
+        //       />
+        //   )}
+
+        //   <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
+        //       GPT例文生成
+        //   </Button>
+
+        // </Box>
+
+        <Grid container sx={{mb: 5}}>
+        <Grid item xs={6}>
+          <Typography>Id: {wordDetail.id}</Typography>
+          <h2>{wordDetail.english}</h2>
+          <Typography>意味：{wordDetail.japanese}</Typography>
+          <Typography> 例文：{wordDetail.exampleSentenceE}</Typography>
+          <Typography> ({wordDetail.exampleSentenceJ})</Typography>
+          <Typography> 類語：{wordDetail.synonyms}</Typography>
+          {/* {wordDetail.usage} */}
+          {wordDetail.usage && (
+            <>
+              <Typography> この単語を使うシチュエーション</Typography>
+              {wordDetail.usage.map((element, index)=>(
+                <>
+                  <Typography sx={{fontWeight: 700}}>{index+1}.{element.situation}</Typography>
+                  <Typography>{element.exampleE}</Typography>
+                  <Typography>{element.exampleJ}</Typography>
+                </>
+              ))}
+
+            </>
           )}
 
-          <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
-              GPT例文生成
-          </Button>
+        </Grid>
+        <Grid item xs={6}>
+            {wordDetail?.imageUrl && (
+                <img 
+                    src={wordDetail.imageUrl} 
+                    style={{ marginTop: 20, maxWidth: '70%', maxHeight: '70%', objectFit: 'contain' }} 
+                />
+            )}
+            <Box>
+              <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
+                  GPT例文生成
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>    
 
-        </Box>
+
       )}
     </>
   );
 }
+

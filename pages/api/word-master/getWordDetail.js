@@ -8,6 +8,7 @@ export default async function handler(req, res) {
 
       const wordDetail = await getWordListById(parseInt(wordListId));
       wordDetail.imageUrl =  await getS3FileUrl(wordDetail.imageFilename),
+      wordDetail.usage =  wordDetail.usage ? JSON.parse(wordDetail.usage) : '',
 
 
       res.status(200).json({
