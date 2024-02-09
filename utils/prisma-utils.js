@@ -114,6 +114,28 @@ export async function getWordListById(id) {
   });
 }
 
+export async function getWordListByBlockIds(blockIds) {
+  // blockIdsが数値の配列でない場合（例えば、文字列の配列の場合）、数値に変換
+  const numericBlockIds = blockIds.map(id => parseInt(id));
+
+  return await prisma.wordList.findMany({
+    where: {
+      // blocksリレーションに紐づくblockIdが、指定されたblockIds配列内のいずれかに一致するレコードを取得
+      blocks: {
+        some: {
+          blockId: {
+            in: numericBlockIds
+          }
+        }
+      }
+    },
+    include: {
+      blocks: true // blocksリレーションを結果に含める
+    }
+  });
+}
+
+
 
 export async function getWordListByEnglish(searchTerm) {
   return await prisma.WordList.findMany({

@@ -39,6 +39,12 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="ワード検索" />
         </ListItem>
+        <ListItem button component="a" href={`/admin/autoPlayWords`}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="ワード再生" />
+        </ListItem>
       </List>
     </Drawer>
   );

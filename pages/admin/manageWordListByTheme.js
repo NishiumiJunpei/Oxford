@@ -153,7 +153,7 @@ export default function Home() {
               <TableCell>{block.id}</TableCell>
               <TableCell>{block.name}</TableCell>
               <TableCell>{block.wordNum}</TableCell>
-              <TableCell>{block.notExampleWordNum}</TableCell>
+              <TableCell>{block.noImageNum}</TableCell>
               <TableCell>
                 <Button onClick={()=>handleClickWordListByBlock(block.id)}>
                   単語一覧(詳細付き)表示

@@ -15,12 +15,12 @@ export default async function handler(req, res) {
         const wordList = await getWordListByCriteria({themeId: parseInt(themeId)})
         const updatedBlocks = blocks.map(block =>{
         const words = wordList.filter(w => w.blocks.some(b => b.blockId == block.id))
-        const notExampleWordWords = words.filter(w => !w.imageFilename)
+        const noImageNum = words.filter(w => !w.imageFilename)
 
         return {
             ...block,
             wordNum: words.length,
-            notExampleWordNum: notExampleWordWords.length    
+            noImageNum: noImageNum.length    
           }
         })
 
