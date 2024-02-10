@@ -33,18 +33,12 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
     const handleNext = () => {
         if (index < wordList.length - 1) {
             setIndex(index + 1);
-            setStreamQuestionJE('')
-            setStreamAnswerJE('')
-            setAccordionExpanded(false)            
         }
     };
 
     const handlePrev = () => {
         if (index > 0) {
             setIndex(index - 1);
-            setStreamQuestionJE('')
-            setStreamAnswerJE('')
-            setAccordionExpanded(false)            
         }
     };
 
@@ -154,38 +148,38 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
             <Typography>{index+1} / {wordList.length}</Typography>
     
             {/* <Box sx={{width: 1200, height: 675, backgroundImage: 'url("/images/backgroundForAutoPlay1.webp")', backgroundSize:'cover', padding: 3, pt: 6}}> */}
-            <Box sx={{width: 1200, height: 675, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5}}>
+            <Box sx={{width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5}}>
                 <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'center'}}>
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h3" sx={{mb: 2}}>
+                        <Typography variant="h2" sx={{mt: 2, mb: 2}}>
                             {word?.english}
                         </Typography>
-                        <Typography variant="body2" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
+                        {/* <Typography variant="body1" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
-                        </Typography>
-                        <Typography variant="body1">
+                        </Typography> */}
+                        <Typography variant="body1" sx={{fontSize: '2rem'}}>
                             {word?.japanese}
                         </Typography>
 
-                        <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body2" style={{ marginTop: 40, display: 'flex', alignItems: 'center' }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
                         </Typography>
 
-                        <Typography variant="body1">
+                        <Typography variant="body1" sx={{fontSize: '1.2rem'}}>
                             {word?.exampleSentenceE}
                         </Typography>
-                        <Typography variant="body1">
+                        <Typography variant="body1" sx={{fontSize: '1.2rem'}}>
                             {word?.exampleSentenceJ}
                         </Typography>
 
-                        <Typography variant="body2" style={{ marginTop: 20 }}>
+                        {/* <Typography variant="body1" style={{ marginTop: 20 }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
                         </Typography>
-                        <Typography variant="body1">
+                        <Typography variant="body1" sx={{fontSize: '0.8rem'}}>
                             {word?.synonyms}
-                        </Typography>
+                        </Typography> */}
 
-                        {word?.usage && (
+                        {/* {word?.usage && (
                         <>
 
                             <Box sx={{mb:1}}>
@@ -194,17 +188,17 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
                                 </Typography>
                             </Box>
                             <Box sx={{mb:3}}>
-                                <Typography variant="body1" sx={{fontWeight: 600}}>{1}. {word.usage[0].situation}</Typography>
+                                <Typography variant="body1" sx={{fontWeight: 600, fontSize: '0.8rem'}}>{1}. {word.usage[0].situation}</Typography>
                                 <Typography variant="body1">{word.usage[0].exampleE}</Typography>
                                 <Typography variant="body1">{word.usage[0].exampleJ}</Typography>
                             </Box>
                             <Box sx={{mb:1}}>
-                                <Typography variant="body1" sx={{fontWeight: 600}}>{2}. {word.usage[1].situation}</Typography>
+                                <Typography variant="body1" sx={{fontWeight: 600, fontSize: '0.8rem'}}>{2}. {word.usage[1].situation}</Typography>
                                 <Typography variant="body1">{word.usage[1].exampleE}</Typography>
                                 <Typography variant="body1">{word.usage[1].exampleJ}</Typography>
                             </Box>
                         </>
-                        )}
+                        )} */}
 
 
                     </Grid>
@@ -238,8 +232,8 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
                 <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={handleAutoPlayStart}>自動再生</Button>
                 <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleAutoPlayStop}>停止</Button>
                 <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={()=>setIndex(0)}>リセット</Button>
-                <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={()=>setIndex(index-1)}>←</Button>
-                <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={()=>setIndex(index+1)}>⇨</Button>
+                <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handlePrev}>←</Button>
+                <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleNext}>⇨</Button>
             </Box>
 
         </Box>
