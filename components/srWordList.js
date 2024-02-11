@@ -59,8 +59,8 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
 
       if (action === 'DELETE') {
         const newSrWordList = { ...srWordList };
-        Object.entries(newSrWordList).forEach(([key, words]) => {
-          if (key === Object.keys(srWordList)[timeIndex]) {
+        Object.entries(newSrWordList[mode]).forEach(([key, words]) => {
+          if (key === Object.keys(srWordList[mode])[timeIndex]) {
             newSrWordList[key] = words.filter(word => !wordIds.includes(word.userWordListStatus?.id));
           }
         });
@@ -75,7 +75,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   };
 
   const checkAllButtonsPressed = (timeIndex) => {
-    const allButtonsPressed = Object.entries(srWordList).every(([srNextTime, words], index) => {
+    const allButtonsPressed = Object.entries(srWordList[mode]).every(([srNextTime, words], index) => {
       return index == timeIndex || isButtonDisabled(srNextTime) || buttonDisabledState[index];
     });
   
