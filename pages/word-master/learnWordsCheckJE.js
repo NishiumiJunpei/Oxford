@@ -195,6 +195,8 @@ const LearnWordsCheck = () => {
         setWordList(data.wordList);
         setBlock(data.block);
         setIsLoading(false)
+        setReadyToAIReview(data.wordList[currentIndex].status?.questionJE !='' ? true : false)
+
       };
   
       if (blockId) {
@@ -216,8 +218,8 @@ const LearnWordsCheck = () => {
           setStreamReviewCommentJE('')
           setStreamReviewScoreJE('')
           setErrorMsg('')
-          setReadyToAIReview(false)
           setTabValue(0)
+          setReadyToAIReview(wordList[currentIndex+1].status.questionJE ? true : false)
 
           setCurrentIndex(currentIndex + 1);
         

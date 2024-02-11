@@ -490,20 +490,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 {word?.exampleSentenceJ}
                             </Typography>
 
-                            <Typography variant="body2" style={{ marginTop: 20 }}>
-                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
-                                <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
-                                    <VolumeUpIcon />
-                                </IconButton>
-                            </Typography>
-                            <Typography variant="body1">
-                                {word?.synonyms}
-                            </Typography>
-
                             {word?.usage && (
                             <>
                                 <Typography variant="body2" style={{ marginTop: 20, }}>
-                                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>シチュエーション</span>
+                                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>単語を使うシーン</span>
                                     {/* <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
                                         <VolumeUpIcon />
                                     </IconButton> */}
@@ -523,6 +513,16 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 </Typography>
                             </>
                             )}
+
+                            <Typography variant="body2" style={{ marginTop: 20 }}>
+                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
+                                <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
+                                    <VolumeUpIcon />
+                                </IconButton>
+                            </Typography>
+                            <Typography variant="body1">
+                                {word?.synonyms}
+                            </Typography>
 
 
                         </Grid>
