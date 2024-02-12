@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { updateWordList } from "./prisma-utils";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -47,6 +48,60 @@ export async function generateImage(description) {
     console.error('generateImage error:', error);
   }
 }
+
+export async function generateUsage(wordListId, english){
+
+  const content = `Please create up to three different situation where the phrase '${english}' can be used. 
+  For each situation, provide an example sentence in English along with its Japanese translation. Write the situation in Japanese, the example sentences in English, and the Japanese translations of these sentences in Japanese. 
+  Write "〜の場面" or "〜する時" in the "situation".
+  Return the output in the following JSON format:
+  {
+  situations: [
+  {
+  situation: [Japanese description of the situation],
+  exampleE: [Example sentence in English],
+  exampleJ: [Japanese translation of the example sentence]
+  },
+  ...
+  ]
+  }`
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4-0125-preview", 
+    // model: "gpt-3.5-turbo-1106",
+    messages: [{role: 'assistant', content }],
+    temperature: 0.2,
+    response_format: { "type": "json_object" },
+
+  });
+
+  const usageJsonFormat = JSON.parse(response.choices[0].message.content);    
+  const usage = usageJsonFormat.situations
+
+  // レスポンスが期待するフォーマットかどうかをチェックする関数
+  const isValidResponse = (response) => {
+    if (!Array.isArray(response)) return false;
+    return response.every(item => 
+      item.hasOwnProperty('situation') &&
+      item.hasOwnProperty('exampleE') &&
+      item.hasOwnProperty('exampleJ')
+    );
+  }
+
+  if (isValidResponse(usage)) {
+    // JSON形式の文字列に変換してデータベースに格納
+    const usageString = JSON.stringify(usage);
+
+    await updateWordList(wordListId, { usage: usageString })
+    return usageString
+
+  } else {
+    console.error(`Invalid response format for word ${english}`);
+    return ''
+  }
+}
+
+
 
 export async function generateWordStory(wordList, length, genre, characters, levelKeyword) {
 

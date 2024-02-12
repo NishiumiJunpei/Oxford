@@ -435,7 +435,7 @@ export async function updateUserSentenceReviewByAI(userId, wordListId, userSente
 
 
 export async function updateWordList(wordListId, data) {
-  await prisma.WordList.update({
+  await prisma.wordList.update({
     where: {
       id: wordListId, // 更新するWordListレコードを特定
     },

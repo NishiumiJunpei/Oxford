@@ -1,6 +1,6 @@
 //wordList-utils.js
 import axios from 'axios';
-import { generateExampleSentences, generateImage } from '@/utils/openai-utils'
+import { generateExampleSentences, generateImage, generateUsage } from '@/utils/openai-utils'
 import { getS3FileUrl, uploadImageToS3 } from '@/utils/aws-s3-utils'
 import { getWordListById, updateWordList } from '@/utils/prisma-utils'
 import { enqueueRequest } from '@/utils/queue-util';
@@ -18,8 +18,9 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
           const data = await generateExampleSentences(english, japanese);
           await updateWordList(wordListId, data);
           word.exampleSentenceE = data.exampleSentenceE
-          word.exampleSentenceJ = data.exampleSentenceE
+          word.exampleSentenceJ = data.exampleSentenceJ
           word.synonyms = data.synonyms
+          word.usage = word.usage ? JSON.parse(word.usage) : ''
         }
 
         // ----------- 画像の生成と保存 ---------------------------
@@ -56,9 +57,17 @@ export const createExampleSentenceAndImageByGPT = async (wordListId) =>{
           await updateWordList(wordListId, {
             imageFilename: imageFilename
           });
-        }
-         
+        }         
         word.imageUrl = imageUrl
+
+
+        // ----------- Usage (単語利用シーン）の生成　 ---------------------------
+        if (!word.usage){
+          const usage = await generateUsage(word.id, word.english)
+          word.usage = usage ? JSON.parse(usage) : ''
+        }
+
+
         return word
         
       } catch (error) {
