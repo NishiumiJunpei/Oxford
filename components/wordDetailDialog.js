@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, Link,
     useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField, Grid,
-    Accordion, AccordionActions, AccordionSummary, AccordionDetails } from '@mui/material';
+    Accordion, AccordionActions, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -13,6 +13,8 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProfileKeywordsSettingDialog from './profileKeywordsSettingDialog';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue, tabDisabledPersonalizedEx, tabDisabledAIReview }) => {
     const router = useRouter();
@@ -33,8 +35,19 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     const [noKeyword, setNoKeyword] = useState(false)
     const [openProfileKeywordsSettingDialog, setOpenProfileKeywordsSettingDialog] = useState(false)  
     const [accordionExpanded, setAccordionExpanded] = useState(false);
+    const [isAutoPlaySettingsOpen, setIsAutoPlaySettingsOpen] = useState(false);
+    const [autoPlaySettings, setAutoPlaySettings] = useState({
+        english: true,
+        japanese: true,
+        exampleSentenceE: true,
+        exampleSentenceJ: true,
+        questionJE: false,
+        answerJE: false,
+    });
+    
 
-
+    let currentAudio = null;
+    let autoPlaying = isAutoPlaying;
 
     useEffect(() => {
         setIndex(initialIndex);
@@ -102,6 +115,29 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
         onClose();
     };
 
+    // ダイアログを開く処理
+    const handleOpenAutoPlaySettings = () => {
+        setIsAutoPlaySettingsOpen(true);
+    };
+
+    // ダイアログを閉じる処理
+    const handleCloseAutoPlaySettings = () => {
+        setIsAutoPlaySettingsOpen(false);
+    };
+
+    const isCloseButtonDisabled = Object.values(autoPlaySettings).every((value) => !value);
+
+
+    // チェックボックスの値を変更する処理
+    const handleAutoPlaySettingChange = (event) => {
+        setAutoPlaySettings({
+        ...autoPlaySettings,
+        [event.target.name]: event.target.checked,
+        });
+    };
+
+
+
     const playAudio = (text, lang = 'en') => {
         return new Promise(async (resolve, reject) => {
           try {
@@ -115,7 +151,11 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             if (data.audioContent) {
               const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
               const audioUrl = URL.createObjectURL(audioBlob);
+              if (currentAudio) {
+                currentAudio.pause(); // 前のオーディオを停止
+              }
               const audio = new Audio(audioUrl);
+              currentAudio = audio; // 現在のオーディオを追跡
               audio.play();
       
               audio.onended = () => {
@@ -127,8 +167,86 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             reject(error);
           }
         });
-      };
+    };
+
+    const handleAutoPlayToggle = () =>{
+        if (!isAutoPlaying){
+            setIsAutoPlaying(true); // 再生状態をトグル
+        }else{
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            setIsAutoPlaying(false); // 自動再生を停止    
+        }
+    }
+
+    useEffect(() => {
+        let isCancelled = false;
+    
+        const autoPlaySequence = async () => {
+            let currentIndex = index;        
+
+            while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
+
+                if (autoPlaySettings.english || autoPlaySettings.japanese || autoPlaySettings.exampleSentenceE || autoPlaySettings.exampleSentenceJ){
+                    setTabValue(0)
+                }
+                if (autoPlaySettings.english){
+                    await playAudio(wordList[currentIndex].english);
+                    if (!isAutoPlaying || isCancelled) break; // 再生が停止されたか、キャンセルされた場合はループを抜ける
+                } 
+                if (autoPlaySettings.japanese){
+                    await playAudio(wordList[currentIndex].japanese, 'ja');
+                    if (!isAutoPlaying || isCancelled) break; // 同上    
+                } 
+                if (autoPlaySettings.exampleSentenceE){
+                    await playAudio(wordList[currentIndex].exampleSentenceE);
+                    if (!isAutoPlaying || isCancelled) break; // 同上
+                }
+                if (autoPlaySettings.exampleSentenceJ){
+                    await playAudio(wordList[currentIndex].exampleSentenceJ, 'ja');
+                    if (!isAutoPlaying || isCancelled) break; // 同上    
+                }
+
+
+                if ((autoPlaySettings.questionJE && wordList[currentIndex].userWordListStatus?.questionJE) ||
+                    autoPlaySettings.questionJE && wordList[currentIndex].userWordListStatus?.questionJE){
+                    setTabValue(1)
+                }
+                if (autoPlaySettings.questionJE && wordList[currentIndex].userWordListStatus?.questionJE){
+                    await playAudio(wordList[currentIndex].userWordListStatus?.questionJE, 'ja');
+                    if (!isAutoPlaying || isCancelled) break; // 同上
+                }
+                if (autoPlaySettings.answerJE && wordList[currentIndex].userWordListStatus?.answerJE){
+                    await playAudio(wordList[currentIndex].userWordListStatus?.answerJE);
+                    if (!isAutoPlaying || isCancelled) break; // 同上
+
+                }
+
+    
+                currentIndex++;
+                if (currentIndex < wordList.length) {
+                    setIndex(currentIndex); // 次の単語にインデックスを更新
+                } else {
+                    setIsAutoPlaying(false); // 単語リストの最後に到達したら自動再生を停止
+                    break;
+                }
+                await new Promise(r => setTimeout(r, 2000)); // 次の音声再生までの間隔
+            }
+        };
+          
+        if (isAutoPlaying) {
+            autoPlaySequence();
+        }
       
+        return () => {
+            isCancelled = true; // コンポーネントがアンマウントされるか、依存配列に含まれる値が変更された場合にキャンセルフラグをtrueに設定
+        };
+    }, [isAutoPlaying, index, wordList]); // 依存配列に`index`と`wordList`を追加
+
+    
+
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -163,6 +281,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     //     }
     // };
 
+
     const createReviewByAI = async () => {
         setIsLoadingReview(true);
         try {
@@ -191,64 +310,6 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             setIsLoadingReview(false);
         }
     };
-
-
-    const handleAutoPlay = () => {
-        setIsAutoPlaying(!isAutoPlaying);
-    };
-
-    let autoPlaying = isAutoPlaying;
-    useEffect(() => {
-        autoPlaying = isAutoPlaying;
-      
-        return () => {
-          autoPlaying = false;
-        };
-      }, [isAutoPlaying]);
-      
-    useEffect(() => {
-        let isCancelled = false;
-
-        const autoPlaySequence = async () => {
-            let currentIndex = index;
-          
-            while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
-                await playAudio(wordList[currentIndex].english);
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                await playAudio(wordList[currentIndex].japanese, 'ja');
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                // await playAudio(wordList[currentIndex].exampleSentenceE);
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                // await playAudio(wordList[currentIndex].exampleSentenceJ, 'ja');
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                        
-
-                if (currentIndex+1 >= wordList.length) {
-                    setIsAutoPlaying(false);
-                    break;
-                }else{
-                    setIndex(index + 1);
-                    currentIndex++
-                }
-                await new Promise(r => setTimeout(r, 2000));
-            }
-        };
-            
-      
-        if (isAutoPlaying) {
-          setTabValue(0);
-          autoPlaySequence();
-        }
-      
-        return () => {
-          isCancelled = true;
-        };
-      }, [isAutoPlaying, index, wordList]);
-      
 
     const handleCreateQuestion = async () => {
         setIsLoadingQuestionJE(true);
@@ -392,9 +453,9 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
       };
   
 
-      const handleChangeAccordion = (panel) => (event, isExpanded) => {
+    const handleChangeAccordion = (panel) => (event, isExpanded) => {
         setAccordionExpanded(isExpanded ? panel : false);
-      };
+    };
     
     useEffect(() =>{
         // キーボードイベントのハンドラを追加
@@ -441,10 +502,32 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             }}
         >
             <DialogTitle>
-            {word?.english}
-            <IconButton onClick={() => playAudio(word.english)}>
-                <VolumeUpIcon />
-            </IconButton>
+                <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                    <Box>
+                        {word?.english}            
+                        <IconButton onClick={() => playAudio(word.english)}>
+                            <VolumeUpIcon />
+                        </IconButton>
+                    </Box>
+                    <Box>
+                        <Button 
+                            onClick={handleAutoPlayToggle} 
+                            style={{ margin: 5, padding: 5, minWidth: 90 }}
+                            variant="outlined"
+                            endIcon={!isAutoPlaying ? <PlayArrowIcon/> : <StopIcon/>}
+                            disabled={tabValue == 2}
+                            color="inherit"
+                        >
+                            自動再生
+                        </Button>
+                        <IconButton onClick={handleOpenAutoPlaySettings}
+                            disabled={tabValue == 2}
+                        >
+                            <SettingsIcon />
+                        </IconButton>
+                    </Box>
+
+                </Box>
             </DialogTitle>
 
             <Tabs
@@ -631,7 +714,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                     </Box>
 
                     <Box sx={{mb:1}}>
-                        <Button onClick={handleCreateQuestion} disabled={isLoadingQuestionJE || noKeyword} variant="outlined" >
+                        <Button onClick={handleCreateQuestion} disabled={isLoadingQuestionJE || noKeyword || isAutoPlaying} variant="outlined" >
                             問題生成
                         </Button>
                     </Box>
@@ -781,17 +864,6 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             <DialogActions style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
                 <div style={{ width: '100%', textAlign: 'center' }}> 
-
-                    <Button 
-                        onClick={handleAutoPlay} 
-                        style={{ margin: 5, padding: 5, minWidth: 90 }}
-                        variant="outlined"
-                        endIcon={!isAutoPlaying ? <PlayArrowIcon/> : <StopIcon/>}
-                        disabled={tabValue == 1 || tabValue == 2}
-                    >
-                        自動再生
-                    </Button>
-
                     <Button 
                         onClick={handlePrev} 
                         disabled={index <= 0 || isAutoPlaying}
@@ -808,6 +880,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                     </Button>
                     <Button 
                         onClick={handleClose}
+                        disabled={isAutoPlaying}
                         style={{ margin: 5, padding: 5, minWidth: 90 }}
                     >
                         閉じる
@@ -819,6 +892,59 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                 open={openProfileKeywordsSettingDialog}
                 onClose={()=>setOpenProfileKeywordsSettingDialog(false)}
             />
+            <Dialog open={isAutoPlaySettingsOpen} 
+                onClose={(event, reason) => {
+                    if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+                    handleCloseAutoPlaySettings();
+                    }
+                }}
+                >
+                <DialogTitle>自動再生設定</DialogTitle>
+                <DialogContent>
+                <Box>
+                    <FormControlLabel
+                        control={<Checkbox checked={autoPlaySettings.english} onChange={handleAutoPlaySettingChange} name="english" />}
+                        label="単語(英)"
+                    />
+                </Box>
+                <Box>
+                    <FormControlLabel
+                        control={<Checkbox checked={autoPlaySettings.japanese} onChange={handleAutoPlaySettingChange} name="japanese" />}
+                        label="単語(日)"
+                    />
+                </Box>
+                <Box>
+                    <FormControlLabel
+                        control={<Checkbox checked={autoPlaySettings.exampleSentenceE} onChange={handleAutoPlaySettingChange} name="exampleSentenceE" />}
+                        label="例文(英)"
+                    />
+                </Box>
+                <Box>
+                    <FormControlLabel
+                        control={<Checkbox checked={autoPlaySettings.exampleSentenceJ} onChange={handleAutoPlaySettingChange} name="exampleSentenceJ" />}
+                        label="例文(日)"
+                    />
+                </Box>
+                <Box>
+                    <FormControlLabel
+                        control={<Checkbox checked={autoPlaySettings.questionJE} onChange={handleAutoPlaySettingChange} name="questionJE" />}
+                        label="パーソナライズ例文(英)"
+                    />
+                </Box>
+                <Box>
+                    <FormControlLabel
+                        control={<Checkbox checked={autoPlaySettings.answerJE} onChange={handleAutoPlaySettingChange} name="answerJE" />}
+                        label="パーソナライズ例文(日)"
+                    />
+                </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseAutoPlaySettings} disabled={isCloseButtonDisabled}>
+                        閉じる
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
 
         </Dialog>
     );
