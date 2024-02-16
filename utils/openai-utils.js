@@ -188,8 +188,9 @@ export async function generateReviewByAI(english, japanese, userSentence, levelK
 
 
 function selectRandomKeywords(keywords) {
-  // ランダムに1か2を選択
-  const count = Math.floor(Math.random() * 2) + 1;
+
+  // const count = Math.floor(Math.random() * 2) + 1;  // ランダムに1か2を選択
+  const count  = 1
   const selectedKeywords = [];
 
   for (let i = 0; i < count; i++) {
