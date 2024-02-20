@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, CircularProgress, Typography, Box, Button, Divider , Switch, FormControlLabel, Badge,
+import { Container, CircularProgress, Typography, Box, Button, Divider , Switch, FormControlLabel, Badge, Grid, Paper,
   Table, TableBody, TableCell, TableRow, Chip, IconButton } from '@mui/material';
 import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
@@ -17,6 +17,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [buttonDisabledState, setButtonDisabledState] = useState({}); // ボタンの状態を管理
   const [switchStates, setSwitchStates] = useState({}); // 各反復タイミングごとのスイッチの状態
+  const [switchStatesImage, setSwitchStatesImage] = useState({}); 
   const [srCount, setSrCount] = useState({})
   const [mode, setMode] = useState('EJ')
   const [dialogSrNextTime, setDialogSrNextTime] = useState('');
@@ -82,6 +83,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     if (allButtonsPressed) {
       fetchSrWordList(); // APIを再コール
       setSwitchStates({})
+      setSwitchStatesImage({})
       setButtonDisabledState({})
     }
   };
@@ -100,6 +102,14 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     }));
   };
 
+  const handleSwitchChangeImage = (timeIndex) => {
+    setSwitchStatesImage(prevStates => ({
+      ...prevStates,
+      [timeIndex]: !prevStates[timeIndex]
+    }));
+  };
+
+
   const handleOpenInNewClick = (srNextTime, words) => {
     setDialogSrNextTime(srNextTime); // ダイアログに渡すsrNextTimeを設定
     setDialogWords(words); // ダイアログに渡すwordsを設定
@@ -109,6 +119,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const handleModeChipClick = (mode) =>{
     setMode(mode)
     setSwitchStates({})
+    setSwitchStatesImage({})
     setButtonDisabledState({})
   }
 
@@ -176,54 +187,60 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                   label="答えを表示"
                 />
 
-                <Table>
-                  <TableBody>
-                    {words.map((word, wordIndex) => (
-                      <TableRow
-                        key={word.id}
-                        hover
-                        onClick={() => handleListItemClick(words, wordIndex)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <TableCell sx={{width: '40%'}}>
-                          {word.userWordListStatus?.srLanguageDirection === 'EJ' ? word.english : (
-                            <>
-                              <Typography variant='subtitle1' fontWeight={600}>
-                                {word.userWordListStatus.questionJE}
-                              </Typography>
-                              <Typography variant='body1'>
-                                ({word.english} / {word.japanese})
-                              </Typography>
-                            </>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {switchStates[timeIndex] ? (word.userWordListStatus?.srLanguageDirection === 'EJ' ? word.japanese : (                            
-                            <>
-                               <Typography variant='subtitle1' fontWeight={600}>
-                                {word.userWordListStatus.answerJE}
-                              </Typography>
-
-                            </>
-                          )) : '　'} {/* 全角スペースで高さを保持 */}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                {/* <List>
-                {words.map((word, wordIndex) => (
-                  <ListItem button key={word.id} onClick={() => handleListItemClick(words, wordIndex)}>
-                    <ListItemText 
-                      primary={word.userWordListStatus?.srLanguageDirection === 'JE' ? word.japanese : word.english} 
-                      secondary={switchStates[timeIndex] ? (word.userWordListStatus?.srLanguageDirection === 'JE' ? word.english : word.japanese) : '　'} // 全角スペースで高さを保持
+                {(switchStates[timeIndex] && words[0].userWordListStatus?.srLanguageDirection === 'EJ') && (
+                    <FormControlLabel
+                      control={<Switch checked={switchStatesImage[timeIndex] || false} onChange={() => handleSwitchChangeImage(timeIndex)} />}
+                      label="画像"
                     />
-                  </ListItem>  
+                )}
 
-                ))}
-                </List> */}
-                <Box sx={{display: 'flex', justifyContent: 'start'}}>
+
+                <Grid container spacing={2} sx={{mt: 2}}>
+                  {words.map((word, wordIndex) => (
+                    <React.Fragment key={word.id}>
+                      {/* 単語の情報を表示 */}
+                      <Grid item xs={12} sm={6} style={{ cursor: 'pointer' }} onClick={() => handleListItemClick(words, wordIndex)}>
+                        <Box>
+                          <Typography color="GrayText" variant='subtitle1' fontWeight={600}>
+                            {word.userWordListStatus?.srLanguageDirection === 'EJ' ? word.english : word.userWordListStatus.questionJE}
+                          </Typography>
+                          <Typography color="GrayText" variant='body1'>
+                            {word.userWordListStatus?.srLanguageDirection === 'EJ' ? '' : `(${word.english} / ${word.japanese})`}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        {switchStates[timeIndex] ? (
+                          word.userWordListStatus?.srLanguageDirection === 'EJ' ? (
+                            <Box>
+                              <Typography color="GrayText" variant='subtitle1'>{word.japanese}</Typography>
+                              {switchStatesImage[timeIndex] && (
+                                <img
+                                  src={word.imageUrl}
+                                  alt={word.english}
+                                  style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }}
+                                />
+                              )}
+                            </Box>
+                          ) : (
+                            <Typography color="GrayText" variant='subtitle1' fontWeight={600}>
+                              {word.userWordListStatus.answerJE}
+                            </Typography>
+                          )
+                        ) : '　'} {/* 全角スペースで高さを保持 */}
+                      </Grid>
+                      {/* Divider を追加 */}
+                      {wordIndex < words.length - 1 && (
+                        <Grid item xs={12}>
+                          <Divider />
+                        </Grid>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </Grid>
+
+
+                <Box sx={{display: 'flex', justifyContent: 'start', mt: 2}}>
                   <Button 
                     onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 
                     disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)} //前者は一回押したら無効化のため、後者は5分後にならないと押せないようにするため
@@ -259,6 +276,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
         wordList={filteredWordList}
         initialIndex={selectedIndex}
         updateWordList={updateWordList}
+        initialTabValue={filteredWordList[0]?.userWordListStatus?.srLanguageDirection == 'JE' ? 1 : 0}
       />
 
       <SrTimingDialog
