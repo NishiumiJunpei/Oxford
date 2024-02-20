@@ -23,7 +23,12 @@ export default function Home() {
   const [themeName, setThemeName] = useState('');
   const [progressRatio, setProgressRatio] = useState({});
   
+  useEffect(() => {
+    router.push('/word-master/wordMasterTop');
+  }, [router]);
 
+
+  
   useEffect(() => {
     const fetchWords = async () => {
       setIsLoadingTodaysWords(true);
