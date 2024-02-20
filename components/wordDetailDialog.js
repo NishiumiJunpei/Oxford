@@ -14,6 +14,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProfileKeywordsSettingDialog from './profileKeywordsSettingDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
 
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue, tabDisabledPersonalizedEx, tabDisabledAIReview }) => {
@@ -46,7 +47,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     });
     
 
-    let currentAudio = null;
+    // let currentAudio = null;
     let autoPlaying = isAutoPlaying;
 
     useEffect(() => {
@@ -138,48 +139,60 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
 
 
-    const playAudio = (text, lang = 'en') => {
-        return new Promise(async (resolve, reject) => {
-          try {
-            const response = await fetch('/api/common/synthesize', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text, lang }),
-            });
+    // const playAudio = (text, lang = 'en') => {
+    //     return new Promise(async (resolve, reject) => {
+    //       try {
+    //         const response = await fetch('/api/common/synthesize', {
+    //           method: 'POST',
+    //           headers: { 'Content-Type': 'application/json' },
+    //           body: JSON.stringify({ text, lang }),
+    //         });
       
-            const data = await response.json();
-            if (data.audioContent) {
-              const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
-              const audioUrl = URL.createObjectURL(audioBlob);
-              if (currentAudio) {
-                currentAudio.pause(); // 前のオーディオを停止
-              }
-              const audio = new Audio(audioUrl);
-              currentAudio = audio; // 現在のオーディオを追跡
-              audio.play();
+    //         const data = await response.json();
+    //         if (data.audioContent) {
+    //           const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
+    //           const audioUrl = URL.createObjectURL(audioBlob);
+    //           if (currentAudio) {
+    //             currentAudio.pause(); // 前のオーディオを停止
+    //           }
+    //           const audio = new Audio(audioUrl);
+    //           currentAudio = audio; // 現在のオーディオを追跡
+    //           audio.play();
       
-              audio.onended = () => {
-                resolve();
-              };
-            }
-          } catch (error) {
-            console.error('Error during audio playback:', error);
-            reject(error);
-          }
-        });
+    //           audio.onended = () => {
+    //             resolve();
+    //           };
+    //         }
+    //       } catch (error) {
+    //         console.error('Error during audio playback:', error);
+    //         reject(error);
+    //       }
+    //     });
+    // };
+
+    // const handleAutoPlayToggle = () =>{
+    //     if (!isAutoPlaying){
+    //         setIsAutoPlaying(true); // 再生状態をトグル
+    //     }else{
+    //         if (currentAudio) {
+    //             currentAudio.pause();
+    //             currentAudio.currentTime = 0;
+    //         }
+    //         setIsAutoPlaying(false); // 自動再生を停止    
+    //     }
+    // }
+
+    const handleAutoPlayToggle = () => {
+        if (!isAutoPlaying) {
+            setIsAutoPlaying(true);
+            // ここで playAudio を呼び出す場合は、必要なパラメータを渡して再生を開始します。
+            // 例: playAudio('Your text here', 'en').then(() => setIsAutoPlaying(false));
+        } else {
+            stopAudio(); // 再生中のオーディオを停止し、currentTimeを0にリセット
+            setIsAutoPlaying(false); // 自動再生を停止
+        }
     };
 
-    const handleAutoPlayToggle = () =>{
-        if (!isAutoPlaying){
-            setIsAutoPlaying(true); // 再生状態をトグル
-        }else{
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
-            setIsAutoPlaying(false); // 自動再生を停止    
-        }
-    }
 
     useEffect(() => {
         let isCancelled = false;

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Box, Checkbox, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import DisplayAutoPlayWordsBasic from '@/components/admin/DisplayAutoPlayWordsBasic';
+import DisplayAutoPlayWordsReproduction from '@/components/admin/DisplayAutoPlayWordsReproduction';
+
+
 
 export default function Home() {
   const [themes, setThemes] = useState([]);
@@ -42,7 +45,6 @@ export default function Home() {
     try {
       const response = await axios.post('/api/admin/getWordListByBlockIds', { blockIds });
       setWordList(response.data.wordList);
-      setCurrentStep('wordPlayback'); // 単語再生ステップへ移行
     } catch (error) {
       console.error('Error fetching word list:', error);
     }
@@ -52,6 +54,11 @@ export default function Home() {
   const handleBlockSelect = (blockId) => {
     setBlockIds(prev => prev.includes(blockId) ? prev.filter(id => id !== blockId) : [...prev, blockId]);
   };
+
+  const handleClickButton = (mode) => {
+    fetchWordListByBlockIds()
+    setCurrentStep(mode)
+  }
 
   return (
     <>
@@ -117,11 +124,12 @@ export default function Home() {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button variant="contained" onClick={fetchWordListByBlockIds}>単語リスト作成</Button>
+            <Button variant="contained" onClick={()=>handleClickButton('wordPlayBasic')}>通常</Button>
+            <Button variant="contained" onClick={()=>handleClickButton('wordPlayReproduction')}>リプロダクション</Button>
           </>
 
           )}
-          {currentStep === 'wordPlayback' && (
+          {currentStep === 'wordPlayBasic' && (
             <Box>
               <Typography variant="h5" gutterBottom>単語再生</Typography>
               
@@ -129,6 +137,15 @@ export default function Home() {
             </Box>
 
           )}
+          {currentStep === 'wordPlayReproduction' && (
+            <Box>
+              <Typography variant="h5" gutterBottom>リプロダクション</Typography>
+              
+              <DisplayAutoPlayWordsReproduction wordList={wordList} />
+            </Box>
+
+          )}
+
         </>
       )}
     </>
