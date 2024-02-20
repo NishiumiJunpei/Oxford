@@ -71,10 +71,10 @@ export const authOptions = {
     async jwt({ token, user, session, trigger }) {
       if (user) {
         token.userId = user.id;
-        token.currentChallengeThemeId = user.currentChallengeThemeId
+        // token.currentChallengeThemeId = user.currentChallengeThemeId
       }
       if (trigger === "update" && session?.currentChallengeThemeId) {
-        token.currentChallengeThemeId = session.currentChallengeThemeId
+        // token.currentChallengeThemeId = session.currentChallengeThemeId
       }
 
       return token;
@@ -82,10 +82,10 @@ export const authOptions = {
     async session({ session, token, trigger, newSession }) {
       if (token.userId) {
         session.userId = token.userId;
-        session.currentChallengeThemeId = token.currentChallengeThemeId
+        // session.currentChallengeThemeId = token.currentChallengeThemeId
       }
       if (trigger === "update" && newSession?.currentChallengeThemeId) {
-        session.currentChallengeThemeId = newSession.currentChallengeThemeId
+        // session.currentChallengeThemeId = newSession.currentChallengeThemeId
       }
 
       return session;

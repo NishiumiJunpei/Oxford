@@ -4,6 +4,16 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 
+export async function getUserCurrentChallengeThemeId(id) {
+  return await prisma.user.findUnique({
+    where: { id },
+    select: {
+      currentChallengeThemeId: true,
+    },
+  });
+}
+
+
 export async function findUserByEmail(email) {
     try {
       const user = await prisma.user.findUnique({

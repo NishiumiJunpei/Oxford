@@ -482,7 +482,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             }
         };
 
-        if (tabValue === 0) {
+        if (tabValue === 0 && !isAutoPlaying) {
             window.addEventListener('keydown', handleKeyPress);
         }
     
@@ -534,7 +534,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             自動再生
                         </Button>
                         <IconButton onClick={handleOpenAutoPlaySettings}
-                            disabled={tabValue == 2}
+                            disabled={tabValue == 2 || isAutoPlaying}
                         >
                             <SettingsIcon />
                         </IconButton>

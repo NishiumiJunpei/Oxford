@@ -465,7 +465,6 @@ const WordListPage = () => {
          filterSettings.filterOption === 'showJEOnlyMEMORIZED2' ? word.memorizeStatusJE === 'MEMORIZED2' : true);
   });
   
-  console.log(wordList)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -658,7 +657,12 @@ const WordListPage = () => {
 
               </Box>
               <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 700, overflowY: 'auto', overflowX: 'auto'}}>
-                <Table sx={{ minWidth: 650 }} >
+                <Table 
+                  sx={{ 
+                    minWidth: 650, 
+                    [theme.breakpoints.down('sm')]: {minWidth: 'unset' } 
+                  }} 
+                  >
                   <TableHead>
                     <TableRow>
                       <TableCell>#</TableCell>

@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { getUserById } from '@/utils/prisma-utils';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { getUserCurrentChallengeThemeId } from './user-utils';
 
 export async function getUserFromSession(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -8,12 +9,12 @@ export async function getUserFromSession(req, res) {
   let currentChallengeThemeId = ''
 
   if (!session.currentChallengeThemeId) {
-    const user = await getUserById(userId);
+    const user = await getUserCurrentChallengeThemeId(userId);
     if (!user) {
       throw new Error("User not found.");
     }
     currentChallengeThemeId = user.currentChallengeThemeId;
-    session.currentChallengeThemeId = user.currentChallengeThemeId;
+    // session.currentChallengeThemeId = user.currentChallengeThemeId;
 
     console.log('currentChallengeThemeId is not  in session')
   }else{
