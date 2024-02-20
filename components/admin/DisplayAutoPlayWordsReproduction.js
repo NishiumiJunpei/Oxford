@@ -78,6 +78,8 @@ const DisplayAutoPlayWordsReproduction = ({ open, onClose, wordList }) => {
                 await playAudio(wordList[currentIndex].exampleSentenceE);
                 if (!isAutoPlaying || isCancelled) break; // 同上
 
+                await new Promise(r => setTimeout(r, 1000)); // 次の音声再生までの間隔
+
 
                 currentIndex++;
                 if (currentIndex < wordList.length) {
