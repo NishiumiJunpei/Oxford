@@ -217,13 +217,22 @@ export async function generateQuestionJE(english, japanese, user, levelKeyword) 
     const randomKeywords = selectRandomKeywords(keywords);
 
 
+    // const content = `
+    // Create one example sentence using the word, ${english}(${japanese}), in English that a person who is interested on ${randomKeywords} might use.
+    // ${english} is required to use in the sentence.
+    // Then, create a Japanese translation of that sentence. 
+    // Provide just Japanese sentence, not include English sentence.
+    // `;
+
     const content = `
-    Create one example sentence using the word, ${english}(${japanese}), in English that a person who is interested on ${randomKeywords} might use.
+    First select one scene randomly relevant to "${randomKeywords}"
+    Then create one example sentence using the word, ${english}(${japanese}) used in the scene.
     ${english} is required to use in the sentence.
     Then, create a Japanese translation of that sentence. 
     Provide just Japanese sentence, not include English sentence.
     `;
     
+
     const response = await openai.chat.completions.create({
       model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-0125-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],

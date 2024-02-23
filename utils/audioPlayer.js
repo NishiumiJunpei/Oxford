@@ -42,3 +42,10 @@ export const stopAudio = () => {
         currentAudio.currentTime = 0; // オーディオの再生位置を最初に戻す
     }
 };
+
+
+const correctSoundPath = "/audio/correct-answer.mp3"
+export const playCorrectSound = () => {
+    const audio = new Audio(correctSoundPath);
+    audio.play();
+  };

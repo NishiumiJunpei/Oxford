@@ -299,33 +299,41 @@ export async function updateUserWordStatus(userId, wordListId, languageDirection
     if (languageDirection === 'EJ') {
       updatedData.memorizeStatusEJ = memorizeStatus;
       if (memorizeStatus === 'MEMORIZED') {
-        //24時間以内に２連続正解すると、その後、MEMORIZED2になりづらくなるので、更新しない
+        //lastMemorizedDateEJ - 24時間以内に２連続正解すると、その後、MEMORIZED2になりづらくなるので、lastMemorizedDateEJを更新しない
         if (existingRecord.memorizeStatusEJ === 'NOT_MEMORIZED' || 
         (existingRecord.memorizeStatusEJ === 'MEMORIZED' && !existingRecord.lastMemorizedDateEJ) ||
         (existingRecord.memorizeStatusEJ === 'MEMORIZED' && (existingRecord.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000))) {
           updatedData.lastMemorizedDateEJ = currentTime;
         }
 
+        //memorizeStatusEJ - 前回正解後、24時間以上たっている場合、MEMORIZED2にする。または、MEMORIZED2の場合はMEMORIZED2のまま
         if (existingRecord.lastMemorizedDateEJ &&
             currentTime - existingRecord.lastMemorizedDateEJ > 24 * 60 * 60 * 1000 &&
             existingRecord.memorizeStatusEJ === 'MEMORIZED') {
-            updatedData.memorizeStatusEJ = 'MEMORIZED2';
+              updatedData.memorizeStatusEJ = 'MEMORIZED2';
+        }else if(existingRecord.memorizeStatusEJ === 'MEMORIZED2'){
+          updatedData.memorizeStatusEJ = 'MEMORIZED2';
+
         }
       }
     } else if (languageDirection === 'JE') {
       updatedData.memorizeStatusJE = memorizeStatus;
       if (memorizeStatus === 'MEMORIZED') {
-        //24時間以内に２連続正解すると、その後、MEMORIZED2になりづらくなるので、更新しない
+        //lastMemorizedDateEJ - 24時間以内に２連続正解すると、その後、MEMORIZED2になりづらくなるので、lastMemorizedDateEJを更新しない
         if (existingRecord.memorizeStatusJE === 'NOT_MEMORIZED' || 
         (existingRecord.memorizeStatusJE === 'MEMORIZED' && !existingRecord.lastMemorizedDateJE) ||
         (existingRecord.memorizeStatusJE === 'MEMORIZED' && (existingRecord.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000))) {
           updatedData.lastMemorizedDateJE = currentTime;
         }
 
+        //memorizeStatusEJ - 前回正解後、24時間以上たっている場合、MEMORIZED2にする。または、MEMORIZED2の場合はMEMORIZED2のまま
         if (existingRecord.lastMemorizedDateJE &&
             currentTime - existingRecord.lastMemorizedDateJE > 24 * 60 * 60 * 1000 &&
             existingRecord.memorizeStatusJE === 'MEMORIZED') {
           updatedData.memorizeStatusJE = 'MEMORIZED2';
+        }else if(existingRecord.memorizeStatusEJ === 'MEMORIZED2'){
+          updatedData.memorizeStatusEJ = 'MEMORIZED2';
+
         }
       }
     }

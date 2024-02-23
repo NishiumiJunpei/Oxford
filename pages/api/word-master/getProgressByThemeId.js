@@ -1,5 +1,5 @@
 // pages/api/word-master/getProgressByThemeId.js
-import { getWordListByCriteria, getWordListUserStatus, getUserById, getBlocks } from '../../../utils/prisma-utils';
+import { getWordListByCriteria, getWordListUserStatus, getUserById, getBlocks, getTheme } from '../../../utils/prisma-utils';
 import { getUserFromSession } from '@/utils/session-utils';
 
 export default async function handler(req, res) {
@@ -7,7 +7,8 @@ export default async function handler(req, res) {
     try {
       const {userId, currentChallengeThemeId} = await getUserFromSession(req, res);
 
-      const themeId = (!req.query.themeId && req.query.themeId != 'undefined' ) ? req.query.themeId : currentChallengeThemeId
+      const themeId = currentChallengeThemeId
+      const theme = await getTheme(themeId)
       const wordList = await getWordListByCriteria({ themeId });
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
       const blocks = await getBlocks(themeId);
@@ -17,6 +18,16 @@ export default async function handler(req, res) {
       let totalProgressJE = 0;
       let totalWords = 0;
       const currentTime = new Date();
+      const wordNum = wordList.length
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 1週間前の日付を設定
+
+      //過去１週間の正解数
+      let EJmemorizedNumNew = 0
+      let EJmemorized2NumNew = 0
+      let JEmemorizedNumNew = 0
+      let JEmemorized2NumNew = 0
+
 
       const updatedBlocks = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks.some(b=> b.blockId === block.id));
@@ -28,7 +39,8 @@ export default async function handler(req, res) {
         //アセスメントやる余地がああるか
         let numAbleToProgressEJ = 0
         let numAbleToProgressJE = 0
-      
+
+
         blockWords.forEach(word => {
           const status = wordListUserStatus.find (us => us.wordListId == word.id)
 
@@ -37,8 +49,19 @@ export default async function handler(req, res) {
             memorizedCountEJ += 1;
             numAbleToProgressEJ =  (status.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ
 
+            if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo){
+              EJmemorizedNumNew += 1
+            }
+
           } else if (status?.memorizeStatusEJ === 'MEMORIZED2') {
             memorizedCountEJ += 2;
+
+            if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo){
+              EJmemorizedNumNew += 1
+              EJmemorized2NumNew += 1
+            }
+
+            
           } else{
             numAbleToProgressEJ +=1
           }
@@ -47,8 +70,19 @@ export default async function handler(req, res) {
           if (status?.memorizeStatusJE === 'MEMORIZED') {
             memorizedCountJE += 1;
             numAbleToProgressJE =  (status.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE
+
+            if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo){
+              JEmemorizedNumNew += 1
+            }
+
           } else if (status?.memorizeStatusJE === 'MEMORIZED2') {
             memorizedCountJE += 2;
+
+            if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo){
+              JEmemorizedNumNew += 1
+              JEmemorized2NumNew += 1
+            }
+
           } else{
             numAbleToProgressJE += 1
           }
@@ -68,7 +102,8 @@ export default async function handler(req, res) {
           EJ: numAbleToProgressEJ, 
           JE: numAbleToProgressJE
         }
-      
+        
+        
         return {
           block,
           progress,
@@ -80,7 +115,7 @@ export default async function handler(req, res) {
 
       const overallProgress = {
         EJ:  Math.round(totalProgressEJ / totalWords * 100),
-        JE:  Math.round(totalProgressJE / totalWords * 100)
+        JE:  Math.round(totalProgressJE / totalWords * 100),
       }
 
 
@@ -92,17 +127,6 @@ export default async function handler(req, res) {
           .filter(item => item.numAbleToProgress[progressKey] > 0)
           .filter(item => item.progress[progressKey] < maxProgress)
           .sort((a, b) => {
-            // // progressが0の場合は最後にする
-            // if (a.progress[progressKey] === 0 && b.progress[progressKey] !== 0) {
-            //   return 1; // aが0でbが0ではない場合、aを後ろに
-            // } else if (b.progress[progressKey] === 0 && a.progress[progressKey] !== 0) {
-            //   return -1; // bが0でaが0ではない場合、bを後ろに
-            // }
-            // // progressで昇順
-            // if (a.progress[progressKey] !== b.progress[progressKey]) {
-            //   return a.progress[progressKey] - b.progress[progressKey];
-            // }
-            // progressが同じ場合、displayOrderで比較
             return a.block.displayOrder - b.block.displayOrder;
           })
           .find(item => true)?.block || null;
@@ -114,13 +138,65 @@ export default async function handler(req, res) {
         || findBlockByProgress(updatedBlocks, 'EJ', 150)
         || findBlockByProgress(updatedBlocks, 'EJ', 200);
 
-        blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 50)
-        || findBlockByProgress(updatedBlocks, 'JE', 100)
-        || findBlockByProgress(updatedBlocks, 'JE', 150)
-        || findBlockByProgress(updatedBlocks, 'JE', 200);
-        
+      blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 50)
+      || findBlockByProgress(updatedBlocks, 'JE', 100)
+      || findBlockByProgress(updatedBlocks, 'JE', 150)
+      || findBlockByProgress(updatedBlocks, 'JE', 200);
       
-      res.status(200).json({ overallProgress, blocks: updatedBlocks, blockToLearn });
+    
+      theme.wordNum = wordNum
+      const memorizeImageArray = [0, 10, 50, 100, 150, 200]
+      const findLastExceedingIndex = (count, array) => {
+        let lastIndex = 0; 
+        for (let i = 0; i < array.length; i++) {
+          if (count > array[i]) {
+            lastIndex = i; // countが配列の要素を超える最後のインデックスを更新
+          } else {
+            break; // countが配列の要素を超えなくなったらループを抜ける
+          }
+        }      
+        return lastIndex;
+      };
+      const progressOverLastWeek = {
+        EJ: {
+          memorizedNumNew: EJmemorizedNumNew,
+          memorized2NumNew: EJmemorized2NumNew,
+          memorizedNumNewImageIndex: findLastExceedingIndex(EJmemorizedNumNew, memorizeImageArray),
+          memorized2NumNewImageIndex: findLastExceedingIndex(EJmemorized2NumNew, memorizeImageArray),
+        },
+        JE:{
+          memorizedNumNew: JEmemorizedNumNew,
+          memorized2NumNew: JEmemorized2NumNew,
+          memorizedNumNewImageIndex: findLastExceedingIndex(JEmemorizedNumNew, memorizeImageArray),
+          memorized2NumNewImageIndex: findLastExceedingIndex(JEmemorized2NumNew, memorizeImageArray),
+
+        }
+      }
+
+      const goalArray = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+      const calcGoal = (wordNum, currentProgress, goalArray) => {
+        // goalProgressを見つける
+        const goalProgress = goalArray.find(progress => progress > currentProgress) || 0;
+        // wordNumToGoalを計算する
+        const progressDifference = goalProgress - currentProgress;
+        const wordNumToGoal = Math.round(wordNum * (progressDifference / 100));
+        return { goalProgress, wordNumToGoal };
+      };
+      const nextGoal = {
+        EJ: calcGoal(wordNum, overallProgress.EJ, goalArray),
+        JE: calcGoal(wordNum, overallProgress.JE, goalArray),
+      }
+
+
+      res.status(200).json({ 
+        theme,
+        overallProgress, 
+        blocks: updatedBlocks, 
+        blockToLearn,
+        progressOverLastWeek,
+        nextGoal,
+      });
+      
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

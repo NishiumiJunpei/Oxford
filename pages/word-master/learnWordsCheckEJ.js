@@ -6,6 +6,7 @@ import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, 
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
 import WordDetailDialog from '@/components/wordDetailDialog';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import { playCorrectSound } from '@/utils/audioPlayer';
 
 
 const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, updateWordList, themeAllWordsFlag}) =>{
@@ -206,6 +207,10 @@ const LearnWordsCheck = () => {
     };
     
     const handleAnswer = (known) => {
+      if (known) {
+        playCorrectSound()
+      }
+      
       if (currentIndex >= 0 && currentIndex < wordList.length) {
         const word = wordList[currentIndex];
         if (word){

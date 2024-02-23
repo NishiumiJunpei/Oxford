@@ -23,5 +23,13 @@ export const srTiming = [
   60 * 24 * 30,  //30日後
 ]
 
+export const badgeImages = [
+  '/icon/blank.png',
+  '/icon/like.png',
+  '/icon/star1.png',
+  '/icon/star2.png',
+  '/icon/medal.png',
+  '/icon/diamond.png',  
+]
 
 

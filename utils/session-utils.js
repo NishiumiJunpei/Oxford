@@ -15,8 +15,6 @@ export async function getUserFromSession(req, res) {
     }
     currentChallengeThemeId = user.currentChallengeThemeId;
     // session.currentChallengeThemeId = user.currentChallengeThemeId;
-
-    console.log('currentChallengeThemeId is not  in session')
   }else{
     currentChallengeThemeId = session.currentChallengeThemeId
   }
