@@ -48,9 +48,12 @@ export default function Home() {
 
 
   const handleClickTheme = () => {
-    router.push('/word-master/wordMasterTop');s
+    router.push('/word-master/wordMasterTop');
   };
 
+  const handleBlockClick = (blockId, languageDirection) => {
+    router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection || 'EJ'}`);
+  };
   
   return (
     <Box maxWidth="lg">
@@ -143,7 +146,7 @@ export default function Home() {
                         />
                         <CardContent>
                             <Box sx={{mb:2}}>
-                              <Typography variant="h3" color={"primary"}>+{progressOverLastWeek?.EJ.memorizedNumNew}</Typography>                    
+                              <Typography variant="h4" color={"primary"}>+{progressOverLastWeek?.EJ.memorizedNumNew}</Typography>                    
                             </Box>
                             <Box sx={{display: 'flex', justifyContent: 'center'}}>
                               <img src={badgeImages[progressOverLastWeek.EJ.memorizedNumNewImageIndex]} width="50px"/>
@@ -163,7 +166,7 @@ export default function Home() {
                         />
                         <CardContent>
                           <Box sx={{mb:2}}>
-                            <Typography variant="h3" color={"primary"}>+{progressOverLastWeek?.EJ.memorized2NumNew}</Typography>                    
+                            <Typography variant="h4" color={"primary"}>+{progressOverLastWeek?.EJ.memorized2NumNew}</Typography>                    
                           </Box>
                           <Box sx={{display: 'flex', justifyContent: 'center'}}>
                             <img src={badgeImages[progressOverLastWeek.EJ.memorized2NumNewImageIndex]} width="50px"/>
@@ -258,7 +261,7 @@ export default function Home() {
                         />
                         <CardContent>
                             <Box sx={{mb:2}}>
-                              <Typography variant="h3" color={"primary"}>+{progressOverLastWeek.JE.memorizedNumNew}</Typography>                    
+                              <Typography variant="h4" color={"primary"}>+{progressOverLastWeek.JE.memorizedNumNew}</Typography>                    
                             </Box>
                             <Box sx={{display: 'flex', justifyContent: 'center'}}>
                               <img src={badgeImages[progressOverLastWeek.JE.memorizedNumNewImageIndex]}width="50px"/>
@@ -278,7 +281,7 @@ export default function Home() {
                         />
                         <CardContent>
                           <Box sx={{mb:2}}>
-                            <Typography variant="h3" color={"primary"}>+{progressOverLastWeek.JE.memorized2NumNew}</Typography>                    
+                            <Typography variant="h4" color={"primary"}>+{progressOverLastWeek.JE.memorized2NumNew}</Typography>                    
                           </Box>
                           <Box sx={{display: 'flex', justifyContent: 'center'}}>
                             <img src={badgeImages[progressOverLastWeek.JE.memorized2NumNewImageIndex]}width="50px"/>
