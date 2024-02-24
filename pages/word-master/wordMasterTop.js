@@ -83,7 +83,7 @@ const WordMasterTop = () => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-    router.push(`/?tab=${newValue}`, undefined, { shallow: true });
+    router.push(`/word-master/wordMasterTop?tab=${newValue}`, undefined, { shallow: true });
   };
 
   const updateWordListForWeak = (newWordData) => {

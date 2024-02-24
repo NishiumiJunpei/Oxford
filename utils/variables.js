@@ -25,8 +25,8 @@ export const srTiming = [
 
 export const badgeImages = [
   '/icon/blank.png',
+  '/icon/smile.png',
   '/icon/like.png',
-  '/icon/star1.png',
   '/icon/star2.png',
   '/icon/medal.png',
   '/icon/diamond.png',  
