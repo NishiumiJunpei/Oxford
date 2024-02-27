@@ -12,6 +12,8 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
+
 
 const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
     const router = useRouter();
@@ -43,33 +45,61 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
     };
 
 
-    const playAudio = (text, lang = 'en') => {
-        return new Promise(async (resolve, reject) => {
-          try {
-            const response = await fetch('/api/common/synthesize', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text, lang }),
-            });
-      
-            const data = await response.json();
-            if (data.audioContent) {
-              const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
-              const audioUrl = URL.createObjectURL(audioBlob);
-              const audio = new Audio(audioUrl);
-              audio.play();
-      
-              audio.onended = () => {
-                resolve();
-              };
+    const handleAutoPlayToggle = () => {
+        if (!isAutoPlaying) {
+            setIsAutoPlaying(true);
+            // ここで playAudio を呼び出す場合は、必要なパラメータを渡して再生を開始します。
+            // 例: playAudio('Your text here', 'en').then(() => setIsAutoPlaying(false));
+        } else {
+            stopAudio(); // 再生中のオーディオを停止し、currentTimeを0にリセット
+            setIsAutoPlaying(false); // 自動再生を停止
+        }
+    };
+
+    useEffect(() => {
+        let isCancelled = false;
+    
+        const autoPlaySequence = async () => {
+            let currentIndex = index;        
+
+            while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
+
+                await playAudio(wordList[currentIndex].english);
+                if (!isAutoPlaying || isCancelled) break; // 同上
+
+
+                await playAudio(wordList[currentIndex].exampleSentenceE);
+                if (!isAutoPlaying || isCancelled) break; // 同上
+
+                // await new Promise(r => setTimeout(r, 5000)); // 次の音声再生までの間隔
+
+                await playAudio(wordList[currentIndex].exampleSentenceE);
+                if (!isAutoPlaying || isCancelled) break; // 同上
+
+                await new Promise(r => setTimeout(r, 1000)); // 次の音声再生までの間隔
+
+
+                currentIndex++;
+                if (currentIndex < wordList.length) {
+                    setIndex(currentIndex); // 次の単語にインデックスを更新
+                } else {
+                    setIsAutoPlaying(false); // 単語リストの最後に到達したら自動再生を停止
+                    break;
+                }
+                await new Promise(r => setTimeout(r, 2000)); // 次の音声再生までの間隔
             }
-          } catch (error) {
-            console.error('Error during audio playback:', error);
-            reject(error);
-          }
-        });
-      };
+        };
+          
+        if (isAutoPlaying) {
+            autoPlaySequence();
+        }
       
+        return () => {
+            isCancelled = true; // コンポーネントがアンマウントされるか、依存配列に含まれる値が変更された場合にキャンセルフラグをtrueに設定
+        };
+    }, [isAutoPlaying, index, wordList]); // 依存配列に`index`と`wordList`を追加
+
+          
 
 
     const handleAutoPlayStart = () => {
@@ -80,63 +110,9 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
         setIsAutoPlaying(false);
     };
 
-
-    let autoPlaying = isAutoPlaying;
-    useEffect(() => {
-        autoPlaying = isAutoPlaying;
-      
-        return () => {
-          autoPlaying = false;
-        };
-      }, [isAutoPlaying]);
-      
-    useEffect(() => {
-        let isCancelled = false;
-
-        const autoPlaySequence = async () => {
-            let currentIndex = index;
-          
-            while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
-                await playAudio(wordList[currentIndex].english);
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                await playAudio(wordList[currentIndex].japanese, 'ja');
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                await playAudio(wordList[currentIndex].exampleSentenceE);
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                await playAudio(wordList[currentIndex].exampleSentenceJ, 'ja');
-                // await new Promise(r => setTimeout(r, 500));
-                // if (!autoPlaying) break;
-                        
-
-                if (currentIndex+1 >= wordList.length) {
-                    setIsAutoPlaying(false);
-                    break;
-                }else{
-                    setIndex(index + 1);
-                    currentIndex++
-                }
-                await new Promise(r => setTimeout(r, 2000));
-            }
-        };
-            
-      
-        if (isAutoPlaying) {
-          autoPlaySequence();
-        }
-      
-        return () => {
-          isCancelled = true;
-        };
-      }, [isAutoPlaying, index, wordList]);
-      
-
-
-      const handleChangeAccordion = (panel) => (event, isExpanded) => {
-        setAccordionExpanded(isExpanded ? panel : false);
-      };
+    const handleChangeAccordion = (panel) => (event, isExpanded) => {
+    setAccordionExpanded(isExpanded ? panel : false);
+    };
     
 
       
@@ -151,24 +127,24 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
             <Box sx={{width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5}}>
                 <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'center'}}>
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h2" sx={{mt: 2, mb: 2}}>
+                        <Typography variant="h4" sx={{mt: 2, mb: 2}}>
                             {word?.english}
                         </Typography>
                         {/* <Typography variant="body1" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
                         </Typography> */}
-                        <Typography variant="body1" sx={{fontSize: '2rem'}}>
+                        <Typography variant="body1" >
                             {word?.japanese}
                         </Typography>
 
-                        <Typography variant="body2" style={{ marginTop: 40, display: 'flex', alignItems: 'center' }}>
+                        {/* <Typography variant="body2" style={{ marginTop: 40, display: 'flex', alignItems: 'center' }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
-                        </Typography>
+                        </Typography> */}
 
-                        <Typography variant="body1" sx={{fontSize: '1.2rem'}}>
+                        <Typography variant="h5" sx={{mt: 3}}>
                             {word?.exampleSentenceE}
                         </Typography>
-                        <Typography variant="body1" sx={{fontSize: '1.2rem'}}>
+                        <Typography variant="body1" sx={{mt:1}}>
                             {word?.exampleSentenceJ}
                         </Typography>
 
@@ -211,7 +187,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
                                     style={{ marginTop: 20, maxWidth: '100%', maxHeight: '100%%', objectFit: 'contain' }} 
                                 />
                                 <Typography variant="body2" sx={{mb: 2}}>
-                                    Created by GPT & DALLE3 / susu English
+                                    Created by GPT & DALLE3 / susuEnglish
                                 </Typography>
                             </>
                         ) : (
@@ -229,8 +205,8 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={handleAutoPlayStart}>自動再生</Button>
-                <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleAutoPlayStop}>停止</Button>
+                <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={handleAutoPlayToggle}>自動再生</Button>
+                <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleAutoPlayToggle}>停止</Button>
                 <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={()=>setIndex(0)}>リセット</Button>
                 <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handlePrev}>←</Button>
                 <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleNext}>⇨</Button>

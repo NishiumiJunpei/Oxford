@@ -95,7 +95,7 @@ export default function Home() {
           {currentStep === 'blockSelection' && (
           <>
             <h3>ブロック選択</h3>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{maxHeight: 500, overflowY: 'auto'}}>
               <Table>
                 <TableHead>
                   <TableRow button>
@@ -108,7 +108,7 @@ export default function Home() {
                 </TableHead>
                 <TableBody>
                   {blocks.map((block) => (
-                    <TableRow key={block.id}>
+                    <TableRow key={block.id} onClick={() => handleBlockSelect(block.id)} sx={{cursor: 'pointer'}}>
                       <TableCell>{block.id}</TableCell>
                       <TableCell>{block.name}</TableCell>
                       <TableCell>{block.wordNum}</TableCell>

@@ -23,7 +23,6 @@ const DisplayAutoPlayWordsReproduction = ({ open, onClose, wordList }) => {
     const [accordionExpanded, setAccordionExpanded] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
 
-
     useEffect(() => {
         if (open && wordList[index]?.userWordListStatus) {
             setExampleSentenceForUser(wordList[index].userWordListStatus.exampleSentenceForUser || '');
@@ -127,6 +126,7 @@ const DisplayAutoPlayWordsReproduction = ({ open, onClose, wordList }) => {
       
 
     const word = wordList[index];
+    console.log('test', word.imageUrl)
 
     return (
         <Box sx={{ p: 2, }}>
