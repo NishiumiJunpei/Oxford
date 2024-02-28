@@ -116,7 +116,7 @@ export default function Home() {
                       <TableCell>
                         <Checkbox
                           checked={blockIds.includes(block.id)}
-                          onChange={() => handleBlockSelect(block.id)}
+                          // onChange={() => handleBlockSelect(block.id)}
                         />
                       </TableCell>
                     </TableRow>
