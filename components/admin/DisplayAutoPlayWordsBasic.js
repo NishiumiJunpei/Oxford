@@ -125,6 +125,9 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
     
             {/* <Box sx={{width: 1200, height: 675, backgroundImage: 'url("/images/backgroundForAutoPlay1.webp")', backgroundSize:'cover', padding: 3, pt: 6}}> */}
             <Box sx={{width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5}}>
+                <Box>
+                    <Typography color="GrayText">{index+1} / {wordList.length}</Typography>
+                </Box>
                 <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'center'}}>
                     <Grid item xs={12} md={6}>
                         <Typography variant="h4" sx={{mt: 2, mb: 2}}>
