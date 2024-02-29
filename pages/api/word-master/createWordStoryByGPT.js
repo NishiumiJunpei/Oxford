@@ -23,8 +23,14 @@ export default async function handler(req, res) {
     const theme = await getTheme(user.currentChallengeThemeId)
 
     let updatedWordList = await Promise.all(wordList.map(async word => {
-      const status = userWordStatus.find(us => us.wordListId == word.id)
-      return { ...word, status };
+      const status = userWordStatus.find(us => us.wordListId == word.id) || {
+        memorizeStatusEJ: 'NOT_MEMORIZED',
+        memorizeStatusJE: 'NOT_MEMORIZED',
+      }
+      return { 
+        ...word, 
+        status 
+      };
     }));
 
     const notMemorizedEJ = updatedWordList.filter(word => word.status?.memorizeStatusEJ === 'NOT_MEMORIZED');
@@ -45,15 +51,32 @@ export default async function handler(req, res) {
     updatedWordList = combinedList.slice(0, wordCount);
 
     // 4. OpenAI APIにプロンプトを渡す
-    const response = await generateWordStory(updatedWordList, length, genre, characters, theme.levelKeyword)
+    const stream = await generateWordStory(updatedWordList, length, genre, characters, theme.levelKeyword, user)
 
-    // 5. DBに登録
-    const words = updatedWordList.map(word => `${word.english} (${word.japanese})`)
-    await saveWordStoryByGPT(userId, blockId, length, genre, characters, response, words);
+
+
+    let collectedData = ''; // ストリームからのデータを収集するための変数
+
+    for await (const chunk of stream) {
+      if (chunk.choices[0]?.finish_reason == 'stop'){
+        break;
+      }
+      const data = chunk.choices[0]?.delta?.content 
+      collectedData += data
+
+      res.write(data)
+    } 
+
+    if (collectedData){
+      const words = updatedWordList.map(word => `${word.english} (${word.japanese})`)
+      await saveWordStoryByGPT(userId, blockId, length, genre, characters, collectedData, words);
+    }
+    
+    res.end()
 
 
     // 6. 結果と単語をフロントに返す
-    res.status(200).json({ story: response, words: updatedWordList });
+    // res.status(200).json({ story: response, words: updatedWordList });
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ message: 'Internal Server Error' });

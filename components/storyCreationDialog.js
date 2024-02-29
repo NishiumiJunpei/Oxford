@@ -12,6 +12,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
     const [characters, setCharacters] = useState('');
     const [loading, setLoading] = useState(false);
     const [storyData, setStoryData] = useState(null);
+    const [streamStoryData, setStreamStoryData] = useState('');
 
     useEffect(() => {
       if (open) {
@@ -20,6 +21,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
         setCharacters('');
         setLoading(false);
         setStoryData(null);
+        setStreamStoryData('')
       }
     }, [open]);
     
@@ -54,33 +56,51 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             body: JSON.stringify(storyRequestData),
           });
 
-          if (!response.ok) {
-              throw new Error('API call failed');
+          setLoading(false)
+          if (response.body) {
+            const reader = response.body.getReader();
+            let receivedLength = 0; // 受信したデータの長さ
+            let chunks = []; // 受信したチャンクを保存する配列
+            let collectionData = ''
+  
+            while(true) {
+              const {done, value} = await reader.read();
+      
+              if (done) {
+                break;
+              }
+      
+              chunks.push(value);
+              receivedLength += value.length;
+      
+              // テキストとしてデータをデコード
+              let decoder = new TextDecoder("utf-8");
+              const chunkText = decoder.decode(value, {stream: true});
+              collectionData += chunkText
+              setStreamStoryData((prevData) => [...prevData, chunkText]);
+            }
+  
+            // 親コンポーネントの保存処理を呼び出す
+            const savedStory = {
+              block, 
+              length, 
+              genre, 
+              characters, 
+              storyContent: collectionData,
+              // words: responseData.words.map(word => `${word.english} (${word.japanese})`),
+              imageUrl: ''
+            }
+            onSave(savedStory);  
           }
-
-          const responseData = await response.json();
-          setStoryData(responseData);
-          setLoading(false);
-
-          // 親コンポーネントの保存処理を呼び出す
-          const savedStory = {
-            block, 
-            length, 
-            genre, 
-            characters, 
-            storyContent: responseData.story,
-            words: responseData.words.map(word => `${word.english} (${word.japanese})`),
-            imageUrl: ''
-          }
-          onSave(savedStory);
-
+  
         } catch (error) {
           console.error('Failed to create story:', error);
-          setLoading(false);
+        } finally {
+          setLoading(false)
         }
     };
 
-    const isSubmitDisabled = !length || !genre || !characters;
+    const isSubmitDisabled = !length || !genre
     
   
     return (
@@ -126,8 +146,8 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
               ))}
             </Box>
             <Box sx={{ marginBottom: 2 }}>
-              <Typography variant="subtitle1" gutterBottom>ジャンル</Typography>
-              {['エンタメ','サイエンス','フィクション','スポーツ', 'ビジネス', 'コメディ', 'ミステリー'].map((option) => (
+              <Typography variant="subtitle1" gutterBottom>シーン</Typography>
+              {['日常会話','ビジネス'].map((option) => (
                 <Chip
                   key={option}
                   label={option}
@@ -137,7 +157,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
                 />
               ))}
             </Box>
-            <Box sx={{ marginBottom: 2 }}>
+            {/* <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>登場人物</Typography>
               {['指定なし', '大統領',,'美人','優しいお兄さん', '宇宙人', 'おばけ', 'うんち君'].map((option) => (
                 <Chip
@@ -148,23 +168,23 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
                   sx={{ marginRight: 1 }}
                 />
               ))}
-            </Box>
+            </Box> */}
             <Divider sx={{ my: 2 }} />
 
             {/* ローディングアイコン */}
             {loading && <CircularProgress />}
 
             {/* API結果の表示 */}
-            {storyData && (
+            {streamStoryData && (
             <Box>
                 <Typography variant="subtitle1">ストーリー</Typography>
-                <Typography className="preformatted-text">{storyData.story}</Typography>
-                <Typography variant="subtitle1" sx={{marginTop: 5}}>単語：</Typography>
+                <Typography className="preformatted-text">{streamStoryData}</Typography>
+                {/* <Typography variant="subtitle1" sx={{marginTop: 5}}>単語：</Typography>
                 <ul>
                 {storyData.words.map((word, index) => (
                     <li key={index}>{word.english} ({word.japanese})</li>
                 ))}
-                </ul>
+                </ul> */}
             </Box>
             )}
 
