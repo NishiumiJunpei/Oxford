@@ -44,3 +44,29 @@ export async function sendSignUpConfirmationEmail(email, url) {
     throw error;
   }
 }
+
+export async function sendInquiryEmail(formData) {
+  const message = {
+    to: 'nishiumi@gmail.com', // 実際にはあなたのメールアドレスに置き換えてください
+    from: `support@${process.env.MAIL_ACCOUNT}`, // 送信者のアドレス
+    subject: '[susuEnglish]問い合わせ内容', // 件名
+    text: `名前: ${formData.name}\nメールアドレス: ${formData.email}\nメッセージ: ${formData.message}`, // テキスト版のメッセージ
+    html: `
+      <p><b>名前:</b> ${formData.name}</p>
+      <p><b>メールアドレス:</b> ${formData.email}</p>
+      <p><b>メッセージ:</b> ${formData.message}</p>
+    `, // HTML版のメッセージ
+  };
+
+  try {
+    await sgMail.send(message);
+    console.log('Inquiry email sent successfully');
+  } catch (error) {
+    console.error('Error sending inquiry email:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    throw error;
+  }
+}
+

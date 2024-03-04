@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Button, Container, Grid, AppBar, Toolbar } from '@mui/material';
 import { useRouter } from 'next/router';
 import HomePageHeader from '@/components/public/homepageHeader';
+import HomePageFooter from '@/components/public/homepageFooter';
 
 export default function HomePage() {
   const router = useRouter()
@@ -92,7 +93,7 @@ export default function HomePage() {
               <Typography>AI画像を使ってビジュアルも含めて覚えられる。ビジュアルだけでなく、音声、類語、単語を使うシーンなどさまざまな情報があるから、より深く記憶できる</Typography>
             </Box>
             <Box sx={{ mt: 5 }}>
-              <img src="/images/hp/app-image.png" alt="App Visual" style={{ width: '80%' }} />
+              <img src="/images/hp/learnByVisual.png" alt="App Visual" style={{ width: '80%' }} />
             </Box>
           </Box>
         </Grid>
@@ -103,7 +104,7 @@ export default function HomePage() {
               <Typography>AIがあなたの英語レベル、興味・好きなことを考慮して、苦手単語を使った例文を作ります。あなたの好きな分野で使う例文なのでより深く記憶できます。</Typography>
             </Box>
             <Box sx={{ mt: 5 }}>
-              <img src="/images/hp/app-image.png" alt="Personalized Examples" style={{ width: '80%' }} />
+              <img src="/images/hp/learnByPersonalizedSent.png" alt="Personalized Examples" style={{ width: '80%' }} />
             </Box>
           </Box>
         </Grid>
@@ -114,7 +115,7 @@ export default function HomePage() {
               <Typography>AIがあなたの苦手な単語を組み合わせて、ストーリーを作ります。ストーリーで覚えるため、より深く記憶できます。</Typography>
             </Box>
             <Box sx={{ mt: 5 }}>
-              <img src="/images/hp/app-image.png" alt="AI Stories" style={{ width: '80%' }} />
+              <img src="/images/hp/learnByAIStory.png" alt="AI Stories" style={{ width: '80%' }} />
             </Box>
           </Box>
         </Grid>
@@ -125,7 +126,7 @@ export default function HomePage() {
               <Typography>あなたが苦手な単語に対して、1時間後、6時間後、24時間後など忘れやすいタイミングで復習できるため、より深く記憶できます。</Typography>
             </Box>
             <Box sx={{ mt: 5 }}>
-              <img src="/images/hp/app-image.png" alt="Focused Review" style={{ width: '80%' }} />
+              <img src="/images/hp/learnByRepetition.png" alt="Focused Review" style={{ width: '80%' }} />
             </Box>
           </Box>
         </Grid>
@@ -144,7 +145,6 @@ export default function HomePage() {
           textAlign: 'center',
           p: '40px 20px',
           borderRadius: '10px',
-          backgroundColor: '#DEF5E5',
         }}>
           <Typography sx={{mb:2}}>
             現在β版のため、無料公開しています。すべての機能を無料で使うことができます。
@@ -154,22 +154,8 @@ export default function HomePage() {
           </Button>
         </Box>
         
-        <Box sx={{
-          fontSize: '0.8em',
-          textAlign: 'center',
-          p: '20px',
-          backgroundColor: '#F6F6F6',
-          borderRadius: '10px',
-          mt: 10,
-        }}>
-          <Typography>
-            © 2024 susuEnglish
-          </Typography>
-          <Typography>
-            <a href="#" sx={{color: '#61dafb', textDecoration: 'none'}}>プライバシーポリシー</a> | <a href="#" sx={{color: '#61dafb', textDecoration: 'none'}}>利用規約</a> | <a href="#" sx={{color: '#61dafb', textDecoration: 'none'}}>お問い合わせ</a>
-          </Typography>
-        </Box>
       </Container>
+      <HomePageFooter/>
     </>
   );
 }

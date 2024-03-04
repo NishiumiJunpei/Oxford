@@ -16,10 +16,10 @@ export default function HomePageHeader() {
         <Box sx={{flexGrow: 1}} onClick={()=> router.push('/public/homepage')}>
             <img src="/logo.png" alt="ロゴ" style={{height: 35}} />
         </Box>
-        <Button color="inherit" onClick={() => router.push('/path/to/english-learning-content')}>
+        <Button color="inherit" onClick={() => router.push('/public/learningContentsList')}>
             英語学習コンテンツ
         </Button>
-        <Button color="secondary" variant="contained" onClick={() => router.push('/path/to/english-learning-content')}>
+        <Button color="secondary" variant="contained" onClick={() => router.push('/')}>
             アプリを使う
         </Button>
         </Toolbar>
