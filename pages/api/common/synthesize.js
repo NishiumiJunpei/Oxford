@@ -6,20 +6,27 @@ export default async function handler(req, res) {
     try {
       const client = new TextToSpeechClient();
       const text = req.body.text;
-      const lang = req.body.lang
+      const lang = req.body.lang || 'en'
+      const gender = req.body.gender || 'female'
 
       //https://cloud.google.com/text-to-speech/docs/voices?hl=ja
       const languageCode = lang == 'en' ? 'en-US' : 
                           lang == 'ja' ? 'ja-JP' : 'en-US'
                     
-      const name = lang == 'en' ? 'en-US-Neural2-F' :  //女性：en-US-Neural2-F, G, H,  男性：en-US-Neural2-D, A, I, J
-                          lang == 'ja' ? 'ja-JP-Neural2-B' : 'en-US-Neural2-F'
+      const name = (lang === 'en' && gender === 'male') ? 'en-US-Neural2-D' :
+          (lang === 'en' && gender === 'female') ? 'en-US-Neural2-F' :
+          (lang === 'ja' && gender === 'male') ? 'ja-JP-Neural2-C' : 
+          (lang === 'ja' && gender === 'female') ? 'ja-JP-Neural2-B' : 
+          'en-US-Neural2-F'; // デフォルト値
+             
 
       const request = {
         input: { text: text },
         voice: { languageCode,  name},
-        // voice: { languageCode, ssmlGender: 'NEUTRAL', name: 'en-US-Neural2-A' },
-        audioConfig: { audioEncoding: 'MP3' },
+        audioConfig: { 
+          audioEncoding: 'MP3',
+          speakingRate: 1.08
+        }
       };
 
       const [response] = await client.synthesizeSpeech(request);

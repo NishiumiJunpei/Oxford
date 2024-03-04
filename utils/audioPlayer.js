@@ -1,12 +1,12 @@
 let currentAudio = null; // グローバルオーディオインスタンス
 
-export const playAudio = (text, lang = 'en') => {
+export const playAudio = (text, lang = 'en', gender = 'male') => {
     return new Promise(async (resolve, reject) => {
         try {
             const response = await fetch('/api/common/synthesize', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, lang }),
+                body: JSON.stringify({ text, lang, gender }),
             });
 
             const data = await response.json();

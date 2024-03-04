@@ -45,6 +45,12 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="ワード再生" />
         </ListItem>
+        <ListItem button component="a" href={`/admin/autoPlayScene`}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="英語シーン" />
+        </ListItem>
       </List>
     </Drawer>
   );

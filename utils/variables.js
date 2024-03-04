@@ -1,3 +1,18 @@
+export const speakerImageUrls = {
+  male: [
+    "/images/male1.png",
+    "/images/male2.png",
+    "/images/male3.png"
+  ],
+  female: [
+    "/images/female1.png",
+    "/images/female2.png",
+    "/images/female3.png",
+    "/images/female4.png",
+    "/images/female5.png"
+  ]
+};
+
 export const challengeThemes = [
     { id: 11, name: 'TOEIC 900レベル', imageFilename: 'TOEIC900.png', activeStatus: 'ACTIVE' },
     { id: 12, name: 'TOEIC 800レベル', imageFilename: 'TOEIC800.png', activeStatus: 'ACTIVE' },
