@@ -140,3 +140,14 @@ export const formatDate = (dateString) => {
   const date = new Date(dateString);
   return `${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}時${date.getMinutes()}分`;
 };
+
+export function convertToSSML(text) {
+  // 英単語を検出してSSMLタグで囲む正規表現
+  const regex = /\b([a-zA-Z\[\]]+)\b/g;
+
+  // 英単語に<lang>タグを適用
+  const ssmlText = text.replace(regex, (match) => `<lang xml:lang="en-US">${match}</lang>`);
+
+  // 最終的なSSML
+  return `<speak>${ssmlText}</speak>`;
+}

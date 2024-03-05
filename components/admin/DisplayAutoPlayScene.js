@@ -13,6 +13,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
+import SubTitleTypography from '../subTitleTypography';
 
 
 const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
@@ -24,8 +25,6 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     const [sentenceIndex, setSentenceIndex] = useState(0);
     const [phraseToLearnIndex, setPhraseToLearnIndex] = useState(0);
     const [activeStep, setActiveStep] = useState('tableOfContents');
-
-    
     
     
     const handleNextScene = () => {
@@ -66,36 +65,36 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     const handleNextStep = () => {
         switch (activeStep) {
             case 'title':
-            setActiveStep('playAudio');
-            break;
+                setActiveStep('playAudio');
+                break;
             case 'playAudio':
-            setActiveStep('playAudioWithSentences');
-            break;
+                setActiveStep('playAudioWithSentences');
+                break;
             case 'playAudioWithSentences':
-            if (sentenceIndex < sceneList[sceneIndex].sentences.length - 1) {
-                setSentenceIndex(sentenceIndex + 1);
-            } else {
-                if (sceneList[sceneIndex].phraseToLearn.length > 0){
-                    setActiveStep('PlayAudioPhraseToLearn');
-                    setSentenceIndex(0); // インデックスをリセット    
-                }else{
-                    if (typeof phraseToLearnIndex !== 'undefined' && phraseToLearnIndex < sceneList[sceneIndex].phraseToLearn.length - 1) {
-                        setPhraseToLearnIndex(phraseToLearnIndex + 1);
-                    } else {
-                        // ここでhandleNextSceneなど、次のシーンに進む関数を呼び出すか、activeStepを更新
-                        handleNextScene(); // または適切な処理
-                    }        
+                if (sentenceIndex < sceneList[sceneIndex].sentences.length - 1) {
+                    setSentenceIndex(sentenceIndex + 1);
+                } else {
+                    if (sceneList[sceneIndex].phraseToLearn.length > 0){
+                        setActiveStep('PlayAudioPhraseToLearn');
+                        setSentenceIndex(0); // インデックスをリセット    
+                        setPhraseToLearnIndex(0); // インデックスをリセット    
+                    }else{
+                        if (typeof phraseToLearnIndex !== 'undefined' && phraseToLearnIndex < sceneList[sceneIndex].phraseToLearn.length - 1) {
+                            setPhraseToLearnIndex(phraseToLearnIndex + 1);
+                        } else {
+                            // ここでhandleNextSceneなど、次のシーンに進む関数を呼び出すか、activeStepを更新
+                            handleNextScene(); // または適切な処理
+                        }        
+                    }
                 }
-            }
-            break;
+                break;
             case 'PlayAudioPhraseToLearn':
-            if (typeof phraseToLearnIndex !== 'undefined' && phraseToLearnIndex < sceneList[sceneIndex].phraseToLearn.length - 1) {
-                setPhraseToLearnIndex(phraseToLearnIndex + 1);
-            } else {
-                // ここでhandleNextSceneなど、次のシーンに進む関数を呼び出すか、activeStepを更新
-                handleNextScene(); // または適切な処理
-            }
-            break;
+                if (typeof phraseToLearnIndex !== 'undefined' && phraseToLearnIndex < sceneList[sceneIndex].phraseToLearn.length - 1) {
+                    setPhraseToLearnIndex(phraseToLearnIndex + 1);
+                } else {
+                    handleNextScene();
+                }
+                break;
             default:
             break;
         }
@@ -168,12 +167,25 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                     if (sceneList[sceneIndex].phraseToLearn.length == 0 && (sceneList[sceneIndex].sentences.length -1 == sentenceIndex) ){
                         await new Promise(r => setTimeout(r, 3000));
                     }
-
                     handleNextStep()
                 } 
 
             } else if (activeStep == 'PlayAudioPhraseToLearn') {
-                // Your existing logic for PlayAudioPhraseToLearn
+                const ptl = sceneList[sceneIndex].phraseToLearn[phraseToLearnIndex];
+                for (const phrase of ptl) {
+                    await playAudio(phrase.phraseE, 'en', 'female');
+                    await playAudio(phrase.explanation, 'ja', 'male');
+                }
+                
+
+                if (isAutoPlaying){
+                    if (phraseToLearnIndex == sceneList[sceneIndex].phraseToLearn.length - 1){
+                        await new Promise(r => setTimeout(r, 3000));
+                    }
+                    handleNextStep()
+    
+                }
+
             }
         }
 
@@ -268,11 +280,25 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                 )}
 
                 {activeStep === 'PlayAudioPhraseToLearn' && (
-                <Box>
-                    <Typography variant="h6">{sceneList[sceneIndex].phraseToLearn[phraseToLearnIndex]?.phraseToLearn}</Typography>
-                    <Typography variant="subtitle1">{sceneList[sceneIndex].phraseToLearn[phraseToLearnIndex]?.japanese}</Typography>
-                    <Typography variant="body2" color="GrayText">{sceneList[sceneIndex].phraseToLearn[phraseToLearnIndex]?.explanation}</Typography>
-                </Box>
+                    <>
+                        <Box>
+                            <Typography sx={{mr: 3}} variant="h6" color="GrayText">{sceneIndex+1}.{sceneList[sceneIndex].title}</Typography>
+                        </Box>
+                        {sceneList[sceneIndex].phraseToLearn[phraseToLearnIndex].map((ptl, index)=>(
+                            <Box key={index}>
+                                <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', mt: 2, mb: 2}}>
+                                    <Typography variant="h6" sx={{ textDecoration: 'underline', textDecorationColor: 'yellow', backgroundColor: 'rgba(255, 255, 0, 0.3)' }}>{ptl?.phraseE}</Typography>：
+                                    <Typography variant="h6">{ptl?.phraseJ}</Typography>
+                                </Box>
+
+                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px', fontSize: '0.8rem' }}>解説</span>                                
+                                <Typography variant="body2">{ptl?.explanation}</Typography>
+
+                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px', fontSize: '0.8rem' }}>元の文</span>                                
+                                <Typography variant="body2" color="GrayText">{ptl?.originalSentenceE}</Typography>
+                            </Box>                        
+                        ))}
+                    </>
                 )}
 
                 {activeStep === 'end' && (

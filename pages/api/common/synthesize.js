@@ -18,10 +18,11 @@ export default async function handler(req, res) {
           (lang === 'ja' && gender === 'male') ? 'ja-JP-Neural2-C' : 
           (lang === 'ja' && gender === 'female') ? 'ja-JP-Neural2-B' : 
           'en-US-Neural2-F'; // デフォルト値
-             
 
+      // const ssmlFlag = /^\s*<speak>/.test(text);
       const request = {
-        input: { text: text },
+        // input: ssmlFlag ? { ssml: text } : { text: text },
+        input : {text, text},
         voice: { languageCode,  name},
         audioConfig: { 
           audioEncoding: 'MP3',

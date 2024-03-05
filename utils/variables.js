@@ -2,14 +2,26 @@ export const speakerImageUrls = {
   male: [
     "/images/male1.png",
     "/images/male2.png",
-    "/images/male3.png"
+    "/images/male3.png",
+    "/images/male4.png",
+    "/images/male5.png",
+    "/images/male6.png",
+    "/images/male7.png",
+    "/images/male8.png",
+    "/images/male9.png",
+    "/images/male10.png"
   ],
   female: [
     "/images/female1.png",
     "/images/female2.png",
     "/images/female3.png",
     "/images/female4.png",
-    "/images/female5.png"
+    "/images/female5.png",
+    "/images/female6.png",
+    "/images/female7.png",
+    "/images/female8.png",
+    "/images/female9.png",
+    "/images/female10.png"
   ]
 };
 
