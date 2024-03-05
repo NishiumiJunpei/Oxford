@@ -22,12 +22,12 @@ const InnerApp = ({ Component, pageProps, router }) => {
 
   useEffect(() => {
     if (status === "loading") return; // セッションの状態がロード中の場合は待機
-    if (!session && !router.pathname.startsWith('/public/') && !router.pathname.startsWith('/auth/')) {
+    if (!session && !router.pathname.startsWith('/public') && !router.pathname.startsWith('/auth')) {
       signIn(); // セッションがない場合はサインインページにリダイレクト
     }
   }, [session, status, router.pathname]);
 
-  const noLayout = router.pathname.startsWith('/public/') || router.pathname.startsWith('/auth/');
+  const noLayout = router.pathname.startsWith('/public') || router.pathname.startsWith('/auth') || router.pathname.startsWith('/404');
   const adminLayout = router.pathname.startsWith('/admin/');
 
   return (

@@ -1,6 +1,7 @@
 import { getCsrfToken, signIn } from "next-auth/react";
 import { useState } from 'react';
 import { TextField, Button, Container, Typography, Box, Alert, CircularProgress, Divider } from '@mui/material';
+import HomePageFooter from "@/components/public/homepageFooter";
 
 export default function Signup({ csrfToken }) {
   const [email, setEmail] = useState('');
@@ -44,6 +45,7 @@ export default function Signup({ csrfToken }) {
   }
 
   return (
+    <>
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
@@ -96,6 +98,9 @@ export default function Signup({ csrfToken }) {
 
       </Box>
     </Container>
+    <HomePageFooter/>
+    </>
+
   );
 }
 

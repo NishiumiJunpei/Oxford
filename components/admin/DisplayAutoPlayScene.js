@@ -165,6 +165,10 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                 await playAudio(sentence.sentenceE, 'en', sentence.speakerGender);
 
                 if (isAutoPlaying){
+                    if (sceneList[sceneIndex].phraseToLearn.length == 0 && (sceneList[sceneIndex].sentences.length -1 == sentenceIndex) ){
+                        await new Promise(r => setTimeout(r, 3000));
+                    }
+
                     handleNextStep()
                 } 
 
@@ -198,7 +202,7 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
             <Box sx={{ width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5 }}>
                 {activeStep === 'tableOfContents' && (
                     <>
-                        <Typography variant="h5" sx={{mt:3}}>英語を使うシーン</Typography>
+                        <Typography variant="h5" sx={{mt:3}}>Table of Contents</Typography>
                         <List>
                             {sceneList.map((scene, index) => (
                                 <ListItem key={index}>{index+1}.{scene.title}</ListItem>

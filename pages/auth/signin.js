@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getCsrfToken, signIn } from "next-auth/react";
 import { TextField, Button, Container, Typography, Box, Divider, Link, CircularProgress } from '@mui/material';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
+import HomePageFooter from '@/components/public/homepageFooter';
 
 export default function SignIn({ csrfToken }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +48,7 @@ export default function SignIn({ csrfToken }) {
 
 
   return (
+    <>
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
@@ -116,6 +118,8 @@ export default function SignIn({ csrfToken }) {
 
       </Box>
     </Container>
+    <HomePageFooter/>
+    </>
   );
 }
 

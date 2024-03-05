@@ -24,8 +24,9 @@ export default function HomePageFooter() {
                 © 2024 susuEnglish
             </Typography>
             <Typography>
-                <a href="/public/privacyPolicy" sx={{color: '#61dafb', textDecoration: 'none'}}>プライバシーポリシー</a> | 
-                <a href="/public/riyokiyaku" sx={{color: '#61dafb', textDecoration: 'none'}}>利用規約</a> | 
+                <a href="/public/homepage" sx={{color: '#61dafb', textDecoration: 'none'}}>HP</a> 　|　 
+                <a href="/public/privacyPolicy" sx={{color: '#61dafb', textDecoration: 'none'}}>プライバシーポリシー</a> 　|　
+                <a href="/public/riyokiyaku" sx={{color: '#61dafb', textDecoration: 'none'}}>利用規約</a> 　|　
                 <a href="/public/inquiry" sx={{color: '#61dafb', textDecoration: 'none'}}>お問い合わせ</a>
             </Typography>
             </Box>
