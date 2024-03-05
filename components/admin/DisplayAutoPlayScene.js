@@ -164,7 +164,7 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                 await playAudio(sentence.sentenceE, 'en', sentence.speakerGender);
 
                 if (isAutoPlaying){
-                    if (sceneList[sceneIndex].phraseToLearn.length == 0 && (sceneList[sceneIndex].sentences.length -1 == sentenceIndex) ){
+                    if (sceneList[sceneIndex].sentences.length -1 == sentenceIndex){
                         await new Promise(r => setTimeout(r, 3000));
                     }
                     handleNextStep()
