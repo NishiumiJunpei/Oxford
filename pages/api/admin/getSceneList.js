@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       const spreadsheetId = '1yF-G1zneVKaS2_WxKAwBqDjRQ49eFMlEUzn7s9zG3Eg';
       const range = 'sceneList'; // 読み込むシートと範囲
       const rawData = await getGoogleSheetData(spreadsheetId, range);
-      const displayChunk = 2;
+      const displayChunk = 1;
 
 
       const headers = rawData[0];

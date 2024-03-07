@@ -9,7 +9,17 @@ export const speakerImageUrls = {
     "/images/male7.png",
     "/images/male8.png",
     "/images/male9.png",
-    "/images/male10.png"
+    "/images/male10.png",
+    "/images/male11.png",
+    "/images/male12.png",
+    "/images/male13.png",
+    "/images/male14.png",
+    "/images/male15.png",
+    "/images/male16.png",
+    "/images/male17.png",
+    "/images/male18.png",
+    "/images/male19.png",
+    "/images/male20.png"
   ],
   female: [
     "/images/female1.png",
@@ -21,7 +31,17 @@ export const speakerImageUrls = {
     "/images/female7.png",
     "/images/female8.png",
     "/images/female9.png",
-    "/images/female10.png"
+    "/images/female10.png",
+    "/images/female11.png",
+    "/images/female12.png",
+    "/images/female13.png",
+    "/images/female14.png",
+    "/images/female15.png",
+    "/images/female16.png",
+    "/images/female17.png",
+    "/images/female18.png",
+    "/images/female19.png",
+    "/images/female20.png"
   ]
 };
 

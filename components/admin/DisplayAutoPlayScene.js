@@ -209,6 +209,15 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     };
 
 
+    const adjustFontSize = (text) => {
+        if (text.length > 250) {
+            return "subtitle1"; // より小さいフォントサイズ
+        } else {
+            return "h6"; // 標準のフォントサイズ
+        }
+    };
+    
+
     return (
         <Box sx={{ p: 2 }}>
             <Box sx={{ width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5 }}>
@@ -271,7 +280,9 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                         </Box>
 
                         <Box sx={{ ml: 1, mt: 2 }}>
-                            <Typography variant="h6">{sceneList[sceneIndex].sentences[sentenceIndex].sentenceE}</Typography>
+                            <Typography variant={adjustFontSize(sceneList[sceneIndex].sentences[sentenceIndex].sentenceE)}>
+                                {sceneList[sceneIndex].sentences[sentenceIndex].sentenceE}
+                            </Typography>
                             <Typography variant="body1" color="GrayText" sx={{mt:3}}>{sceneList[sceneIndex].sentences[sentenceIndex].sentenceJ}</Typography>
                         </Box>
                     </Box>
@@ -291,11 +302,20 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                                     <Typography variant="h6">{ptl?.phraseJ}</Typography>
                                 </Box>
 
-                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px', fontSize: '0.8rem' }}>解説</span>                                
-                                <Typography variant="body2">{ptl?.explanation}</Typography>
+                                <Box sx={{mb:1}}>
+                                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px', fontSize: '0.8rem' }}>解説</span>                                
+                                </Box>
+                                <Box sx={{mb:1}}>
+                                    <Typography variant="body1">{ptl?.explanation}</Typography>
+                                </Box>
+    
+                                <Box sx={{mb:1}}>
+                                    <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px', fontSize: '0.8rem' }}>元の文</span>                                
+                                </Box>
+                                <Box sx={{mb:1}}>
+                                    <Typography variant="body1" color="GrayText">{ptl?.originalSentenceE}</Typography>
+                                </Box>
 
-                                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px', fontSize: '0.8rem' }}>元の文</span>                                
-                                <Typography variant="body2" color="GrayText">{ptl?.originalSentenceE}</Typography>
                             </Box>                        
                         ))}
                     </>
