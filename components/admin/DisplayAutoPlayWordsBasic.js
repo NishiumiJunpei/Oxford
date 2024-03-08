@@ -64,16 +64,16 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
 
             while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
 
-                await playAudio(wordList[currentIndex].english);
+                await playAudio({text: wordList[currentIndex].english});
                 if (!isAutoPlaying || isCancelled) break; // 同上
 
 
-                await playAudio(wordList[currentIndex].exampleSentenceE);
+                await playAudio({text: wordList[currentIndex].exampleSentenceE});
                 if (!isAutoPlaying || isCancelled) break; // 同上
 
                 // await new Promise(r => setTimeout(r, 5000)); // 次の音声再生までの間隔
 
-                await playAudio(wordList[currentIndex].exampleSentenceE);
+                await playAudio({text: wordList[currentIndex].exampleSentenceE});
                 if (!isAutoPlaying || isCancelled) break; // 同上
 
                 await new Promise(r => setTimeout(r, 1000)); // 次の音声再生までの間隔

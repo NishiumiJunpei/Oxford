@@ -1,11 +1,7 @@
-import { speakerImageUrls } from '@/utils/variables';
+import { speakerInfo } from '@/utils/variables';
 import { getGoogleSheetData } from '@/utils/googleapi-utils';
 import { convertToSSML } from '@/utils/utils';
 
-function getRandomImageUrl(gender) {
-  const urls = speakerImageUrls[gender.toLowerCase()];
-  return urls[Math.floor(Math.random() * urls.length)];
-}
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -27,20 +23,30 @@ export default async function handler(req, res) {
       });
 
 
+      const speakerSelection = {};
       const sceneList = data
         .filter(row => row.pickForApp === '1')
         .map(scene => {
           if (scene.sentences) {
             scene.sentences = JSON.parse(scene.sentences);
-            const uniqueImageUrls = {
-              male: getRandomImageUrl('male'),
-              female: getRandomImageUrl('female')
-            };
-            scene.sentences.forEach(sentence => {
-              if (sentence?.speakerGender) {
-                sentence.speakerAvatarImageUrl = uniqueImageUrls[sentence.speakerGender.toLowerCase()];
+            
+            scene.sentences = scene.sentences.map(item => {
+              if (!speakerSelection[item.speakerName]) {
+                const genderInfo = speakerInfo[item.speakerGender];
+                const randomSelection = genderInfo[Math.floor(Math.random() * genderInfo.length)];
+                speakerSelection[item.speakerName] = randomSelection;
               }
+          
+              return {
+                ...item,
+                speakerAvatarImageUrl: speakerSelection[item.speakerName].imageUrl,
+                voice:{
+                  langCode: speakerSelection[item.speakerName].langCode,
+                  name: speakerSelection[item.speakerName].voiceName  
+                }
+              };
             });
+
           }
 
           if (scene.phraseToLearn) {
@@ -68,7 +74,8 @@ export default async function handler(req, res) {
               // 4. 結果をscene.phraseToLearnに代入
               scene.phraseToLearn = chunkedPtl;
           }
-                    return scene;
+
+          return scene;
         });
 
       if (sceneList.length === 0) {

@@ -8,16 +8,27 @@ export default async function handler(req, res) {
       const text = req.body.text;
       const lang = req.body.lang || 'en'
       const gender = req.body.gender || 'female'
+      const specifiedVoice = req.body.specifiedVoice
 
-      //https://cloud.google.com/text-to-speech/docs/voices?hl=ja
-      const languageCode = lang == 'en' ? 'en-US' : 
-                          lang == 'ja' ? 'ja-JP' : 'en-US'
-                    
-      const name = (lang === 'en' && gender === 'male') ? 'en-US-Neural2-D' :
-          (lang === 'en' && gender === 'female') ? 'en-US-Neural2-F' :
-          (lang === 'ja' && gender === 'male') ? 'ja-JP-Neural2-C' : 
-          (lang === 'ja' && gender === 'female') ? 'ja-JP-Neural2-B' : 
-          'en-US-Neural2-F'; // デフォルト値
+      let languageCode
+      let name
+
+      if (specifiedVoice){
+        languageCode = specifiedVoice.langCode
+        name = specifiedVoice.name
+        
+      }else{
+        //https://cloud.google.com/text-to-speech/docs/voices?hl=ja
+        languageCode = lang == 'en' ? 'en-US' : 
+                            lang == 'ja' ? 'ja-JP' : 'en-US'
+                      
+        name = (lang === 'en' && gender === 'male') ? 'en-US-Neural2-D' :
+            (lang === 'en' && gender === 'female') ? 'en-US-Neural2-F' :
+            (lang === 'ja' && gender === 'male') ? 'ja-JP-Neural2-C' : 
+            (lang === 'ja' && gender === 'female') ? 'ja-JP-Neural2-B' : 
+            'en-US-Neural2-F'; // デフォルト値
+
+      }
 
       // const ssmlFlag = /^\s*<speak>/.test(text);
       const request = {

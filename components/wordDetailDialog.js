@@ -518,7 +518,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                 <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
                     <Box>
                         {word?.english}            
-                        <IconButton onClick={() => playAudio(word.english)}>
+                        <IconButton onClick={() => playAudio({text: word.english})}>
                             <VolumeUpIcon />
                         </IconButton>
                     </Box>
@@ -561,7 +561,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
                                 <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
-                                <IconButton onClick={() => playAudio(word.japanese, 'ja')} size="small">
+                                <IconButton onClick={() => playAudio({text: word.japanese, lang: 'ja'})} size="small">
                                     <VolumeUpIcon />
                                 </IconButton>
                             </Typography>
@@ -571,10 +571,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
                             <Typography variant="body2" style={{ marginTop: 20, display: 'flex', alignItems: 'center' }}>
                                 <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
-                                <IconButton onClick={() => playAudio(word.exampleSentenceE)} size="small">
+                                <IconButton onClick={() => playAudio({text: word.exampleSentenceE})} size="small">
                                 <VolumeUpIcon /><Typography variant="body2">(英)</Typography>
                                 </IconButton>
-                                <IconButton onClick={() => playAudio(word.exampleSentenceJ, 'ja')} size="small">
+                                <IconButton onClick={() => playAudio({text: word.exampleSentenceJ, lang: 'ja'})} size="small">
                                     <VolumeUpIcon /><Typography variant="body2">(日)</Typography>
                                 </IconButton>
                             </Typography>
@@ -590,9 +590,6 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             <>
                                 <Typography variant="body2" style={{ marginTop: 20, }}>
                                     <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>単語を使うシーン</span>
-                                    {/* <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
-                                        <VolumeUpIcon />
-                                    </IconButton> */}
                                 </Typography>
                                 <Typography variant="body1">
                                     {word?.usage.map((u, index)=>(
@@ -612,7 +609,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
                             <Typography variant="body2" style={{ marginTop: 20 }}>
                                 <span style={{ backgroundColor: '#D3D3D3', padding: '4px' }}>類語</span>
-                                <IconButton onClick={() => playAudio(word?.synonyms)} size="small">
+                                <IconButton onClick={() => playAudio({text: word?.synonyms})} size="small">
                                     <VolumeUpIcon />
                                 </IconButton>
                             </Typography>
@@ -752,7 +749,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                     </Typography>
                                 </Box>
                                 <Box sx={{mb: 2}}>
-                                    <IconButton onClick={() => playAudio(word.userWordListStatus?.questionJE, 'ja')} size="small">
+                                    <IconButton onClick={() => playAudio({text:word.userWordListStatus?.questionJE, lang:'ja'})} size="small">
                                         <VolumeUpIcon />
                                     </IconButton>
                                 </Box>
@@ -768,7 +765,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                       </Typography>
                       {word.userWordListStatus?.answerJE && (
                         <Box sx={{mb: 2}}>
-                            <IconButton onClick={() => playAudio(word.userWordListStatus?.answerJE)} size="small">
+                            <IconButton onClick={() => playAudio({text: word.userWordListStatus?.answerJE})} size="small">
                                 <VolumeUpIcon />
                             </IconButton>
                         </Box>

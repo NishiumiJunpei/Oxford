@@ -14,6 +14,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
 import SubTitleTypography from '../subTitleTypography';
+import { speakerInfo } from '@/utils/variables';
 
 
 const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
@@ -143,7 +144,7 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                 }
 
             }else if(activeStep == 'title'){
-                playAudio(sceneList[sceneIndex].title, 'ja', 'female')
+                playAudio({text: sceneList[sceneIndex].title, lang: 'ja', gender: 'female'})
                 if (isAutoPlaying){
                     await new Promise(r => setTimeout(r, 5000));
                     handleNextStep()
@@ -151,7 +152,10 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
 
             }else if (activeStep == 'playAudio') {
                 for (const sentence of sceneList[sceneIndex].sentences) {
-                    await playAudio(sentence.sentenceE, 'en', sentence.speakerGender);
+                    await playAudio({
+                        text: sentence.sentenceE, 
+                        specifiedVoice: sentence.voice
+                    });
                 }
 
                 if (isAutoPlaying){
@@ -161,7 +165,10 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
 
             } else if (activeStep == 'playAudioWithSentences') {
                 const sentence = sceneList[sceneIndex].sentences[sentenceIndex];
-                await playAudio(sentence.sentenceE, 'en', sentence.speakerGender);
+                await playAudio({
+                    text: sentence.sentenceE, 
+                    specifiedVoice: sentence.voice
+                });
 
                 if (isAutoPlaying){
                     if (sceneList[sceneIndex].sentences.length -1 == sentenceIndex){
@@ -173,8 +180,8 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
             } else if (activeStep == 'PlayAudioPhraseToLearn') {
                 const ptl = sceneList[sceneIndex].phraseToLearn[phraseToLearnIndex];
                 for (const phrase of ptl) {
-                    await playAudio(phrase.phraseE, 'en', 'female');
-                    await playAudio(phrase.explanation, 'ja', 'male');
+                    await playAudio({text: phrase.phraseE, lang: 'en', gender: 'female'});
+                    await playAudio({text: phrase.explanation, lang: 'ja', gender: 'male'});
                 }
                 
 
@@ -192,6 +199,7 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
         playAudioScene()
 
     },[activeStep, sentenceIndex, phraseToLearnIndex, isAutoPlaying])
+
 
 
     const handleAutoPlayToggle = () => {
