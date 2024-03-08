@@ -30,7 +30,6 @@ export default async function handler(req, res) {
           if (scene.sentences) {
             scene.sentences = JSON.parse(scene.sentences);
             if (!Array.isArray(scene.sentences)) {
-              console.log('test', scene.sentences)
               throw new TypeError("sentences is not an array");
             }
                       

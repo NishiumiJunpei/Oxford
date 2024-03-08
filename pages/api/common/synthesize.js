@@ -30,6 +30,7 @@ export default async function handler(req, res) {
 
       }
 
+      console.log('speaker test', languageCode, name)
       // const ssmlFlag = /^\s*<speak>/.test(text);
       const request = {
         // input: ssmlFlag ? { ssml: text } : { text: text },

@@ -5,15 +5,8 @@ import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, useMediaQuery, Link,
     useTheme,CircularProgress, Box,  Divider, Tooltip, IconButton, Tabs, Tab, Paper, TextField, Grid,
     Accordion, AccordionActions, AccordionSummary, AccordionDetails, Step, Stepper, StepLabel, List, ListItem, Avatar } from '@mui/material';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import StarIcon from '@mui/icons-material/Star';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import StopIcon from '@mui/icons-material/Stop';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
-import SubTitleTypography from '../subTitleTypography';
 import { speakerInfo } from '@/utils/variables';
 
 
@@ -26,9 +19,22 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     const [sentenceIndex, setSentenceIndex] = useState(0);
     const [phraseToLearnIndex, setPhraseToLearnIndex] = useState(0);
     const [activeStep, setActiveStep] = useState('tableOfContents');
-    
-    
-    const handleNextScene = () => {
+        
+    const handleNextScene = async () => {
+        // console.log('test')
+        // for (let i = 0; i<20; i++){
+        //     const specifiedVoice = {
+        //         langCode: speakerInfo.male[i].langCode,
+        //         name: speakerInfo.male[i].voiceName,
+        //     }
+        //     console.log(i+1, 'speaker:', speakerInfo.male[i].voiceName)
+        //     await playAudio({text:sceneList[sceneIndex].sentences[1].sentenceE, specifiedVoice})
+        //     await playAudio({text:sceneList[sceneIndex].sentences[2].sentenceE, specifiedVoice})    
+        // }
+
+        // return 
+
+
         if (activeStep == 'tableOfContents'){
             setActiveStep('title')
         }else if (sceneIndex < sceneList.length - 1) {
