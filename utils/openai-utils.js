@@ -360,3 +360,98 @@ export async function generateReviewCommentJE(english, japanese, questionJE, ans
   }
 }
 
+
+
+export async function generateSceneSentences(sceneTitle) {
+  try{
+
+    const content = `
+    あなたは英語圏のあらゆる分野に精通した知識人で、人々の会話やプレゼンなどverval communicationに誰よりも詳しいです。
+    下記のシーンについて、具体的かつリアリティのある英語の会話またはプレゼン・アナウンスを作成してください。各会話やプレゼンは、以下の4つの項目を含むオブジェクトで構成されます。固有名詞は架空のものをあてはめてください。
+    内容は実際にありそうなリアルなものにしてください。
+    内容は少し込み入ったものにし、5~6つの発言や会話があるようにしてください。
+    スピーカは２名か３名にしてください。
+    回答は下記4つの項目を含むオブジェクトの配列で、JSON形式にしてください。その他のコメントは不要です。
+    "speakerName": スピーカの名前（欧米人）
+    "speakerGender": male or female
+    "sentenceE": 英語の文章
+    "sentenceJ": 日本語訳
+    ＃シーン
+    ${sceneTitle}
+    #アウトプットフォーマット
+    {
+      scene:[
+        {speakerName: XXXX, ...},
+        {},
+        ...
+      ]
+    }
+    `;
+    
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      response_format: { "type": "json_object" },
+      temperature: 0.2,
+    });
+
+    const responseJSON  = JSON.parse(response.choices[0].message.content)
+
+    return responseJSON.scene;
+
+
+
+  } catch (error) {
+    console.error('generateSceneSentences error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+
+export async function generatePhraseToLearnFromScene(sceneSentences) {
+  try{
+
+    const content = `
+    あなたは日本一人気がある日本人に英語を教える教師です。
+    下記のJSON形式のインプットからsentenceEを抽出して、英語学習者（英語中級者）が覚えるべき英単語またはフレーズを最大6つ選んで解説文を作ってください。
+    回答はアウトプットフォーマットの通りJSON形式にしてください。
+    phraseEは解説対象の英単語、またはフレーズ
+    phraseJはphraseJの日本語訳
+    explanationは解説文（日本語のみで、英単語は含めないでください）
+    indexには、解説文を抽出したインプットの配列の要素番号を入れてください。
+    
+    ＃インプット
+    ${sceneSentences}
+    
+    
+    ＃アウトプットフォーマット
+    {
+      phrases:
+      [
+        {""phraseE"": ""XXXX"",
+        ""phraseJ"": ""XXXX"",
+        ""explanation"": ""XXXX"",
+        ""index"":""X""
+        }
+        ]
+    
+    }
+    `;
+    
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      response_format: { "type": "json_object" },
+      temperature: 0.2,
+    });
+
+    const responseJSON = JSON.parse(response.choices[0].message.content)
+    
+    return responseJSON.phrases;
+
+  } catch (error) {
+    console.error('generatePhraseToLearnFromScene error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}

@@ -29,7 +29,11 @@ export default async function handler(req, res) {
         .map(scene => {
           if (scene.sentences) {
             scene.sentences = JSON.parse(scene.sentences);
-            
+            if (!Array.isArray(scene.sentences)) {
+              console.log('test', scene.sentences)
+              throw new TypeError("sentences is not an array");
+            }
+                      
             scene.sentences = scene.sentences.map(item => {
               if (!speakerSelection[item.speakerName]) {
                 const genderInfo = speakerInfo[item.speakerGender];
@@ -84,6 +88,7 @@ export default async function handler(req, res) {
       res.status(200).json({ sceneList });
 
     } catch (error) {
+      console.log('error', error)
       res.status(500).json({ error: error.message });
     }
   } else {
