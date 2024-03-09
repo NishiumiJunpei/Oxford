@@ -13,8 +13,7 @@ export default function Home() {
     const fetchSceneList = async () => {
       setIsLoading(true);
       try {
-        const sceneIds = [1,2,3,4,5]
-        const response = await axios.post('/api/admin/getSceneList', { sceneIds });
+        const response = await axios.post('/api/admin/getSceneList');
         setSceneList(response.data.sceneList);
       } catch (error) {
         console.error('Error fetching scene list:', error);

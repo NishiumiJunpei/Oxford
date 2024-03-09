@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       console.log(`Processing row ${currentIndex + 1} of ${total}`); // 現在処理中の件数を表示
 
       if (!row.sentences) {
-        const response = await generateSceneSentences(row.title);
+        const response = await generateSceneSentences(row.title, row.description);
         row.sentences = JSON.stringify(response)
       }
 
