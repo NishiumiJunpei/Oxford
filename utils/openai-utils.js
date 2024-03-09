@@ -362,7 +362,7 @@ export async function generateReviewCommentJE(english, japanese, questionJE, ans
 
 
 
-export async function generateSceneSentences(title, description) {
+export async function generateSceneSentences(movieTitle, title, description) {
   try{
 
     const content = `
@@ -377,7 +377,7 @@ export async function generateSceneSentences(title, description) {
     "sentenceE": 英語の文章
     "sentenceJ": 日本語訳
     ＃シーン
-    ${title}
+    ${movieTitle} - ${title}
     ${description}
     #アウトプットフォーマット
     {
