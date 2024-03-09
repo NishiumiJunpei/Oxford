@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Box, Checkbox, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import DisplayAutoPlayScene from '@/components/admin/DisplayAutoPlayScene';
+import SpeakerSelector from '@/components/admin/speakerSelector';
 
 
 export default function Home() {
   const [sceneList, setSceneList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState('sceneList');
+  const [openingScript, setOpeningScript] = useState('');
+  const [selectedSpeaker, setSelectedSpeaker] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
 
   useEffect(() => {
     const fetchSceneList = async () => {
@@ -29,6 +34,7 @@ export default function Home() {
   }
 
   const handleClickButtonGenerateData = async () => {
+    setShowSuccessMessage(false); 
     try {
       // APIエンドポイントにPOSTリクエストを送信
       const response = await fetch('/api/admin/createSceneData', {
@@ -42,6 +48,7 @@ export default function Home() {
           // 例: { key: "value" }
         }),
       });
+      setShowSuccessMessage(true); 
   
       if (!response.ok) {
         // レスポンスがOKでない場合には、エラーを投げる
@@ -58,6 +65,15 @@ export default function Home() {
       console.error('Error creating scene data:', error.message);
     }
   };
+
+  const handleOpeningScriptChange = (script) => {
+    setOpeningScript(script);
+  };
+
+  const handleSpeakerSelect = (speaker) => {
+    setSelectedSpeaker(speaker);
+  };
+
   
   console.log('test - sceneList', sceneList)
   return (
@@ -71,8 +87,14 @@ export default function Home() {
         <>
          <Box sx={{mt: 3, mb: 3}}>
             <Button variant="contained" onClick={handleClickButtonAutoPlayStart} sx={{mr: 3}}>オート再生へ</Button>
-            <Button variant="contained" onClick={handleClickButtonGenerateData}>データ生成</Button>
-          </Box>
+            <Button variant="contained" onClick={handleClickButtonGenerateData} disabled={showSuccessMessage}>データ生成</Button>            
+         </Box>
+          {showSuccessMessage && (
+            <Box>
+              <Typography color="success.main">データ生成をリクエストしました。</Typography>
+            </Box>
+          )}
+
 
           {currentStep === 'sceneList' && (
             <Box>
@@ -103,13 +125,19 @@ export default function Home() {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <SpeakerSelector onOpeningScriptChange={handleOpeningScriptChange} onSpeakerSelect={handleSpeakerSelect} />
+
             </Box>
 
           )}
 
           {currentStep === 'autoPlay' && (
             <Box>              
-              <DisplayAutoPlayScene sceneList={sceneList} />
+              <DisplayAutoPlayScene 
+                sceneList={sceneList} 
+                openingScript={openingScript}
+                selectedSpeaker={selectedSpeaker}
+              />
             </Box>
 
           )}

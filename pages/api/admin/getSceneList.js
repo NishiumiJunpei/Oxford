@@ -43,10 +43,7 @@ export default async function handler(req, res) {
               return {
                 ...item,
                 speakerAvatarImageUrl: speakerSelection[item.speakerName].imageUrl,
-                voice:{
-                  langCode: speakerSelection[item.speakerName].langCode,
-                  name: speakerSelection[item.speakerName].voiceName  
-                }
+                voice:speakerSelection[item.speakerName].voice,
               };
             });
 

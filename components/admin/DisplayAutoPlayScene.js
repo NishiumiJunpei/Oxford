@@ -10,7 +10,7 @@ import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
 import { speakerInfo } from '@/utils/variables';
 
 
-const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
+const DisplayAutoPlayScene = ({ open, onClose, sceneList, openingScript, selectedSpeaker }) => {
     const router = useRouter();
     const theme = useTheme();
     const [sceneIndex, setSceneIndex] = useState(0);
@@ -21,19 +21,6 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     const [activeStep, setActiveStep] = useState('tableOfContents');
         
     const handleNextScene = async () => {
-        // console.log('test')
-        // for (let i = 0; i<20; i++){
-        //     const specifiedVoice = {
-        //         langCode: speakerInfo.male[i].langCode,
-        //         name: speakerInfo.male[i].voiceName,
-        //     }
-        //     console.log(i+1, 'speaker:', speakerInfo.male[i].voiceName)
-        //     await playAudio({text:sceneList[sceneIndex].sentences[1].sentenceE, specifiedVoice})
-        //     await playAudio({text:sceneList[sceneIndex].sentences[2].sentenceE, specifiedVoice})    
-        // }
-
-        // return 
-
 
         if (activeStep == 'tableOfContents'){
             setActiveStep('title')
@@ -60,6 +47,7 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     };
 
     const handleReset = () =>{
+        stopAudio()
         setSceneIndex(0);
         setSentenceIndex(0)
         setPhraseToLearnIndex(0)
@@ -142,10 +130,15 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
     
     useEffect(()=>{
         const playAudioScene = async () => {
-
             if (activeStep == 'tableOfContents'){
                 if (isAutoPlaying){
-                    await new Promise(r => setTimeout(r, 5000));
+                    await new Promise(r => setTimeout(r, 3000));
+                    if(openingScript){
+                        await playAudio({text: openingScript, specifiedVoice: selectedSpeaker.voice})
+                    }
+        
+        
+                    await new Promise(r => setTimeout(r, 2000));
                     handleNextScene()    
                 }
 
@@ -231,19 +224,28 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
         }
     };
     
-
+    console.log('test', selectedSpeaker)
     return (
         <Box sx={{ p: 2 }}>
             <Box sx={{ width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5 }}>
                 {activeStep === 'tableOfContents' && (
                     <>
-                        <Typography variant="h5" sx={{mt:3}}>Table of Contents</Typography>
-                        <List>
-                            {sceneList.map((scene, index) => (
-                                <ListItem key={index}>{index+1}.{scene.title}</ListItem>
-                            ))}
-                        </List>
-
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}> {/* 左側のコンテンツエリア */}                    
+                            <Avatar alt="Selected Speaker" src={selectedSpeaker.imageUrl} sx={{ width: 70, height: 70, mt: 3, mb: 5 }} />
+                            <Typography variant="h5" sx={{color: '#364e96', padding: '0.5em 0', borderTop: 'solid 3px #364e96', borderBottom: 'solid 3px #364e96'}}>
+                                {sceneList[0].movieTitle
+                            }</Typography>
+                        </Grid>
+                        <Grid item xs={6}> {/* 右側の目次エリア */}
+                            <Typography variant="h5" sx={{mt:5}}>Table of Contents</Typography>
+                            <List>
+                                {sceneList.map((scene, index) => (
+                                    <ListItem key={index}>{index+1}.{scene.title}</ListItem>
+                                ))}
+                            </List>
+                        </Grid>                    
+                    </Grid>
                     </>
                 )}
 
@@ -360,6 +362,12 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList }) => {
                     <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleNextStep}>＞</Button>
                     <Button variant="outlined" color="primary" sx={{ mr: 1 }} onClick={handleNextScene}>＞＞</Button>
                 </Box>
+            </Box>
+
+            <Box>
+                <Typography varaint="body2">
+                    {openingScript}
+                </Typography>
             </Box>
         </Box>
 
