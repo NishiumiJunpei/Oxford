@@ -413,12 +413,12 @@ export async function generatePhraseToLearnFromScene(sceneSentences) {
   try{
 
     const content = `
-    あなたは日本一人気がある日本人に英語を教える教師です。
-    下記のJSON形式のインプットからsentenceEを抽出して、英語学習者（英語中級者）が覚えるべき英単語またはフレーズを最大6つ選んで解説文を作ってください。
+    あなたは日本一人気がある英語を教える先生です。
+    下記のJSON形式のインプットからsentenceEを抽出して、各sentenceEで相対的に難しいフレーズ(名詞だけではなく動詞や副詞も含む)を選んで解説文を作ってください。
     回答はアウトプットフォーマットの通りJSON形式にしてください。
     phraseEは解説対象の英単語、またはフレーズ
     phraseJはphraseJの日本語訳
-    explanationは解説文（日本語のみで、英単語は含めないでください）
+    explanationは解説文（日本語のみで、"必ず"英単語は含めないでください）
     indexには、解説文を抽出したインプットの配列の要素番号を入れてください。
     
     ＃インプット

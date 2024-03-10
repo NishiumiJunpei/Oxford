@@ -2,9 +2,6 @@
 //AU, GBは微妙なのでペンディング。例えば、Miaをえむあいえーと発音する。
 export const speakerInfo = {
   male: [
-    // { imageUrl: "/images/male1.png", voice: {languageCode: 'en-AU', name: "en-AU-Neural2-B"} },　音声最悪！！
-    // { imageUrl: "/images/male2.png", voice: {languageCode: 'en-AU', name: "en-AU-Neural2-D"} },　音声最悪！！
-    // { imageUrl: "/images/male3.png", voice: {languageCode: 'en-AU', name: "en-AU-News-G"} },
     // { imageUrl: "/images/male4.png", voice: {languageCode: 'en-GB', name: "en-GB-Neural2-B"} },
     // { imageUrl: "/images/male5.png", voice: {languageCode: 'en-GB', name: "en-GB-Neural2-D"} },
     // { imageUrl: "/images/male6.png", voice: {languageCode: 'en-GB', name: "en-GB-News-J"} },
@@ -35,9 +32,6 @@ export const speakerInfo = {
     { imageUrl: "/images/male20.png", voice: {languageCode: 'en-US', name: "en-US-Standard-A"} }
   ],
   female: [
-    // { imageUrl: "/images/female1.png", voice: {languageCode: 'en-AU', name: "en-AU-Neural2-C"} },
-    // { imageUrl: "/images/female2.png", voice: {languageCode: 'en-AU', name: "en-AU-News-E"} },
-    // { imageUrl: "/images/female3.png", voice: {languageCode: 'en-AU', name: "en-AU-Neural2-A"} },
     // { imageUrl: "/images/female4.png", voice: {languageCode: 'en-GB', name: "en-GB-Neural2-A"} },
     // { imageUrl: "/images/female5.png", voice: {languageCode: 'en-GB', name: "en-GB-Neural2-C"} },
     // { imageUrl: "/images/female6.png", voice: {languageCode: 'en-GB', name: "en-GB-Neural2-F"} },

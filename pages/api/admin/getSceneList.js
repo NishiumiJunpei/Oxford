@@ -32,14 +32,30 @@ export default async function handler(req, res) {
             if (!Array.isArray(scene.sentences)) {
               throw new TypeError("sentences is not an array");
             }
-                      
+
+            const alreadySelected = []; // 選択済みのspeakerInfo要素を追跡
             scene.sentences = scene.sentences.map(item => {
               if (!speakerSelection[item.speakerName]) {
                 const genderInfo = speakerInfo[item.speakerGender];
-                const randomSelection = genderInfo[Math.floor(Math.random() * genderInfo.length)];
-                speakerSelection[item.speakerName] = randomSelection;
+            
+                // まだ選択されていない要素のみをフィルタリング
+                const availableSelections = genderInfo.filter(info => !alreadySelected.includes(info));
+            
+                if (availableSelections.length > 0) {
+                  // 利用可能な要素からランダムに選択
+                  const randomIndex = Math.floor(Math.random() * availableSelections.length);
+                  const randomSelection = availableSelections[randomIndex];
+            
+                  // 選択済み配列とspeakerSelectionに追加
+                  alreadySelected.push(randomSelection);
+                  speakerSelection[item.speakerName] = randomSelection;
+                } else {
+                  // すべての要素が既に選択されている場合（オプション：エラーハンドリングや代替ロジックをここに追加）
+                  console.warn('All elements have been selected. Need to handle this scenario.');
+                }
               }
-          
+            
+                      
               return {
                 ...item,
                 speakerAvatarImageUrl: speakerSelection[item.speakerName].imageUrl,

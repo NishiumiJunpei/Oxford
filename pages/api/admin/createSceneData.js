@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
       const range = `${sheetName}!A${row.rowIndex}:Z${row.rowIndex}`; // 更新する行の範囲
       await writeToGoogleSheet(spreadsheetId, range, [
-        [row.id, row.pickForApp, row.category, row.title, row.description, row.sentences, row.phraseToLearn]
+        [row.id, row.pickForApp, row.category, row.movieTitle, row.title, row.description, row.sentences, row.phraseToLearn]
       ]);
 
       console.log(`Processed row ${currentIndex + 1} of ${total}`);

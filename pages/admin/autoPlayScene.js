@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from "next/router";
 import { Box, Checkbox, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import DisplayAutoPlayScene from '@/components/admin/DisplayAutoPlayScene';
 import SpeakerSelector from '@/components/admin/speakerSelector';
 
 
 export default function Home() {
+  const router = useRouter();
   const [sceneList, setSceneList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState('sceneList');
@@ -34,7 +36,7 @@ export default function Home() {
   }
 
   const handleClickButtonGenerateData = async () => {
-    setShowSuccessMessage(false); 
+    setShowSuccessMessage(true); 
     try {
       // APIエンドポイントにPOSTリクエストを送信
       const response = await fetch('/api/admin/createSceneData', {
@@ -48,18 +50,10 @@ export default function Home() {
           // 例: { key: "value" }
         }),
       });
-      setShowSuccessMessage(true); 
+      setShowSuccessMessage(false); 
+      router.reload()
+      // router.push('/admin/autoPlayScene')
   
-      if (!response.ok) {
-        // レスポンスがOKでない場合には、エラーを投げる
-        throw new Error('Something went wrong with the request.');
-      }
-  
-      // レスポンスデータをJSON形式で取得
-      const data = await response.json();
-  
-      // 成功時の処理をここに記述
-      console.log('Successfully created scene data:', data);
     } catch (error) {
       // エラーハンドリングをここに記述
       console.error('Error creating scene data:', error.message);
@@ -86,7 +80,6 @@ export default function Home() {
       ) : (
         <>
          <Box sx={{mt: 3, mb: 3}}>
-            <Button variant="contained" onClick={handleClickButtonAutoPlayStart} sx={{mr: 3}}>オート再生へ</Button>
             <Button variant="contained" onClick={handleClickButtonGenerateData} disabled={showSuccessMessage}>データ生成</Button>            
          </Box>
           {showSuccessMessage && (
@@ -126,6 +119,9 @@ export default function Home() {
                 </Table>
               </TableContainer>
               <SpeakerSelector onOpeningScriptChange={handleOpeningScriptChange} onSpeakerSelect={handleSpeakerSelect} />
+              <Box sx={{mt: 2}}>
+                <Button variant="contained" onClick={handleClickButtonAutoPlayStart} sx={{mr: 3}}>オート再生</Button>
+              </Box>
 
             </Box>
 

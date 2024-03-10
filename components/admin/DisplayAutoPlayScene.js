@@ -60,7 +60,11 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList, openingScript, selecte
     const handleNextStep = () => {
         switch (activeStep) {
             case 'title':
-                setActiveStep('playAudio');
+                if (sceneList[sceneIndex].category == 'news'){
+                    setActiveStep('playAudioWithSentences');
+                }else{
+                    setActiveStep('playAudio');
+                }
                 break;
             case 'playAudio':
                 setActiveStep('playAudioWithSentences');
