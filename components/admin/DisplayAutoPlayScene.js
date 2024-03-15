@@ -63,7 +63,8 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList, openingScript, selecte
                 if (sceneList[sceneIndex].category == 'news'){
                     setActiveStep('playAudioWithSentences');
                 }else{
-                    setActiveStep('playAudio');
+                    setActiveStep('playAudioWithSentences'); // 音だけはなしにする
+                    // setActiveStep('playAudio');  
                 }
                 break;
             case 'playAudio':
