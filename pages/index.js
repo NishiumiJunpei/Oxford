@@ -36,7 +36,6 @@ export default function Home() {
         setProgressOverLastWeek(response.data.progressOverLastWeek)
         setNextGoal(response.data.nextGoal)
         setIsLoading(false);  
-        console.log(response.data.progressOverLastWeek)
       } catch(error){
         console.error('Error fetching words:', error);
       }

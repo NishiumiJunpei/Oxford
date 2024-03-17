@@ -29,7 +29,6 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     try {
       const currentTime =  new Date().toISOString()
       const response = await axios.get(`/api/word-master/getSrWordList?currentTime=${currentTime}`);
-      console.log('test', response.data.srWordList)
       setSrWordList(response.data.srWordList);
       setSrCount(response.data.srCount)
     } catch (error) {

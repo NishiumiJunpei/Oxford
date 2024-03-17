@@ -126,7 +126,6 @@ const DisplayAutoPlayWordsReproduction = ({ open, onClose, wordList }) => {
       
 
     const word = wordList[index];
-    console.log('test', word.imageUrl)
 
     return (
         <Box sx={{ p: 2, }}>

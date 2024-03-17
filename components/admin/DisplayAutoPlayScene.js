@@ -60,7 +60,7 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList, openingScript, selecte
     const handleNextStep = () => {
         switch (activeStep) {
             case 'title':
-                if (sceneList[sceneIndex].category == 'news'){
+                if (sceneList[sceneIndex].type == 'news'){
                     setActiveStep('playAudioWithSentences');
                 }else{
                     setActiveStep('playAudioWithSentences'); // 音だけはなしにする
@@ -229,7 +229,6 @@ const DisplayAutoPlayScene = ({ open, onClose, sceneList, openingScript, selecte
         }
     };
     
-    console.log('test', selectedSpeaker)
     return (
         <Box sx={{ p: 2 }}>
             <Box sx={{ width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5 }}>

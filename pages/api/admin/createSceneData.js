@@ -29,18 +29,18 @@ export default async function handler(req, res) {
       console.log(`Processing row ${currentIndex + 1} of ${total}`); // 現在処理中の件数を表示
 
       if (!row.sentences) {
-        const response = await generateSceneSentences(row.movieTitle, row.title, row.description);
+        const response = await generateSceneSentences(row.movieTitle, row.title, row.description, row.engLevel);
         row.sentences = JSON.stringify(response)
       }
 
       if (!row.phraseToLearn) {
-        const response = await generatePhraseToLearnFromScene(row.sentences);
+        const response = await generatePhraseToLearnFromScene(row.sentences, row.engLevel);
         row.phraseToLearn = JSON.stringify(response)
       }
 
       const range = `${sheetName}!A${row.rowIndex}:Z${row.rowIndex}`; // 更新する行の範囲
       await writeToGoogleSheet(spreadsheetId, range, [
-        [row.id, row.pickForApp, row.category, row.movieTitle, row.title, row.description, row.sentences, row.phraseToLearn]
+        [row.id, row.pickForApp, row.type, row.category, row.movieTitle, row.title, row.description, row.engLevel, row.sentences, row.phraseToLearn]
       ]);
 
       console.log(`Processed row ${currentIndex + 1} of ${total}`);

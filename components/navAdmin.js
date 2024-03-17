@@ -49,7 +49,13 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="英語シーン" />
+          <ListItemText primary="シーン再生" />
+        </ListItem>
+        <ListItem button component="a" href={`/admin/autoPlayPhrase`}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="フレーズ再生" />
         </ListItem>
       </List>
     </Drawer>

@@ -69,7 +69,6 @@ export default function Home() {
   };
 
   
-  console.log('test - sceneList', sceneList)
   return (
     <>
       <Box>
