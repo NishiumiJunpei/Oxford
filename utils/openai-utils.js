@@ -495,29 +495,21 @@ export async function generatePhraseSentences(category1, category2, category2_de
 
 
 
-    const sentencesString = responseJSON1.phrases.map(phrase => `"${phrase}"`).join(", ");
+    const sentenceEs = {
+      phrases: responseJSON1.phrases.map(phrase => ({
+        sentenceE: phrase,
+        sentenceJ: ''
+      }))
+    }
+    const sentencesString = JSON.stringify(sentenceEs, null, 2)
+
 
     const content2 = `
-    下記の英文リストに対して自然な日本語訳を作り、アウトプットフォーマットの通りJSON形式の配列にしてください。
-    必ず、英文リストの要素数の分の配列になるようにしてください。
-    
-    ＃英文リスト
-    [${sentencesString}]
-    
-    ＃アウトプットフォーマット
-    {
-      phrases:
-      [
-        {""sentenceE"": ""XXXX"", ※sentenceEは英文リストの各要素
-        ""sentenceJ"": ""XXXX"",  ※sentenceJは自然な日本語訳
-        },
-        {""sentenceE"": ""XXXX"",
-        ""sentenceJ"": ""XXXX"",
-        },
-        ....
-      ]
-    
-    }
+    下記の英文JSONデータの各要素のsentenceJに、sentenceEの自然な日本語訳を埋めてください。
+    アウトプットは構造を変えずに、JSON形式にしてください。
+
+    #英文JSONデータ
+    ${sentencesString}
     `;
     
 
