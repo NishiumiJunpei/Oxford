@@ -462,6 +462,7 @@ export async function generatePhraseToLearnFromScene(sceneSentences, engLevel) {
 
 export async function generatePhraseSentences(category1, category2, category2_desc, engLevel, numSentence) {
   try{
+    console.log('gpt api called')
 
     const content = `
     あなたは日本一人気がある英語教師です。

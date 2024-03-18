@@ -6,11 +6,13 @@ import { generatePhraseSentences } from '@/utils/openai-utils';
 async function generatePhraseSentencesRepeatedly(category1, category2, category2_desc, engLevel, numSentence) {
   let sentences = [];
   let attempts = 0;
+  const batch = 10
   
-  while (sentences.length <= numSentence && attempts <= numSentence) {
-    console.log(`試行 ${attempts + 1}: 現在 ${sentences.length} 件の文章が生成されています。`);
-    const partialSentences = await generatePhraseSentences(category1, category2, category2_desc, engLevel, numSentence - sentences.length);
-    sentences = sentences.concat(partialSentences);
+  while (sentences.length <= numSentence && attempts <= numSentence && numSentence - sentences.length > 0) {
+    console.log(`試行 ${attempts + 1}: 現在 ${sentences.length} 件の文章が生成されています。あと${numSentence - sentences.length}件の文章作成を試みます`);
+    const num = numSentence - sentences.length > batch ? batch : numSentence - sentences.length
+    const partialSentences = await generatePhraseSentences(category1, category2, category2_desc, engLevel, num);
+    sentences = sentences.concat(partialSentences);        
     attempts++;
   }
 
@@ -30,7 +32,7 @@ export default async function handler(req, res) {
 
   try {
     const { userId } = await getUserFromSession(req, res);
-    const numSentence = 10
+    const numSentence = 20
 
     const { categoryList } = req.body;
     const spreadsheetId = '1JJCY9EkGzlQb-l_0zRiKxjYsVds3Y73beJtEATErWuw';
