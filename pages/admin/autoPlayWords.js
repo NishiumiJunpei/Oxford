@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Box, Checkbox, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import DisplayAutoPlayWordsBasic from '@/components/admin/DisplayAutoPlayWordsBasic';
 import DisplayAutoPlayWordsReproduction from '@/components/admin/DisplayAutoPlayWordsReproduction';
+import { ThemeContext } from '@emotion/react';
 
 
 
@@ -13,6 +14,7 @@ export default function Home() {
   const [wordList, setWordList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState('themeSelection');
+  const [selectedTheme, setSelectedTheme] = useState(null);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -60,6 +62,11 @@ export default function Home() {
     setCurrentStep(mode)
   }
 
+  const handleClickRowTheme = (theme) =>{
+    setSelectedTheme(theme)
+    fetchBlocks(theme.id)
+  }
+
   return (
     <>
       <Box>
@@ -82,7 +89,7 @@ export default function Home() {
                 </TableHead>
                 <TableBody>
                   {themes.map((theme) => (
-                    <TableRow key={theme.id} hover onClick={() => fetchBlocks(theme.id)}>
+                    <TableRow key={theme.id} hover onClick={() => handleClickRowTheme(theme)}>
                       <TableCell>{theme.id}</TableCell>
                       <TableCell>{theme.name}</TableCell>
                     </TableRow>
@@ -133,7 +140,7 @@ export default function Home() {
             <Box>
               <Typography variant="h5" gutterBottom>単語再生</Typography>
               
-              <DisplayAutoPlayWordsBasic wordList={wordList} />
+              <DisplayAutoPlayWordsBasic wordList={wordList} selectedTheme={selectedTheme}/>
             </Box>
 
           )}

@@ -15,7 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
 
 
-const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
+const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) => {
     const router = useRouter();
     const theme = useTheme();
     const [index, setIndex] = useState(0);
@@ -121,6 +121,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList }) => {
 
     return (
         <Box sx={{ p: 2, }}>
+            <Typography>{selectedTheme.name}</Typography>
             <Typography>{index+1} / {wordList.length}</Typography>
     
             {/* <Box sx={{width: 1200, height: 675, backgroundImage: 'url("/images/backgroundForAutoPlay1.webp")', backgroundSize:'cover', padding: 3, pt: 6}}> */}

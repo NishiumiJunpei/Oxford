@@ -54,6 +54,10 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
     const handlePrevStep = () => {
         switch (activeStep) {
           case 'playAudio':
+            if (phraseIndex != 0){
+                setPhraseIndex(phraseIndex - 1)
+                setActiveStep('playAudioWithSentences');
+            }
             break;
           case 'playAudioWithSentences':
             setActiveStep('playAudio');
@@ -143,7 +147,7 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
 
 
     const adjustFontSize = (text) => {
-        if (text.length > 250) {
+        if (text.length > 100) {
             return "h5"; // より小さいフォントサイズ
         } else {
             return "h4"; // 標準のフォントサイズ
@@ -159,11 +163,13 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                 {activeStep === 'tableOfContents' && (
                     <>
                     <Grid container spacing={2}>
-                        <Grid item xs={6}> {/* 左側のコンテンツエリア */}                    
-                            <Avatar alt="Selected Speaker" src={selectedSpeaker.imageUrl} sx={{ width: 70, height: 70, mt: 3, mb: 5 }} />
-                            <Typography variant="h5" sx={{color: {textColor}, padding: '0.5em 0', borderTop: `solid 3px ${textColor}`, borderBottom: `solid 3px ${textColor}`}}>
-                                {categoryList[0].category1}
-                            </Typography>
+                        <Grid item xs={6} > {/* 左側のコンテンツエリア */}                    
+                            <Avatar alt="Selected Speaker" src={selectedSpeaker.imageUrl} sx={{ width: 70, height: 70, mt: 5, mb: 5 }} />
+                            <Box sx={{width: '80%'}}>
+                                <Typography variant="h5" sx={{color: textColor, padding: '0.5em 0', borderTop: `solid 3px ${textColor}`, borderBottom: `solid 3px ${textColor}`}}>
+                                    {categoryList[0].category1}
+                                </Typography>
+                            </Box>
                         </Grid>
                         <Grid item xs={6}> {/* 右側の目次エリア */}
                             <Typography variant="h5" color={textColor} sx={{mt:5}}>Table of Contents</Typography>
@@ -186,10 +192,10 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                 {activeStep === 'playAudio' && (
                     <>
                     <Box>
-                        <Typography color={textColor} >{phraseIndex+1} / {phraseList.length}</Typography>
+                        <Typography variant="subtitle1" sx={{fontSize: '1.2rem'}} color={'#98ABEE'} >{phraseIndex+1} / {phraseList.length}</Typography>
                     </Box>
                     <Box>
-                        <Typography sx={{mr: 3}} variant="subtitle1" color={textColor} >{phraseList[phraseIndex].categoryNo}.{phraseList[phraseIndex].category2}</Typography>
+                        <Typography variant="subtitle1" sx={{fontSize: '1.2rem'}} color={'#98ABEE'} >{phraseList[phraseIndex].categoryNo}.{phraseList[phraseIndex].category2}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', pb: 10 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', animation: 'pulse 2s infinite' }}>
@@ -216,36 +222,47 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                 {activeStep === 'playAudioWithSentences' && (
                     <>
                     <Box>
-                        <Typography color={textColor} >{phraseIndex+1} / {phraseList.length}</Typography>
+                        <Typography variant="subtitle1" sx={{fontSize: '1.2rem'}} color={'#98ABEE'} >{phraseIndex+1} / {phraseList.length}</Typography>
                     </Box>
                     <Box>
-                        <Typography sx={{mr: 3}} variant="subtitle1" color={textColor} >{phraseList[phraseIndex].categoryNo}.{phraseList[phraseIndex].category2}</Typography>
+                        <Typography variant="subtitle1" sx={{fontSize: '1.2rem'}} color={'#98ABEE'} >{phraseList[phraseIndex].categoryNo}.{phraseList[phraseIndex].category2}</Typography>
                     </Box>
 
-                    <Box sx={{mt:1}}>
-                        {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Avatar src={phraseList[phraseIndex].sentences[sentenceIndex].speakerAvatarImageUrl} sx={{width: 70, height: 70}}/>
-                            <Typography variant="h6">{phraseList[phraseIndex].sentences[sentenceIndex].speakerName}</Typography>
-                        </Box> */}
-
-                        <Box
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center', // 水平方向の中央
+                        alignItems: 'center', // 垂直方向の中央
+                        minHeight: '100%', // 親コンテナの高さに合わせる
+                        p: 2, // コンテンツ周りのパディングを設定
+                        pb: 15,
+                    }}
+                    >
+                    <Typography
+                        color={textColor}
+                        variant={adjustFontSize(phraseList[phraseIndex].sentenceE)}
                         sx={{
-                            display: 'flex',
-                            flexDirection: 'column', // 垂直方向の中央寄せを行うための設定
-                            justifyContent: 'center', // 水平方向の中央
-                            alignItems: 'center', // 垂直方向の中央
-                            ml: 1,
-                            mt: 14
+                            wordWrap: 'break-word',
+                            textAlign: 'center', // テキストを中央揃えにする
+                            maxWidth: '100%', // テキストの最大幅を親要素の幅に合わせる
                         }}
-                        >
-                            <Typography color={textColor} variant={adjustFontSize(phraseList[phraseIndex].sentenceE)}>
-                                {phraseList[phraseIndex].sentenceE}
-                            </Typography>
-                            <Typography color={textColor} variant="h6" sx={{ mt: 3 }}>
-                                {phraseList[phraseIndex].sentenceJ}
-                            </Typography>
-                        </Box>
+                    >
+                        {phraseList[phraseIndex].sentenceE}
+                    </Typography>
+                    <Typography
+                        color={'#DEDEDE'}
+                        variant="h6"
+                        sx={{
+                            mt: 3,
+                            wordWrap: 'break-word',
+                            textAlign: 'center',
+                            maxWidth: '100%',
+                        }}
+                    >
+                        {phraseList[phraseIndex].sentenceJ}
+                    </Typography>
                     </Box>
+
                     </>
 
                 )}

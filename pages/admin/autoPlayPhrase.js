@@ -70,8 +70,6 @@ export default function Home() {
   };
 
   
-  console.log('test - categoryList', categoryList)
-  console.log('test - phraseList', phraseList)
   return (
     <>
       <Box>

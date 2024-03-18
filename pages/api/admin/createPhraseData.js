@@ -3,6 +3,24 @@ import { writeToGoogleSheet } from '@/utils/googleapi-utils';
 import { generatePhraseSentences } from '@/utils/openai-utils';
 
 
+async function generatePhraseSentencesRepeatedly(category1, category2, category2_desc, engLevel, numSentence) {
+  let sentences = [];
+  let attempts = 0;
+  
+  while (sentences.length < numSentence && attempts < 10) {
+    console.log(`試行 ${attempts + 1}: 現在 ${sentences.length} 件の文章が生成されています。`);
+    const partialSentences = await generatePhraseSentences(category1, category2, category2_desc, engLevel, numSentence - sentences.length);
+    sentences = sentences.concat(partialSentences);
+    attempts++;
+  }
+
+  if (sentences.length > numSentence) {
+    sentences = sentences.slice(0, numSentence);
+  }
+
+  return sentences;
+}
+
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,10 +30,9 @@ export default async function handler(req, res) {
 
   try {
     const { userId } = await getUserFromSession(req, res);
-    const numSentence = 3
+    const numSentence = 10
 
     const { categoryList } = req.body;
-    console.log('test10', categoryList)
     const spreadsheetId = '1JJCY9EkGzlQb-l_0zRiKxjYsVds3Y73beJtEATErWuw';
     const sheetName = 'phraseList'; // Googleシートのタブ名
 
@@ -27,7 +44,7 @@ export default async function handler(req, res) {
       console.log(`Processing category ${index + 1} of ${filteredCategories.length}: ${category.category1}, ${category.category2}`); // 各カテゴリ処理開始のログ
 
       // generatePhraseSentences関数を呼び出し
-      const sentences = await generatePhraseSentences(category.category1, category.category2, category.category2_desc, category.engLevel, numSentence);
+      const sentences = await generatePhraseSentencesRepeatedly(category.category1, category.category2, category.category2_desc, category.engLevel, numSentence);
       console.log(`Generated ${sentences.length} sentences for category: ${category.category1}, ${category.category2}`); // 文生成成功のログ
 
       // 書き込むデータの配列を準備
@@ -35,7 +52,6 @@ export default async function handler(req, res) {
         category.category1.trim(), category.category2.trim(), category.engLevel, sentence.sentenceE, sentence.sentenceJ
       ]);
 
-      console.log('test3', values)
       // 最後の行を特定してデータを追加
       const appendDataResponse = await writeToGoogleSheet(spreadsheetId, `${sheetName}!A:E`, values, 'APPEND');
     }
