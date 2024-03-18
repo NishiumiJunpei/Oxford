@@ -8,15 +8,15 @@ async function generatePhraseSentencesRepeatedly(category1, category2, category2
   let attempts = 0;
   const batch = 10
   
-  while (sentences.length <= numSentence && attempts <= numSentence && numSentence - sentences.length > 0) {
+  while (sentences.length <= numSentence && attempts <= numSentence-1 && numSentence - sentences.length > 0) {
     console.log(`試行 ${attempts + 1}: 現在 ${sentences.length} 件の文章が生成されています。あと${numSentence - sentences.length}件の文章作成を試みます`);
     const num = numSentence - sentences.length > batch ? batch : numSentence - sentences.length
-    
+
     try {
       const partialSentences = await generatePhraseSentences(category1, category2, category2_desc, engLevel, num);
       sentences = sentences.concat(partialSentences);
     } catch (error) {
-      console.error(`generatePhraseToLearnFromScene error: ${error.message}`);
+      console.error(`generatePhraseSentencesRepeatedly error: ${error.message}`);
       // エラーが発生してもここで処理が停止しないため、ループは続行されます。
       // 必要に応じて、エラー発生時の追加の処理をここに記述できます。
     }

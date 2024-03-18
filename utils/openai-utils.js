@@ -462,7 +462,6 @@ export async function generatePhraseToLearnFromScene(sceneSentences, engLevel) {
 
 export async function generatePhraseSentences(category1, category2, category2_desc, engLevel, numSentence) {
   try{
-    console.log('gpt api called')
 
     const content1 = `
     あなたは日本一人気がある英語教師です。
@@ -481,7 +480,8 @@ export async function generatePhraseSentences(category1, category2, category2_de
       ["XXXXX", "XXXXX", "XXXXX", ...]    
     }
     `;
-    
+  
+    console.log('gpt api called - 1', content1)
     const response1 = await openai.chat.completions.create({
       model: "gpt-4-1106-preview", //"gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content: content1 }],
@@ -489,11 +489,14 @@ export async function generatePhraseSentences(category1, category2, category2_de
       temperature: 0.2,
     });
 
+    console.log('gpt api result1: ', response1.choices[0].message.content)
     const responseJSON1 = JSON.parse(response1.choices[0].message.content)
 
 
 
-    const sentencesString = responseJSON1.phrases.join(", ")
+
+    const sentencesString = responseJSON1.phrases.map(phrase => `"${phrase}"`).join(", ");
+
     const content2 = `
     下記の英文リストに対して自然な日本語訳を作り、アウトプットフォーマットの通りJSON形式の配列にしてください。
     必ず、英文リストの要素数の分の配列になるようにしてください。
@@ -518,6 +521,7 @@ export async function generatePhraseSentences(category1, category2, category2_de
     `;
     
 
+    console.log('gpt api called - 2', content2)
     const response2 = await openai.chat.completions.create({
       model: "gpt-4-1106-preview", //"gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content: content2 }],
@@ -525,6 +529,7 @@ export async function generatePhraseSentences(category1, category2, category2_de
       temperature: 0.2,
     });
 
+    console.log('gpt api result2: ', response2.choices[0].message.content)
     const responseJSON2 = JSON.parse(response2.choices[0].message.content)
     
     return responseJSON2.phrases;
