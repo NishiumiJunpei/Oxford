@@ -464,6 +464,81 @@ export async function generatePhraseSentences(category1, category2, category2_de
   try{
     console.log('gpt api called')
 
+    const content1 = `
+    あなたは日本一人気がある英語教師です。
+    下記のテーマにおいて、ネイティブがよく使う英語フレーズを、${engLevel}のレベルで、${numSentence}個作ってください。
+    回答はアウトプットフォーマットの通りJSON形式の配列にしてください。
+    必ず${numSentence}個の作成して、${numSentence}個の要素数の配列になるようにしてください。
+    
+    ＃テーマ
+    ${category1}
+    ${category2}
+    ${category2_desc}
+    
+    ＃アウトプットフォーマット
+    {
+      phrases:
+      ["XXXXX", "XXXXX", "XXXXX", ...]    
+    }
+    `;
+    
+    const response1 = await openai.chat.completions.create({
+      model: "gpt-4-1106-preview", //"gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content: content1 }],
+      response_format: { "type": "json_object" },
+      temperature: 0.2,
+    });
+
+    const responseJSON1 = JSON.parse(response1.choices[0].message.content)
+
+
+
+    const sentencesString = responseJSON1.phrases.join(", ")
+    const content2 = `
+    下記の英文リストに対して自然な日本語訳を作り、アウトプットフォーマットの通りJSON形式の配列にしてください。
+    必ず、英文リストの要素数の分の配列になるようにしてください。
+    
+    ＃英文リスト
+    [${sentencesString}]
+    
+    ＃アウトプットフォーマット
+    {
+      phrases:
+      [
+        {""sentenceE"": ""XXXX"", ※sentenceEは英文リストの各要素
+        ""sentenceJ"": ""XXXX"",  ※sentenceJは自然な日本語訳
+        },
+        {""sentenceE"": ""XXXX"",
+        ""sentenceJ"": ""XXXX"",
+        },
+        ....
+      ]
+    
+    }
+    `;
+    
+
+    const response2 = await openai.chat.completions.create({
+      model: "gpt-4-1106-preview", //"gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content: content2 }],
+      response_format: { "type": "json_object" },
+      temperature: 0.2,
+    });
+
+    const responseJSON2 = JSON.parse(response2.choices[0].message.content)
+    
+    return responseJSON2.phrases;
+
+  } catch (error) {
+    console.error('generatePhraseSentences error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+
+export async function generatePhraseSentencesOLD(category1, category2, category2_desc, engLevel, numSentence) {
+  try{
+    console.log('gpt api called')
+
     const content = `
     あなたは日本一人気がある英語教師です。
     下記のテーマにおいて、ネイティブがよく使う英語フレーズを、${engLevel}のレベルで、${numSentence}個作ってください。
@@ -506,7 +581,7 @@ export async function generatePhraseSentences(category1, category2, category2_de
     return responseJSON.phrases;
 
   } catch (error) {
-    console.error('generatePhraseToLearnFromScene error:', error);
+    console.error('generatePhraseSentences error:', error);
     throw error; // このエラーを上位の関数に伝播させます
   }
 }
