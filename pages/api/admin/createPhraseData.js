@@ -7,7 +7,7 @@ async function generatePhraseSentencesRepeatedly(category1, category2, category2
   let sentences = [];
   let attempts = 0;
   
-  while (sentences.length < numSentence && attempts < 10) {
+  while (sentences.length < numSentence && attempts < numSentence) {
     console.log(`試行 ${attempts + 1}: 現在 ${sentences.length} 件の文章が生成されています。`);
     const partialSentences = await generatePhraseSentences(category1, category2, category2_desc, engLevel, numSentence - sentences.length);
     sentences = sentences.concat(partialSentences);
