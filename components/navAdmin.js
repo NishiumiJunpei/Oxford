@@ -57,6 +57,12 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="フレーズ再生" />
         </ListItem>
+        <ListItem button component="a" href={`/admin/managePhraseList`}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="フレーズ検索" />
+        </ListItem>
       </List>
     </Drawer>
   );
