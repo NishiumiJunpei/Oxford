@@ -446,7 +446,7 @@ export async function generatePhraseToLearnFromScene(sceneSentences, engLevel) {
       model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       response_format: { "type": "json_object" },
-      temperature: 0.2,
+      temperature: 0.5,
     });
 
     const responseJSON = JSON.parse(response.choices[0].message.content)
