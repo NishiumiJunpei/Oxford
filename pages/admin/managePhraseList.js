@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Chip, Stack, CircularProgress, Typography, Divider, Container } from '@mui/material';
+import { Chip, Stack, CircularProgress, Typography, Divider, Container, Box } from '@mui/material';
 
 const App = () => {
   const [engLevels, setEngLevels] = useState({});
@@ -51,37 +51,39 @@ const App = () => {
   };
 
   return (
-    <Container>
-      <Stack direction="row" spacing={1} marginBottom={2}>
+    <Container sx={{mb: 10}}>
+      <Stack direction="row" spacing={1} marginBottom={2} sx={{ flexWrap: 'wrap', gap: 2, mt: 3 }}>
         {Object.keys(engLevels).map(level => (
-          <Chip key={level} label={level} onClick={() => handleSelectEngLevel(level)} color={selectedEngLevel === level ? 'primary' : 'default'} />
+          <Chip key={level} sx={{mb:1}} label={level} onClick={() => handleSelectEngLevel(level)} color={selectedEngLevel === level ? 'primary' : 'default'} />
         ))}
       </Stack>
       {selectedEngLevel && (
-        <Stack direction="row" spacing={1} marginBottom={2}>
+        <Stack direction="row" spacing={1} marginBottom={2} sx={{ flexWrap: 'wrap', gap: 2 }}>
           {Object.keys(engLevels[selectedEngLevel]).map(category1 => (
-            <Chip key={category1} label={category1} onClick={() => handleSelectCategory1(category1)} color={selectedCategory1 === category1 ? 'primary' : 'default'} />
+            <Chip key={category1} sx={{mb:1}} label={category1} onClick={() => handleSelectCategory1(category1)} color={selectedCategory1 === category1 ? 'primary' : 'default'} />
           ))}
         </Stack>
       )}
       {selectedCategory1 && (
-        <Stack direction="row" spacing={1} marginBottom={2}>
+        <Stack direction="row" spacing={1} marginBottom={5} sx={{ flexWrap: 'wrap', gap: 2}}>
           {engLevels[selectedEngLevel][selectedCategory1].map(category2 => (
-            <Chip key={category2} label={category2} onClick={() => handleSelectCategory2(category2)} color={selectedCategory2 === category2 ? 'primary' : 'default'} />
+            <Chip key={category2} sx={{mb:1}} label={category2} onClick={() => handleSelectCategory2(category2)} color={selectedCategory2 === category2 ? 'primary' : 'default'} />
           ))}
         </Stack>
       )}
+
+
       {isLoading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
           <CircularProgress />
         </div>
       ) : (
         selectedCategory2 && phraseList.map((sentence, index) => (
-          <React.Fragment key={index}>
+          <Box key={index}>
             <Typography variant="body1" gutterBottom>{sentence.sentenceE}</Typography>
-            <Typography variant="body2" gutterBottom>{sentence.sentenceJ}</Typography>
-            {index < phraseList.length - 1 && <Divider style={{ margin: '8px 0' }} />}
-          </React.Fragment>
+            <Typography variant="body2" color="GrayText" gutterBottom>{sentence.sentenceJ}</Typography>
+            {index < phraseList.length - 1 && <Divider style={{ margin: '32px 0' }} />}
+          </Box>
         ))
       )}
     </Container>

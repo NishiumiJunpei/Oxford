@@ -1,6 +1,15 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getGoogleSheetData } from '@/utils/googleapi-utils';
 
+const engLevelDisplayOrder = [
+  {engLevel: 'CEFR A1', displayOrder: 1},
+  {engLevel: 'CEFR A2', displayOrder: 2},
+  {engLevel: 'CEFR B1', displayOrder: 3},
+  {engLevel: 'CEFR B2', displayOrder: 4},
+  {engLevel: 'CEFR C1', displayOrder: 5},
+  {engLevel: 'CEFR C2', displayOrder: 6}
+]
+
 export default async function handler(req, res) {
   if (req.method === 'GET') { // このAPIはGETリクエストを想定
     try {
@@ -41,6 +50,12 @@ export default async function handler(req, res) {
         engLevels[engLevel][category1].add(category2);
       });
 
+      // engLevelの表示順序をマップする
+      const engLevelOrderMap = engLevelDisplayOrder.reduce((acc, item) => {
+        acc[item.engLevel] = item.displayOrder;
+        return acc;
+      }, {});
+
       // Setオブジェクトを配列に変換
       Object.keys(engLevels).forEach(engLevel => {
         Object.keys(engLevels[engLevel]).forEach(category1 => {
@@ -48,7 +63,16 @@ export default async function handler(req, res) {
         });
       });
 
-      res.status(200).json({ engLevels });
+      // engLevelsのキーを表示順序に基づいてソートする
+      let sortedEngLevels = Object.keys(engLevels).sort((a, b) => {
+        return engLevelOrderMap[a] - engLevelOrderMap[b];
+      }).reduce((acc, key) => {
+        acc[key] = engLevels[key];
+        return acc;
+      }, {});
+
+
+      res.status(200).json({ engLevels: sortedEngLevels });
 
     } catch (error) {
       console.log('error', error)
