@@ -121,7 +121,8 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     const scene = selectRandomKeywords(keywords);
 
     const content = 
-    `First select one scene randomly relevant to "${scene}".
+    `You are genious to create story using given words.
+    First select one scene randomly relevant to "${scene}".
     Then create an English story related to the scene. using the specified words below. Create Japanese translation which is very natual for Japanese.
     Adjust the story's difficulty level to match the specified level (${levelKeyword}).
     # Words to use: ${wordsString}

@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   }
 
   const { userId } = await getUserFromSession(req, res);
-  const { blockId, length, genre, characters } = req.body;
+  const { blockId, length, genre = '', characters = '' } = req.body;
   const user = await getUserById(userId);
   
   try {
