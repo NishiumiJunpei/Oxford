@@ -120,29 +120,26 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     const keywords = [...profileKeyword.split(',').map(k => k.trim()), ...interestKeyword.split(',').map(k => k.trim()), genre];    
     const scene = selectRandomKeywords(keywords);
 
-    // const content = 
-    // `First select one scene randomly relevant to "${scene}".
-    // Then create an English story related to the scene. using the specified words. Create Japanese translation which is very natual for Japanese.
-    // Adjust the story's difficulty level to match the specified level (${levelKeyword}).
-    // # Words to use: ${wordsString}
-    // # Maximum character count for the story: ${maxCharacters}
-    // # Output format
-    // Story in Japanese
-    // Story in English
-    // Used specified word with meaning in Japanese`;
+    const content = 
+    `First select one scene randomly relevant to "${scene}".
+    Then create an English story related to the scene. using the specified words below. Create Japanese translation which is very natual for Japanese.
+    Adjust the story's difficulty level to match the specified level (${levelKeyword}).
+    # Words to use: ${wordsString}
+    # Maximum character count for the story: ${maxCharacters}
+    # Output format
+    Story in Japanese (very natural Japanese)
+    Story in English
+    Used specified word with meaning in Japanese`;
 
     
-    const content = `
-    ${scene}に興味を持った人に対して、下記英単語をどういうシーンで使うのか例文を踏まえて、一つ一つ解説してください。
-    Word: ${wordsString}
-    `
+    // const content = `
+    // ${scene}に興味を持った人に対して、下記英単語をどういうシーンで使うのか例文を踏まえて、一つ一つ解説してください。
+    // Word: ${wordsString}
+    // `
 
     
     console.log('prompt', content)
-    // 
 
-
-    // 以下に、APIへのリクエストを行うコードが続きます。        
     const response = await openai.chat.completions.create({
         model: "gpt-4-0125-preview", // gpt-4, gpt-3.5-turbo-1106
         messages: [{ role: 'assistant', content }],
