@@ -6,7 +6,7 @@ import { generatePhraseSentences } from '@/utils/openai-utils';
 async function generatePhraseSentencesRepeatedly(category1, category2, category2_desc, engLevel, numSentence) {
   let sentences = [];
   let attempts = 0;
-  const batch = 10
+  const batch = 20
   
   while (sentences.length <= numSentence && attempts <= numSentence-1 && numSentence - sentences.length > 0) {
     console.log(`試行 ${attempts + 1}: 現在 ${sentences.length} 件の文章が生成されています。あと${numSentence - sentences.length}件の文章作成を試みます`);
