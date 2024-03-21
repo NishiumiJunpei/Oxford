@@ -232,7 +232,7 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center', // 水平方向の中央
-                        alignItems: 'center', // 垂直方向の中央
+                        alignItems: 'start', // 垂直方向の中央
                         minHeight: '100%', // 親コンテナの高さに合わせる
                         p: 2, // コンテンツ周りのパディングを設定
                         pb: 15,
@@ -243,7 +243,7 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                         variant={adjustFontSize(phraseList[phraseIndex].sentenceE)}
                         sx={{
                             wordWrap: 'break-word',
-                            textAlign: 'center', // テキストを中央揃えにする
+                            textAlign: 'left', // テキストを中央揃えにする
                             maxWidth: '100%', // テキストの最大幅を親要素の幅に合わせる
                         }}
                     >
@@ -255,11 +255,24 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                         sx={{
                             mt: 3,
                             wordWrap: 'break-word',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             maxWidth: '100%',
                         }}
                     >
                         {phraseList[phraseIndex].sentenceJ}
+                    </Typography>
+
+                    <Typography
+                        color={'#DEDEDE'}
+                        variant="subtitle1"
+                        sx={{
+                            mt: 10,
+                            wordWrap: 'break-word',
+                            textAlign: 'left',
+                            maxWidth: '100%',
+                        }}
+                    >
+                        {phraseList[phraseIndex].explanation}
                     </Typography>
                     </Box>
 

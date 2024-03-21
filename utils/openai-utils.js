@@ -458,8 +458,9 @@ export async function generatePhraseToLearnFromScene(sceneSentences, engLevel) {
 }
 
 
-export async function generatePhraseSentences(category1, category2, category2_desc, engLevel, numSentence) {
+export async function generatePhraseSentences(conditionData, numSentence) {
   try{
+    const {category1, category2, category2_desc, engLevel, requiredExplanation = 0} = conditionData
 
     const content1 = `
     あなたは日本一人気がある英語教師です。
@@ -494,21 +495,40 @@ export async function generatePhraseSentences(category1, category2, category2_de
 
 
     const sentenceEs = {
-      phrases: responseJSON1.phrases.map(phrase => ({
-        sentenceE: phrase,
-        sentenceJ: ''
-      }))
-    }
+      phrases: responseJSON1.phrases.map(phrase => {
+        // requiredExplanationが1なら、explanationフィールドを追加
+        const phraseObject = {
+          sentenceE: phrase,
+          sentenceJ: ''
+        };
+        
+        if (requiredExplanation === '1') {
+          phraseObject.explanation = ''; // explanationフィールドを追加して、空文字列を設定
+        }
+        
+        return phraseObject;
+      })
+    };
+
     const sentencesString = JSON.stringify(sentenceEs, null, 2)
 
 
-    const content2 = `
-    下記の英文JSONデータの各要素のsentenceJに、sentenceEの自然な日本語訳を埋めてください。
+    const content2 = requiredExplanation == 1 ? 
+    `下記の英文JSONデータの各要素について、
+    sentenceJに、sentenceEの自然な日本語訳を入れてください。
+    explanationに、sentenceEで使われているフレーズを1つ選んで日本語の解説文を入れてください。
     アウトプットは構造を変えずに、JSON形式にしてください。
 
     #英文JSONデータ
     ${sentencesString}
-    `;
+    ` :
+    `下記の英文JSONデータの各要素のsentenceJに、sentenceEの自然な日本語訳を埋めてください。
+    アウトプットは構造を変えずに、JSON形式にしてください。
+
+    #英文JSONデータ
+    ${sentencesString}
+    `
+
     
 
     console.log('gpt api called - 2', content2)

@@ -3,7 +3,7 @@ import { writeToGoogleSheet } from '@/utils/googleapi-utils';
 import { generatePhraseSentences } from '@/utils/openai-utils';
 
 
-async function generatePhraseSentencesRepeatedly(category1, category2, category2_desc, engLevel, numSentence) {
+async function generatePhraseSentencesRepeatedly(conditionData, numSentence) {
   let sentences = [];
   let attempts = 0;
   const batch = 20
@@ -13,7 +13,7 @@ async function generatePhraseSentencesRepeatedly(category1, category2, category2
     const num = numSentence - sentences.length > batch ? batch : numSentence - sentences.length
 
     try {
-      const partialSentences = await generatePhraseSentences(category1, category2, category2_desc, engLevel, num);
+      const partialSentences = await generatePhraseSentences(conditionData, num);
       sentences = sentences.concat(partialSentences);
     } catch (error) {
       console.error(`generatePhraseSentencesRepeatedly error: ${error.message}`);
@@ -52,15 +52,15 @@ export default async function handler(req, res) {
 
     console.log(`Total count: ${filteredCategories.length}`); // フィルタリング後のカテゴリ数のログ
     for (const [index, category] of filteredCategories.entries()) {
-      console.log(`Processing category ${index + 1} of ${filteredCategories.length}: ${category.category1}, ${category.category2}`); // 各カテゴリ処理開始のログ
+      // console.log(`Processing category ${index + 1} of ${filteredCategories.length}: ${category.category1}, ${category.category2}`); // 各カテゴリ処理開始のログ
 
       // generatePhraseSentences関数を呼び出し
-      const sentences = await generatePhraseSentencesRepeatedly(category.category1, category.category2, category.category2_desc, category.engLevel, numSentence);
+      const sentences = await generatePhraseSentencesRepeatedly(category, numSentence);
       console.log(`Generated ${sentences.length} sentences for category: ${category.category1}, ${category.category2}`); // 文生成成功のログ
 
       // 書き込むデータの配列を準備
       const values = sentences.map(sentence => [
-        category.category1.trim(), category.category2.trim(), category.engLevel, sentence.sentenceE, sentence.sentenceJ
+        category.category1.trim(), category.category2.trim(), category.engLevel, sentence.sentenceE, sentence.sentenceJ, sentence.explanation
       ]);
 
       // 最後の行を特定してデータを追加
