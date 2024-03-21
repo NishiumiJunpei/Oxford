@@ -251,7 +251,7 @@ const DisplayAutoPlayPhrase = ({ open, onClose, categoryList, phraseList, openin
                     </Typography>
                     <Typography
                         color={'#DEDEDE'}
-                        variant="h6"
+                        variant="h5"
                         sx={{
                             mt: 3,
                             wordWrap: 'break-word',
