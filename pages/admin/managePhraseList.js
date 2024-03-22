@@ -74,7 +74,7 @@ const App = () => {
 
 
       {isLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div style={{ display: 'flex', justifyContent: 'center'}}>
           <CircularProgress />
         </div>
       ) : (
@@ -82,6 +82,12 @@ const App = () => {
           <Box key={index}>
             <Typography variant="body1" gutterBottom>{sentence.sentenceE}</Typography>
             <Typography variant="body2" color="GrayText" gutterBottom>{sentence.sentenceJ}</Typography>
+            {sentence.explanation && (
+              <Box sx={{mt:2}}>
+                <span style={{ backgroundColor: '#D3D3D3', padding: '4px', fontSize:'0.8rem' }}>解説</span>
+                <Typography variant="body2" color="GrayText" gutterBottom sx={{mt: 1}}>{sentence.explanation}</Typography>
+              </Box>
+            )}
             {index < phraseList.length - 1 && <Divider style={{ margin: '32px 0' }} />}
           </Box>
         ))
