@@ -129,14 +129,8 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     # Maximum character count for the story: ${maxCharacters}
     # Output format
     Story in Japanese (very natural Japanese)
-    Story in English
-    Used specified word with meaning in Japanese`;
-
-    
-    // const content = `
-    // ${scene}に興味を持った人に対して、下記英単語をどういうシーンで使うのか例文を踏まえて、一つ一つ解説してください。
-    // Word: ${wordsString}
-    // `
+    Story in English (enclosing the specified English words in *)
+    `;
 
     
     console.log('prompt', content)

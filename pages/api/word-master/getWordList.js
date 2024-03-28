@@ -66,7 +66,6 @@ export default async function handler(req, res) {
 
       const wordStoryList = await getWordStoriesByUserIdAndBlockId(userId, block.id);
 
-
       //progressDetail作成処理（EJ、JEの単語数、正解数、２連続性回数、過去１週間追加分）
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 1週間前の日付を設定

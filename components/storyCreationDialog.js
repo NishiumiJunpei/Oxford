@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { 
   Dialog, DialogActions, DialogContent, DialogTitle, 
   Button, Chip, FormControl, InputLabel, Select, MenuItem, 
-  Box, Typography, CircularProgress, Divider , Avatar
+  Box, Typography, CircularProgress, Divider , Avatar, useTheme
 } from '@mui/material';
 
 const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
-    
+    const theme = useTheme()
     const [length, setLength] = useState('');
     const [genre, setGenre] = useState('');
     const [characters, setCharacters] = useState('');
     const [loading, setLoading] = useState(false);
     const [storyData, setStoryData] = useState(null);
     const [streamStoryData, setStreamStoryData] = useState('');
+    const [profileKeywords, setProfileKeywords] = useState([]);
+    const [interestKeywords, setInterestKeywords] = useState([]);
 
     useEffect(() => {
       if (open) {
@@ -24,6 +26,32 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
         setStreamStoryData('')
       }
     }, [open]);
+
+      // ユーザー情報をAPIから取得
+      useEffect(() => {
+        const fetchUserInfo = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/user-setting/getUserInfo');
+            if (!response.ok) {
+            throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+              
+            // profileKeywordsとinterestKeywordsの更新
+            setProfileKeywords(data.profileKeywords || []);
+            setInterestKeywords(data.interestKeywords || []);
+    
+        } catch (error) {
+            console.error('There was an error fetching the user info:', error);
+        }
+        setLoading(false);
+        };
+    
+        fetchUserInfo();
+    }, []);
+  
+  
     
     const handleLengthChange = (selectedLength) => {
         setLength(selectedLength);
@@ -100,6 +128,24 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
         }
     };
 
+    // ストーリーコンテンツをパースして、必要な部分を太字と青色で表示する
+    const renderFormattedStoryContent = (storyContent) => {
+      const regex = /\*(.*?)\*/g;
+      const parts = [];
+      let lastEnd = 0;
+
+      storyContent?.replace(regex, (match, p1, offset) => {
+        parts.push(storyContent.substring(lastEnd, offset));
+        parts.push(<span style={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{p1}</span>);
+        lastEnd = offset + match.length;
+      });
+
+      parts.push(storyContent.substring(lastEnd));
+
+      return parts;
+    };
+
+
     const isSubmitDisabled = !length || !genre
     
   
@@ -146,6 +192,21 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
               ))}
             </Box>
             <Box sx={{ marginBottom: 2 }}>
+              <Typography variant="subtitle1" gutterBottom>ジャンル</Typography>
+              {['日常会話', 'ビジネス', ...profileKeywords, ...interestKeywords].map((genreEle) => (
+                  <Chip
+                      key={genreEle}
+                      label={genreEle}
+                      onClick={() => handleGenreChange(genreEle)}
+                      // 選択されたジャンルと一致する場合に色を変える
+                      color={genre === genreEle ? 'primary' : 'default'}
+                      sx={{ marginRight: 1 }}
+                  />
+              ))}
+            </Box>
+
+
+            {/* <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>シーン</Typography>
               {['日常会話','ビジネス'].map((option) => (
                 <Chip
@@ -156,7 +217,7 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
                   sx={{ marginRight: 1 }}
                 />
               ))}
-            </Box>
+            </Box> */}
             {/* <Box sx={{ marginBottom: 2 }}>
               <Typography variant="subtitle1" gutterBottom>登場人物</Typography>
               {['指定なし', '大統領',,'美人','優しいお兄さん', '宇宙人', 'おばけ', 'うんち君'].map((option) => (
@@ -178,13 +239,11 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
             {streamStoryData && (
             <Box>
                 <Typography variant="subtitle1">ストーリー</Typography>
-                <Typography className="preformatted-text">{streamStoryData}</Typography>
-                {/* <Typography variant="subtitle1" sx={{marginTop: 5}}>単語：</Typography>
-                <ul>
-                {storyData.words.map((word, index) => (
-                    <li key={index}>{word.english} ({word.japanese})</li>
-                ))}
-                </ul> */}
+                <Typography variant="body1" className="preformatted-text" sx={{mb: 5}}>
+                  {renderFormattedStoryContent(streamStoryData)}
+                </Typography>
+
+
             </Box>
             )}
 
