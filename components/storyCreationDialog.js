@@ -128,23 +128,27 @@ const StoryCreationDialog = ({ open, onClose, onSave, block }) => {
         }
     };
 
-    // ストーリーコンテンツをパースして、必要な部分を太字と青色で表示する
-    const renderFormattedStoryContent = (storyContent) => {
-      const regex = /\*(.*?)\*/g;
+    const renderFormattedStoryContent = (storyContentArray) => {
+      // 配列の要素を結合して一つの文字列にする
+      const storyString = storyContentArray.join('');
+      const regex = /\*(.*?)\*/g; // 太字にする文字列を探すための正規表現
       const parts = [];
       let lastEnd = 0;
-
-      storyContent?.replace(regex, (match, p1, offset) => {
-        parts.push(storyContent.substring(lastEnd, offset));
+    
+      // 結合した文字列に対してreplaceメソッドを使用して処理を行う
+      storyString.replace(regex, (match, p1, offset) => {
+        parts.push(storyString.substring(lastEnd, offset));
         parts.push(<span style={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{p1}</span>);
         lastEnd = offset + match.length;
       });
-
-      parts.push(storyContent.substring(lastEnd));
-
-      return parts;
+    
+      // 最後のマッチの後のテキストを追加
+      parts.push(storyString.substring(lastEnd));
+    
+      // Reactのフラグメントを使用して、配列の各要素をDOMに描画
+      return <>{parts.map((part, index) => <React.Fragment key={index}>{part}</React.Fragment>)}</>;
     };
-
+    
 
     const isSubmitDisabled = !length || !genre
     

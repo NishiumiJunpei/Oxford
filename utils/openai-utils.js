@@ -116,9 +116,11 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     // #ジャンル: ${genre}
     // #登場人物: ${characters}`;
 
-    const { profileKeyword, interestKeyword } = user;
-    const keywords = [...profileKeyword.split(',').map(k => k.trim()), ...interestKeyword.split(',').map(k => k.trim()), genre];    
-    const scene = selectRandomKeywords(keywords);
+    // const { profileKeyword, interestKeyword } = user;
+    // const keywords = [...profileKeyword.split(',').map(k => k.trim()), ...interestKeyword.split(',').map(k => k.trim()), genre];    
+    // const scene = selectRandomKeywords(keywords);
+
+    const scene = genre
 
     const content = 
     `You are genious to create story using given words.
@@ -128,17 +130,19 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     # Words to use: ${wordsString}
     # Maximum character count for the story: ${maxCharacters}
     # Output format
-    Story in Japanese (very natural Japanese)
-    Story in English (enclosing the specified English words in *)
+    Japanese Story
+    English Story
+    # Remark for output format
+    Japanese Story must be written in very natural Japanese
+    As for Japanese Story, enclosing Japanese word of the specified English words in *.
+    As for English Story, enclosing the specified English words in *.
     `;
 
-    
-    console.log('prompt', content)
-
+  
     const response = await openai.chat.completions.create({
         model: "gpt-4-0125-preview", // gpt-4, gpt-3.5-turbo-1106
         messages: [{ role: 'assistant', content }],
-        temperature: 0.7,
+        temperature: 0.2,
         // max_tokens: 1000,
         stream: true,
       });
