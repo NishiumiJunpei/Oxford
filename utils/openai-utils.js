@@ -134,8 +134,8 @@ export async function generateWordStory(wordList, length, genre, characters, lev
     English Story
     # Remark for output format
     Japanese Story must be written in very natural Japanese
-    As for Japanese Story, enclosing Japanese word of the specified English words in *.
-    As for English Story, enclosing the specified English words in *.
+    As for Japanese Story, enclosing Japanese word of the specified English words in *. for example, 彼は問題の治療法(*cure*)を見つけました
+    As for English Story, enclosing the specified English words in *. for example, He found the *cure* for the problem
     `;
 
   
