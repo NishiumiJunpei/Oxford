@@ -458,7 +458,7 @@ export async function generatePhraseToLearnFromScene(sceneSentences, engLevel) {
 
 export async function generatePhraseSentences(conditionData, numSentence) {
   try{
-    const {category1, category2, category2_desc, engLevel, requiredExplanation = 0} = conditionData
+    const {category1, category2, category2_desc, engLevel, requiredExplanation = '1'} = conditionData
 
     const content1 = `
     あなたは日本一人気がある英語教師です。

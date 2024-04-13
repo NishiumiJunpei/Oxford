@@ -3,7 +3,7 @@ import { writeToGoogleSheet } from '@/utils/googleapi-utils';
 import { generatePhraseSentences } from '@/utils/openai-utils';
 
 
-async function generatePhraseSentencesRepeatedly(conditionData, numSentence) {
+async function generatePhraseSentencesRepeatedly(conditionData) {
   let sentences = [];
   let attempts = 0;
   const numSentence = conditionData.numSentence || 10
