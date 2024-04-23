@@ -22,7 +22,11 @@ export default function Home() {
       setIsLoading(true);
       try {
         const response = await axios.post('/api/admin/getPhraseList');
-        setCategoryList(response.data.categoryList);
+        const updatedCategories = response.data.categoryList.map(cate => ({
+          ...cate,
+          createFlag: 1 // ここでcreateFlagを1に設定
+        }));
+        setCategoryList(updatedCategories);
         setPhraseList(response.data.phraseList);
       } catch (error) {
         console.error('Error fetching data:', error);

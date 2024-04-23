@@ -208,7 +208,7 @@ const LearnWordsCheck = () => {
     
     const handleAnswer = (known) => {
       if (known) {
-        playCorrectSound()
+        // playCorrectSound()
       }
       
       if (currentIndex >= 0 && currentIndex < wordList.length) {
