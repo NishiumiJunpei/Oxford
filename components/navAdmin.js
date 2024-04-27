@@ -63,6 +63,12 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="フレーズ検索" />
         </ListItem>
+        <ListItem button component="a" href={`/admin/manageUsers`}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="ユーザリスト" />
+        </ListItem>
       </List>
     </Drawer>
   );

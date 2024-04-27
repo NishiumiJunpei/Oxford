@@ -187,3 +187,45 @@ export async function updateUserInterestKeyword(userId, interestKeyword, action)
     data: { interestKeyword: updatedKeywords.join(',') },
   });
 }
+
+
+export async function getAllUsers() {
+  return await prisma.user.findMany({
+    orderBy: {
+      id: 'asc'  // Sort by 'id' in ascending order
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      birthday: true,
+      profile: true,
+      profileKeyword: true,
+      interestKeyword: true,
+      googleId: true,
+      currentChallengeThemeId: true,
+      currentChallengeTheme: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
+      // Uncomment below if you need to fetch related data
+      // UserWordList: {
+      //   select: {
+      //     id: true
+      //   }
+      // },
+      // WordListUserStatus: {
+      //   select: {
+      //     id: true
+      //   }
+      // },
+      // WordStoryByGPT: {
+      //   select: {
+      //     id: true
+      //   }
+      // }
+    }
+  });
+}

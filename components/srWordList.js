@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, CircularProgress, Typography, Box, Button, Divider , Switch, FormControlLabel, Badge, Grid, Paper,
-  Table, TableBody, TableCell, TableRow, Chip, IconButton } from '@mui/material';
+import {
+  Container, CircularProgress, Typography, Box, Button, Divider, Switch, FormControlLabel,
+  Badge, Grid, Paper, Table, TableBody, TableCell, TableRow, Chip, IconButton, 
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete'; // Deleteアイコンのインポート
 import WordDetailDialog from './wordDetailDialog';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
 import SrTimingDialog  from './srTimingDialog';
@@ -22,6 +26,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [mode, setMode] = useState('EJ')
   const [dialogSrNextTime, setDialogSrNextTime] = useState('');
   const [dialogWords, setDialogWords] = useState([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 削除ダイアログの状態管理
    
   
   const fetchSrWordList = async () => {
@@ -122,7 +127,30 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     setButtonDisabledState({})
   }
 
+  const handleDelete = async () => {
+    setDeleteDialogOpen(false);
+    try {
+      await axios.post('/api/word-master/deleteSrWordList', { /* 必要なパラメータをここに追加 */ });
+      fetchSrWordList(); // 削除後にリストを更新
+    } catch (error) {
+      console.error('Error deleting SR word:', error);
+    }
+  };
 
+  const isExpired = () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 30); // 30日前の日付を取得
+  
+    // 全てのモードをループして、どれか一つでも条件を満たすかチェック
+    return Object.values(srWordList).some(modeWords => {
+      return Object.keys(modeWords).some(srNextTime => {
+        return new Date(srNextTime) < currentDate;
+      });
+    });
+  };
+    console.log('isExpired', isExpired)
+
+  
   return (
     <Container>
       {loading ? (
@@ -133,6 +161,11 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
             <Box sx={{mt: 3, mb: 3}}>
               <Typography variant="subtitle1" color="GrayText">期限切れ件数</Typography>
               <Typography variant="h5" color="error">{srCount.overdueTotal}件</Typography>
+              {isExpired && (
+                <IconButton onClick={() => setDeleteDialogOpen(true)}>
+                  <DeleteIcon />
+                </IconButton>
+              )}
 
             </Box>
           )}          
@@ -284,6 +317,29 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
         srNextTime={dialogSrNextTime} // ダイアログにsrNextTimeを渡す
         words={dialogWords} // ダイアログにwordsを渡す
       />
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"間隔反復のデータを削除しますか？"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            この操作は取り消せません。続けますか？
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+            キャンセル
+          </Button>
+          <Button onClick={handleDelete} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
 
     </Container>
   );

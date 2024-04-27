@@ -667,3 +667,19 @@ export async function updateReviewScoreCommentJE(wordListUserStatusId, reviewSco
   }
 }
 
+export async function deleteSrWordList(userId) {
+  return await prisma.wordListUserStatus.updateMany({
+    where: {
+      userId: userId
+    },
+    data: {
+      srStartTime: null,
+      srNextTime: null,
+      srCount: null,
+      srLanguageDirection: null,
+      srStatus: null
+    }
+  });
+}
+
+
