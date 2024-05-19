@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
   TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, List, ListItem, ListItemText,
-  Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,
+  Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader, Link, 
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -502,7 +502,9 @@ const WordListPage = () => {
               </Box>
             </Box>
 
-
+            <Link sx={{cursor: 'pointer'}} onClick={() => router.push(`/word-master/wordList2?blockId=${blockId}`)}>
+              切り替え
+            </Link>
         {progress && (
           <Box sx={{mt: 5}}>
             <SubTitleTypography text="ステータス" />
