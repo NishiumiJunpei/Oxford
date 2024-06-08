@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     const { selectedWords } = req.body;
 
     const result = {
+        success: true,
         selectedWords: selectedWords,
         japanese: 'susuEnglish is great',
     }
