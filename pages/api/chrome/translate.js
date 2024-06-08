@@ -1,12 +1,14 @@
 
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
+  if (req.method === 'POST') {
     try {
     //   const { userId } = await getUserFromSession(req, res)
 
+    const { selectedWords } = req.body;
+
     const result = {
-        originalMsg: 'test',
-        jap: 'susuEnglish is great',
+        selectedWords: selectedWords,
+        japanese: 'susuEnglish is great',
     }
 
       res.status(200).json(result);
