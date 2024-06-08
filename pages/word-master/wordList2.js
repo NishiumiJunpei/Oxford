@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
   TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, List, ListItem, ListItemText,
-  Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,
+  Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,Snackbar,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -249,6 +249,8 @@ const WordListPage = () => {
   const [tabForWordDetailDialog, setTabForWordDetailDialog] = useState(0);
   const [openSrIntroDialog, setOpenSrIntroDialog] = useState(false);
   const [progressDetail, setProgressDetail] = useState(null)
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   
   useEffect(() => {
@@ -454,6 +456,17 @@ const WordListPage = () => {
   };      
 
 
+  const handleWordsCopy = async () => {
+    const wordsText = filteredWordList.map(word => `${word.english}, ${word.japanese}`).join('\n');
+    try {
+      await navigator.clipboard.writeText(wordsText);
+      setCopySuccess(true);
+    } catch (err) {
+      setError('Failed to copy');
+    }
+  };
+
+
 
   // フィルタリングされた単語リストを取得
   const filteredWordList = wordList.filter(word => {
@@ -510,6 +523,9 @@ const WordListPage = () => {
               </IconButton>
               <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
+              </Button>
+              <Button variant='text' color='inherit' onClick={handleWordsCopy} sx={{ml: 3}}>
+                単語コピー
               </Button>
 
             </Box>
@@ -699,6 +715,24 @@ const WordListPage = () => {
         </>
       )}
       </Box>
+      {error && (
+        <Snackbar
+          open={Boolean(error)}
+          autoHideDuration={6000}
+          onClose={() => setError(null)}
+          message={error}
+        />
+      )}
+      {copySuccess && (
+        <Snackbar
+          open={copySuccess}
+          autoHideDuration={6000}
+          onClose={() => setCopySuccess(false)}
+          message="Copied to clipboard"
+        />
+      )}
+
+
       <WordDetailDialog
         open={modalOpenWord}
         onClose={() => setModalOpenWord(false)}

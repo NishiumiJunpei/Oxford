@@ -8,6 +8,7 @@ import LayoutAdmin from '../components/layoutAdmin'; // LayoutAdminをインポ�
 import '../styles/globals.css'; // グローバルスタイルシート
 
 const layoutPaths = [
+  { path: '/appHome', layout: Layout },
   { path: '/user-setting', layout: Layout },
   { path: '/word-master', layout: Layout },
   { path: '/admin', layout: LayoutAdmin },
