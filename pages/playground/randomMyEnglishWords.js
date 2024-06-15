@@ -25,24 +25,32 @@ const RandomEnglishWords = () => {
     setLoading(false);
   };
 
-  const updateUnderstanding = async (index) => {
-    const updatedWords = [...words];
-    let newLevel = (parseInt(updatedWords[index][5]) + 1) % 3; // 理解度は5番目の要素
-    const rowIndex = updatedWords[index][0]; // 行インデックスは0番目の要素
-
-    updatedWords[index][5] = newLevel.toString();
-    setWords(updatedWords);
-
-    try {
-      await axios.post('/api/playground/updateMyEnglishWord', {
-        rowIndex: rowIndex,
-        newLevel: newLevel.toString()
-      });
-    } catch (err) {
-      setError('Failed to update understanding level');
+  const updateUnderstanding = async (word) => {
+    // word[0]のrowIndexと一致する要素を探し、その要素番号をindex変数に入れる
+    const index = words.findIndex(w => w[0] === word[0]);
+    
+    // 一致する要素が見つかった場合のみ処理を続ける
+    if (index !== -1) {
+      const updatedWords = [...words];
+      let newLevel = (parseInt(updatedWords[index][5]) + 1) % 3; // 理解度は5番目の要素
+      const rowIndex = updatedWords[index][0]; // 行インデックスは0番目の要素
+  
+      updatedWords[index][5] = newLevel.toString();
+      setWords(updatedWords);
+  
+      try {
+        await axios.post('/api/playground/updateMyEnglishWord', {
+          rowIndex: rowIndex,
+          newLevel: newLevel.toString()
+        });
+      } catch (err) {
+        setError('Failed to update understanding level');
+      }
+    } else {
+      setError('Word not found');
     }
   };
-
+  
   useEffect(() => {
     fetchWords(filter);
   }, []);
@@ -96,9 +104,9 @@ const RandomEnglishWords = () => {
   });
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Random English Words
+    <Box sx={{ p: { xs: 1, sm: 4 }, width: '100%' }}>
+      <Typography variant="h6" gutterBottom>
+        My 単語帳
       </Typography>
       {loading ? (
         <CircularProgress />
@@ -127,9 +135,9 @@ const RandomEnglishWords = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell>理解度</TableCell>
-                  <TableCell>英語</TableCell>
-                  <TableCell>
+                <TableCell style={{ paddingTop: 2, paddingBottom: 2 }}></TableCell>
+                <TableCell style={{ paddingTop: 2, paddingBottom: 2 }}>英語</TableCell>
+                <TableCell style={{ paddingTop: 2, paddingBottom: 2 }}>
                     日本語
                     <IconButton onClick={toggleJapaneseVisibility} style={{ marginLeft: 8 }}>
                       {showJapanese ? <Visibility /> : <VisibilityOff />}
@@ -141,7 +149,7 @@ const RandomEnglishWords = () => {
                 {getFilteredWords().map((word, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                      <IconButton onClick={() => updateUnderstanding(index)}>
+                      <IconButton onClick={() => updateUnderstanding(word)}>
                         {getIcon(word[5])}
                       </IconButton>
                     </TableCell>
