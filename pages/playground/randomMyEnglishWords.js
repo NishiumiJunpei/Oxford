@@ -18,7 +18,7 @@ const RandomEnglishWords = () => {
       const filterQuery = Object.entries(filters).map(([key, value]) => `${key}=${value}`).join('&');
       const response = await axios.get(`/api/playground/getRandomMyEnglishWords?${filterQuery}`);
       setWords(response.data.words);
-      await handleCopy(response.data.words);  // データ取得後に自動でコピー
+      // await handleCopy(response.data.words);  // データ取得後に自動でコピー
     } catch (err) {
       setError('Failed to fetch words');
     }
@@ -131,7 +131,7 @@ const RandomEnglishWords = () => {
               Copy
             </Button>
           </Box>
-          <TableContainer component={Paper} sx={{ maxHeight: 600, tableLayout: 'fixed' }}>
+          <TableContainer component={Paper} sx={{ maxHeight: '80vh', tableLayout: 'fixed' }}>
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
