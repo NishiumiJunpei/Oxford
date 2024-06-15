@@ -55,19 +55,24 @@ const RandomEnglishWords = () => {
     fetchWords(filter);
   }, []);
 
-  const handleCopy = async (wordsToCopy) => {
+
+  const handleCopyAndOpenURL = async (wordsToCopy) => {
     if (!Array.isArray(wordsToCopy)) {
       wordsToCopy = words;
     }
     const filteredWords = getFilteredWords(wordsToCopy);
     const wordsText = filteredWords.map(word => `${word[1]}, ${word[2]}`).join('\n');
+  
     try {
       await navigator.clipboard.writeText(wordsText);
       setCopySuccess(true);
+      window.open('https://chatgpt.com/g/g-fcRjeqACa-super-cute-coach', '_blank');
     } catch (err) {
       setError('Failed to copy');
     }
   };
+  
+
 
   const handleRetry = () => {
     fetchWords(filter);
@@ -127,7 +132,7 @@ const RandomEnglishWords = () => {
                 <Star color="success" />
               </IconButton>
             </Box>
-            <Button variant="contained" color="primary" onClick={() => handleCopy(words)}>
+            <Button variant="contained" color="primary" onClick={() => handleCopyAndOpenURL(words)}>
               Copy
             </Button>
           </Box>
