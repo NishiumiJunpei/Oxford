@@ -518,18 +518,18 @@ const WordListPage = () => {
         <Box ref={wordSectionRef} style={{minHeight: '100vh'}} sx={{mt: 5}}>
           <>
             <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
-              <IconButton onClick={() => setFilterDialogOpen(true)}>
+              {/* <IconButton onClick={() => setFilterDialogOpen(true)}>
                 <FilterListIcon />
-              </IconButton>
-              <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
+              </IconButton> */}
+              {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
-              </Button>
+              </Button> */}
               <Button variant='text' color='inherit' onClick={handleWordsCopy} sx={{ml: 3}}>
                 単語コピー
               </Button>
 
             </Box>
-            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 700, overflowY: 'auto', overflowX: 'auto'}}>
+            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 850, overflowY: 'auto', overflowX: 'auto'}}>
               <Table 
                 sx={{ 
                   minWidth: 650, 
@@ -539,172 +539,43 @@ const WordListPage = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>#</TableCell>
-                    <TableCell>
-                      {filterSettings.displayMode === 'EtoJ' ? "英語" : 
-                      filterSettings.displayMode === 'JtoE' ? "日本語" : 
-                      filterSettings.displayMode === 'ImageToE' ? "イメージ" :
-                      filterSettings.displayMode === 'VoiceToE' ? "音声(単語)" :
-                      filterSettings.displayMode === 'VoiceExToE' ? "音声(例文)" : "例文(英)"}
-                      </TableCell>
-                      <TableCell
-                          sx={{
-                            [theme.breakpoints.down('sm')]: {
-                              display: filterSettings.displayMode === 'ExJtoExE' ? 'none' : 'table-cell',
-                            },
-                          }}
-                          >
-                        {filterSettings.displayMode === 'EtoJ' ? "日本語" : 
-                          filterSettings.displayMode === 'JtoE' ? "英語" : 
-                          filterSettings.displayMode === 'ImageToE' ? "英語" :
-                          filterSettings.displayMode === 'VoiceToE' ? "英語" :
-                          filterSettings.displayMode === 'VoiceExToE' ? "英語" : "例文(日)"}
-                      </TableCell>
-                      <TableCell sx={{width: 100}}>画像</TableCell>
-                      <TableCell>例文</TableCell>
-                      <TableCell>理解できる</TableCell>
-                    {/* <TableCell>使える</TableCell> */}
-                    {/* <TableCell sx={{ '@media (max-width: 600px)': { display: 'none' } }}>例文</TableCell> */}
+                    <TableCell>英語</TableCell>
+                    <TableCell>意味</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+
+                <TableBody>                  
                   {filteredWordList?.map((word, index) => (
                     <TableRow 
                       key={index}
                       sx={{ 
                         backgroundColor: (word.memorizeStatusEJ === 'NOT_MEMORIZED' && word.memorizeStatusJE === 'NOT_MEMORIZED') && theme.palette.secondary.light,
                         cursor: 'pointer', 
+                        verticalAlign: 'top' // これで行の上寄せを実現
                         }}
                       onClick={() => handleOpenModalWord(index)}
                     >
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-
-                        {filterSettings.displayMode === 'EtoJ' ? (
-                            <Typography variant="body2">{word.english}</Typography>
-                        ) : filterSettings.displayMode === 'JtoE' ? (
-                            <Typography variant="body2">{word.japanese}</Typography>
-                        ) : filterSettings.displayMode === 'ImageToE' ? (
-                            word.imageUrl ? (
-                                <img 
-                                    src={word.imageUrl} 
-                                    alt={word.english} 
-                                    style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }} 
-                                />
-                            ) : (
-                                <Typography variant="body2">画像がありません</Typography>
-                            )
-                        ) : filterSettings.displayMode === 'VoiceToE' ? (
-                          <IconButton onClick={(event) => {
-                              event.stopPropagation();
-                              playAudio(word.english);
-                          }}>
-                              <VolumeUpIcon />
-                          </IconButton>
-                        ) : filterSettings.displayMode === 'VoiceExToE' ? (
-                          <IconButton onClick={(event) => {
-                            event.stopPropagation();
-                            playAudio(word.exampleSentenceE);
-                          }}>
-                            <VolumeUpIcon />
-                          </IconButton>
-                        ) : filterSettings.displayMode === 'ExJtoExE' ? (
-                          <Typography variant="body2">{word.exampleSentenceJ}</Typography>
-                          ) : null }
-
+                      <TableCell sx={{ verticalAlign: 'top' }}>
+                        <Typography variant="body2">{word.english}</Typography>
                       </TableCell>
-                      <TableCell
-                          sx={{
-                            [theme.breakpoints.down('sm')]: {
-                              display: filterSettings.displayMode === 'ExJtoExE' ? 'none' : 'table-cell',
-                            },
-                          }}
-                          >
-                        <Typography
-                          sx={{
-                            backgroundColor: filterSettings.showAnswer ? 'transparent' : 'lightcoral',
-                            color: filterSettings.showAnswer ? 'inherit' : 'lightcoral',
-                            '@media (hover: hover)': {
-                              '&:hover': {
-                                backgroundColor: 'transparent', // マウスオーバー時の背景色
-                              },
-                            },
-                          }}
-                        >
-                        {filterSettings.displayMode === 'EtoJ' ? word.japanese : 
-                        filterSettings.displayMode === 'JtoE' ? word.english : 
-                        filterSettings.displayMode === 'ImageToE' ? word.english : 
-                        filterSettings.displayMode === 'VoiceToE' ? word.english : 
-                        filterSettings.displayMode === 'VoiceExToE' ? word.english : 
-                        filterSettings.displayMode === 'ExJtoExE' ? word.exampleSentenceE : null
-                        }
-
-                        </Typography>
-                      </TableCell>
+                      <TableCell sx={{ verticalAlign: 'top' }}>
+                        <Typography variant="body2">{word.japanese}</Typography>
                         {word.imageUrl ? ( 
                           <img 
                               src={word.imageUrl} 
                               alt={word.english} 
-                              style={{ maxWidth: '100px', maxHeight: 'auto', objectFit: 'contain' }} 
+                              style={{ maxWidth: '200px', maxHeight: 'auto', objectFit: 'contain', display: 'block', marginTop: '8px' }} 
                           />
                         ) : (
-                          <div style={{ width: '100px', height: '100px', backgroundColor: 'transparent' }}></div>
-                        )
-                        }
-                      <TableCell>
-                        <Typography>
-                          {word.exampleSentenceE}
-                        </Typography>
-
-                        <span style={{ backgroundColor: '#D3D3D3', padding: '4px', display: 'inline-block', marginTop: '8px' }}>類語</span>
-                        <Typography variant="body1">
-                                {word?.synonyms}
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell>
-                        {word.memorizeStatusEJ === 'NOT_MEMORIZED' && (
-                          <>
-                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                          </>
-                        )}
-                        {word.memorizeStatusEJ === 'MEMORIZED' && (
-                          <>
-                            <StarIcon style={{ color: 'gold' }} />
-                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                          </>
-                        )}
-                        {word.memorizeStatusEJ === 'MEMORIZED2' && (
-                          <>
-                            <StarIcon style={{ color: 'gold' }} />
-                            <StarIcon style={{ color: 'gold' }} />
-                          </>
+                          <div style={{ width: '200px', height: '200px', backgroundColor: 'transparent', marginTop: '8px' }}></div>
                         )}
                       </TableCell>
-                      {/* <TableCell>
-                        {word.memorizeStatusJE === 'NOT_MEMORIZED' && (
-                          <>
-                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                          </>
-                        )}
-                        {word.memorizeStatusJE === 'MEMORIZED' && (
-                          <>
-                            <StarIcon style={{ color: 'gold' }} />
-                            <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                          </>
-                        )}
-                        {word.memorizeStatusJE === 'MEMORIZED2' && (
-                          <>
-                            <StarIcon style={{ color: 'gold' }} />
-                            <StarIcon style={{ color: 'gold' }} />
-                          </>
-                        )}
-                      </TableCell> */}
-
                     </TableRow>
                   ))}
                 </TableBody>
+
+
               </Table>
             </TableContainer>
 
