@@ -244,7 +244,6 @@ const WordListPage = () => {
     filterOption: '',
   });
   const theme = useTheme();
-  const wordSectionRef = useRef(null);
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
   const [tabForWordDetailDialog, setTabForWordDetailDialog] = useState(0);
   const [openSrIntroDialog, setOpenSrIntroDialog] = useState(false);
@@ -363,10 +362,6 @@ const WordListPage = () => {
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
-  };
-
-  const scrollToWordSection = () => {
-    wordSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const setFilterBasedOnStatus = ()=>{
@@ -515,7 +510,7 @@ const WordListPage = () => {
               </Box>
             </Box>
 
-        <Box ref={wordSectionRef} style={{minHeight: '100vh'}} sx={{mt: 5}}>
+        <Box sx={{mt: 5}}>
           <>
             <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
               {/* <IconButton onClick={() => setFilterDialogOpen(true)}>
@@ -529,7 +524,7 @@ const WordListPage = () => {
               </Button>
 
             </Box>
-            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 850}}>
+            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto'}}>
               <Table 
                 sx={{ 
                   minWidth: 650, 
