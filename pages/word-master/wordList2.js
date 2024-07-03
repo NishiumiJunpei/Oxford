@@ -529,7 +529,7 @@ const WordListPage = () => {
               </Button>
 
             </Box>
-            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 850, overflowY: 'auto', overflowX: 'auto'}}>
+            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', maxHeight: 850, overflowX: 'auto'}}>
               <Table 
                 sx={{ 
                   minWidth: 650, 
