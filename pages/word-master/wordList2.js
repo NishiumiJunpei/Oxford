@@ -10,217 +10,126 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import WordDetailDialog from '../../components/wordDetailDialog';
-import StoryCreationDialog from '../../components/storyCreationDialog'
-import WordStoryDetailsDialog from '../../components/wordStoryDetailsDialog'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SubTitleTypography from '@/components/subTitleTypography';
-import ImageIcon from '@mui/icons-material/Image';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import HotelIcon from '@mui/icons-material/Hotel';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext' 
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import GPTCoachButton from '@/components/gptCoachButton';
+import { Error, StarBorder, Star } from '@mui/icons-material';
+import axios from 'axios';
+
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
-  const handleRadioChange = (event) => {
-    setFilterSettings(prev => ({
-      ...prev,
-      displayMode: event.target.value
-    }));
-  };
-
-  const handleRadioFilterChange = (event) => {
-    setFilterSettings(prev => ({
-      ...prev,
-      filterOption: event.target.value
-    }));
-  };
-
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    setFilterSettings(prev => ({
+    setFilterSettings((prev) => ({
       ...prev,
-      [name]: checked
+      filterOption: {
+        ...prev.filterOption,
+        [name]: checked,
+      },
     }));
   };
 
-
   return (
-    <Dialog open={open} onClose={onClose}
-      sx={{
-        '& .MuiDialog-paper': {
-          width: '100%', // モバイルデバイス用の全幅
-          maxWidth: 'none', // maxWidthを無効化
-          '@media (min-width: 600px)': { // 600px以上のデバイスに適用されるスタイル
-            maxWidth: '50%', // デスクトップでの最大幅
-          },
-        },
-      }}
-
-      >
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>フィルタ設定</DialogTitle>
       <DialogContent>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <Box>
-              <SubTitleTypography text="表示モード"/>
-              <FormControl component="fieldset">
-                <RadioGroup
-                  aria-label="display-mode"
-                  name="display-mode"
-                  value={filterSettings.displayMode}
-                  onChange={handleRadioChange}
-                >
-                  <FormControlLabel value="EtoJ" control={<Radio />} label="英⇨日" />
-                  <FormControlLabel value="JtoE" control={<Radio />} label="日⇨英" />
-                  <FormControlLabel value="ImageToE" control={<Radio />} label="画像⇨英" />
-                  <FormControlLabel value="VoiceToE" control={<Radio />} label="音声(単語)⇨英" />
-                  <FormControlLabel value="VoiceExToE" control={<Radio />} label="音声(例文)⇨英" />
-                  <FormControlLabel value="ExJtoExE" control={<Radio />} label="例文(日)⇨例文(例)" />
-                </RadioGroup>
-              </FormControl>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Box>
-              <SubTitleTypography text="答え"/>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={filterSettings.showAnswer}
-                    onChange={handleCheckboxChange}
-                    name="showAnswer"
-                  />
-                }
-                label="表示する"
+        <Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={filterSettings.filterOption.showNOT_MEMORIZED || false}
+                onChange={handleCheckboxChange}
+                name="showNOT_MEMORIZED"
               />
-
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Box>
-              <SubTitleTypography text="絞り込み"/>
-              <FormControl component="fieldset">
-                <RadioGroup
-                  aria-label="filter"
-                  name="filter"
-                  value={filterSettings.filterOption}
-                  onChange={handleRadioFilterChange}
-                >
-                  <Typography>英⇨日</Typography>
-                  <FormControlLabel 
-                    value="showEJOnlyNOT_MEMORIZED" 
-                    control={<Radio />} 
-                    label={
-                      <>
-                        <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                        <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
-                        のみ表示
-                      </>
-                    } 
-                  />
-                  <FormControlLabel 
-                    value="showEJOnlyMEMORIZED" 
-                    control={<Radio />} 
-                    label={
-                      <>
-                        <StarIcon style={{ color: 'gold' }}/>
-                        <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
-                        のみ表示
-                      </>
-                    } 
-                  />
-                  <FormControlLabel 
-                    value="showEJOnlyMEMORIZED2" 
-                    control={<Radio />} 
-                    label={
-                      <>
-                        <StarIcon style={{ color: 'gold' }}/>
-                        <StarIcon style={{ color: 'gold' }}/>
-                        のみ表示
-                      </>
-                    } 
-                  />
-
-                  <Typography>日⇨英</Typography>
-                  <FormControlLabel 
-                    value="showJEOnlyNOT_MEMORIZED" 
-                    control={<Radio />} 
-                    label={
-                      <>
-                      <StarBorderIcon style={{ color: '#D3D3D3' }}/>
-                      <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
-                      のみ表示
-                      </>
-                    } 
-                  />
-                  <FormControlLabel 
-                    value="showJEOnlyMEMORIZED" 
-                    control={<Radio />} 
-                    label={
-                      <>
-                      <StarIcon style={{ color: 'gold' }}/>
-                      <StarBorderIcon style={{ color: '#D3D3D3' }}/> 
-                      のみ表示
-                      </>
-                    } 
-                  />
-                  <FormControlLabel 
-                    value="showJEOnlyMEMORIZED2" 
-                    control={<Radio />} 
-                    label={
-                      <>
-                      <StarIcon style={{ color: 'gold' }}/>
-                      <StarIcon style={{ color: 'gold' }}/>
-                      のみ表示
-                      </>
-                    } 
-                  />
-                </RadioGroup>
-              </FormControl>
-
-            </Box>
-          </Grid>
-        </Grid>
+            }
+            label={<Error color="error" />}
+          />
+        </Box>
+        <Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={filterSettings.filterOption.showMEMORIZED || false}
+                onChange={handleCheckboxChange}
+                name="showMEMORIZED"
+              />
+            }
+            label={<StarBorder color="warning" />}
+          />
+        </Box>
+        <Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={filterSettings.filterOption.showMEMORIZED2 || false}
+                onChange={handleCheckboxChange}
+                name="showMEMORIZED2"
+              />
+            }
+            label={<Star color="success" />}
+          />
+        </Box>
       </DialogContent>
-      <DialogActions sx={{justifyContent: 'center'}}>
+      <DialogActions sx={{ justifyContent: 'center' }}>
         <Button onClick={onClose}>閉じる</Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-const SrIntroDialog = ({ open, onClose, blockId }) => {
-  const router = useRouter();
+const WordIconButton = ({ word, languageDirection, updateWordList }) => {
+  const id  = word.id;
+  const status = word.memorizeStatusEJ
 
-  const handleCheckUnderstanding = () => {
-    router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}`);
+  const getIcon = (status) => {
+    switch (status) {
+      case 'MEMORIZED':
+        return <StarBorder color="warning" />;
+      case 'MEMORIZED2':
+        return <Star color="success" />;
+      case 'NOT_MEMORIZED':
+      default:
+        return <Error color="error" />;
+    }
+  };
+
+  const getNextStatus = (currentStatus) => {
+    switch (currentStatus) {
+      case 'MEMORIZED':
+        return 'MEMORIZED2';
+      case 'MEMORIZED2':
+        return 'NOT_MEMORIZED';
+      case 'NOT_MEMORIZED':
+      default:
+        return 'MEMORIZED';
+    }
+  };
+
+  const handleIconClick = async (event) => {
+    event.stopPropagation(); // Prevent click event from bubbling up
+    const newStatus = getNextStatus(status);
+    try {
+      await axios.post('/api/word-master/updateUserWordStatus', {
+        wordId: id,
+        status: newStatus,
+        languageDirection: languageDirection,
+      });
+      const updatedWord = { ...word, memorizeStatusEJ: newStatus };
+      updateWordList(updatedWord);
+    } catch (err) {
+      console.error('Failed to update word status', err);
+    }
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>間隔反復</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          アセスメントをして、間違えた単語に対して間隔反復が行えます。
-        </DialogContentText>
-        <DialogContentText>
-          ※間隔反復は、10分後、1時間後、5時間後、翌日、など間隔をあけて復習して効率的に記憶する方法です
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>キャンセル</Button>
-        <Button color="primary" onClick={handleCheckUnderstanding}>
-          アセスメント
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <IconButton onClick={handleIconClick}>
+      {getIcon(status)}
+    </IconButton>
   );
 };
+
+
 
 const WordListPage = () => {
   const router = useRouter();
@@ -241,7 +150,11 @@ const WordListPage = () => {
   const [filterSettings, setFilterSettings] = useState({
     displayMode: 'EtoJ',
     showAnswer: true,
-    filterOption: '',
+    filterOption: {
+      showNOT_MEMORIZED: true,
+      showMEMORIZED: true,
+      showMEMORIZED2: true,
+    },
   });
   const theme = useTheme();
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
@@ -303,9 +216,11 @@ const WordListPage = () => {
     }
   }
 
-  const handleOpenModalWord = (index) => {
-    setSelectedIndex(index);
-    setModalOpenWord(true);
+  const handleOpenModalWord = (event, index) => {
+    if (event.target.nodeName === 'TD') {
+      setSelectedIndex(index);
+      setModalOpenWord(true);
+    }
   };
 
   const updateWordList = (newWordData) => {
@@ -316,162 +231,35 @@ const WordListPage = () => {
   };
     
 
-  const handleOpenStoryCreationDialog = () => {
-    setOpenStoryCreationDialog(true);
-  };
-
-  const handleSaveStoryCreationDialog = (newStory) => {
-    // 新しいストーリーをwordStoryListに追加
-    setWordStoryList(prevList => [...prevList, newStory]);
-  };
-
-
-  const handleCloseStoryCreationDialog = () => {
-    setOpenStoryCreationDialog(false);
-  };
-
-
-  const handleCloseStoryDetailsDialog = () => {
-    setOpenWordStoryDetailsDialog(false);
-  };
-
-  const handleOpenWordStoryDetailsDialog = (story) => {
-    setSelectedStory(story);
-    setOpenWordStoryDetailsDialog(true);
-  };
-
-  const onDeleteWordStory = async (id) => {
-    try {
-      const response = await fetch('/api/word-master/deleteWordStoryByGPT', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id }),
-      });
-  
-      if (response.ok) {
-        setWordStoryList(prevList => prevList.filter(story => story.id !== id));
-      } else {
-        throw new Error('API Error');
-      }
-    } catch (error) {
-      console.error('Failed to delete story:', error);
-    }
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setSelectedTab(newValue);
-  };
-
-  const setFilterBasedOnStatus = ()=>{
-    if (languageDirection == 'EJ'){
-      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusEJ !== 'NOT_MEMORIZED');
-      const allMemorized2 = wordList.every(word => word.memorizeStatusEJ == 'MEMORIZED2');
-      setFilterSettings({
-        ...filterSettings, 
-        filterOption: allMemorized2 ? '' :
-                      clearNOT_MEMORIZED ? 'showEJOnlyMEMORIZED' : 'showEJOnlyNOT_MEMORIZED'
-      })
-
-    }else if (languageDirection == 'JE'){
-      const clearNOT_MEMORIZED = wordList.every(word => word.memorizeStatusJE !== 'NOT_MEMORIZED');
-      const allMemorized2 = wordList.every(word => word.memorizeStatusJE == 'MEMORIZED2');
-      setFilterSettings({
-        ...filterSettings, 
-        filterOption: allMemorized2 ? '' :
-                      clearNOT_MEMORIZED ? 'showJEOnlyMEMORIZED' : 'showJEOnlyNOT_MEMORIZED'
-      })
-
-    }
-  }
-
-  const handleClickLearnByVisual = () =>{
-    scrollToWordSection() 
-    setSelectedTab(0)
-    setFilterBasedOnStatus()
-    handleOpenModalWord(0)
-  }
-  
-  const handleClickRedSheet = () =>{
-    scrollToWordSection() 
-    setSelectedTab(0)
-    setFilterBasedOnStatus()
-    setFilterSettings({...filterSettings, showAnswer: false})
-
-  }
-
-  const handleClickSR = () =>{
-    setOpenSrIntroDialog(true)
-  }
-
-  const handleAILearningLink = (index)=>{
-    if (index == 0){
-      scrollToWordSection() 
-      setSelectedTab(1)  
-    }else if (index == 1 || index == 2){
-      scrollToWordSection() 
-      setSelectedTab(0)
-      setFilterBasedOnStatus()
-
-      handleOpenModalWord(0)
-  
-      setTabForWordDetailDialog(index)
-
-    }
-  }
-
-  const handleRemoveFilter = () =>{
+  const handleRemoveFilter = () => {
     setFilterSettings({
       displayMode: 'EtoJ',
       showAnswer: true,
-      filterOption: '',
-    })
-  }
-
-
-  const playAudio = async (text) => {
-    try {
-      const response = await fetch('/api/common/synthesize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text }),
-      });
-  
-      const data = await response.json();
-      if (data.audioContent) {
-        const audioBlob = new Blob([new Uint8Array(data.audioContent.data)], { type: 'audio/mp3' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        audio.play();
-      }
-    } catch (error) {
-      console.error('Error during audio playback:', error);
-    }
-  };      
-
-
-  const handleWordsCopy = async () => {
-    const wordsText = filteredWordList.map(word => `${word.english}, ${word.japanese}`).join('\n');
-    try {
-      await navigator.clipboard.writeText(wordsText);
-      setCopySuccess(true);
-    } catch (err) {
-      setError('Failed to copy');
-    }
+      filterOption: {
+        showNOT_MEMORIZED: true,
+        showMEMORIZED: true,
+        showMEMORIZED2: true,
+      },
+    });
   };
-
-
+  
 
   // フィルタリングされた単語リストを取得
-  const filteredWordList = wordList.filter(word => {
-    return (filterSettings.filterOption === 'showEJOnlyNOT_MEMORIZED' ? word.memorizeStatusEJ === 'NOT_MEMORIZED' :
-         filterSettings.filterOption === 'showEJOnlyMEMORIZED' ? word.memorizeStatusEJ === 'MEMORIZED' :
-         filterSettings.filterOption === 'showEJOnlyMEMORIZED2' ? word.memorizeStatusEJ === 'MEMORIZED2' :
-         filterSettings.filterOption === 'showJEOnlyNOT_MEMORIZED' ? word.memorizeStatusJE === 'NOT_MEMORIZED' :
-         filterSettings.filterOption === 'showJEOnlyMEMORIZED' ? word.memorizeStatusJE === 'MEMORIZED' :
-         filterSettings.filterOption === 'showJEOnlyMEMORIZED2' ? word.memorizeStatusJE === 'MEMORIZED2' : true);
+  const filteredWordList = wordList.filter((word) => {
+    const { showNOT_MEMORIZED, showMEMORIZED, showMEMORIZED2 } = filterSettings.filterOption;
+  
+    if (showNOT_MEMORIZED && word.memorizeStatusEJ === 'NOT_MEMORIZED') {
+      return true;
+    }
+    if (showMEMORIZED && word.memorizeStatusEJ === 'MEMORIZED') {
+      return true;
+    }
+    if (showMEMORIZED2 && word.memorizeStatusEJ === 'MEMORIZED2') {
+      return true;
+    }
+    return false;
   });
+
   
   return (
     <Box maxWidth="lg">
@@ -513,15 +301,13 @@ const WordListPage = () => {
         <Box sx={{mt: 5}}>
           <>
             <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
-              {/* <IconButton onClick={() => setFilterDialogOpen(true)}>
+              <IconButton onClick={() => setFilterDialogOpen(true)}>
                 <FilterListIcon />
-              </IconButton> */}
-              {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
+              </IconButton>
+              <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
-              </Button> */}
-              <Button variant='text' color='inherit' onClick={handleWordsCopy} sx={{ml: 3}}>
-                単語コピー
               </Button>
+              <GPTCoachButton words={filteredWordList} />
 
             </Box>
             <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto'}}>
@@ -533,7 +319,7 @@ const WordListPage = () => {
                 >
                 <TableHead>
                   <TableRow>
-                    <TableCell>#</TableCell>
+                    <TableCell>　</TableCell>
                     <TableCell>英語</TableCell>
                     <TableCell>意味</TableCell>
                   </TableRow>
@@ -548,9 +334,11 @@ const WordListPage = () => {
                         cursor: 'pointer', 
                         verticalAlign: 'top' // これで行の上寄せを実現
                         }}
-                      onClick={() => handleOpenModalWord(index)}
-                    >
-                      <TableCell>{index + 1}</TableCell>
+                        onClick={(event) => handleOpenModalWord(event, index)}
+                      >
+                      <TableCell>
+                        <WordIconButton word={word} languageDirection={languageDirection} updateWordList={updateWordList}/>
+                      </TableCell>
                       <TableCell sx={{ verticalAlign: 'top' }}>
                         <Typography variant="body2">{word.english}</Typography>
                       </TableCell>
