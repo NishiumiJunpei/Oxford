@@ -14,7 +14,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SubTitleTypography from '@/components/subTitleTypography';
 import GPTCoachButton from '@/components/gptCoachButton';
-import { Error, StarBorder, Star } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Error, StarBorder, Star } from '@mui/icons-material';
 import axios from 'axios';
 
 
@@ -137,15 +137,9 @@ const WordListPage = () => {
   const [wordList, setWordList] = useState([]);
   const [modalOpenWord, setModalOpenWord] = useState(false);// 例文確認用のモーダル用の状態
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [wordStoryList, setWordStoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [openStoryCreationDialog, setOpenStoryCreationDialog] = useState(false);
-  const [openWordStoryDetailsDialog, setOpenWordStoryDetailsDialog] = useState(false);
-  const [selectedStory, setSelectedStory] = useState(null);
   const [block, setBlock] = useState(null);
   const [blocks, setBlocks] = useState(null);
-  const [selectedTab, setSelectedTab] = useState(0);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
     displayMode: 'EtoJ',
@@ -163,6 +157,7 @@ const WordListPage = () => {
   const [progressDetail, setProgressDetail] = useState(null)
   const [copySuccess, setCopySuccess] = useState(false);
   const [error, setError] = useState(null);
+  const [showJapanese, setShowJapanese] = useState(true); // 日本語の表示状態を管理するフック
 
   
   useEffect(() => {
@@ -172,9 +167,6 @@ const WordListPage = () => {
       const data = await response.json();
       if (data && data.wordList) { // dataとdata.wordListが存在する場合のみセット
         setWordList(data.wordList);
-        setProgress(data.progress);
-        setProgressDetail(data.progressDetail);
-        setWordStoryList(data.wordStoryList);
         setBlock(data.block);
         setBlocks(data.blocks);
 
@@ -242,6 +234,11 @@ const WordListPage = () => {
       },
     });
   };
+
+  const toggleJapaneseVisibility = () => {
+    setShowJapanese(!showJapanese);
+  };
+
   
 
   // フィルタリングされた単語リストを取得
@@ -304,9 +301,9 @@ const WordListPage = () => {
               <IconButton onClick={() => setFilterDialogOpen(true)}>
                 <FilterListIcon />
               </IconButton>
-              <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
+              {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
-              </Button>
+              </Button> */}
               <GPTCoachButton words={filteredWordList} />
 
             </Box>
@@ -321,7 +318,13 @@ const WordListPage = () => {
                   <TableRow>
                     <TableCell>　</TableCell>
                     <TableCell>英語</TableCell>
-                    <TableCell>意味</TableCell>
+                    <TableCell>
+                      意味
+                      <IconButton onClick={toggleJapaneseVisibility} style={{ marginLeft: 8 }}>
+                      {showJapanese ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+
+                    </TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -342,9 +345,9 @@ const WordListPage = () => {
                       <TableCell sx={{ verticalAlign: 'top' }}>
                         <Typography variant="body2">{word.english}</Typography>
                       </TableCell>
-                      <TableCell sx={{ verticalAlign: 'top' }}>
+                      <TableCell sx={{ verticalAlign: 'top' }}style={{ color: showJapanese ? 'inherit' : 'transparent' }}>
                         <Typography variant="body2">{word.japanese}</Typography>
-                        {word.imageUrl ? ( 
+                        {word.imageUrl && showJapanese ? ( 
                           <img 
                               src={word.imageUrl} 
                               alt={word.english} 

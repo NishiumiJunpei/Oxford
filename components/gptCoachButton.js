@@ -1,5 +1,6 @@
-import React from 'react';
-import { Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Chip, Stack, Typography } from '@mui/material';
+import { shuffleArray } from '@/utils/utils';
 
 const themesForGPT = [
   'スポーツ',
@@ -15,27 +16,50 @@ const themesForGPT = [
 ];
 
 const GPTCoachButton = ({ words }) => {
+  const [open, setOpen] = useState(false);
+  const [maxWords, setMaxWords] = useState('10');
+  const [mode, setMode] = useState('英単語解説');
+  const [selectedTheme, setSelectedTheme] = useState('');
+
+  useEffect(() => {
+    setSelectedTheme(getRandomTheme());
+  }, []);
+
   const getRandomTheme = () => {
     const randomIndex = Math.floor(Math.random() * themesForGPT.length);
     return themesForGPT[randomIndex];
   };
 
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+  const handleOpen = () => {
+    setOpen(true);
   };
 
-  const handleCopyAndOpenURL = async () => {
-    const randomTheme = getRandomTheme();
-    const themeText = `テーマ：${randomTheme}\n`;
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChipClick = (chip, type) => {
+    if (type === 'words') {
+      setMaxWords(chip);
+    } else if (type === 'mode') {
+      setMode(chip);
+    } else if (type === 'theme') {
+      setSelectedTheme(chip);
+    }
+  };
+
+  const handleAction = async () => {
+    const themeText = `テーマ：${selectedTheme}\n`;
+
+    let fullThemeText = themeText;
+    if (mode.includes('ストーリー生成')) {
+      fullThemeText = `テーマ：${selectedTheme}\n### 物語生成（${mode.includes('英語') ? '英語中心' : '日本語中心'}）###\n`;
+    }
 
     const shuffledWords = shuffleArray([...words]);
-    const wordsText = shuffledWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
-
-    const fullText = themeText + wordsText;
+    const limitedWords = maxWords === '指定なし' ? shuffledWords : shuffledWords.slice(0, 10);
+    const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
+    const fullText = fullThemeText + wordsText;
 
     try {
       await navigator.clipboard.writeText(fullText);
@@ -43,12 +67,47 @@ const GPTCoachButton = ({ words }) => {
     } catch (err) {
       console.log(err);
     }
+
+    handleClose();
   };
 
   return (
-    <Button variant="contained" color="primary" onClick={handleCopyAndOpenURL}>
-      GPT Coach
-    </Button>
+    <>
+      <Button variant="contained" color="primary" onClick={handleOpen}>
+        GPT Coach
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>GPT Coach</DialogTitle>
+        <DialogContent>
+          <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
+          <Stack direction="row" spacing={1} mb={2} mt={1}>
+            {themesForGPT.map(theme => (
+              <Chip
+                key={theme}
+                label={theme}
+                onClick={() => handleChipClick(theme, 'theme')}
+                color={selectedTheme === theme ? 'primary' : 'default'}
+              />
+            ))}
+          </Stack>
+          <Typography variant="subtitle2" color="textSecondary">最大単語数</Typography>
+          <Stack direction="row" spacing={2} mb={2} mt={1}>
+            <Chip label="10" onClick={() => handleChipClick('10', 'words')} color={maxWords === '10' ? 'primary' : 'default'} />
+            <Chip label="指定なし" onClick={() => handleChipClick('指定なし', 'words')} color={maxWords === '指定なし' ? 'primary' : 'default'} />
+          </Stack>
+          <Typography variant="subtitle2" color="textSecondary">モード</Typography>
+          <Stack direction="row" spacing={2} mt={1}>
+            <Chip label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
+            <Chip label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
+            <Chip label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} style={{ color: 'grey' }}>キャンセル</Button>
+          <Button onClick={handleAction} color="primary">コーチを呼び出す</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
