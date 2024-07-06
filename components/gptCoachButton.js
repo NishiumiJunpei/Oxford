@@ -45,12 +45,12 @@ const GPTCoachButton = ({ words }) => {
     } else if (type === 'mode') {
       setMode(chip);
     } else if (type === 'theme') {
-      setSelectedTheme(chip === '指定なし' ? '' : chip);
+      setSelectedTheme(chip);
     }
   };
 
   const handleAction = async () => {
-    const themeText = selectedTheme ? `テーマ：${selectedTheme}\n` : '';
+    const themeText = selectedTheme != '指定なし' ? `テーマ：${selectedTheme}\n` : '';
 
     let fullThemeText = themeText;
     if (mode.includes('ストーリー生成')) {
@@ -58,7 +58,7 @@ const GPTCoachButton = ({ words }) => {
     }
 
     const shuffledWords = shuffleArray([...words]);
-    const limitedWords = maxWords === '指定なし' ? shuffledWords : shuffledWords.slice(0, 10);
+    const limitedWords = maxWords === '指定なし' ? shuffledWords : shuffledWords.slice(0, Number(maxWords));
     const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
     const fullText = fullThemeText + wordsText;
 
