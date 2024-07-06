@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Chip, Stack, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Chip, Stack, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { shuffleArray } from '@/utils/utils';
 
 const themesForGPT = [
@@ -21,6 +21,7 @@ const GPTCoachButton = ({ words }) => {
   const [maxWords, setMaxWords] = useState('10');
   const [mode, setMode] = useState('英単語解説');
   const [selectedTheme, setSelectedTheme] = useState('');
+  const [isRandom, setIsRandom] = useState(false); // ランダムチェックボックスの状態
 
   useEffect(() => {
     setSelectedTheme(getRandomTheme());
@@ -57,8 +58,11 @@ const GPTCoachButton = ({ words }) => {
       fullThemeText = `テーマ：${selectedTheme}\n### 物語生成（${mode.includes('英語') ? '英語中心' : '日本語中心'}）###\n`;
     }
 
-    const shuffledWords = shuffleArray([...words]);
-    const limitedWords = maxWords === '指定なし' ? shuffledWords : shuffledWords.slice(0, Number(maxWords));
+    let processedWords = [...words];
+    if (isRandom) {
+      processedWords = shuffleArray(processedWords);
+    }
+    const limitedWords = maxWords === '指定なし' ? processedWords : processedWords.slice(0, Number(maxWords));
     const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
     const fullText = fullThemeText + wordsText;
 
@@ -80,6 +84,13 @@ const GPTCoachButton = ({ words }) => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>GPT Coach</DialogTitle>
         <DialogContent>
+          <Typography variant="subtitle2" color="textSecondary">モード</Typography>
+          <Stack direction="row" spacing={2} mt={1}>
+            <Chip label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
+            <Chip label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
+            <Chip label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
+          </Stack>
+
           <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
           <Stack direction="row" spacing={1} mb={2} mt={1}>
             {themesForGPT.map(theme => (
@@ -91,18 +102,19 @@ const GPTCoachButton = ({ words }) => {
               />
             ))}
           </Stack>
+
           <Typography variant="subtitle2" color="textSecondary">最大単語数</Typography>
           <Stack direction="row" spacing={2} mb={2} mt={1}>
             <Chip label="10" onClick={() => handleChipClick('10', 'words')} color={maxWords === '10' ? 'primary' : 'default'} />
             <Chip label="20" onClick={() => handleChipClick('20', 'words')} color={maxWords === '20' ? 'primary' : 'default'} />
             <Chip label="指定なし" onClick={() => handleChipClick('指定なし', 'words')} color={maxWords === '指定なし' ? 'primary' : 'default'} />
           </Stack>
-          <Typography variant="subtitle2" color="textSecondary">モード</Typography>
-          <Stack direction="row" spacing={2} mt={1}>
-            <Chip label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
-            <Chip label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
-            <Chip label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
-          </Stack>
+
+          <Typography variant="subtitle2" color="textSecondary">単語ランダム</Typography>
+          <FormControlLabel
+            control={<Checkbox checked={isRandom} onChange={() => setIsRandom(!isRandom)} />}
+            label="ランダムにする"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} style={{ color: 'grey' }}>キャンセル</Button>
