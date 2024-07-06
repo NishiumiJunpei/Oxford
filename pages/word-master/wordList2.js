@@ -153,11 +153,10 @@ const WordListPage = () => {
   const theme = useTheme();
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
   const [tabForWordDetailDialog, setTabForWordDetailDialog] = useState(0);
-  const [openSrIntroDialog, setOpenSrIntroDialog] = useState(false);
-  const [progressDetail, setProgressDetail] = useState(null)
   const [copySuccess, setCopySuccess] = useState(false);
   const [error, setError] = useState(null);
   const [showJapanese, setShowJapanese] = useState(true); // 日本語の表示状態を管理するフック
+  const [visibleRows, setVisibleRows] = useState({}); // 各行の見るボタンと日本語表示状態を管理するフック
 
   
   useEffect(() => {
@@ -236,7 +235,21 @@ const WordListPage = () => {
   };
 
   const toggleJapaneseVisibility = () => {
+    if (showJapanese) {
+      const newVisibleRows = wordList.reduce((acc, word) => {
+        acc[word.id] = { showJapanese: false, showButton: true };
+        return acc;
+      }, {});
+      setVisibleRows(newVisibleRows);
+    }
     setShowJapanese(!showJapanese);
+  };
+
+  const handleViewClick = (wordId) => {
+    setVisibleRows((prev) => ({
+      ...prev,
+      [wordId]: { showJapanese: true, showButton: false },
+    }));
   };
 
   
@@ -257,6 +270,7 @@ const WordListPage = () => {
     return false;
   });
 
+  console.log('test', visibleRows)
   
   return (
     <Box maxWidth="lg">
@@ -298,13 +312,17 @@ const WordListPage = () => {
         <Box sx={{mt: 5}}>
           <>
             <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
-              <IconButton onClick={() => setFilterDialogOpen(true)}>
+              <IconButton onClick={() => setFilterDialogOpen(true)} sx={{mr: 3}}>
                 <FilterListIcon />
               </IconButton>
               {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
               </Button> */}
               <GPTCoachButton words={filteredWordList} />
+              <Button variant="contained" color="primary" 
+                onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{ml: 3}}>
+                  アセスメント
+              </Button>
 
             </Box>
             <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto'}}>
@@ -328,7 +346,7 @@ const WordListPage = () => {
                   </TableRow>
                 </TableHead>
 
-                <TableBody>                  
+                {/* <TableBody>                  
                   {filteredWordList?.map((word, index) => (
                     <TableRow 
                       key={index}
@@ -359,7 +377,62 @@ const WordListPage = () => {
                       </TableCell>
                     </TableRow>
                   ))}
+                </TableBody> */}
+
+                <TableBody>
+                  {filteredWordList?.map((word, index) => (
+                    <TableRow 
+                      key={index}
+                      sx={{ 
+                        backgroundColor: (word.memorizeStatusEJ === 'NOT_MEMORIZED' && word.memorizeStatusJE === 'NOT_MEMORIZED') && theme.palette.secondary.light,
+                        cursor: 'pointer', 
+                        verticalAlign: 'top'
+                      }}
+                      onClick={(event) => handleOpenModalWord(event, index)}
+                    >
+                      <TableCell>
+                        <WordIconButton word={word} languageDirection={languageDirection} updateWordList={updateWordList} />
+                      </TableCell>
+                      <TableCell sx={{ verticalAlign: 'top' }}>
+                        <Typography variant="body2">{word.english}</Typography>
+                      </TableCell>
+                      <TableCell sx={{ verticalAlign: 'top' }}>
+                        {showJapanese || visibleRows[word.id]?.showJapanese ? (
+                          <>
+                            <Typography variant="body2">{word.japanese}</Typography>
+                            {word.imageUrl && (
+                              <img 
+                                src={word.imageUrl} 
+                                alt={word.english} 
+                                style={{ maxWidth: '200px', maxHeight: 'auto', objectFit: 'contain', display: 'block', marginTop: '8px' }} 
+                              />
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {visibleRows[word.id]?.showButton && (
+                              <Button 
+                                onClick={() => handleViewClick(word.id)}
+                                sx={{
+                                  fontSize: theme.typography.body2.fontSize,
+                                  margin: 0,
+                                  padding: 0,
+                                  textTransform: 'none' // ボタンテキストの大文字変換を防止
+                                }}
+                              >
+                              見る
+                            </Button>
+
+                            )}
+                            <div style={{ width: '200px', height: '200px', backgroundColor: 'transparent', marginTop: '8px' }}></div>
+                          </>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
+
+
 
 
               </Table>
