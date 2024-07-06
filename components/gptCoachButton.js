@@ -20,17 +20,28 @@ const GPTCoachButton = ({ words }) => {
     return themesForGPT[randomIndex];
   };
 
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
   const handleCopyAndOpenURL = async () => {
     const randomTheme = getRandomTheme();
     const themeText = `テーマ：${randomTheme}\n`;
-    const wordsText = words.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
+
+    const shuffledWords = shuffleArray([...words]);
+    const wordsText = shuffledWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
+
     const fullText = themeText + wordsText;
 
     try {
       await navigator.clipboard.writeText(fullText);
       window.open('https://chatgpt.com/g/g-fcRjeqACa-super-cute-coach', '_blank');
     } catch (err) {
-        console.log(err);
+      console.log(err);
     }
   };
 
