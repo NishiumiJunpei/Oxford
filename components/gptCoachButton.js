@@ -3,6 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Chip, Stack,
 import { shuffleArray } from '@/utils/utils';
 
 const themesForGPT = [
+  '指定なし',
   'スポーツ',
   '料理',
   '音楽',
@@ -44,12 +45,12 @@ const GPTCoachButton = ({ words }) => {
     } else if (type === 'mode') {
       setMode(chip);
     } else if (type === 'theme') {
-      setSelectedTheme(chip);
+      setSelectedTheme(chip === '指定なし' ? '' : chip);
     }
   };
 
   const handleAction = async () => {
-    const themeText = `テーマ：${selectedTheme}\n`;
+    const themeText = selectedTheme ? `テーマ：${selectedTheme}\n` : '';
 
     let fullThemeText = themeText;
     if (mode.includes('ストーリー生成')) {
