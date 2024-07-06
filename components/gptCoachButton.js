@@ -94,6 +94,7 @@ const GPTCoachButton = ({ words }) => {
           <Typography variant="subtitle2" color="textSecondary">最大単語数</Typography>
           <Stack direction="row" spacing={2} mb={2} mt={1}>
             <Chip label="10" onClick={() => handleChipClick('10', 'words')} color={maxWords === '10' ? 'primary' : 'default'} />
+            <Chip label="20" onClick={() => handleChipClick('20', 'words')} color={maxWords === '20' ? 'primary' : 'default'} />
             <Chip label="指定なし" onClick={() => handleChipClick('指定なし', 'words')} color={maxWords === '指定なし' ? 'primary' : 'default'} />
           </Stack>
           <Typography variant="subtitle2" color="textSecondary">モード</Typography>
