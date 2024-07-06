@@ -23,7 +23,7 @@ const GPTCoachButton = ({ words }) => {
   const handleCopyAndOpenURL = async () => {
     const randomTheme = getRandomTheme();
     const themeText = `テーマ：${randomTheme}\n`;
-    const wordsText = words.map(word => `${word.english}, ${word.japanese}`).join('\n');
+    const wordsText = words.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
     const fullText = themeText + wordsText;
 
     try {
