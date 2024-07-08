@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { AppBar, Toolbar, Button, ListItem, LinearProgress, Box, Typography, Avatar, IconButton,Switch,
-  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Tabs, Tab, CircularProgress, Tooltip,
+  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableSortLabel, Paper, Tabs, Tab, CircularProgress, Tooltip,
   Card, CardHeader, CardContent, Link } from '@mui/material';
 import WeakWordsList from '../../components/weakWordList'; 
 import ProgressCircle from '@/components/progressCircle';
@@ -11,6 +11,29 @@ import SrWordList from '@/components/srWordList';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useTheme } from '@mui/material/styles';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+
+
+const ThickProgressBar = ({ value }) => {
+  // プログレスバーの最大値と最小値
+  const min = 0;
+  const max = 200;
+  const progressValue = Math.round((value / max) * 100); // パーセンテージに変換
+
+  return (
+    <Box display="flex" alignItems="center" flexDirection="column" width="100%">
+      <Box width="100%" mr={1}>
+        <LinearProgress 
+          variant="determinate" 
+          value={progressValue} 
+          sx={{ height: 20 }} // 太いプログレスバー
+        />
+      </Box>
+      <Box minWidth={35}>
+        <Typography variant="body2" color="textSecondary">{`${progressValue}%`}</Typography>
+      </Box>
+    </Box>
+  );
+};
 
 
 const WordMasterTop = () => {
@@ -24,7 +47,9 @@ const WordMasterTop = () => {
   const [weakWordList, setWeakWordList] = useState([]);
   const [srWordList, setSrWordList] = useState({});
   const [srWordCount, setSrWordCount] = useState(0); // 追加: 復習すべき単語の数を格納するstate
-
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('block');
+  
 
   const { themeId } = router.query; // URLのクエリパラメータからthemeを取得
   const fetchData = async (themeToFetch) => {
@@ -116,8 +141,27 @@ const WordMasterTop = () => {
     // srWordListの状態を更新
     setSrWordList(updatedSrWordList);
   };
-  
 
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+  
+  const sortedData = (data) => {
+    return data.slice().sort((a, b) => {
+      if (orderBy === 'block') {
+        return (a.block.name < b.block.name ? -1 : 1) * (order === 'asc' ? 1 : -1);
+      } else if (orderBy === 'status') {
+        return (a.progress.EJ < b.progress.EJ ? -1 : 1) * (order === 'asc' ? 1 : -1);
+      } else if (orderBy === 'lastStudy') {
+        return (new Date(a.lastUpdatedAt.datetime) < new Date(b.lastUpdatedAt.datetime) ? -1 : 1) * (order === 'asc' ? 1 : -1);
+      }
+      return 0;
+    });
+  };
+  
+  // console.log('test',data)
   return (
     <Box maxWidth="lg">
       {isLoading ? (
@@ -138,15 +182,12 @@ const WordMasterTop = () => {
 
         {tabValue === 0 && (
           <>
-            {/* <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
-              <ProgressCircle value={overallProgress} />
-            </Box> */}
             <Box display="flex" justifyContent="space-between" sx={{ width: '400px', mt: 5 }}>
               <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
               <CardHeader 
                 title={
                   <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1">理解できる</Typography>
+                    <Typography variant="subtitle1">進捗</Typography>
                     {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
                       <IconButton size="small" sx={{ marginLeft: 1 }}>
                         <HelpOutlineIcon />
@@ -169,89 +210,74 @@ const WordMasterTop = () => {
 
                 </CardContent>
               </Card>
-              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
-              <CardHeader 
-                title={
-                  <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1">使える</Typography>
-                    {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
-                      <IconButton size="small" sx={{ marginLeft: 1 }}>
-                        <HelpOutlineIcon />
-                      </IconButton>
-                    </Tooltip> */}
-                  </Box>
-                } 
-                titleTypographyProps={{ variant: 'subtitle1' }} 
-              />
-                <CardContent>
-                <ProgressCircle value={overallProgress.JE} />
-                {blockToLearn.JE?.id && (
-                  <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.JE.id, 'JE')}>
-                    学習する
-                    <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
-                      {blockToLearn.JE.name}
-                    </Avatar>
-                  </Button>
-                )}
 
-                </CardContent>
-              </Card>
             </Box>
     
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left" style={{ fontWeight: 'bold', width: '10%' }}>ブロック</TableCell>
-                    <TableCell align="left" style={{ fontWeight: 'bold', width: '15%' }}>理解できる</TableCell>
-                    <TableCell align="left" style={{ fontWeight: 'bold', width: '15%' }}>使える</TableCell>
-                    <TableCell align="left" style={{ fontWeight: 'bold', width: '60%' }}>アクション</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data.map((item, index) => (
-                    <TableRow key={index} sx={{cursor: 'pointer'}}>
-                      <TableCell component="th" scope="row">
-                        <ListItem >
-                          <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>{item.block.name}</Avatar>
-                        </ListItem>
-                      </TableCell>
-
-                      <TableCell component="th" scope="row">
-                        <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'} >
-                          <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
-                            { Math.round(item.progress?.EJ) == 200 ? (
-                              <WorkspacePremiumIcon fontSize='large' color='success' />
-                            ) : (
-                              <>
-                                {`${Math.round(item.progress?.EJ)}%`}
-                              </>                              
-                            )}
-                          </Link>
-                        </Typography>
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        <Typography variant="subtitle1" color={Math.round(item.progress?.JE) < 100 ? 'textPrimary' : 'primary'} >
-                          <Link onClick={() => handleBlockClick(item.block.id, 'JE')}>
-                            { Math.round(item.progress?.JE) == 200 ? (
-                              <WorkspacePremiumIcon fontSize='large' color='success' />
-                            ) : (
-                              <>
-                                {`${Math.round(item.progress?.JE)}%`}
-                              </>                              
-                            )}
-                          </Link>
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell align="left">
-                        <Link variant="text" color="inherit" onClick={() => handleActionClick(item.block.id)}>
-                          アセスメント
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px'}}>
+                    <TableSortLabel
+                      active={orderBy === 'block'}
+                      direction={orderBy === 'block' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'block')}
+                    >
+                      ブロック
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'status'}
+                      direction={orderBy === 'status' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'status')}
+                    >
+                      ステータス
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'lastStudy'}
+                      direction={orderBy === 'lastStudy' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'lastStudy')}
+                    >
+                      最後に勉強した日
+                    </TableSortLabel>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedData(data).map((item, index) => (
+                  <TableRow key={index} sx={{cursor: 'pointer'}}>
+                    <TableCell component="th" scope="row" align="left">
+                      <ListItem>
+                        <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
+                          {item.block.name}
+                        </Avatar>
+                      </ListItem>
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="left">
+                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                        <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
+                          { Math.round(item.progress?.EJ) == 200 ? (
+                            <WorkspacePremiumIcon fontSize='large' color='success' />
+                          ) : (
+                            <ThickProgressBar value={item.progress?.EJ} />
+                          )}
                         </Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                      </Typography>
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="left">
+                      <Typography variant="subtitle1" color={item.lastUpdatedAt?.within7day ? 'primary' : 'textPrimary'}>
+                        {item.lastUpdatedAt?.datetimeText}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+
+
+
               </Table>
             </TableContainer>
           </>

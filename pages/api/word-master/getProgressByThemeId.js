@@ -13,7 +13,6 @@ export default async function handler(req, res) {
       const wordListUserStatus = await getWordListUserStatus(userId, themeId);
       const blocks = await getBlocks(themeId);
 
-      
       let totalProgressEJ = 0;
       let totalProgressJE = 0;
       let totalWords = 0;
@@ -30,87 +29,102 @@ export default async function handler(req, res) {
 
 
       const updatedBlocks = blocks.map(block => {
-        const blockWords = wordList.filter(word => word.blocks.some(b=> b.blockId === block.id));
-
+        const blockWords = wordList.filter(word => word.blocks.some(b => b.blockId === block.id));
+      
         // progress計算
         let memorizedCountEJ = 0;
         let memorizedCountJE = 0;
-
-        //アセスメントやる余地がああるか
-        let numAbleToProgressEJ = 0
-        let numAbleToProgressJE = 0
-
-
-        blockWords.forEach(word => {
-          const status = wordListUserStatus.find (us => us.wordListId == word.id)
-
-          // memorizeStatusEJのカウント
-          if (status?.memorizeStatusEJ === 'MEMORIZED') {
-            memorizedCountEJ += 1;
-            numAbleToProgressEJ =  (status.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ
-
-            if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo){
-              EJmemorizedNumNew += 1
-            }
-
-          } else if (status?.memorizeStatusEJ === 'MEMORIZED2') {
-            memorizedCountEJ += 2;
-
-            if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo){
-              EJmemorizedNumNew += 1
-              EJmemorized2NumNew += 1
-            }
-
-            
-          } else{
-            numAbleToProgressEJ +=1
-          }
       
-          // memorizeStatusJEのカウント
-          if (status?.memorizeStatusJE === 'MEMORIZED') {
-            memorizedCountJE += 1;
-            numAbleToProgressJE =  (status.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE
-
-            if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo){
-              JEmemorizedNumNew += 1
+        // アセスメントやる余地があるか
+        let numAbleToProgressEJ = 0;
+        let numAbleToProgressJE = 0;
+      
+        // lastUpdatedAtの初期値を設定
+        let lastUpdatedAt = null;
+      
+        blockWords.forEach(word => {
+          const status = wordListUserStatus.find(us => us.wordListId == word.id);
+      
+          if (status) {
+            // updatedAtの最大値を追跡
+            if (!lastUpdatedAt || new Date(status.updatedAt) > new Date(lastUpdatedAt)) {
+              lastUpdatedAt = status.updatedAt;
             }
-
-          } else if (status?.memorizeStatusJE === 'MEMORIZED2') {
-            memorizedCountJE += 2;
-
-            if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo){
-              JEmemorizedNumNew += 1
-              JEmemorized2NumNew += 1
+      
+            // memorizeStatusEJのカウント
+            if (status.memorizeStatusEJ === 'MEMORIZED') {
+              memorizedCountEJ += 1;
+              numAbleToProgressEJ = (status.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ;
+      
+              if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo) {
+                EJmemorizedNumNew += 1;
+              }
+      
+            } else if (status.memorizeStatusEJ === 'MEMORIZED2') {
+              memorizedCountEJ += 2;
+      
+              if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo) {
+                EJmemorizedNumNew += 1;
+                EJmemorized2NumNew += 1;
+              }
+      
+            } else {
+              numAbleToProgressEJ += 1;
             }
-
-          } else{
-            numAbleToProgressJE += 1
+      
+            // memorizeStatusJEのカウント
+            if (status.memorizeStatusJE === 'MEMORIZED') {
+              memorizedCountJE += 1;
+              numAbleToProgressJE = (status.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE;
+      
+              if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo) {
+                JEmemorizedNumNew += 1;
+              }
+      
+            } else if (status.memorizeStatusJE === 'MEMORIZED2') {
+              memorizedCountJE += 2;
+      
+              if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo) {
+                JEmemorizedNumNew += 1;
+                JEmemorized2NumNew += 1;
+              }
+      
+            } else {
+              numAbleToProgressJE += 1;
+            }
           }
         });
-
+      
+        // lastUpdatedAtオブジェクトの作成
+        const lastUpdatedAtObject = lastUpdatedAt ? {
+          datetime: lastUpdatedAt,
+          datetimeText: `${new Date(lastUpdatedAt).getFullYear()}年${new Date(lastUpdatedAt).getMonth() + 1}月${new Date(lastUpdatedAt).getDate()}日（${Math.floor((currentTime.getTime() - new Date(lastUpdatedAt).getTime()) / (1000 * 60 * 60 * 24))}日前）`,
+          within7day: (currentTime.getTime() - new Date(lastUpdatedAt).getTime()) <= (7 * 24 * 60 * 60 * 1000) // 7日（ミリ秒単位）の範囲内かどうかを判定
+        } : null;
+      
         // progress計算
         const progress = {
           EJ: Math.round(memorizedCountEJ / blockWords.length * 100),
           JE: Math.round(memorizedCountJE / blockWords.length * 100)
-        }    
-
+        };
+      
         totalProgressEJ += memorizedCountEJ;
         totalProgressJE += memorizedCountJE;
         totalWords += blockWords.length;
-          
-        const numAbleToProgress =  {
-          EJ: numAbleToProgressEJ, 
+      
+        const numAbleToProgress = {
+          EJ: numAbleToProgressEJ,
           JE: numAbleToProgressJE
-        }
-        
-        
+        };
+      
         return {
           block,
           progress,
-          numAbleToProgress
+          numAbleToProgress,
+          lastUpdatedAt: lastUpdatedAtObject
         };
       });
-                  
+                              
       updatedBlocks.sort((a, b) => a.block - b.block);
 
       const overallProgress = {
