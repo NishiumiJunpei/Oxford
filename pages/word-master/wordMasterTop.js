@@ -151,7 +151,7 @@ const WordMasterTop = () => {
   const sortedData = (data) => {
     return data.slice().sort((a, b) => {
       if (orderBy === 'block') {
-        return (a.block.name < b.block.name ? -1 : 1) * (order === 'asc' ? 1 : -1);
+        return (a.block.displayOrder < b.block.displayOrder ? -1 : 1) * (order === 'asc' ? 1 : -1);
       } else if (orderBy === 'status') {
         return (a.progress.EJ < b.progress.EJ ? -1 : 1) * (order === 'asc' ? 1 : -1);
       } else if (orderBy === 'lastStudy') {

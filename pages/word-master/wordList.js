@@ -270,7 +270,6 @@ const WordListPage = () => {
     return false;
   });
 
-  console.log('test', visibleRows)
   
   return (
     <Box maxWidth="lg">
