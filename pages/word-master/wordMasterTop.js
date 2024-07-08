@@ -199,14 +199,14 @@ const WordMasterTop = () => {
               />
                 <CardContent>
                   <ProgressCircle value={overallProgress.EJ} />
-                  {blockToLearn.EJ?.id && (
+                  {/* {blockToLearn.EJ?.id && (
                     <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.EJ.id, 'EJ')}>
                       学習する
                       <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
                         {blockToLearn.EJ.name}
                       </Avatar>
                     </Button>
-                  )}
+                  )} */}
 
                 </CardContent>
               </Card>
