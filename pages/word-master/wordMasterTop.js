@@ -11,6 +11,7 @@ import SrWordList from '@/components/srWordList';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useTheme } from '@mui/material/styles';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import { Visibility, VisibilityOff, Error, StarBorder, Star } from '@mui/icons-material';
 
 
 const ThickProgressBar = ({ value }) => {
@@ -156,12 +157,18 @@ const WordMasterTop = () => {
         return (a.progress.EJ < b.progress.EJ ? -1 : 1) * (order === 'asc' ? 1 : -1);
       } else if (orderBy === 'lastStudy') {
         return (new Date(a.lastUpdatedAt.datetime) < new Date(b.lastUpdatedAt.datetime) ? -1 : 1) * (order === 'asc' ? 1 : -1);
+      } else if (orderBy === 'numNOTSTARTED') {
+        return (a.progress.NOT_STARTED < b.progress.NOT_STARTED ? -1 : 1) * (order === 'asc' ? 1 : -1);
+      } else if (orderBy === 'numMEMORIZED') {
+        return (a.progress.MEMORIZED < b.progress.MEMORIZED ? -1 : 1) * (order === 'asc' ? 1 : -1);
+      } else if (orderBy === 'numMEMORIZED2') {
+        return (a.progress.MEMORIZED2 < b.progress.MEMORIZED2 ? -1 : 1) * (order === 'asc' ? 1 : -1);
       }
       return 0;
     });
   };
   
-  // console.log('test',data)
+  console.log('test',data)
   return (
     <Box maxWidth="lg">
       {isLoading ? (
@@ -235,6 +242,33 @@ const WordMasterTop = () => {
                       ステータス
                     </TableSortLabel>
                   </TableCell>
+                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
+                    <TableSortLabel
+                      active={orderBy === 'numNOTSTARTED'}
+                      direction={orderBy === 'numNOTSTARTED' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'numNOTSTARTED')}
+                    >
+                      <Error color="error" />
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
+                    <TableSortLabel
+                      active={orderBy === 'numMEMORIZED'}
+                      direction={orderBy === 'numMEMORIZED' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'numMEMORIZED')}
+                    >
+                      <StarBorder color="warning" />
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
+                    <TableSortLabel
+                      active={orderBy === 'numMEMORIZED2'}
+                      direction={orderBy === 'numMEMORIZED2' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'numMEMORIZED2')}
+                    >
+                      <Star color="success" />
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell align="left" style={{ fontWeight: 'bold' }}>
                     <TableSortLabel
                       active={orderBy === 'lastStudy'}
@@ -267,6 +301,23 @@ const WordMasterTop = () => {
                         </Link>
                       </Typography>
                     </TableCell>
+
+                    <TableCell component="th" scope="row" align="left">
+                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                        {item.progress.NOT_STARTED}
+                      </Typography>
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="left">
+                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                        {item.progress.MEMORIZED}
+                      </Typography>
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="left">
+                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                        {item.progress.MEMORIZED2}
+                      </Typography>
+                    </TableCell>
+
                     <TableCell component="th" scope="row" align="left">
                       <Typography variant="subtitle1" color={item.lastUpdatedAt?.within7day ? 'primary' : 'textPrimary'}>
                         {item.lastUpdatedAt?.datetimeText}

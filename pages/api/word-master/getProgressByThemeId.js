@@ -34,6 +34,9 @@ export default async function handler(req, res) {
         // progress計算
         let memorizedCountEJ = 0;
         let memorizedCountJE = 0;
+        let memorizedCountEJ_NOTSTARTED = 0;
+        let memorizedCountEJ_MEMORIZED = 0;
+        let memorizedCountEJ_MEMORIZED2 = 0;
       
         // アセスメントやる余地があるか
         let numAbleToProgressEJ = 0;
@@ -54,6 +57,7 @@ export default async function handler(req, res) {
             // memorizeStatusEJのカウント
             if (status.memorizeStatusEJ === 'MEMORIZED') {
               memorizedCountEJ += 1;
+              memorizedCountEJ_MEMORIZED += 1
               numAbleToProgressEJ = (status.lastMemorizedDateEJ?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressEJ + 1 : numAbleToProgressEJ;
       
               if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo) {
@@ -62,6 +66,7 @@ export default async function handler(req, res) {
       
             } else if (status.memorizeStatusEJ === 'MEMORIZED2') {
               memorizedCountEJ += 2;
+              memorizedCountEJ_MEMORIZED2 += 1
       
               if (new Date(status.lastMemorizedDateEJ) >= oneWeekAgo) {
                 EJmemorizedNumNew += 1;
@@ -69,6 +74,7 @@ export default async function handler(req, res) {
               }
       
             } else {
+              memorizedCountEJ_NOTSTARTED += 1
               numAbleToProgressEJ += 1;
             }
       
@@ -91,6 +97,7 @@ export default async function handler(req, res) {
       
             } else {
               numAbleToProgressJE += 1;
+              memorizedCountEJ_NOTSTARTED += 1
             }
           }
         });
@@ -105,7 +112,10 @@ export default async function handler(req, res) {
         // progress計算
         const progress = {
           EJ: Math.round(memorizedCountEJ / blockWords.length * 100),
-          JE: Math.round(memorizedCountJE / blockWords.length * 100)
+          JE: Math.round(memorizedCountJE / blockWords.length * 100),
+          NOT_STARTED: memorizedCountEJ_NOTSTARTED,
+          MEMORIZED: memorizedCountEJ_MEMORIZED,
+          MEMORIZED2: memorizedCountEJ_MEMORIZED2,
         };
       
         totalProgressEJ += memorizedCountEJ;
@@ -121,6 +131,7 @@ export default async function handler(req, res) {
           block,
           progress,
           numAbleToProgress,
+          totalWordNum: blockWords.length,
           lastUpdatedAt: lastUpdatedAtObject
         };
       });
@@ -133,82 +144,82 @@ export default async function handler(req, res) {
       }
 
 
-      const blockToLearn = {}
+      // const blockToLearn = {}
     
       // 指定されたパーセンテージ以下で最小のprogressを持つ要素を見つける関数
-      const findBlockByProgress = (blocks, progressKey, maxProgress) => {
-        return blocks
-          .filter(item => item.numAbleToProgress[progressKey] > 0)
-          .filter(item => item.progress[progressKey] < maxProgress)
-          .sort((a, b) => {
-            return a.block.displayOrder - b.block.displayOrder;
-          })
-          .find(item => true)?.block || null;
-      };
+      // const findBlockByProgress = (blocks, progressKey, maxProgress) => {
+      //   return blocks
+      //     .filter(item => item.numAbleToProgress[progressKey] > 0)
+      //     .filter(item => item.progress[progressKey] < maxProgress)
+      //     .sort((a, b) => {
+      //       return a.block.displayOrder - b.block.displayOrder;
+      //     })
+      //     .find(item => true)?.block || null;
+      // };
           
       // EJとJEに対して処理を実行
-      blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 50)
-        || findBlockByProgress(updatedBlocks, 'EJ', 100)
-        || findBlockByProgress(updatedBlocks, 'EJ', 150)
-        || findBlockByProgress(updatedBlocks, 'EJ', 200);
+      // blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 50)
+      //   || findBlockByProgress(updatedBlocks, 'EJ', 100)
+      //   || findBlockByProgress(updatedBlocks, 'EJ', 150)
+      //   || findBlockByProgress(updatedBlocks, 'EJ', 200);
 
-      blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 50)
-      || findBlockByProgress(updatedBlocks, 'JE', 100)
-      || findBlockByProgress(updatedBlocks, 'JE', 150)
-      || findBlockByProgress(updatedBlocks, 'JE', 200);
+      // blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 50)
+      // || findBlockByProgress(updatedBlocks, 'JE', 100)
+      // || findBlockByProgress(updatedBlocks, 'JE', 150)
+      // || findBlockByProgress(updatedBlocks, 'JE', 200);
       
     
-      theme.wordNum = wordNum
-      const memorizeImageArray = [0, 10, 50, 100, 150, 200]
-      const findLastExceedingIndex = (count, array) => {
-        let lastIndex = 0; 
-        for (let i = 0; i < array.length; i++) {
-          if (count > array[i]) {
-            lastIndex = i; // countが配列の要素を超える最後のインデックスを更新
-          } else {
-            break; // countが配列の要素を超えなくなったらループを抜ける
-          }
-        }      
-        return lastIndex;
-      };
-      const progressOverLastWeek = {
-        EJ: {
-          memorizedNumNew: EJmemorizedNumNew,
-          memorized2NumNew: EJmemorized2NumNew,
-          memorizedNumNewImageIndex: findLastExceedingIndex(EJmemorizedNumNew, memorizeImageArray),
-          memorized2NumNewImageIndex: findLastExceedingIndex(EJmemorized2NumNew, memorizeImageArray),
-        },
-        JE:{
-          memorizedNumNew: JEmemorizedNumNew,
-          memorized2NumNew: JEmemorized2NumNew,
-          memorizedNumNewImageIndex: findLastExceedingIndex(JEmemorizedNumNew, memorizeImageArray),
-          memorized2NumNewImageIndex: findLastExceedingIndex(JEmemorized2NumNew, memorizeImageArray),
+      // theme.wordNum = wordNum
+      // const memorizeImageArray = [0, 10, 50, 100, 150, 200]
+      // const findLastExceedingIndex = (count, array) => {
+      //   let lastIndex = 0; 
+      //   for (let i = 0; i < array.length; i++) {
+      //     if (count > array[i]) {
+      //       lastIndex = i; // countが配列の要素を超える最後のインデックスを更新
+      //     } else {
+      //       break; // countが配列の要素を超えなくなったらループを抜ける
+      //     }
+      //   }      
+      //   return lastIndex;
+      // };
+      // const progressOverLastWeek = {
+      //   EJ: {
+      //     memorizedNumNew: EJmemorizedNumNew,
+      //     memorized2NumNew: EJmemorized2NumNew,
+      //     memorizedNumNewImageIndex: findLastExceedingIndex(EJmemorizedNumNew, memorizeImageArray),
+      //     memorized2NumNewImageIndex: findLastExceedingIndex(EJmemorized2NumNew, memorizeImageArray),
+      //   },
+      //   JE:{
+      //     memorizedNumNew: JEmemorizedNumNew,
+      //     memorized2NumNew: JEmemorized2NumNew,
+      //     memorizedNumNewImageIndex: findLastExceedingIndex(JEmemorizedNumNew, memorizeImageArray),
+      //     memorized2NumNewImageIndex: findLastExceedingIndex(JEmemorized2NumNew, memorizeImageArray),
 
-        }
-      }
+      //   }
+      // }
 
-      const goalArray = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-      const calcGoal = (wordNum, currentProgress, goalArray) => {
-        // goalProgressを見つける
-        const goalProgress = goalArray.find(progress => progress > currentProgress) || 0;
-        // wordNumToGoalを計算する
-        const progressDifference = goalProgress - currentProgress;
-        const wordNumToGoal = Math.round(wordNum * (progressDifference / 100));
-        return { goalProgress, wordNumToGoal };
-      };
-      const nextGoal = {
-        EJ: calcGoal(wordNum, overallProgress.EJ, goalArray),
-        JE: calcGoal(wordNum, overallProgress.JE, goalArray),
-      }
+      // const goalArray = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+      // const calcGoal = (wordNum, currentProgress, goalArray) => {
+      //   // goalProgressを見つける
+      //   const goalProgress = goalArray.find(progress => progress > currentProgress) || 0;
+      //   // wordNumToGoalを計算する
+      //   const progressDifference = goalProgress - currentProgress;
+      //   const wordNumToGoal = Math.round(wordNum * (progressDifference / 100));
+      //   return { goalProgress, wordNumToGoal };
+      // };
+      // const nextGoal = {
+      //   EJ: calcGoal(wordNum, overallProgress.EJ, goalArray),
+      //   JE: calcGoal(wordNum, overallProgress.JE, goalArray),
+      // }
 
 
       res.status(200).json({ 
         theme,
         overallProgress, 
         blocks: updatedBlocks, 
-        blockToLearn,
-        progressOverLastWeek,
-        nextGoal,
+        // blockToLearn,
+        // progressOverLastWeek,
+        // nextGoal,
       });
       
     } catch (error) {
