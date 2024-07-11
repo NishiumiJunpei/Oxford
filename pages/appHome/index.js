@@ -105,7 +105,7 @@ export default function Home() {
                       </Box>
                   ) : (
                     <>
-                      <Box display="flex" alignItems="center">
+                      {/* <Box display="flex" alignItems="center">
                         <Typography variant="subtitle2" sx={{mt: 2}}>目標</Typography>
                       </Box>
                       <Box>
@@ -113,7 +113,7 @@ export default function Home() {
                       </Box>
                       <Box>
                         <Typography variant="body2">(単語数：+{nextGoal?.EJ.wordNumToGoal})</Typography>                    
-                      </Box>
+                      </Box> */}
 
                     </>
                   )}
@@ -153,7 +153,7 @@ export default function Home() {
                         </CardContent>
                       </Card>
                     </Grid>
-                    <Grid item justifyContent="flex-start">
+                    {/* <Grid item justifyContent="flex-start">
                       <Card sx={{ mr: 1, pl: 1, pr: 1,  height: '100%' }}> 
                         <CardHeader 
                           title={
@@ -172,7 +172,7 @@ export default function Home() {
                           </Box>
                         </CardContent>
                       </Card>
-                    </Grid>
+                    </Grid> */}
 
                   </Grid>
 
@@ -181,7 +181,7 @@ export default function Home() {
             </Grid>
           </Grid>
 
-          {blockToLearn.EJ?.id && (
+          {/* {blockToLearn.EJ?.id && (
             <>
             <Button variant="outlined" color="secondary" onClick={()=>handleBlockClick(blockToLearn.EJ.id, 'EJ')}>
               学習する
@@ -191,12 +191,12 @@ export default function Home() {
             </Button>
 
             </>
-          )}
+          )} */}
         </Box>
 
 
 
-
+{/* 
 
         <Box sx={{mt: 5, mb: 5}}>
           <SubTitleTypography text="使える"/>
@@ -310,7 +310,7 @@ export default function Home() {
 
 
 
-        </Box>
+        </Box> */}
 
 
       </>
