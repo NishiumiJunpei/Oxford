@@ -99,7 +99,7 @@ export default async function handler(req, res) {
               numAbleToProgressJE += 1;
             }
           }else{
-            memorizedCountEJ_NOTSTARTED += 1
+            memorizedCountEJ_NOTSTARTED += 1  
           }
         });
       

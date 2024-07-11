@@ -66,6 +66,15 @@ const WordMasterTop = () => {
     }
   };
 
+  useEffect(() => {
+    // LocalStorageからソート状態を取得
+    const savedOrder = localStorage.getItem('tableOrder');
+    const savedOrderBy = localStorage.getItem('tableOrderBy');
+    if (savedOrder && savedOrderBy) {
+      setOrder(savedOrder);
+      setOrderBy(savedOrderBy);
+    }
+  }, []);
 
   useEffect(() => {
     fetchData(themeId);
@@ -143,10 +152,20 @@ const WordMasterTop = () => {
     setSrWordList(updatedSrWordList);
   };
 
+  // const handleRequestSort = (event, property) => {
+  //   const isAsc = orderBy === property && order === 'asc';
+  //   setOrder(isAsc ? 'desc' : 'asc');
+  //   setOrderBy(property);
+  // };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const newOrder = isAsc ? 'desc' : 'asc';
+    setOrder(newOrder);
     setOrderBy(property);
+
+    // LocalStorageにソート状態を保存
+    localStorage.setItem('tableOrder', newOrder);
+    localStorage.setItem('tableOrderBy', property);
   };
   
   const sortedData = (data) => {
