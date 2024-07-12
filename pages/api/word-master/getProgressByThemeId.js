@@ -28,6 +28,28 @@ export default async function handler(req, res) {
       let JEmemorized2NumNew = 0
 
 
+      const getTimeDifferenceText = (lastUpdatedAt) => {
+        const currentTime = new Date();
+        const lastUpdatedTime = new Date(lastUpdatedAt);
+        const timeDifference = currentTime - lastUpdatedTime;
+      
+        const minutesDifference = Math.floor(timeDifference / (1000 * 60));
+        const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      
+        let timeDifferenceText;
+        if (daysDifference > 0) {
+          timeDifferenceText = `${daysDifference}日前`;
+        } else if (hoursDifference > 0) {
+          timeDifferenceText = `${hoursDifference}時間前`;
+        } else {
+          timeDifferenceText = `${minutesDifference}分前`;
+        }
+      
+        return `${lastUpdatedTime.getFullYear()}年${lastUpdatedTime.getMonth() + 1}月${lastUpdatedTime.getDate()}日（${timeDifferenceText}）`;
+      };
+      
+
       const updatedBlocks = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks.some(b => b.blockId === block.id));
       
@@ -106,7 +128,7 @@ export default async function handler(req, res) {
         // lastUpdatedAtオブジェクトの作成
         const lastUpdatedAtObject = lastUpdatedAt ? {
           datetime: lastUpdatedAt,
-          datetimeText: `${new Date(lastUpdatedAt).getFullYear()}年${new Date(lastUpdatedAt).getMonth() + 1}月${new Date(lastUpdatedAt).getDate()}日（${Math.floor((currentTime.getTime() - new Date(lastUpdatedAt).getTime()) / (1000 * 60 * 60 * 24))}日前）`,
+          datetimeText: getTimeDifferenceText(lastUpdatedAt),
           within7day: (currentTime.getTime() - new Date(lastUpdatedAt).getTime()) <= (7 * 24 * 60 * 60 * 1000) // 7日（ミリ秒単位）の範囲内かどうかを判定
         } : null;
       
