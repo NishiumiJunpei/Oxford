@@ -46,7 +46,7 @@ export default async function handler(req, res) {
           timeDifferenceText = `${minutesDifference}分前`;
         }
       
-        return `${lastUpdatedTime.getFullYear()}年${lastUpdatedTime.getMonth() + 1}月${lastUpdatedTime.getDate()}日（${timeDifferenceText}）`;
+        return `${timeDifferenceText}（${lastUpdatedTime.getFullYear()}年${lastUpdatedTime.getMonth() + 1}月${lastUpdatedTime.getDate()}日）`;
       };
       
 
