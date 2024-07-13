@@ -334,7 +334,7 @@ const WordListPage = () => {
     const newDisplayOrder = block.displayOrder + increment;
     const newBlock = blocks.find(b => b.displayOrder === newDisplayOrder);
     if (newBlock) {
-      router.push(`/word-master/wordList2?blockId=${newBlock.id}`);
+      router.push(`/word-master/wordList?blockId=${newBlock.id}`);
     }
   }
 
