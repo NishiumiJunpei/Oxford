@@ -207,6 +207,12 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
     }
   };
 
+  const handleClose = () => {
+    setMessage('');
+    setLoading(false);
+    onClose();
+  };
+
   return (
     <div>
       <Dialog open={open} onClose={onClose}>
@@ -240,8 +246,8 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
 
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="primary">
-            キャンセル
+          <Button onClick={handleClose} color="primary">
+            閉じる
           </Button>
           <Button onClick={handleSetSrWords} color="primary" variant="contained" disabled={loading}>
             間隔反復をセット
