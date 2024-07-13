@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
-  TableBody, Paper, Avatar, Box, Grid, CircularProgress, IconButton, List, ListItem, ListItemText,
-  Tabs, Tab, FormControlLabel, Switch, Checkbox, Card, CardContent, CardHeader,Snackbar,
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Tooltip } from '@mui/material';
+  TableBody, Paper, Avatar, Box, CircularProgress, IconButton, FormLabel,
+  Tabs, Tab, FormControlLabel, Checkbox,Snackbar,
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControl, RadioGroup, Radio, Link } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
@@ -30,10 +30,42 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
     }));
   };
 
+  const handleSelectErrorOnly = () => {
+    setFilterSettings((prev) => ({
+      ...prev,
+      filterOption: {
+        showNOT_MEMORIZED: true,
+        showMEMORIZED: false,
+        showMEMORIZED2: false,
+      },
+    }));
+  };
+
+  const handleRadioChange = (event) => {
+    setFilterSettings((prev) => ({
+      ...prev,
+      updateStatus: event.target.value,
+    }));
+  };
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog 
+      open={open} 
+      onClose={onClose}       
+      PaperProps={{
+      style: {
+        minWidth: '320px'
+      }
+    }}
+>
       <DialogTitle>フィルタ設定</DialogTitle>
       <DialogContent>
+        <Box>
+          <FormLabel>ステータス</FormLabel>
+          <Box sx={{mt: 2, mb: 2}}>
+            <Button onClick={handleSelectErrorOnly} sx={{padding: 0}}> <Error color="error" />だけ選択</Button>
+          </Box>
+        </Box>
         <Box>
           <FormControlLabel
             control={
@@ -70,6 +102,15 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
             label={<Star color="success" />}
           />
         </Box>
+        <Box sx={{mt: 5}}>
+          <FormLabel>ステータス更新日</FormLabel>
+          <RadioGroup value={filterSettings.updateStatus || ''} onChange={handleRadioChange}>
+            <FormControlLabel value="all" control={<Radio />} label="全て" />
+            <FormControlLabel value="1day" control={<Radio />} label="1日以内" />
+            <FormControlLabel value="3days" control={<Radio />} label="3日以内" />
+            <FormControlLabel value="7days" control={<Radio />} label="7日以内" />
+          </RadioGroup>
+        </Box>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center' }}>
         <Button onClick={onClose}>閉じる</Button>
@@ -77,6 +118,7 @@ const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
     </Dialog>
   );
 };
+
 
 const WordIconButton = ({ word, languageDirection, updateWordList }) => {
   const id  = word.id;
@@ -115,7 +157,16 @@ const WordIconButton = ({ word, languageDirection, updateWordList }) => {
         status: newStatus,
         languageDirection: languageDirection,
       });
-      const updatedWord = { ...word, memorizeStatusEJ: newStatus };
+      const updatedWord = { 
+        ...word, memorizeStatusEJ: newStatus, 
+        lastUpdatedAt: {
+          timeText: 'いま',
+          within1Day: true,
+          within3Days: true,
+          within7Days: true,
+        }
+
+       };
       updateWordList(updatedWord);
     } catch (err) {
       console.error('Failed to update word status', err);
@@ -129,6 +180,75 @@ const WordIconButton = ({ word, languageDirection, updateWordList }) => {
   );
 };
 
+const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) => {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSetSrWords = async () => {
+    setLoading(true);
+    try {
+      const srStartTime = new Date().toISOString();
+      const wordListIds = filteredWordList.map(word => word.id);
+
+      const response = await axios.post('/api/word-master/setSrWords', {
+        wordListIds,
+        srStartTime,
+        srLanguageDirection: 'EJ',
+      });
+
+      if (response.status === 200) {
+        setMessage('セットしました。');
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log('error', error);
+      setMessage('セットに失敗しました。');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle>間隔反復セット</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            現在表示されている{filteredWordList.length}件の単語を間隔反復にセットしますか？
+          </DialogContentText>
+          {filteredWordList.length > 10 && (
+            <>
+              <DialogContentText color="error">
+                件数が多すぎるため絞り込みをおすすめします。
+              </DialogContentText>
+              <Button onClick={() => setFilterDialogOpen(true)} variant="contained" color="primary">
+                フィルタ
+              </Button>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary">
+            キャンセル
+          </Button>
+          <Button onClick={handleSetSrWords} color="primary" variant="contained" disabled={loading}>
+            間隔反復をセット
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {message && (
+        <Box>
+          <Typography variant="body1">
+            {message}
+            <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
+              (間隔反復ページはこちら)
+            </Link>
+          </Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
 
 
 const WordListPage = () => {
@@ -149,6 +269,7 @@ const WordListPage = () => {
       showMEMORIZED: true,
       showMEMORIZED2: true,
     },
+    updateStatus: 'all', 
   });
   const theme = useTheme();
   const [languageDirection, setLanguageDirection] = useState(router.query.languageDirection || 'EJ');
@@ -157,6 +278,7 @@ const WordListPage = () => {
   const [error, setError] = useState(null);
   const [showJapanese, setShowJapanese] = useState(true); // 日本語の表示状態を管理するフック
   const [visibleRows, setVisibleRows] = useState({}); // 各行の見るボタンと日本語表示状態を管理するフック
+  const [srDialogOpen, setSrDialogOpen] = useState(false);
 
   
   useEffect(() => {
@@ -252,25 +374,49 @@ const WordListPage = () => {
     }));
   };
 
+  const handleSrDialogOpen = () => {
+    setSrDialogOpen(true);
+  };
   
+  const handleSrDialogClose = () => {
+    setSrDialogOpen(false);
+  };
+    
 
   // フィルタリングされた単語リストを取得
   const filteredWordList = wordList.filter((word) => {
     const { showNOT_MEMORIZED, showMEMORIZED, showMEMORIZED2 } = filterSettings.filterOption;
+    const { updateStatus } = filterSettings;
   
+    let statusFilter = false;
     if (showNOT_MEMORIZED && word.memorizeStatusEJ === 'NOT_MEMORIZED') {
-      return true;
+      statusFilter = true;
     }
     if (showMEMORIZED && word.memorizeStatusEJ === 'MEMORIZED') {
-      return true;
+      statusFilter = true;
     }
     if (showMEMORIZED2 && word.memorizeStatusEJ === 'MEMORIZED2') {
-      return true;
+      statusFilter = true;
     }
-    return false;
+  
+    if (!statusFilter) {
+      return false;
+    }
+  
+    switch (updateStatus) {
+      case '1day':
+        return word.lastUpdatedAt?.within1Day;
+      case '3days':
+        return word.lastUpdatedAt?.within3Days;
+      case '7days':
+        return word.lastUpdatedAt?.within7Days;
+      default:
+        return true;
+    }
   });
 
   
+  console.log('test', wordList)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -318,9 +464,12 @@ const WordListPage = () => {
                 フィルター解除
               </Button> */}
               <GPTCoachButton words={filteredWordList} />
-              <Button variant="contained" color="primary" 
+              {/* <Button variant="contained" color="primary" 
                 onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{ml: 3}}>
                   アセスメント
+              </Button> */}
+              <Button variant="contained" color="primary" onClick={handleSrDialogOpen}>
+                間隔反復セット
               </Button>
 
             </Box>
@@ -338,10 +487,10 @@ const WordListPage = () => {
                     <TableCell>
                       意味
                       <IconButton onClick={toggleJapaneseVisibility} style={{ marginLeft: 8 }}>
-                      {showJapanese ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-
+                        {showJapanese ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
                     </TableCell>
+                    <TableCell>ステータス更新日</TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -427,6 +576,10 @@ const WordListPage = () => {
                           </>
                         )}
                       </TableCell>
+                      <TableCell sx={{ verticalAlign: 'top' }}>
+                        <Typography variant="body2">{word.lastUpdatedAt.timeText}</Typography>
+                      </TableCell>
+                      
                     </TableRow>
                   ))}
                 </TableBody>
@@ -476,6 +629,12 @@ const WordListPage = () => {
         onClose={()=>setFilterDialogOpen(false)}
         filterSettings={filterSettings}
         setFilterSettings={setFilterSettings}
+      />
+      <SrSetDialog
+        open={srDialogOpen}
+        onClose={handleSrDialogClose}
+        filteredWordList={filteredWordList}
+        setFilterDialogOpen={setFilterDialogOpen}
       />
 
     </Box>

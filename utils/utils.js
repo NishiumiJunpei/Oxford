@@ -119,6 +119,41 @@ export const timeAgo = (date) => {
   }
 };
 
+export const getTimeDifferenceText = (lastUpdatedAt) => {
+  const currentTime = new Date();
+  const lastUpdatedTime = new Date(lastUpdatedAt);
+  const timeDifference = currentTime - lastUpdatedTime;
+
+  const minutesDifference = Math.floor(timeDifference / (1000 * 60));
+  const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  let timeDifferenceText;
+  if (daysDifference > 0) {
+    timeDifferenceText = `${daysDifference}日前`;
+  } else if (hoursDifference > 0) {
+    timeDifferenceText = `${hoursDifference}時間前`;
+  } else if (minutesDifference > 0) {
+    timeDifferenceText = `${minutesDifference}分前`;
+  } else {
+    timeDifferenceText = `さきほど`;
+  }
+
+  return lastUpdatedAt ? `${timeDifferenceText}（${lastUpdatedTime.getFullYear()}年${lastUpdatedTime.getMonth() + 1}月${lastUpdatedTime.getDate()}日）` : '';
+};
+
+export const isWithinDays = (date, days) => {
+  if (!date) return false;
+
+  const now = new Date();
+  const targetDate = new Date(date);
+  const timeDifference = now - targetDate;
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  return daysDifference <= days;
+};
+
+
 
 
 // 配列をランダムに並び替える関数

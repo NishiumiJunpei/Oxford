@@ -522,7 +522,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             <VolumeUpIcon />
                         </IconButton>
                     </Box>
-                    <Box>
+                    {/* <Box>
                         <Button 
                             onClick={handleAutoPlayToggle} 
                             style={{ margin: 5, padding: 5, minWidth: 90 }}
@@ -538,7 +538,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                         >
                             <SettingsIcon />
                         </IconButton>
-                    </Box>
+                    </Box> */}
 
                 </Box>
             </DialogTitle>

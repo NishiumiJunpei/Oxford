@@ -1,6 +1,7 @@
 // pages/api/word-master/getProgressByThemeId.js
 import { getWordListByCriteria, getWordListUserStatus, getUserById, getBlocks, getTheme } from '../../../utils/prisma-utils';
 import { getUserFromSession } from '@/utils/session-utils';
+import { getTimeDifferenceText } from '@/utils/utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -25,30 +26,7 @@ export default async function handler(req, res) {
       let EJmemorizedNumNew = 0
       let EJmemorized2NumNew = 0
       let JEmemorizedNumNew = 0
-      let JEmemorized2NumNew = 0
-
-
-      const getTimeDifferenceText = (lastUpdatedAt) => {
-        const currentTime = new Date();
-        const lastUpdatedTime = new Date(lastUpdatedAt);
-        const timeDifference = currentTime - lastUpdatedTime;
-      
-        const minutesDifference = Math.floor(timeDifference / (1000 * 60));
-        const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
-        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-      
-        let timeDifferenceText;
-        if (daysDifference > 0) {
-          timeDifferenceText = `${daysDifference}日前`;
-        } else if (hoursDifference > 0) {
-          timeDifferenceText = `${hoursDifference}時間前`;
-        } else {
-          timeDifferenceText = `${minutesDifference}分前`;
-        }
-      
-        return `${timeDifferenceText}（${lastUpdatedTime.getFullYear()}年${lastUpdatedTime.getMonth() + 1}月${lastUpdatedTime.getDate()}日）`;
-      };
-      
+      let JEmemorized2NumNew = 0      
 
       const updatedBlocks = blocks.map(block => {
         const blockWords = wordList.filter(word => word.blocks.some(b => b.blockId === block.id));
@@ -101,25 +79,26 @@ export default async function handler(req, res) {
             }
       
             // memorizeStatusJEのカウント
-            if (status.memorizeStatusJE === 'MEMORIZED') {
-              memorizedCountJE += 1;
-              numAbleToProgressJE = (status.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE;
+            // if (status.memorizeStatusJE === 'MEMORIZED') {
+            //   memorizedCountJE += 1;
+            //   numAbleToProgressJE = (status.lastMemorizedDateJE?.getTime() < currentTime.getTime() - 24 * 60 * 60 * 1000) ? numAbleToProgressJE + 1 : numAbleToProgressJE;
       
-              if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo) {
-                JEmemorizedNumNew += 1;
-              }
+            //   if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo) {
+            //     JEmemorizedNumNew += 1;
+            //   }
       
-            } else if (status.memorizeStatusJE === 'MEMORIZED2') {
-              memorizedCountJE += 2;
+            // } else if (status.memorizeStatusJE === 'MEMORIZED2') {
+            //   memorizedCountJE += 2;
       
-              if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo) {
-                JEmemorizedNumNew += 1;
-                JEmemorized2NumNew += 1;
-              }
+            //   if (new Date(status.lastMemorizedDateJE) >= oneWeekAgo) {
+            //     JEmemorizedNumNew += 1;
+            //     JEmemorized2NumNew += 1;
+            //   }
       
-            } else {
-              numAbleToProgressJE += 1;
-            }
+            // } else {
+            //   numAbleToProgressJE += 1;
+            // }
+
           }else{
             memorizedCountEJ_NOTSTARTED += 1  
           }

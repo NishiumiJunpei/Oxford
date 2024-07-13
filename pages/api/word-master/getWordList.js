@@ -1,6 +1,7 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getBlock, getWordListByCriteria, getWordListUserStatus, findBlockByDisplayOrderAndThemeId, getWordStoriesByUserIdAndBlockId, getBlocks } from '../../../utils/prisma-utils';
 import { getS3FileUrl } from '../../../utils/aws-s3-utils';
+import { getTimeDifferenceText, isWithinDays } from '@/utils/utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -61,6 +62,12 @@ export default async function handler(req, res) {
           imageUrl: await getS3FileUrl(word.imageFilename),
           usage: word.usage ? JSON.parse(word.usage) : '',
           userWordListStatus,
+          lastUpdatedAt: {
+            timeText: getTimeDifferenceText(userWordListStatus?.updatedAt),
+            within1Day: isWithinDays(userWordListStatus?.updatedAt, 1),
+            within3Days: isWithinDays(userWordListStatus?.updatedAt, 3),
+            within7Days: isWithinDays(userWordListStatus?.updatedAt, 7),
+          }
         };
       }));
 
