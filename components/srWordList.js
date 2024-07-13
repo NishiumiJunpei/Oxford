@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Container, CircularProgress, Typography, Box, Button, Divider, Switch, FormControlLabel,
-  Badge, Grid, Paper, Table, TableBody, TableCell, TableRow, Chip, IconButton, 
+  Grid, Paper, IconButton, 
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Deleteアイコンのインポート
@@ -21,14 +21,13 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [buttonDisabledState, setButtonDisabledState] = useState({}); // ボタンの状態を管理
   const [switchStates, setSwitchStates] = useState({}); // 各反復タイミングごとのスイッチの状態
-  const [switchStatesImage, setSwitchStatesImage] = useState({}); 
+  const [showAnswerStates, setShowAnswerStates] = useState({}); // 答えと画像表示の状態
   const [srCount, setSrCount] = useState({})
   const [mode, setMode] = useState('EJ')
   const [dialogSrNextTime, setDialogSrNextTime] = useState('');
   const [dialogWords, setDialogWords] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 削除ダイアログの状態管理
    
-  
   const fetchSrWordList = async () => {
     setLoading(true);
     try {
@@ -87,7 +86,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     if (allButtonsPressed) {
       fetchSrWordList(); // APIを再コール
       setSwitchStates({})
-      setSwitchStatesImage({})
+      setShowAnswerStates({})
       setButtonDisabledState({})
     }
   };
@@ -106,14 +105,14 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     }));
   };
 
-  const handleSwitchChangeImage = (timeIndex) => {
-    setSwitchStatesImage(prevStates => ({
+  const handleShowAnswer = (timeIndex, wordId) => {
+    setShowAnswerStates(prevStates => ({
       ...prevStates,
-      [timeIndex]: !prevStates[timeIndex]
+      [`${timeIndex}-${wordId}`]: true
     }));
   };
-
-
+  console.log('test', showAnswerStates)
+    
   const handleOpenInNewClick = (srNextTime, words) => {
     setDialogSrNextTime(srNextTime); // ダイアログに渡すsrNextTimeを設定
     setDialogWords(words); // ダイアログに渡すwordsを設定
@@ -123,7 +122,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const handleModeChipClick = (mode) =>{
     setMode(mode)
     setSwitchStates({})
-    setSwitchStatesImage({})
+    setShowAnswerStates({})
     setButtonDisabledState({})
   }
 
@@ -149,7 +148,8 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
     });
   };
 
-  
+  console.log('srWordList', srWordList)
+
   return (
     <Container>
       {loading ? (
@@ -168,33 +168,6 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
 
             </Box>
           )}          
-
-          {/* <Box sx={{mt: 3, mb: 3, display: 'flex', gap: 2}}>
-            <Badge
-              badgeContent={srCount.overdueEJ} // 「理解できる」に関連する期限切れの数
-              color="error" // バッジの色
-              invisible={srCount.overdueEJ == 0}
-            >
-              <Chip
-                label="理解できる"
-                onClick={() => handleModeChipClick('EJ')}
-                color={mode === 'EJ' ? 'primary' : 'default'}
-                clickable
-              />
-            </Badge>
-            <Badge
-              badgeContent={srCount.overdueJE} // 「使える」に関連する期限切れの数
-              color="error" // バッジの色
-              invisible={srCount.overdueJE == 0}
-            >
-              <Chip
-                label="使える"
-                onClick={() => handleModeChipClick('JE')}
-                color={mode === 'JE' ? 'primary' : 'default'}
-                clickable
-              />
-            </Badge>
-          </Box> */}
           
           {Object.entries(srWordList[mode]).map(([srNextTime, words], timeIndex) => (
             <Box key={timeIndex}>
@@ -212,19 +185,10 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                   </IconButton>
                 </Box>
 
-
                 <FormControlLabel
                   control={<Switch checked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
                   label="答えを表示"
                 />
-
-                {(switchStates[timeIndex] && words[0].userWordListStatus?.srLanguageDirection === 'EJ') && (
-                    <FormControlLabel
-                      control={<Switch checked={switchStatesImage[timeIndex] || false} onChange={() => handleSwitchChangeImage(timeIndex)} />}
-                      label="画像"
-                    />
-                )}
-
 
                 <Grid container spacing={2} sx={{mt: 2}}>
                   {words.map((word, wordIndex) => (
@@ -241,24 +205,26 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                         </Box>
                       </Grid>
                       <Grid item xs={12} sm={6}>
-                        {switchStates[timeIndex] ? (
+                      {switchStates[timeIndex] || showAnswerStates[`${timeIndex}-${word.id}`] ? (
                           word.userWordListStatus?.srLanguageDirection === 'EJ' ? (
                             <Box>
                               <Typography color="GrayText" variant='subtitle1'>{word.japanese}</Typography>
-                              {switchStatesImage[timeIndex] && (
-                                <img
-                                  src={word.imageUrl}
-                                  alt={word.english}
-                                  style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }}
-                                />
-                              )}
+                              <img
+                                src={word.imageUrl}
+                                alt={word.english}
+                                style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }}
+                              />
                             </Box>
                           ) : (
                             <Typography color="GrayText" variant='subtitle1' fontWeight={600}>
                               {word.userWordListStatus.answerJE}
                             </Typography>
                           )
-                        ) : '　'} {/* 全角スペースで高さを保持 */}
+                        ) : (
+                          <Button onClick={() => handleShowAnswer(timeIndex, word.id)}>
+                            見る
+                          </Button>
+                        )}
                       </Grid>
                       {/* Divider を追加 */}
                       {wordIndex < words.length - 1 && (
@@ -270,10 +236,9 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                   ))}
                 </Grid>
 
-
                 <Box sx={{display: 'flex', justifyContent: 'start', mt: 2}}>
                   <Button 
-                    onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 
+                    onClick={() => handleButtonClick(words.map(word => word.userWordListStatus?.id), 'PROGRESS', timeIndex)} 
                     disabled={buttonDisabledState[timeIndex] || isButtonDisabled(srNextTime)} //前者は一回押したら無効化のため、後者は5分後にならないと押せないようにするため
                     sx={{margin: 1}}
                     variant="outlined"
@@ -282,7 +247,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                       反復済み
                   </Button>
                   <Button 
-                    onClick={() => handleButtonClick(words.map(word=>word.userWordListStatus?.id), 'DELETE', timeIndex)} 
+                    onClick={() => handleButtonClick(words.map(word => word.userWordListStatus?.id), 'DELETE', timeIndex)} 
                     disabled={buttonDisabledState[timeIndex]}
                     sx={{margin: 1}}
                     color="inherit"
@@ -338,8 +303,6 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
     </Container>
   );
 };

@@ -496,15 +496,25 @@ export const deleteWordStoryByGPT = async (id) => {
   });
 };
 
-
 export const setSrForWordListUserStatus = async(userId, wordListId, srStartTime, srLanguageDirection) =>{
   try {
-    await prisma.wordListUserStatus.updateMany({
+    await prisma.wordListUserStatus.upsert({
       where: {
+        userId_wordListId: {
+          userId: userId,
+          wordListId: wordListId,
+        }
+      },
+      update: {
+        srCount: 0,
+        srStartTime: srStartTime,
+        srNextTime: addMinutesToDate(new Date(srStartTime), srTiming[0]),
+        srLanguageDirection: srLanguageDirection,
+        srStatus: "ACTIVE",
+      },
+      create: {
         userId: userId,
         wordListId: wordListId,
-      },
-      data: {
         srCount: 0,
         srStartTime: srStartTime,
         srNextTime: addMinutesToDate(new Date(srStartTime), srTiming[0]),
@@ -513,10 +523,12 @@ export const setSrForWordListUserStatus = async(userId, wordListId, srStartTime,
       }
     });
   } catch (error) {
-    throw new Error(`Failed to update WordListUserStatus: ${error.message}`);
+    throw new Error(`Failed to upsert WordListUserStatus: ${error.message}`);
   }
-
 }
+
+
+
 export async function getActiveSrWordListsForUser(userId) {
   const activeWordListUserStatuses = await prisma.wordListUserStatus.findMany({
     where: {

@@ -187,7 +187,6 @@ const WordMasterTop = () => {
     });
   };
   
-  console.log('test',data)
   return (
     <Box maxWidth="lg">
       {isLoading ? (
@@ -221,7 +220,7 @@ const WordMasterTop = () => {
                       ブロック
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                  {/* <TableCell align="left" style={{ fontWeight: 'bold' }}>
                     <TableSortLabel
                       active={orderBy === 'status'}
                       direction={orderBy === 'status' ? order : 'asc'}
@@ -229,7 +228,7 @@ const WordMasterTop = () => {
                     >
                       ステータス
                     </TableSortLabel>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
                     <TableSortLabel
                       active={orderBy === 'numNOTSTARTED'}
@@ -270,7 +269,7 @@ const WordMasterTop = () => {
               </TableHead>
               <TableBody>
                 {sortedData(data).map((item, index) => (
-                  <TableRow key={index} sx={{cursor: 'pointer'}}>
+                  <TableRow key={index} sx={{cursor: 'pointer'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
                     <TableCell component="th" scope="row" align="left">
                       <ListItem>
                         <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
@@ -278,7 +277,7 @@ const WordMasterTop = () => {
                         </Avatar>
                       </ListItem>
                     </TableCell>
-                    <TableCell component="th" scope="row" align="left">
+                    {/* <TableCell component="th" scope="row" align="left">
                       <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
                         <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
                           { Math.round(item.progress?.EJ) == 200 ? (
@@ -288,7 +287,7 @@ const WordMasterTop = () => {
                           )}
                         </Link>
                       </Typography>
-                    </TableCell>
+                    </TableCell> */}
 
                     <TableCell component="th" scope="row" align="left">
                       <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
