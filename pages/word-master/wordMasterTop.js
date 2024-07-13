@@ -207,38 +207,7 @@ const WordMasterTop = () => {
         </Tabs>
 
         {tabValue === 0 && (
-          <>
-            <Box display="flex" justifyContent="space-between" sx={{ width: '400px', mt: 5 }}>
-              <Card sx={{ flex: 1, minWidth: 160, mr: 1 }}> 
-              <CardHeader 
-                title={
-                  <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1">進捗</Typography>
-                    {/* <Tooltip title="アセスメントですべての単語に１度正解すると100％、24時間あけて2回連続で成果すると200％になります。200%を目指しましょう。">
-                      <IconButton size="small" sx={{ marginLeft: 1 }}>
-                        <HelpOutlineIcon />
-                      </IconButton>
-                    </Tooltip> */}
-                  </Box>
-                } 
-                titleTypographyProps={{ variant: 'subtitle1' }} 
-              />
-                <CardContent>
-                  <ProgressCircle value={overallProgress.EJ} />
-                  {/* {blockToLearn.EJ?.id && (
-                    <Button variant="outlined" color="secondary" sx={{mt:3}} onClick={()=>handleBlockClick(blockToLearn.EJ.id, 'EJ')}>
-                      学習する
-                      <Avatar sx={{ width: 24, height: 24, marginLeft: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
-                        {blockToLearn.EJ.name}
-                      </Avatar>
-                    </Button>
-                  )} */}
-
-                </CardContent>
-              </Card>
-
-            </Box>
-    
+          <>    
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>

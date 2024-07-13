@@ -195,14 +195,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
               />
             </Badge>
           </Box> */}
-          <Box>
-            {srCount.overdueEJ > 0 && (
-              <Typography variant="subtitle2" style={{ color: 'red' }}>
-                {srCount.overdueEJ}件
-              </Typography>
-            )}
-          </Box>
-
+          
           {Object.entries(srWordList[mode]).map(([srNextTime, words], timeIndex) => (
             <Box key={timeIndex}>
               <Box key={timeIndex} sx={{ mt: 2,padding: 3, bgcolor: !isButtonDisabled(srNextTime) ? 'secondary.light' : 'default' }}>

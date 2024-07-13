@@ -17,8 +17,8 @@ export default async function handler(req, res) {
       let totalProgressEJ = 0;
       let totalProgressJE = 0;
       let totalWords = 0;
-      const currentTime = new Date();
       const wordNum = wordList.length
+      const currentTime = new Date();
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 1週間前の日付を設定
 
@@ -122,7 +122,7 @@ export default async function handler(req, res) {
       
         totalProgressEJ += memorizedCountEJ;
         totalProgressJE += memorizedCountJE;
-        totalWords += blockWords.length;
+        // totalWords += blockWords.length;
       
         const numAbleToProgress = {
           EJ: numAbleToProgressEJ,
@@ -140,38 +140,31 @@ export default async function handler(req, res) {
                               
       updatedBlocks.sort((a, b) => a.block - b.block);
 
-      const overallProgress = {
-        EJ:  Math.round(totalProgressEJ / totalWords * 100),
-        JE:  Math.round(totalProgressJE / totalWords * 100),
-      }
-
-
-      // const blockToLearn = {}
-    
-      // 指定されたパーセンテージ以下で最小のprogressを持つ要素を見つける関数
-      // const findBlockByProgress = (blocks, progressKey, maxProgress) => {
-      //   return blocks
-      //     .filter(item => item.numAbleToProgress[progressKey] > 0)
-      //     .filter(item => item.progress[progressKey] < maxProgress)
-      //     .sort((a, b) => {
-      //       return a.block.displayOrder - b.block.displayOrder;
-      //     })
-      //     .find(item => true)?.block || null;
-      // };
-          
-      // EJとJEに対して処理を実行
-      // blockToLearn.EJ = findBlockByProgress(updatedBlocks, 'EJ', 50)
-      //   || findBlockByProgress(updatedBlocks, 'EJ', 100)
-      //   || findBlockByProgress(updatedBlocks, 'EJ', 150)
-      //   || findBlockByProgress(updatedBlocks, 'EJ', 200);
-
-      // blockToLearn.JE = findBlockByProgress(updatedBlocks, 'JE', 50)
-      // || findBlockByProgress(updatedBlocks, 'JE', 100)
-      // || findBlockByProgress(updatedBlocks, 'JE', 150)
-      // || findBlockByProgress(updatedBlocks, 'JE', 200);
+      // --------------------------------- overallProgress ---------------------------------
+      const totalWordCnt = wordList.length;
+      const memorizedCountEJ_NOT_STARTED = updatedBlocks.reduce((acc, block) => acc + block.progress.NOT_STARTED, 0);
+      const memorizedCountEJ_MEMORIZED = updatedBlocks.reduce((acc, block) => acc + block.progress.MEMORIZED, 0);
+      const memorizedCountEJ_MEMORIZED2 = updatedBlocks.reduce((acc, block) => acc + block.progress.MEMORIZED2, 0);
       
+      const memorizedRatioEJ_NOT_STARTED = Math.round((memorizedCountEJ_NOT_STARTED / totalWordCnt) * 100);
+      const memorizedRatioEJ_MEMORIZED = Math.round((memorizedCountEJ_MEMORIZED / totalWordCnt) * 100);
+      const memorizedRatioEJ_MEMORIZED2 = Math.round((memorizedCountEJ_MEMORIZED2 / totalWordCnt) * 100);
+      
+      const overallProgress = {
+        memorizedCountEJ_NOT_STARTED: memorizedCountEJ_NOT_STARTED,
+        memorizedCountEJ_MEMORIZED: memorizedCountEJ_MEMORIZED,
+        memorizedCountEJ_MEMORIZED2: memorizedCountEJ_MEMORIZED2,
     
-      theme.wordNum = wordNum
+        memorizedRatioEJ_NOT_STARTED: memorizedRatioEJ_NOT_STARTED,
+        memorizedRatioEJ_MEMORIZED: memorizedRatioEJ_MEMORIZED,
+        memorizedRatioEJ_MEMORIZED2: memorizedRatioEJ_MEMORIZED2,
+      };
+      
+
+      
+      // --------------------------------- progressOverLastWeek ---------------------------------
+    
+      theme.totalWordCnt = wordNum
       const memorizeImageArray = [0, 10, 50, 100, 150, 200]
       const findLastExceedingIndex = (count, array) => {
         let lastIndex = 0; 
@@ -200,28 +193,12 @@ export default async function handler(req, res) {
         }
       }
 
-      // const goalArray = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-      // const calcGoal = (wordNum, currentProgress, goalArray) => {
-      //   // goalProgressを見つける
-      //   const goalProgress = goalArray.find(progress => progress > currentProgress) || 0;
-      //   // wordNumToGoalを計算する
-      //   const progressDifference = goalProgress - currentProgress;
-      //   const wordNumToGoal = Math.round(wordNum * (progressDifference / 100));
-      //   return { goalProgress, wordNumToGoal };
-      // };
-      // const nextGoal = {
-      //   EJ: calcGoal(wordNum, overallProgress.EJ, goalArray),
-      //   JE: calcGoal(wordNum, overallProgress.JE, goalArray),
-      // }
-
 
       res.status(200).json({ 
         theme,
         overallProgress, 
         blocks: updatedBlocks, 
         progressOverLastWeek,
-        // blockToLearn,
-        // nextGoal,
       });
       
     } catch (error) {

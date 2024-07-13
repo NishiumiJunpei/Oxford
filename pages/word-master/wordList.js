@@ -428,10 +428,9 @@ const WordListPage = () => {
         </Button> */}
 
         {isLoading ? (
-          <></>
-        // <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        //   <CircularProgress />
-        // </div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress />
+          </div>
         ) : (
           <>
             <Box display="flex" width="100%" sx={{mt:2, flexDirection: { xs: 'column', sm: 'row' }}}>
