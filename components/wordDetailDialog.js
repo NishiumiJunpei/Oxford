@@ -15,6 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProfileKeywordsSettingDialog from './profileKeywordsSettingDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
+import GPTCoachButton from './gptCoachButton';
 
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue, tabDisabledPersonalizedEx, tabDisabledAIReview }) => {
@@ -617,6 +618,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                                 {word?.synonyms}
                             </Typography>
 
+                            <Box sx={{mt:5}}>
+                                <GPTCoachButton words={[word]}/>
+                            </Box>
+
 
                         </Grid>
                         <Grid item xs={12} md={6}>
@@ -643,8 +648,9 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
                     </Grid>
 
+                    
 
-                    <Divider sx={{mt: 3, mb: 3}}/>
+                    {/* <Divider sx={{mt: 3, mb: 3}}/>
                     <Typography variant="h6">
                         ステータス
                         <Tooltip 
@@ -704,7 +710,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             )}
                             </Box>
                         </Box>
-                    </Box>
+                    </Box> */}
 
                 </DialogContent>
             )}
