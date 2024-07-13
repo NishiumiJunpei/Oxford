@@ -103,6 +103,19 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
       ...prevStates,
       [timeIndex]: !prevStates[timeIndex]
     }));
+
+    if (switchStates[timeIndex]) {
+      setShowAnswerStates(prevStates => {
+        const newStates = { ...prevStates };
+        Object.keys(newStates).forEach(key => {
+          if (key.startsWith(`${timeIndex}-`)) {
+            newStates[key] = false;
+          }
+        });
+        return newStates;
+      });
+    }
+  
   };
 
   const handleShowAnswer = (timeIndex, wordId) => {
