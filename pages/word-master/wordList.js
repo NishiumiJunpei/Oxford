@@ -215,7 +215,7 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
           <DialogContentText>
             現在表示されている{filteredWordList.length}件の単語を間隔反復にセットしますか？
           </DialogContentText>
-          {filteredWordList.length > 10 && (
+          {filteredWordList.length > 20 && (
             <>
               <DialogContentText color="error">
                 件数が多すぎるため絞り込みをおすすめします。
@@ -225,6 +225,19 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
               </Button>
             </>
           )}
+
+          {message && (
+            <Box>
+              <Typography variant="body1">
+                {message}
+                <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
+                  (間隔反復ページはこちら)
+                </Link>
+              </Typography>
+            </Box>
+          )}
+
+
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="primary">
@@ -236,16 +249,6 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
         </DialogActions>
       </Dialog>
 
-      {message && (
-        <Box>
-          <Typography variant="body1">
-            {message}
-            <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
-              (間隔反復ページはこちら)
-            </Link>
-          </Typography>
-        </Box>
-      )}
     </div>
   );
 };
@@ -469,7 +472,7 @@ const WordListPage = () => {
                 onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{ml: 3}}>
                   アセスメント
               </Button> */}
-              <Button variant="contained" color="primary" onClick={handleSrDialogOpen}>
+              <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{ml: 4}}> 
                 間隔反復セット
               </Button>
 
