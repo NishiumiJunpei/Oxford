@@ -173,7 +173,9 @@ export function addMinutesToDate(date, minutes) {
 
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return `${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}時${date.getMinutes()}分`;
+  const days = ['日', '月', '火', '水', '木', '金', '土'];
+  const dayName = days[date.getDay()];
+  return `${date.getMonth() + 1}月${date.getDate()}日(${dayName}) ${date.getHours()}時${date.getMinutes()}分`;
 };
 
 export function convertToSSML(text) {

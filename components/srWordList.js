@@ -25,7 +25,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [srCount, setSrCount] = useState({})
   const [mode, setMode] = useState('EJ')
   const [dialogSrNextTime, setDialogSrNextTime] = useState('');
-  const [dialogWords, setDialogWords] = useState([]);
+  const [dialogWord, setDialogWord] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 削除ダイアログの状態管理
    
   const fetchSrWordList = async () => {
@@ -124,11 +124,10 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
       [`${timeIndex}-${wordId}`]: true
     }));
   };
-  console.log('test', showAnswerStates)
     
   const handleOpenInNewClick = (srNextTime, words) => {
     setDialogSrNextTime(srNextTime); // ダイアログに渡すsrNextTimeを設定
-    setDialogWords(words); // ダイアログに渡すwordsを設定
+    setDialogWord(words[0]); // ダイアログに渡すwordsを設定
     setOpenSrTimingDialog(true); // SrTimingDialogを開く
   };
 
@@ -291,8 +290,8 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
       <SrTimingDialog
         open={openSrTimingDialog}
         onClose={()=>setOpenSrTimingDialog(false)}
-        srNextTime={dialogSrNextTime} // ダイアログにsrNextTimeを渡す
-        words={dialogWords} // ダイアログにwordsを渡す
+        // srNextTime={dialogSrNextTime} // ダイアログにsrNextTimeを渡す
+        word={dialogWord} // ダイアログにwordsを渡す
       />
 
       <Dialog

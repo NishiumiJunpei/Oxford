@@ -1,12 +1,14 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from '@mui/material';
-import Check from '@mui/icons-material/Check';
+import CheckCircle from '@mui/icons-material/CheckCircle';
 import AccessTime from '@mui/icons-material/AccessTime';
 import { srTiming } from '@/utils/variables';
 import { formatDate, timeAgo } from '@/utils/utils';
+import SubTitleTypography from './subTitleTypography';
 
-const SrTimingDialog = ({ srNextTime, words, open, onClose }) => {
-  const { srCount } = words.length > 0 && words[0].userWordListStatus ? words[0].userWordListStatus : { srCount: 0 };
+const SrTimingDialog = ({ srNextTime, word, open, onClose }) => {
+  const srCount = word?.userWordListStatus ? word.userWordListStatus.srCount : 0;
+  srNextTime = srNextTime ? srNextTime : word?.userWordListStatus?.srNextTime
 
   const formatTiming = (minutes) => {
     if (typeof minutes !== 'number' || isNaN(minutes) || minutes < 0) {
@@ -22,11 +24,23 @@ const SrTimingDialog = ({ srNextTime, words, open, onClose }) => {
     }
   };
 
+  // console.log('test', word)
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="sr-timing-dialog-title">
-      <DialogTitle id="sr-timing-dialog-title">反復タイミング</DialogTitle>
+      <DialogTitle id="sr-timing-dialog-title">間隔反復</DialogTitle>
       <DialogContent>
         <Box>
+          <SubTitleTypography text="開始日時"/>
+          <Box>
+            <Typography>
+              {formatDate(word?.userWordListStatus?.srStartTime)}
+            </Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{mt: 5}}>
+          <SubTitleTypography text="反復タイミング"/>
+
           {srTiming.map((timing, index) => (
             <Box key={index} display="flex" alignItems="center" mb={3}>
               <Box minWidth="20%" textAlign="right" pr={2}>
@@ -35,17 +49,14 @@ const SrTimingDialog = ({ srNextTime, words, open, onClose }) => {
               {index < srCount ? (
                 <Box>
                     <Typography variant="h6" color="textSecondary">
-                        <Check color="primary" />
+                        <CheckCircle color="primary" />
                     </Typography>
                 </Box>
               ) : index == srCount ? (
                 <>
                     <Box display="flex" alignItems="center" >
                         <AccessTime />
-                        {/* <Typography variant="h6" sx={{ml: 2}}>
-                            {`${formatDate(srNextTime)}`}
-                        </Typography> */}
-                        <Typography variant="h6" color={new Date(srNextTime) < new Date() ? "error" : "inherit"} sx={{ml: 2}}>
+                        <Typography variant="subtitle" color={new Date(srNextTime) < new Date() ? "error" : "secondary"} sx={{ml: 2}}>
                             {formatDate(srNextTime)} {timeAgo(srNextTime) && `(${timeAgo(srNextTime)})`}
                         </Typography>
                     </Box>

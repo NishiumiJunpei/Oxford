@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
+import axios from 'axios';
 import { Typography, Button, TableContainer, Table, TableHead, TableRow, TableCell, 
   TableBody, Paper, Avatar, Box, CircularProgress, IconButton, FormLabel,
   Tabs, Tab, FormControlLabel, Checkbox,Snackbar,
@@ -14,8 +15,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SubTitleTypography from '@/components/subTitleTypography';
 import GPTCoachButton from '@/components/gptCoachButton';
-import { Visibility, VisibilityOff, Error, StarBorder, Star } from '@mui/icons-material';
-import axios from 'axios';
+import { Visibility, VisibilityOff, Error, StarBorder, Star, CheckBox } from '@mui/icons-material';
+import SrTimingDialog from '@/components/srTimingDialog';
 
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
@@ -288,6 +289,8 @@ const WordListPage = () => {
   const [showJapanese, setShowJapanese] = useState(true); // 日本語の表示状態を管理するフック
   const [visibleRows, setVisibleRows] = useState({}); // 各行の見るボタンと日本語表示状態を管理するフック
   const [srDialogOpen, setSrDialogOpen] = useState(false);
+  const [openSrTimingDialog, setOpenSrTimingDialog] = useState(false);
+  const [srWord, setSrWord] = useState();
 
   
   useEffect(() => {
@@ -390,6 +393,11 @@ const WordListPage = () => {
   const handleSrDialogClose = () => {
     setSrDialogOpen(false);
   };
+
+  const handleOpenSrTimingDialog = (word) => {
+    setSrWord(word); // ダイアログに渡すwordsを設定
+    setOpenSrTimingDialog(true); // SrTimingDialogを開く
+  };
     
 
   // フィルタリングされた単語リストを取得
@@ -425,7 +433,7 @@ const WordListPage = () => {
   });
 
   
-  // console.log('test', wordList)
+  console.log('wordList', wordList)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -482,7 +490,7 @@ const WordListPage = () => {
               </Button>
 
             </Box>
-            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto'}}>
+            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', overflowX: 'auto' }}>
               <Table 
                 sx={{ 
                   minWidth: 650, 
@@ -500,6 +508,7 @@ const WordListPage = () => {
                       </IconButton>
                     </TableCell>
                     <TableCell>ステータス更新日</TableCell>
+                    <TableCell>間隔反復</TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -588,7 +597,13 @@ const WordListPage = () => {
                       <TableCell sx={{ verticalAlign: 'top' }}>
                         <Typography variant="body2">{word.lastUpdatedAt.timeText}</Typography>
                       </TableCell>
-                      
+                      <TableCell sx={{ verticalAlign: 'top' }}>
+                        {word.userWordListStatus?.srStatus == 'ACTIVE' && (
+                          <IconButton onClick={() => handleOpenSrTimingDialog(word)}>
+                            <CheckBox/>
+                          </IconButton>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -645,6 +660,12 @@ const WordListPage = () => {
         filteredWordList={filteredWordList}
         setFilterDialogOpen={setFilterDialogOpen}
       />
+      <SrTimingDialog
+        open={openSrTimingDialog}
+        onClose={()=>setOpenSrTimingDialog(false)}
+        word={srWord} // ダイアログにwordsを渡す
+      />
+
 
     </Box>
   );
