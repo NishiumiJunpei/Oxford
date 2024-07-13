@@ -416,7 +416,7 @@ const WordListPage = () => {
   });
 
   
-  console.log('test', wordList)
+  // console.log('test', wordList)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -425,9 +425,10 @@ const WordListPage = () => {
         </Button> */}
 
         {isLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <CircularProgress />
-        </div>
+          <></>
+        // <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        //   <CircularProgress />
+        // </div>
         ) : (
           <>
             <Box display="flex" width="100%" sx={{mt:2, flexDirection: { xs: 'column', sm: 'row' }}}>

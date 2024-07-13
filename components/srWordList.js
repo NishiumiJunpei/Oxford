@@ -148,7 +148,6 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
       });
     });
   };
-    console.log('isExpired', isExpired)
 
   
   return (
@@ -170,7 +169,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
             </Box>
           )}          
 
-          <Box sx={{mt: 3, mb: 3, display: 'flex', gap: 2}}>
+          {/* <Box sx={{mt: 3, mb: 3, display: 'flex', gap: 2}}>
             <Badge
               badgeContent={srCount.overdueEJ} // 「理解できる」に関連する期限切れの数
               color="error" // バッジの色
@@ -195,6 +194,13 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                 clickable
               />
             </Badge>
+          </Box> */}
+          <Box>
+            {srCount.overdueEJ > 0 && (
+              <Typography variant="subtitle2" style={{ color: 'red' }}>
+                {srCount.overdueEJ}件
+              </Typography>
+            )}
           </Box>
 
           {Object.entries(srWordList[mode]).map(([srNextTime, words], timeIndex) => (
