@@ -95,22 +95,22 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
         <DialogTitle>GPT Coach</DialogTitle>
         <DialogContent>
           <Typography variant="subtitle2" color="textSecondary">モード</Typography>
-          <Stack direction="row" spacing={2} mt={1} sx={{ flexWrap: 'wrap' }}>
-            <Chip sx={{mb:1}} label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
-            <Chip sx={{mb:1}} label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
-            <Chip sx={{mb:1}} label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
-            <Chip sx={{mb:1}} label="問題生成" onClick={() => handleChipClick('問題生成', 'mode')} color={mode === '問題生成' ? 'primary' : 'default'} />
+          <Stack direction="row" mt={1} sx={{ flexWrap: 'wrap' }}>
+            <Chip sx={{mb:1, mr:1}} label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
+            <Chip sx={{mb:1, mr:1}} label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
+            <Chip sx={{mb:1, mr:1}} label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
+            <Chip sx={{mb:1, mr:1}} label="問題生成" onClick={() => handleChipClick('問題生成', 'mode')} color={mode === '問題生成' ? 'primary' : 'default'} />
           </Stack>
 
           <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
-          <Stack direction="row" spacing={1} mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
+          <Stack direction="row" mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
             {themesForGPT.map(theme => (
               <Chip
                 key={theme}
                 label={theme}
                 onClick={() => handleChipClick(theme, 'theme')}
                 color={selectedTheme === theme ? 'primary' : 'default'}
-                sx={{mb:1}}
+                sx={{mb:1, mr:1}}
               />
             ))}
           </Stack>
