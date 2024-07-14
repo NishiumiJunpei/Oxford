@@ -78,7 +78,7 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
 
     try {
       await navigator.clipboard.writeText(fullText);
-      window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', '_blank');
+      window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', 'newWindowForCHATGPT');
     } catch (err) {
       console.log(err);
     }
