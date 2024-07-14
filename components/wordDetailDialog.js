@@ -619,7 +619,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             </Typography>
 
                             <Box sx={{mt:5}}>
-                                <GPTCoachButton words={[word]}/>
+                                <GPTCoachButton words={[word]} dialogFlag={false}/>
                             </Box>
 
 

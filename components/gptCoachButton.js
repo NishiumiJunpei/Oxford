@@ -16,7 +16,7 @@ const themesForGPT = [
   '教育'
 ];
 
-const GPTCoachButton = ({ words }) => {
+const GPTCoachButton = ({ words, dialogFlag = true }) => {
   const [open, setOpen] = useState(false);
   const [maxWords, setMaxWords] = useState('10');
   const [mode, setMode] = useState('英単語解説');
@@ -64,11 +64,25 @@ const GPTCoachButton = ({ words }) => {
     }
     const limitedWords = maxWords === '指定なし' ? processedWords : processedWords.slice(0, Number(maxWords));
     const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
-    const fullText = fullThemeText + wordsText;
+    let fullText = fullThemeText + wordsText;
+
+    if (!dialogFlag) {
+      fullText = `CONVERSATION CODE: CZX9\n${words[0].english}`;
+    } else {
+      let conversationCode = '';
+      if (mode === '英単語解説') {
+        conversationCode = 'JYDO';
+      } else if (mode === 'ストーリー生成（英語）') {
+        conversationCode = 'MR74';
+      } else if (mode === 'ストーリー生成（日本語）') {
+        conversationCode = 'OK4K';
+      }
+      fullText = `CONVERSATION CODE: ${conversationCode}\n` + fullText;
+    }
 
     try {
       await navigator.clipboard.writeText(fullText);
-      window.open('https://chatgpt.com/g/g-fcRjeqACa-super-cute-coach', '_blank');
+      window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', '_blank');
     } catch (err) {
       console.log(err);
     }
@@ -78,7 +92,7 @@ const GPTCoachButton = ({ words }) => {
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
+      <Button variant="contained" color="primary" onClick={dialogFlag ? handleOpen : handleAction}>
         GPT Coach
       </Button>
       <Dialog open={open} onClose={handleClose}>
