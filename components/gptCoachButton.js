@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Chip, Stack, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { shuffleArray } from '@/utils/utils';
 
@@ -20,6 +20,7 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
   const [mode, setMode] = useState('英単語解説');
   const [selectedTheme, setSelectedTheme] = useState('指定なし');
   const [isRandom, setIsRandom] = useState(false); // ランダムチェックボックスの状態
+  const windowRef = useRef(null); // ウィンドウの参照を保存するためのuseRef
 
   useEffect(() => {
     setSelectedTheme('指定なし');
@@ -78,7 +79,13 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
 
     try {
       await navigator.clipboard.writeText(fullText);
-      window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', 'newWindowForCHATGPT');
+
+      if (windowRef.current && !windowRef.current.closed) {
+        windowRef.current.focus(); // ウィンドウが既に開いている場合はフォーカスを移動
+      } else {
+        windowRef.current = window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', 'newWindowForCHATGPT');
+      }
+  
     } catch (err) {
       console.log(err);
     }
