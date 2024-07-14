@@ -108,6 +108,7 @@ export default async function handler(req, res) {
         const lastUpdatedAtObject = lastUpdatedAt ? {
           datetime: lastUpdatedAt,
           datetimeText: getTimeDifferenceText(lastUpdatedAt),
+          within1day: (currentTime.getTime() - new Date(lastUpdatedAt).getTime()) <= (24 * 60 * 60 * 1000), // 7日（ミリ秒単位）の範囲内かどうかを判定
           within7day: (currentTime.getTime() - new Date(lastUpdatedAt).getTime()) <= (7 * 24 * 60 * 60 * 1000) // 7日（ミリ秒単位）の範囲内かどうかを判定
         } : null;
       

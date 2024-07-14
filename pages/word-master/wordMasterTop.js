@@ -187,6 +187,7 @@ const WordMasterTop = () => {
     });
   };
   
+  console.log('data', data)
   return (
     <Box maxWidth="lg">
       {isLoading ? (
@@ -269,7 +270,7 @@ const WordMasterTop = () => {
               </TableHead>
               <TableBody>
                 {sortedData(data).map((item, index) => (
-                  <TableRow key={index} sx={{cursor: 'pointer'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
+                  <TableRow key={index} sx={{cursor: 'pointer', backgroundColor: item.lastUpdatedAt?.within1day ? theme.palette.primary.light : 'inherit'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
                     <TableCell component="th" scope="row" align="left">
                       <ListItem>
                         <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
@@ -290,23 +291,23 @@ const WordMasterTop = () => {
                     </TableCell> */}
 
                     <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                      <Typography variant="subtitle1" >
                         {item.progress.NOT_STARTED}
                       </Typography>
                     </TableCell>
                     <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                      <Typography variant="subtitle1" >
                         {item.progress.MEMORIZED}
                       </Typography>
                     </TableCell>
                     <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                      <Typography variant="subtitle1" >
                         {item.progress.MEMORIZED2}
                       </Typography>
                     </TableCell>
 
-                    <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" color={item.lastUpdatedAt?.within7day ? 'primary' : 'textPrimary'}>
+                    <TableCell component="th" scope="row" align="left" sx={{color: item.lastUpdatedAt?.within1day ? 'primary.main' : 'inherit'}}>
+                      <Typography variant="subtitle1" >
                         {item.lastUpdatedAt?.datetimeText}
                       </Typography>
                     </TableCell>
