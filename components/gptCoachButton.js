@@ -6,31 +6,24 @@ const themesForGPT = [
   '指定なし',
   'スポーツ',
   '料理',
-  '音楽',
-  '映画',
   '旅行',
   'テクノロジー',
   '健康とフィットネス',
-  '読書',
   '趣味',
-  '教育'
+  '歴史',
+  'ギャグ',
 ];
 
 const GPTCoachButton = ({ words, dialogFlag = true }) => {
   const [open, setOpen] = useState(false);
   const [maxWords, setMaxWords] = useState('10');
   const [mode, setMode] = useState('英単語解説');
-  const [selectedTheme, setSelectedTheme] = useState('');
+  const [selectedTheme, setSelectedTheme] = useState('指定なし');
   const [isRandom, setIsRandom] = useState(false); // ランダムチェックボックスの状態
 
   useEffect(() => {
-    setSelectedTheme(getRandomTheme());
+    setSelectedTheme('指定なし');
   }, []);
-
-  const getRandomTheme = () => {
-    const randomIndex = Math.floor(Math.random() * themesForGPT.length);
-    return themesForGPT[randomIndex];
-  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -51,7 +44,7 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
   };
 
   const handleAction = async () => {
-    const themeText = selectedTheme != '指定なし' ? `テーマ：${selectedTheme}\n` : '';
+    const themeText = selectedTheme !== '指定なし' ? `テーマ：${selectedTheme}\n` : '';
 
     let fullThemeText = themeText;
     if (mode.includes('ストーリー生成')) {
@@ -76,7 +69,10 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
         conversationCode = 'MR74';
       } else if (mode === 'ストーリー生成（日本語）') {
         conversationCode = 'OK4K';
+      } else if (mode === '問題生成') {
+        conversationCode = 'IGUB';
       }
+
       fullText = `CONVERSATION CODE: ${conversationCode}\n` + fullText;
     }
 
@@ -99,14 +95,15 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
         <DialogTitle>GPT Coach</DialogTitle>
         <DialogContent>
           <Typography variant="subtitle2" color="textSecondary">モード</Typography>
-          <Stack direction="row" spacing={2} mt={1}>
+          <Stack direction="row" spacing={2} mt={1} sx={{ flexWrap: 'wrap' }}>
             <Chip label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
             <Chip label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
             <Chip label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
+            <Chip label="問題生成" onClick={() => handleChipClick('問題生成', 'mode')} color={mode === '問題生成' ? 'primary' : 'default'} />
           </Stack>
 
           <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
-          <Stack direction="row" spacing={1} mb={2} mt={1}>
+          <Stack direction="row" spacing={1} mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
             {themesForGPT.map(theme => (
               <Chip
                 key={theme}
@@ -118,7 +115,7 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
           </Stack>
 
           <Typography variant="subtitle2" color="textSecondary">最大単語数</Typography>
-          <Stack direction="row" spacing={2} mb={2} mt={1}>
+          <Stack direction="row" spacing={2} mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
             <Chip label="10" onClick={() => handleChipClick('10', 'words')} color={maxWords === '10' ? 'primary' : 'default'} />
             <Chip label="20" onClick={() => handleChipClick('20', 'words')} color={maxWords === '20' ? 'primary' : 'default'} />
             <Chip label="指定なし" onClick={() => handleChipClick('指定なし', 'words')} color={maxWords === '指定なし' ? 'primary' : 'default'} />

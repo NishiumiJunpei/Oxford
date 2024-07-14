@@ -490,18 +490,13 @@ const WordListPage = () => {
               </Button>
 
             </Box>
-            <TableContainer component={Paper} sx={{width: filterSettings.displayMode != 'ExJtoExE' ? '100%' : 'auto', overflowX: 'auto' }}>
-              <Table 
-                sx={{ 
-                  minWidth: 650, 
-                  [theme.breakpoints.down('sm')]: {minWidth: 'unset' } 
-                }} 
-                >
+            <TableContainer component={Paper} sx={{ marginTop: 5 }}>
+              <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>　</TableCell>
-                    <TableCell>英語</TableCell>
-                    <TableCell>
+                    <TableCell >　</TableCell>
+                    <TableCell >英語</TableCell>
+                    <TableCell >
                       意味
                       <IconButton onClick={toggleJapaneseVisibility} style={{ marginLeft: 8 }}>
                         {showJapanese ? <Visibility /> : <VisibilityOff />}
