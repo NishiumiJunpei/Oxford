@@ -568,6 +568,7 @@ const WordListPage = () => {
                                 style={{ maxWidth: '200px', maxHeight: 'auto', objectFit: 'contain', display: 'block', marginTop: '8px' }} 
                               />
                             )}
+                            <GPTCoachButton words={[word]} dialogFlag={false} styleType="LINK" />
                           </>
                         ) : (
                           <>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '@mui/material/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Chip, Stack, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { shuffleArray } from '@/utils/utils';
 
@@ -14,13 +15,15 @@ const themesForGPT = [
   'ギャグ',
 ];
 
-const GPTCoachButton = ({ words, dialogFlag = true }) => {
+const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
   const [open, setOpen] = useState(false);
   const [maxWords, setMaxWords] = useState('10');
   const [mode, setMode] = useState('英単語解説');
   const [selectedTheme, setSelectedTheme] = useState('指定なし');
   const [isRandom, setIsRandom] = useState(false); // ランダムチェックボックスの状態
   const windowRef = useRef(null); // ウィンドウの参照を保存するためのuseRef
+  const theme = useTheme();
+
 
   useEffect(() => {
     setSelectedTheme('指定なし');
@@ -95,7 +98,18 @@ const GPTCoachButton = ({ words, dialogFlag = true }) => {
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={dialogFlag ? handleOpen : handleAction}>
+      <Button
+        variant={styleType === 'BUTTON' ? 'contained' : 'text'}
+        color="primary"
+        onClick={dialogFlag ? handleOpen : handleAction}
+        sx={styleType === 'LINK' ? {
+          fontSize: theme.typography.body2.fontSize,
+          margin: 0,
+          padding: 0,
+          textTransform: 'none', // ボタンテキストの大文字変換を防止
+          color: theme.palette.primary.main,
+        } : {}}
+      >
         GPT Coach
       </Button>
       <Dialog open={open} onClose={handleClose}>

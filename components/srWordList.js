@@ -228,6 +228,9 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                                 alt={word.english}
                                 style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }}
                               />
+                              <Box>
+                                <GPTCoachButton words={[word]} dialogFlag={false} styleType="LINK" />
+                              </Box>
                             </Box>
                           ) : (
                             <Typography color="GrayText" variant='subtitle1' fontWeight={600}>
