@@ -84,6 +84,7 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
       await navigator.clipboard.writeText(fullText);
 
       if (windowRef.current && !windowRef.current.closed) {
+        console.log('test window')
         windowRef.current.focus(); // ウィンドウが既に開いている場合はフォーカスを移動
       } else {
         windowRef.current = window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', 'newWindowForCHATGPT');
@@ -107,7 +108,7 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
           margin: 0,
           padding: 0,
           textTransform: 'none', // ボタンテキストの大文字変換を防止
-          color: theme.palette.primary.main,
+          color: theme.palette.link.main,
         } : {}}
       >
         GPT Coach

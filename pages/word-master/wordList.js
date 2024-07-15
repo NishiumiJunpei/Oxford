@@ -328,6 +328,18 @@ const WordListPage = () => {
   }, [languageDirection])
 
 
+  useEffect(() => {
+    const savedFilterSettings = localStorage.getItem('filterSettings');
+    if (savedFilterSettings) {
+      setFilterSettings(JSON.parse(savedFilterSettings));
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem('filterSettings', JSON.stringify(filterSettings));
+  }, [filterSettings]);
+  
+
   const handleBack = () => {
     router.push(`/word-master/wordMasterTop`);
   };
@@ -433,7 +445,7 @@ const WordListPage = () => {
   });
 
   
-  console.log('wordList', wordList)
+  // console.log('wordList', wordList)
   return (
     <Box maxWidth="lg">
       <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
@@ -491,7 +503,7 @@ const WordListPage = () => {
 
             </Box>
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
-              <Table>
+              <Table sx={{ minWidth: 650 }}>
                 <TableHead>
                   <TableRow>
                     <TableCell >　</TableCell>

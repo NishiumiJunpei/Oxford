@@ -35,7 +35,7 @@ const theme = createTheme({
       primary: 'rgba(67,67,67,0.87)',
     }, 
     link: {
-      main: '#0000EE'
+      main: '#0033cc	'
     }
   },
   typography: {
