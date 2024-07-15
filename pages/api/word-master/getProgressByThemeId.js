@@ -42,16 +42,16 @@ export default async function handler(req, res) {
         let numAbleToProgressEJ = 0;
         let numAbleToProgressJE = 0;
       
-        // lastUpdatedAtの初期値を設定
-        let lastUpdatedAt = null;
+        // lastMemorizedDateEJの初期値を設定
+        let lastMemorizedDateEJ = null;
       
         blockWords.forEach(word => {
           const status = wordListUserStatus.find(us => us.wordListId == word.id);
       
           if (status) {
-            // updatedAtの最大値を追跡
-            if (!lastUpdatedAt || new Date(status.updatedAt) > new Date(lastUpdatedAt)) {
-              lastUpdatedAt = status.updatedAt;
+            // lastMemorizedDateEJの最大値を追跡
+            if (!lastMemorizedDateEJ || new Date(status.lastMemorizedDateEJ) > new Date(lastMemorizedDateEJ)) {
+              lastMemorizedDateEJ = status.lastMemorizedDateEJ;
             }
       
             // memorizeStatusEJのカウント
@@ -104,12 +104,12 @@ export default async function handler(req, res) {
           }
         });
       
-        // lastUpdatedAtオブジェクトの作成
-        const lastUpdatedAtObject = lastUpdatedAt ? {
-          datetime: lastUpdatedAt,
-          datetimeText: getTimeDifferenceText(lastUpdatedAt),
-          within1day: (currentTime.getTime() - new Date(lastUpdatedAt).getTime()) <= (24 * 60 * 60 * 1000), // 7日（ミリ秒単位）の範囲内かどうかを判定
-          within7day: (currentTime.getTime() - new Date(lastUpdatedAt).getTime()) <= (7 * 24 * 60 * 60 * 1000) // 7日（ミリ秒単位）の範囲内かどうかを判定
+        // lastMemorizedDateEJオブジェクトの作成
+        const lastMemorizedDateEJObject = lastMemorizedDateEJ ? {
+          datetime: lastMemorizedDateEJ,
+          datetimeText: getTimeDifferenceText(lastMemorizedDateEJ),
+          within1day: (currentTime.getTime() - new Date(lastMemorizedDateEJ).getTime()) <= (24 * 60 * 60 * 1000), // 7日（ミリ秒単位）の範囲内かどうかを判定
+          within7day: (currentTime.getTime() - new Date(lastMemorizedDateEJ).getTime()) <= (7 * 24 * 60 * 60 * 1000) // 7日（ミリ秒単位）の範囲内かどうかを判定
         } : null;
       
         // progress計算
@@ -135,7 +135,7 @@ export default async function handler(req, res) {
           progress,
           numAbleToProgress,
           totalWordNum: blockWords.length,
-          lastUpdatedAt: lastUpdatedAtObject
+          lastMemorizedDateEJ: lastMemorizedDateEJObject
         };
       });
                               

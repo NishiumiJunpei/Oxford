@@ -160,7 +160,7 @@ const WordIconButton = ({ word, languageDirection, updateWordList }) => {
       });
       const updatedWord = { 
         ...word, memorizeStatusEJ: newStatus, 
-        lastUpdatedAt: {
+        lastMemorizedDateEJ: {
           timeText: 'いま',
           within1Day: true,
           within3Days: true,
@@ -434,11 +434,11 @@ const WordListPage = () => {
   
     switch (updateStatus) {
       case '1day':
-        return word.lastUpdatedAt?.within1Day;
+        return word.lastMemorizedDateEJ?.within1Day;
       case '3days':
-        return word.lastUpdatedAt?.within3Days;
+        return word.lastMemorizedDateEJ?.within3Days;
       case '7days':
-        return word.lastUpdatedAt?.within7Days;
+        return word.lastMemorizedDateEJ?.within7Days;
       default:
         return true;
     }
@@ -598,7 +598,7 @@ const WordListPage = () => {
                         )}
                       </TableCell>
                       <TableCell sx={{ verticalAlign: 'top' }}>
-                        <Typography variant="body2">{word.lastUpdatedAt.timeText}</Typography>
+                        <Typography variant="body2">{word.lastMemorizedDateEJ.timeText}</Typography>
                       </TableCell>
                       <TableCell sx={{ verticalAlign: 'top' }}>
                         {word.userWordListStatus?.srStatus == 'ACTIVE' && (

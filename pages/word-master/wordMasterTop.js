@@ -175,7 +175,7 @@ const WordMasterTop = () => {
       } else if (orderBy === 'status') {
         return (a.progress.EJ < b.progress.EJ ? -1 : 1) * (order === 'asc' ? 1 : -1);
       } else if (orderBy === 'lastStudy') {
-        return (new Date(a.lastUpdatedAt.datetime) < new Date(b.lastUpdatedAt.datetime) ? -1 : 1) * (order === 'asc' ? 1 : -1);
+        return (new Date(a.lastMemorizedDateEJ.datetime) < new Date(b.lastMemorizedDateEJ.datetime) ? -1 : 1) * (order === 'asc' ? 1 : -1);
       } else if (orderBy === 'numNOTSTARTED') {
         return (a.progress.NOT_STARTED < b.progress.NOT_STARTED ? -1 : 1) * (order === 'asc' ? 1 : -1);
       } else if (orderBy === 'numMEMORIZED') {
@@ -270,7 +270,7 @@ const WordMasterTop = () => {
               </TableHead>
               <TableBody>
                 {sortedData(data).map((item, index) => (
-                  <TableRow key={index} sx={{cursor: 'pointer', backgroundColor: item.lastUpdatedAt?.within1day ? theme.palette.primary.light : 'inherit'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
+                  <TableRow key={index} sx={{cursor: 'pointer', backgroundColor: item.lastMemorizedDateEJ?.within1day ? theme.palette.primary.light : 'inherit'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
                     <TableCell component="th" scope="row" align="left">
                       <ListItem>
                         <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
@@ -306,9 +306,9 @@ const WordMasterTop = () => {
                       </Typography>
                     </TableCell>
 
-                    <TableCell component="th" scope="row" align="left" sx={{color: item.lastUpdatedAt?.within1day ? 'primary.main' : 'inherit'}}>
+                    <TableCell component="th" scope="row" align="left" sx={{color: item.lastMemorizedDateEJ?.within1day ? 'primary.main' : 'inherit'}}>
                       <Typography variant="subtitle1" >
-                        {item.lastUpdatedAt?.datetimeText}
+                        {item.lastMemorizedDateEJ?.datetimeText}
                       </Typography>
                     </TableCell>
                   </TableRow>

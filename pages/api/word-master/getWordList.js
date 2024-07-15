@@ -62,11 +62,11 @@ export default async function handler(req, res) {
           imageUrl: await getS3FileUrl(word.imageFilename),
           usage: word.usage ? JSON.parse(word.usage) : '',
           userWordListStatus,
-          lastUpdatedAt: {
-            timeText: getTimeDifferenceText(userWordListStatus?.updatedAt),
-            within1Day: isWithinDays(userWordListStatus?.updatedAt, 1),
-            within3Days: isWithinDays(userWordListStatus?.updatedAt, 3),
-            within7Days: isWithinDays(userWordListStatus?.updatedAt, 7),
+          lastMemorizedDateEJ: {
+            timeText: getTimeDifferenceText(userWordListStatus?.lastMemorizedDateEJ),
+            within1Day: isWithinDays(userWordListStatus?.lastMemorizedDateEJ, 1),
+            within3Days: isWithinDays(userWordListStatus?.lastMemorizedDateEJ, 3),
+            within7Days: isWithinDays(userWordListStatus?.lastMemorizedDateEJ, 7),
           }
         };
       }));
