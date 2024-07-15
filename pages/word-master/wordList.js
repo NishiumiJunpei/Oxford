@@ -448,18 +448,13 @@ const WordListPage = () => {
   // console.log('wordList', wordList)
   return (
     <Box maxWidth="lg">
-      <Box display="flex" flexDirection="column" alignItems="start" mb={2}>
-        {/* <Button startIcon={<ArrowBackIcon />} onClick={handleBack}>
-          戻る
-        </Button> */}
-
-        {isLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress />
-          </div>
-        ) : (
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </div>
+      ) : (
           <>
-            <Box display="flex" width="100%" sx={{mt:2, flexDirection: { xs: 'column', sm: 'row' }}}>
+            <Box >
               <Box display="flex" alignItems="center" onClick={handleBack} sx={{cursor: 'pointer'}}>
                 <Typography variant="h4"sx={{mb: 1, mr: 2}}>
                     {block?.theme.name}
@@ -503,10 +498,10 @@ const WordListPage = () => {
 
             </Box>
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
-              <Table sx={{ minWidth: 650 }}>
+              <Table sx={{ maxWidth: 800 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell >　</TableCell>
+                    <TableCell style={{ width: '10px' }} >　</TableCell>
                     <TableCell >英語</TableCell>
                     <TableCell >
                       意味
@@ -563,7 +558,7 @@ const WordListPage = () => {
                       }}
                       onClick={(event) => handleOpenModalWord(event, index)}
                     >
-                      <TableCell>
+                      <TableCell  style={{ width: '10px' }} >
                         <WordIconButton word={word} languageDirection={languageDirection} updateWordList={updateWordList} />
                       </TableCell>
                       <TableCell sx={{ verticalAlign: 'top' }}>
@@ -628,8 +623,8 @@ const WordListPage = () => {
 
         </>
       )}
-      </Box>
-      {error && (
+
+      {/* {error && (
         <Snackbar
           open={Boolean(error)}
           autoHideDuration={6000}
@@ -645,7 +640,7 @@ const WordListPage = () => {
           message="Copied to clipboard"
         />
       )}
-
+ */}
 
       <WordDetailDialog
         open={modalOpenWord}
