@@ -49,12 +49,12 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
 
   const handleAction = async () => {
     const themeText = selectedTheme !== '指定なし' ? `テーマ：${selectedTheme}\n` : '';
-
+  
     let fullThemeText = themeText;
     if (mode.includes('ストーリー生成')) {
       fullThemeText = `テーマ：${selectedTheme}\n### 物語生成（${mode.includes('英語') ? '英語中心' : '日本語中心'}）###\n`;
     }
-
+  
     let processedWords = [...words];
     if (isRandom) {
       processedWords = shuffleArray(processedWords);
@@ -62,7 +62,7 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
     const limitedWords = maxWords === '指定なし' ? processedWords : processedWords.slice(0, Number(maxWords));
     const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
     let fullText = fullThemeText + wordsText;
-
+  
     if (!dialogFlag) {
       fullText = `CONVERSATION CODE: CZX9\n${words[0].english}`;
     } else {
@@ -76,24 +76,45 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
       } else if (mode === '問題生成') {
         conversationCode = 'IGUB';
       }
-
+  
       fullText = `CONVERSATION CODE: ${conversationCode}\n` + fullText;
     }
-
+  
     try {
       await navigator.clipboard.writeText(fullText);
-
+  
       if (windowRef.current && !windowRef.current.closed) {
-        console.log('test window')
+        console.log('test window');
         windowRef.current.focus(); // ウィンドウが既に開いている場合はフォーカスを移動
       } else {
-        windowRef.current = window.open('https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish', 'newWindowForCHATGPT');
-      }
+        const appUrl = 'yourapp://open';
+        const fallbackUrl = 'https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish';
   
+        // アプリを開くためのiframeを作成
+        const iframe = document.createElement('iframe');
+        iframe.style.border = 'none';
+        iframe.style.width = '1px';
+        iframe.style.height = '1px';
+        iframe.onload = function () {
+          clearTimeout(timeout);
+          window.location = fallbackUrl;
+        };
+  
+        // タイムアウトを設定して、アプリが開かれない場合にHTTPサイトに遷移
+        const timeout = setTimeout(() => {
+          window.location = fallbackUrl;
+        }, 1000);
+  
+        document.body.appendChild(iframe);
+        iframe.src = appUrl;
+  
+        // 新しいウィンドウを開く処理をコメントアウト
+        // windowRef.current = window.open(fallbackUrl, 'newWindowForCHATGPT');
+      }
     } catch (err) {
       console.log(err);
     }
-
+  
     handleClose();
   };
 
