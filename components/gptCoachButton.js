@@ -82,39 +82,26 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
   
     try {
       await navigator.clipboard.writeText(fullText);
-  
+    
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    
       if (windowRef.current && !windowRef.current.closed) {
-        console.log('test window');
         windowRef.current.focus(); // ウィンドウが既に開いている場合はフォーカスを移動
       } else {
-        const appUrl = 'yourapp://open';
         const fallbackUrl = 'https://chatgpt.com/g/g-q2TmYaWUE-english-coach-susuenglish';
-  
-        // アプリを開くためのiframeを作成
-        const iframe = document.createElement('iframe');
-        iframe.style.border = 'none';
-        iframe.style.width = '1px';
-        iframe.style.height = '1px';
-        iframe.onload = function () {
-          clearTimeout(timeout);
-          window.location = fallbackUrl;
-        };
-  
-        // タイムアウトを設定して、アプリが開かれない場合にHTTPサイトに遷移
-        const timeout = setTimeout(() => {
-          window.location = fallbackUrl;
-        }, 1000);
-  
-        document.body.appendChild(iframe);
-        iframe.src = appUrl;
-  
-        // 新しいウィンドウを開く処理をコメントアウト
-        // windowRef.current = window.open(fallbackUrl, 'newWindowForCHATGPT');
+    
+        if (isMobile) {
+          //スマホ・タブレットの場合はこっち
+          window.location.href = fallbackUrl; 
+        } else {
+          //PCはこっち
+          windowRef.current = window.open(fallbackUrl, 'newWindowForCHATGPT');
+        }
       }
     } catch (err) {
       console.log(err);
     }
-  
+
     handleClose();
   };
 
