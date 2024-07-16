@@ -523,8 +523,10 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             <VolumeUpIcon />
                         </IconButton>
                     </Box>
-                    {/* <Box>
-                        <Button 
+                     <Box>
+                        <GPTCoachButton words={[word]} dialogFlag={false} styleType='LINK'/>
+
+                        {/* <Button 
                             onClick={handleAutoPlayToggle} 
                             style={{ margin: 5, padding: 5, minWidth: 90 }}
                             variant="outlined"
@@ -538,8 +540,8 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             disabled={tabValue == 2 || isAutoPlaying}
                         >
                             <SettingsIcon />
-                        </IconButton>
-                    </Box> */}
+                        </IconButton> */}
+                    </Box> 
 
                 </Box>
             </DialogTitle>
@@ -617,11 +619,6 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
                             <Typography variant="body1">
                                 {word?.synonyms}
                             </Typography>
-
-                            <Box sx={{mt:5}}>
-                                <GPTCoachButton words={[word]} dialogFlag={false}/>
-                            </Box>
-
 
                         </Grid>
                         <Grid item xs={12} md={6}>
