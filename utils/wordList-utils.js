@@ -20,6 +20,8 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
 
     try {
         const word = await getWordListById(wordListId)
+        word.usage = word.usage ? JSON.parse(word.usage) : ''
+
         const {english } = word
         
         // ----------- 日本語 ---------------------------
@@ -30,9 +32,9 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
             word.japanese = jap
 
             mode.exampleSentence.on = true
-            mode.exampleSentence.rewite = true
+            mode.exampleSentence.rewrite = true
             mode.image.on = true
-            mode.image.rewite = true
+            mode.image.rewrite = true
 
           }
         }
@@ -46,10 +48,9 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
             word.exampleSentenceE = data.exampleSentenceE
             word.exampleSentenceJ = data.exampleSentenceJ
             word.synonyms = data.synonyms
-            word.usage = word.usage ? JSON.parse(word.usage) : ''
 
             mode.image.on = true
-            mode.image.rewite = true
+            mode.image.rewrite = true
 
           }
   
