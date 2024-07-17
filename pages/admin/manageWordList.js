@@ -34,12 +34,12 @@ export default function Home() {
     }
   };
 
-  const createExampleSentence = async () => {
+  const createExampleSentence = async (rewirteScope) => {
     setIsLoadingWordDetail(true);
     setWordDetail(null)
     if (wordDetail && wordDetail.id) {
         try {
-            const response = await axios.post(`/api/word-master/createExampleSentenceForWordListId`, { wordListId: wordDetail.id });
+            const response = await axios.post(`/api/admin/createExampleSentenceForWordListId`, { wordListId: wordDetail.id, rewirteScope });
             setWordDetail(response.data.wordDetail);
             setIsLoadingWordDetail(false);
           } catch (error) {
@@ -140,10 +140,10 @@ export default function Home() {
           <Typography> ({wordDetail.exampleSentenceJ})</Typography>
           <Typography> 類語：{wordDetail.synonyms}</Typography>
           {/* {wordDetail.usage} */}
-          {wordDetail.usage && (
+          {wordDetail.usage?.length > 0 && (
             <>
               <Typography> この単語を使うシチュエーション</Typography>
-              {wordDetail.usage.map((element, index)=>(
+              {wordDetail.usage?.map((element, index)=>(
                 <>
                   <Typography sx={{fontWeight: 700}}>{index+1}.{element.situation}</Typography>
                   <Typography>{element.exampleE}</Typography>
@@ -163,9 +163,16 @@ export default function Home() {
                 />
             )}
             <Box>
-              <Button variant="contained" color="secondary" onClick={createExampleSentence} disabled={isLoadingWordDetail}>
-                  GPT例文生成
+              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+                  画像生成(上書き)
               </Button>
+              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+                  例文・画像生成(上書き)
+              </Button>
+              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("J_EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+                  日・例文・画像生成(上書き)
+              </Button>
+
             </Box>
           </Grid>
         </Grid>    

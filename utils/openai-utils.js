@@ -5,14 +5,35 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+export async function generateJapanese(english) {
+  try{
+    const content = `あなたは英語教師です。この英単語の日本語の意味を単語で教えてください。
+    複数の意味があるときは最大2つまでカンマで区切って複数教えて。回答には日本語の意味以外は含めないでください。 
+    ${english}`;
 
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      messages: [{role: 'assistant', content }],
+      temperature: 0.8,
+      max_tokens: 100,
+    });
+
+    const res = response.choices[0].message.content
+
+    return res;
+
+  } catch (error) {
+    console.error('generateExampleSentences error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
 
 export async function generateExampleSentences(english, japanese) {
   try{
     const content = `Given the English word '${english}' (${japanese}), create one example sentence using this word. Then provide a plain text translation of this sentence in Japanese and a list of up to three English synonyms for the word. Format your response as a JSON object with keys 'e' for the English sentence, 'j' for the Japanese translation, and 's' for the list of English synonyms. Do not include labels such as 'Example' or 'Translation', and explicitly mark the list as synonyms.`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
+      model: "gpt-4o", //"gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
       messages: [{role: 'assistant', content }],
       temperature: 0.2,
       response_format: { "type": "json_object" },
@@ -67,8 +88,7 @@ export async function generateUsage(wordListId, english){
   }`
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4-0125-preview", 
-    // model: "gpt-3.5-turbo-1106",
+    model: "gpt4-o", //"gpt-4-0125-preview", 
     messages: [{role: 'assistant', content }],
     temperature: 0.2,
     response_format: { "type": "json_object" },

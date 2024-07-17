@@ -47,7 +47,7 @@ export default function Home() {
     setWordDetail(null)
     if (wordDetail && wordDetail.id) {
         try {
-            const response = await axios.post(`/api/word-master/createExampleSentenceForWordListId`, { wordListId: wordDetail.id });
+            const response = await axios.post(`/api/admin/createExampleSentenceForWordListId`, { wordListId: wordDetail.id });
             setWordDetail(response.data.wordDetail);
             setIsLoadingWordDetail(false);
           } catch (error) {

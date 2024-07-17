@@ -26,12 +26,21 @@ async function updateWordList(blockId) {
 
     const filteredWordLists = wordLists.filter(wordList => !wordList.imageFilename);
 
+    const mode = {
+      japanese: {on: false, rewrite: false},
+      exampleSentence: {on: false, rewrite: false},
+      image: {on: true, rewrite: false},
+      usage: {on: false, rewrite: false},
+      synonyms: {on: false, rewrite: false},
+    }
+  
+
     // WordListをループして処理
     for (const [index, wordList] of filteredWordLists.entries()) {
         // imageFilenameが未設定の場合のみ更新処理を行う
       console.log(`GenImage:: blockId:${blockId} ${index + 1}/${filteredWordLists.length}: ${wordList.id}.${wordList.english} - processing`);
       if (!wordList.imageFilename) {
-        await createExampleSentenceAndImageByGPT(wordList.id);
+        await createExampleSentenceAndImageByGPT(wordList.id, mode);
       }
       console.log(`GenImage:: blockId:${blockId} ${index + 1}/${filteredWordLists.length}: ${wordList.id}.${wordList.english} - completed`);
 
