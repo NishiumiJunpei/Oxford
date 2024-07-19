@@ -278,8 +278,52 @@ export async function getWordListUserStatusByWordListIds(userId, wordListIds) {
   return statusRecords
 }
 
-
 export async function updateUserWordStatus(userId, wordListId, languageDirection, memorizeStatus) {
+  const existingRecord = await prisma.wordListUserStatus.findUnique({
+    where: {
+      userId_wordListId: {
+        userId: userId,
+        wordListId: wordListId,
+      },
+    },
+  });
+
+  const currentTime = new Date();
+
+  const updatedData = {
+    lastCheckDate: currentTime,
+  };
+
+  if (languageDirection === 'EJ') {
+    updatedData.memorizeStatusEJ = memorizeStatus;
+    updatedData.lastMemorizedDateEJ = currentTime;
+  } else if (languageDirection === 'JE') {
+    updatedData.memorizeStatusJE = memorizeStatus;
+    updatedData.lastMemorizedDateJE = currentTime;
+  }
+
+  if (existingRecord) {
+    return await prisma.wordListUserStatus.update({
+      where: { id: existingRecord.id },
+      data: updatedData,
+    });
+  } else {
+    const newData = {
+      userId,
+      wordListId,
+      lastCheckDate: currentTime,
+      memorizeStatusEJ: 'NOT_MEMORIZED',
+      memorizeStatusJE: 'NOT_MEMORIZED',
+      ...updatedData,
+    };
+
+    return await prisma.wordListUserStatus.create({
+      data: newData,
+    });
+  }
+}
+
+export async function updateUserWordStatusForAssessment(userId, wordListId, languageDirection, memorizeStatus) {
   const existingRecord = await prisma.wordListUserStatus.findUnique({
     where: {
       userId_wordListId: {

@@ -270,7 +270,7 @@ const LearnWordsCheck = () => {
 
     const updateWordStatus = async (wordId, known) => {
         try {
-          await fetch('/api/word-master/updateUserWordStatus', {
+          await fetch('/api/word-master/updateUserWordStatusForAssessment', {
             method: 'POST', // 通常、APIへのデータ更新はPOSTまたはPUTメソッドを使用
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ wordId, status: known ? 'MEMORIZED' : 'NOT_MEMORIZED', languageDirection: 'JE' }),
