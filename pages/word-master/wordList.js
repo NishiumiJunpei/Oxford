@@ -234,7 +234,7 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
           )}
 
           {message && (
-            <Box>
+            <Box sx={{mt: 5}}>
               <Typography variant="body1">
                 {message}
                 <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
@@ -250,7 +250,7 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
           <Button onClick={handleClose} color="primary">
             閉じる
           </Button>
-          <Button onClick={handleSetSrWords} color="primary" variant="contained" disabled={loading}>
+          <Button onClick={handleSetSrWords} color="primary" variant="contained" disabled={loading || message}>
             間隔反復をセット
           </Button>
         </DialogActions>
