@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await updateWordList();
+    updateWordList();
     res.status(200).json("done");
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
