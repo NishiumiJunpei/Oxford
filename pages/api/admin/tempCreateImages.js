@@ -24,6 +24,7 @@ async function updateWordList() {
     };
 
     // WordListをループして処理
+    console.log('GenImage creation started', wordLists.length)
     for (const [index, wordList] of wordLists.entries()) {
       console.log(`GenImage(temp):: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - processing`);
       await createExampleSentenceAndImageByGPT(wordList.id, mode);

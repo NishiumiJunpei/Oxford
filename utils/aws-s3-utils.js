@@ -26,9 +26,6 @@ export async function uploadImageToS3(imageBuffer, fileName) {
 }
 
 export const getS3FileUrl = async (filename) => {
-  if (!filename || filename.trim() === '') {
-    return null;
-  }
 
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -37,7 +34,15 @@ export const getS3FileUrl = async (filename) => {
   };
 
   try {
-    const url = await s3.getSignedUrlPromise('getObject', params);
+    let url = ''
+    if (!filename || filename.trim() === '') {
+      url = `/images/under_prep.png`;
+    }
+    else if (filename == 'NO_IMAGE'){
+      url = `/images/no_image.png`;
+    }else{
+      url = await s3.getSignedUrlPromise('getObject', params);
+    }
     return url;
   } catch (error) {
     console.error('Error generating signed URL:', error);
