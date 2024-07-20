@@ -13,9 +13,6 @@ async function updateWordList() {
       where: {
         imageFilename: null
       },
-      include: {
-        blocks: true,
-      },
     });
 
     const mode = {
@@ -28,9 +25,9 @@ async function updateWordList() {
 
     // WordListをループして処理
     for (const [index, wordList] of wordLists.entries()) {
-      console.log(`GenImage:: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - processing`);
+      console.log(`GenImage(temp):: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - processing`);
       await createExampleSentenceAndImageByGPT(wordList.id, mode);
-      console.log(`GenImage:: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - completed`);
+      console.log(`GenImage(temp):: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - completed`);
     }
   } catch (error) {
     console.error('Error updating word lists:', error);
