@@ -222,7 +222,7 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
           <DialogContentText>
             現在表示されている{filteredWordList.length}件の単語を間隔反復にセットしますか？
           </DialogContentText>
-          {filteredWordList.length > 20 && (
+          {/* {filteredWordList.length > 20 && (
             <>
               <DialogContentText color="error">
                 件数が多すぎるため絞り込みをおすすめします。
@@ -231,7 +231,7 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
                 フィルタ
               </Button>
             </>
-          )}
+          )} */}
 
           {message && (
             <Box sx={{mt: 5}}>

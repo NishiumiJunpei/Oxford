@@ -6,11 +6,17 @@ export default async function handler(req, res) {
     try {
       const { userId } = await getUserFromSession(req, res);
       const wordListIds = req.body.wordListIds.map(id => parseInt(id));
-      const srStartTime = new Date(req.body.srStartTime);
-      const srLanguageDirection = req.body.srLanguageDirection || 'EJ'
+      let srStartTime = new Date(req.body.srStartTime);
+      const srLanguageDirection = req.body.srLanguageDirection || 'EJ';
 
-      for (const wordListId of wordListIds) {
+      for (let i = 0; i < wordListIds.length; i++) {
+        const wordListId = wordListIds[i];
         await setSrForWordListUserStatus(userId, wordListId, srStartTime, srLanguageDirection);
+
+        // 10件ごとに srStartTime を10秒増やす
+        if ((i + 1) % 10 === 0) {
+          srStartTime = new Date(srStartTime.getTime() + 10000); // 10秒追加
+        }
       }
 
       res.status(200).json({ message: 'updated successfully.' });
