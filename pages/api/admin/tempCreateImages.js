@@ -16,8 +16,8 @@ async function updateWordList() {
     });
 
     const mode = {
-      japanese: { on: false, rewrite: false },
-      exampleSentence: { on: false, rewrite: false },
+      japanese: { on: true, rewrite: true },
+      exampleSentence: { on: true, rewrite: true },
       image: { on: true, rewrite: false },
       usage: { on: false, rewrite: false },
       synonyms: { on: false, rewrite: false },
