@@ -72,7 +72,7 @@ export async function generateImage(description) {
 
 export async function generateUsage(wordListId, english){
 
-  const content = `Please create up to three different situation where the phrase '${english}' can be used. 
+  const content = `Please create up to three different situation where the phrase '${english}' is used. 
   For each situation, provide an example sentence in English along with its Japanese translation. Write the situation in Japanese, the example sentences in English, and the Japanese translations of these sentences in Japanese. 
   Write "〜の場面" or "〜する時" in the "situation".
   Return the output in the following JSON format:
@@ -88,7 +88,7 @@ export async function generateUsage(wordListId, english){
   }`
 
   const response = await openai.chat.completions.create({
-    model: "gpt4-o", //"gpt-4-0125-preview", 
+    model: "gpt-4o", //"gpt-4-0125-preview", 
     messages: [{role: 'assistant', content }],
     temperature: 0.2,
     response_format: { "type": "json_object" },
