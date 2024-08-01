@@ -33,7 +33,11 @@ export default async function handler(req, res) {
     if (rewirteScope == 'J_EX_IMAGE'){
       mode.japanese .rewrite = true
     }
-  
+    if (rewirteScope == 'USAGE'){
+      mode.usage .on = true
+      mode.usage .rewrite = true
+    }
+    
 
     const wordDetail = await createExampleSentenceAndImageByGPT(wordListId, mode);
     

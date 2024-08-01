@@ -163,13 +163,16 @@ export default function Home() {
                 />
             )}
             <Box>
-              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+              <Button variant="contained" color="primary" onClick={()=>createExampleSentence("IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
                   画像生成(上書き)
               </Button>
-              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+              <Button variant="contained" color="primary" onClick={()=>createExampleSentence("EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
                   例文・画像生成(上書き)
               </Button>
-              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("J_EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+              <Button variant="contained" color="primary" onClick={()=>createExampleSentence("J_EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
+                  日・例文・画像生成(上書き)
+              </Button>
+              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("USAGE")} disabled={isLoadingWordDetail} sx={{mr: 2}}>
                   日・例文・画像生成(上書き)
               </Button>
 
