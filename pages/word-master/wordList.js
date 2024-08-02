@@ -488,12 +488,12 @@ const WordListPage = () => {
                 フィルター解除
               </Button> */}
               <GPTCoachButton words={filteredWordList} />
-              {/* <Button variant="contained" color="primary" 
-                onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{ml: 3}}>
-                  アセスメント
-              </Button> */}
-              <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{ml: 4}}> 
+              <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{mr: 3}}> 
                 間隔反復セット
+              </Button>
+              <Button variant="contained" color="primary" 
+                onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{mr: 3}}>
+                  アセスメント
               </Button>
 
             </Box>
