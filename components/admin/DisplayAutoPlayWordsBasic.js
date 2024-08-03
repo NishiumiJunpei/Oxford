@@ -137,7 +137,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                         {/* <Typography variant="body1" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
                         </Typography> */}
-                        <Typography variant="h6" sx={{fontSize: 30, color:'#173B45',}}>
+                        <Typography variant="h6" sx={{fontSize: 30, color:'#173B45', mb: 3}}>
                             {word?.japanese}
                         </Typography>
 
@@ -145,7 +145,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
                         </Typography> */}
 
-                        <Typography variant="h4" sx={{color:'#173B45', mt: 3}}>
+                        <Typography variant="h4" sx={{color:'#173B45', mt: 3, mb: 3}}>
                             {word?.exampleSentenceE}
                         </Typography>
                         <Typography variant="h5" sx={{color:'#173B45', mt:1}}>
