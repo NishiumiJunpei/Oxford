@@ -487,7 +487,9 @@ const WordListPage = () => {
               {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
               </Button> */}
-              <GPTCoachButton words={filteredWordList} />
+              <Box sx={{mr: 3}}>
+                <GPTCoachButton words={filteredWordList} />
+              </Box>
               <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{mr: 3}}> 
                 間隔反復セット
               </Button>

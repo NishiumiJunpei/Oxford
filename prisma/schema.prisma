@@ -162,7 +162,7 @@ model WordStoryByGPT {
   words         String[] // Prismaでは配列をサポートしています
   imageFilename      String?   // AWSのパスを格納
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  block         Block    @relation(fields: [blockId], references: [id])
+  block         Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
 }
 

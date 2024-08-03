@@ -125,19 +125,19 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
             <Typography>{index+1} / {wordList.length}</Typography>
     
             {/* <Box sx={{width: 1200, height: 675, backgroundImage: 'url("/images/backgroundForAutoPlay1.webp")', backgroundSize:'cover', padding: 3, pt: 6}}> */}
-            <Box sx={{width: 800, height: 450, backgroundColor: 'white', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5}}>
+            <Box sx={{width: 1200, height: 675, backgroundColor: '#F8EDED', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5}}>
                 <Box>
                     <Typography color="GrayText">{index+1} / {wordList.length}</Typography>
                 </Box>
                 <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'center'}}>
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h4" sx={{mt: 2, mb: 2}}>
+                        <Typography variant="h1" sx={{fontSize: 70, color:'#B43F3F', mt: 2, mb: 2}}>
                             {word?.english}
                         </Typography>
                         {/* <Typography variant="body1" style={{ marginTop: 5, display: 'flex', alignItems: 'center' }}>
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>意味</span>
                         </Typography> */}
-                        <Typography variant="body1" >
+                        <Typography variant="h6" sx={{fontSize: 30, color:'#173B45',}}>
                             {word?.japanese}
                         </Typography>
 
@@ -145,10 +145,10 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                             <span style={{ backgroundColor: '#D3D3D3', padding: '4px', marginRight: '8px' }}>例文</span>
                         </Typography> */}
 
-                        <Typography variant="h5" sx={{mt: 3}}>
+                        <Typography variant="h4" sx={{color:'#173B45', mt: 3}}>
                             {word?.exampleSentenceE}
                         </Typography>
-                        <Typography variant="body1" sx={{mt:1}}>
+                        <Typography variant="h5" sx={{color:'#173B45', mt:1}}>
                             {word?.exampleSentenceJ}
                         </Typography>
 
@@ -190,7 +190,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                                     alt={word.english} 
                                     style={{ marginTop: 20, maxWidth: '100%', maxHeight: '100%%', objectFit: 'contain' }} 
                                 />
-                                <Typography variant="body2" sx={{mb: 2}}>
+                                <Typography variant="body2" sx={{fontSize: 18, color:'#173B45', mb: 2}}>
                                     Created by GPT & DALLE3 / susuEnglish
                                 </Typography>
                             </>
