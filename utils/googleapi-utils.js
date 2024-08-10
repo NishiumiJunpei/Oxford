@@ -66,34 +66,3 @@ export async function writeToGoogleSheet(spreadsheetId, range, values, action = 
     throw error;
   }
 }
-
-
-
-// export async function writeToGoogleSheet(spreadsheetId, range, values) {
-//   try {
-//     const auth = new google.auth.GoogleAuth({
-//       // Depending on your environment, you might need to specify credentials here
-//       scopes: ['https://www.googleapis.com/auth/spreadsheets']
-//     });
-
-//     const client = await auth.getClient();
-//     const googleSheets = google.sheets({ version: 'v4', auth: client });
-
-//     const response = await googleSheets.spreadsheets.values.update({
-//       spreadsheetId,
-//       range,
-//       valueInputOption: 'USER_ENTERED',
-//       requestBody: {
-//         values
-//       }
-//     });
-
-//     console.log(response.data); // Log the response for debugging purposes
-//     return response.data; // You might want to return something more specific here
-//   } catch (error) {
-//     console.error('Error writing to Google Sheet:', error);
-//     throw error; // Re-throw the error for upstream handling
-//   }
-// }
-
-  
