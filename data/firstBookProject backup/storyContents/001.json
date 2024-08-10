@@ -14,16 +14,14 @@
             "japanese": "美味な、口に合う",
             "meaningInThisStory": "伝説のレシピの秘密が美味であることを示している。",
             "usage": "食べ物や飲み物が美味しい、または口に合う場合に使われる。",
-            "promptForImageGeneration": "A chef presenting a beautifully plated dish that is the result of uncovering a long-lost, legendary recipe, with vibrant, fresh ingredients that look extremely appetizing.",
-            "wordImageFilename": "book/WORD-001-palatable.png"
+            "promptForImageGeneration": "A chef presenting a beautifully plated dish, with vibrant, fresh ingredients that look extremely appetizing."
           },
           {
             "englishWord": "augmented",
             "japanese": "増幅された、強化された",
             "meaningInThisStory": "シェフたちの情熱が、謎によってさらに高められたことを示している。",
             "usage": "何かが増大したり、強化されたりする場面で使われる。",
-            "promptForImageGeneration": "A glowing orb of energy symbolizing the chefs' passion, growing brighter and larger as they delve deeper into the mystery surrounding the ancient dish.",
-            "wordImageFilename": "book/WORD-001-augmented.png"
+            "promptForImageGeneration": "A glowing orb of energy growing brighter and larger, symbolizing increased power or intensity."
           }
         ]
       },
@@ -36,47 +34,42 @@
             "japanese": "改善する、改良する",
             "meaningInThisStory": "シェフたちが互いの違いを乗り越えるために改善する様子を示している。",
             "usage": "問題や状況を良くするために使われる。",
-            "promptForImageGeneration": "A group of chefs working together, improving their collaboration and resolving differences, with a bright light symbolizing their successful resolution.",
-            "wordImageFilename": "book/WORD-001-ameliorate.png"
+            "promptForImageGeneration": "A group of people working together, improving and solving a problem, with a bright light symbolizing resolution."
           },
           {
             "englishWord": "accommodate",
             "japanese": "受け入れる、適応させる",
             "meaningInThisStory": "お互いのスキルを認め合い、共に働くために適応していることを示している。",
             "usage": "他人の要求やニーズに合わせて柔軟に対応する場面で使われる。",
-            "promptForImageGeneration": "Two chefs shaking hands in agreement, with symbols of their different cooking skills in the background, showing mutual respect and adaptation.",
-            "wordImageFilename": "book/WORD-001-accommodate.png"
+            "promptForImageGeneration": "Two hands shaking in agreement, with tools or symbols of different skills in the background."
           },
           {
             "englishWord": "alleviate",
             "japanese": "緩和する、軽減する",
             "meaningInThisStory": "シェフたちの間の緊張が軽減される様子を表している。",
             "usage": "痛みやストレスを和らげるために使われる。",
-            "promptForImageGeneration": "A chef calming another chef, offering comforting words or gestures, with a serene kitchen background representing the easing of tension.",
-            "wordImageFilename": "book/WORD-001-alleviate.png"
+            "promptForImageGeneration": "A person comforting another, with a calm and serene atmosphere in the background."
           },
           {
             "englishWord": "buoyant",
             "japanese": "浮揚している、元気な",
             "meaningInThisStory": "困難に直面しても、シェフたちの精神が高揚し続けていることを示している。",
             "usage": "精神的に前向きで、活気に満ちた様子を表す場面で使われる。",
-            "promptForImageGeneration": "A chef joyfully cooking despite the challenges, surrounded by bright, uplifting colors that symbolize their positive spirit."
+            "promptForImageGeneration": "A person jumping with joy, surrounded by bright colors and uplifting scenery."
           },
           {
             "englishWord": "converge",
             "japanese": "収束する、集まる",
             "meaningInThisStory": "シェフたちが共通の目標に向かって一緒に進んでいく様子を示している。",
             "usage": "異なるものが一点に集まる場面で使われる。",
-            "promptForImageGeneration": "Multiple chefs coming together at a large table, each contributing their unique skills to a single dish, symbolizing unity towards a common goal.",
-            "wordImageFilename": "book/WORD-001-converge.png"
+            "promptForImageGeneration": "Several paths or streams merging into one, symbolizing unity or common purpose."
           },
           {
             "englishWord": "culminate",
             "japanese": "最高潮に達する、完結する",
             "meaningInThisStory": "シェフたちの努力が料理の偉業に結実することを表している。",
             "usage": "長期にわたるプロセスや出来事が頂点に達する場面で使われる。",
-            "promptForImageGeneration": "A beautifully plated dish placed on a pedestal, with a bright light shining down on it, representing the pinnacle of the chefs' efforts.",
-            "wordImageFilename": "book/WORD-001-culminate.png"
+            "promptForImageGeneration": "A mountain peak with a bright light or flag at the top, representing the achievement of a goal."
           }
         ]
       },
@@ -89,39 +82,35 @@
             "japanese": "当惑した、恥ずかしがった",
             "meaningInThisStory": "他のシェフの優れた技術に気後れしたことを示している。",
             "usage": "恥ずかしい思いをしたり、当惑したりする場面で使われる。",
-            "promptForImageGeneration": "A chef looking down and avoiding eye contact in a kitchen, feeling overshadowed by another chef's superior skills, symbolizing embarrassment.",
-            "wordImageFilename": "book/WORD-001-abashed.png"
+            "promptForImageGeneration": "A person with a flushed face, looking down and avoiding eye contact, symbolizing embarrassment."
           },
           {
             "englishWord": "antipathy",
             "japanese": "反感、嫌悪",
             "meaningInThisStory": "あるシェフが他のシェフに対して抱いたネガティブな感情を表している。",
             "usage": "強い嫌悪感や反感を抱く場面で使われる。",
-            "promptForImageGeneration": "Two chefs standing apart in a kitchen, with crossed arms and scowls, symbolizing mutual dislike or conflict.",
-            "wordImageFilename": "book/WORD-001-antipathy.png"
+            "promptForImageGeneration": "Two people standing apart with crossed arms, looking away from each other, symbolizing dislike or conflict."
           },
           {
             "englishWord": "abrogate",
             "japanese": "無効にする、廃止する",
             "meaningInThisStory": "苦々しい感情が、シェフたちの仲間意識を壊す可能性があることを示している。",
             "usage": "法律や合意が廃止されたり、取り消されたりする場面で使われる。",
-            "promptForImageGeneration": "A broken friendship bracelet or bond, symbolizing the potential destruction of camaraderie among chefs.",
-            "wordImageFilename": "book/WORD-001-abrogate.png"
+            "promptForImageGeneration": "A legal document being torn apart, symbolizing the annulment or cancellation of an agreement."
           },
           {
             "englishWord": "affable",
             "japanese": "愛想の良い、親しみやすい",
             "meaningInThisStory": "他のシェフたちが優しい性格で、問題を解決しようとしている様子を表している。",
             "usage": "人々に親しみやすく、話しかけやすい性格を表す場面で使われる。",
-            "promptForImageGeneration": "A chef smiling warmly and offering a hand to another chef in a kitchen, creating an inviting and friendly atmosphere.",
-            "wordImageFilename": "book/WORD-001-affable.png"
+            "promptForImageGeneration": "A smiling person warmly greeting others, with an open and inviting demeanor."
           },
           {
             "englishWord": "appease",
             "japanese": "なだめる、宥める",
             "meaningInThisStory": "他のシェフたちが彼の怒りを和らげ、平和を取り戻そうとしていることを示している。",
             "usage": "怒りや不満を持つ人をなだめて、穏やかにする場面で使われる。",
-            "promptForImageGeneration": "A chef offering a gesture of peace, such as a conciliatory dish or gift, to calm another chef in a tense kitchen atmosphere."
+            "promptForImageGeneration": "A person offering a gift or kind gesture to calm another, with a peaceful and calm atmosphere."
           }
         ]
       },
@@ -134,24 +123,21 @@
             "japanese": "古代の、古風な",
             "meaningInThisStory": "寺院が非常に古く、歴史的なものを表している。",
             "usage": "非常に古いものや、過去の時代に属するものを記述する場面で使われる。",
-            "promptForImageGeneration": "An ancient, weathered temple hidden deep within a lush, dense forest, with vines and moss covering its stone structure, representing its archaic nature.",
-            "wordImageFilename": "book/WORD-001-archaic.png"
+            "promptForImageGeneration": "An ancient, weathered temple hidden deep in a lush forest, with vines and moss covering its stone structure."
           },
           {
             "englishWord": "zest",
             "japanese": "風味、楽しさ",
             "meaningInThisStory": "作った料理に特別な風味や魅力があることを示している。",
             "usage": "食べ物に対して使われる場合は風味や香りを指し、他の状況では何かを特別に楽しくする要素を意味する。",
-            "promptForImageGeneration": "A vibrant dish with bright citrus garnishes, emanating a strong, fresh aroma that adds a memorable zest to the dish.",
-            "wordImageFilename": "book/WORD-001-zest.png"
+            "promptForImageGeneration": "A vibrant dish with bright citrus garnishes, emanating a strong, fresh aroma that enhances the overall appeal."
           },
           {
             "englishWord": "palatable",
             "japanese": "美味な、口に合う",
             "meaningInThisStory": "精霊を満足させるための料理が非常に美味しいことを表している。",
             "usage": "食べ物や飲み物が美味しい、または口に合う場合に使われる。",
-            "promptForImageGeneration": "A beautifully plated dish, created by the chefs as a final challenge, with vibrant ingredients and an appearance that makes it look exceptionally appetizing.",
-            "wordImageFilename": "book/WORD-001-palatable.png"
+            "promptForImageGeneration": "A chef presenting a beautifully plated dish, with vibrant, fresh ingredients that look extremely appetizing."
           }
         ]
       },
@@ -164,12 +150,10 @@
             "japanese": "愛想の良い、親しみやすい",
             "meaningInThisStory": "シェフたちが互いに対して親しみやすく、良い関係を築いたことを示している。",
             "usage": "人々が親しみやすく、友好的な性格を持っている場面で使われる。",
-            "promptForImageGeneration": "A group of chefs happily celebrating their success, with warm smiles and friendly interactions, symbolizing their newfound amiability.",
-            "wordImageFilename": "book/WORD-001-amiable.png"
+            "promptForImageGeneration": "A group of friends laughing and enjoying each other's company, with warm, inviting smiles."
           }
         ]
       }
-    ],
-    "titleImageFilename": "book/TITLE-001.png"
+    ]
   }
 }
