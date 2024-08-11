@@ -9,7 +9,7 @@ const sharp = require('sharp');
 
 // type: 'WORD' or 'TITLE'
 // str: 'WORD'なら英単語、'TITLE'ならタイトルID
-export const createImage = async (type, fileId, prompt, str) =>{
+export const createImage = async (type, fileId, prompt, englishWord, sectionIndex, wordsExplanationIndex) =>{
 
     try {
 
@@ -37,9 +37,8 @@ export const createImage = async (type, fileId, prompt, str) =>{
               .toBuffer();
           } 
   
-          const imageFilename = type == 'TITLE' ? `book/TITLE-${fileId}.png` : `book/WORD-${fileId}-${str}.png` 
+          const imageFilename = type == 'TITLE' ? `book/TITLE-${fileId}.png` : `book/WORD-${fileId}-${sectionIndex}-${wordsExplanationIndex}-${englishWord}.png` 
           await uploadImageToS3(compressedImageBuffer, imageFilename); // 画像をS3にアップロード
-          // imageUrl = await getS3FileUrl(imageFilename)
 
           return imageFilename
         }         

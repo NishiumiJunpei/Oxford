@@ -1,75 +1,49 @@
-import fs from 'fs';
-import path from 'path';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Typography, Card, CardContent, Snackbar } from '@mui/material';
-import { getS3FileUrl } from '@/utils/aws-s3-utils';
 
-export async function getStaticProps() {
-  const storyDir = path.join(process.cwd(), 'data/firstBookProject/storyContents');
-  const filenames = fs.readdirSync(storyDir);
-
-  const contentFiles = await Promise.all(
-    filenames.map(async (filename) => {
-      const filePath = path.join(storyDir, filename);
-      const fileContent = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-      if (fileContent.content.titleImageFilename) {
-        const imageUrl = await getS3FileUrl(fileContent.content.titleImageFilename);
-        fileContent.content.titleImageUrl = imageUrl;
-      }
-
-      if (fileContent.content.sections) {
-        fileContent.content.sections = await Promise.all(
-          fileContent.content.sections.map(async (section) => {
-            if (section.wordsExplanation) {
-              section.wordsExplanation = await Promise.all(
-                section.wordsExplanation.map(async (word) => {
-                  if (word.wordImageFilename) {
-                    const imageUrl = await getS3FileUrl(word.wordImageFilename);
-                    word.imageUrl = imageUrl;
-                  }
-                  return word;
-                })
-              );
-            }
-            return section;
-          })
-        );
-      }
-
-      fileContent.content.id = filename.replace('.json', '');
-
-      return { content: fileContent.content };
-    })
-  );
-
-  return { props: { contentFiles } };
-}
-
-export default function StoryTable({ contentFiles: initialContentFiles }) {
-  const [contentFiles, setContentFiles] = useState(initialContentFiles);
-  const [selectedContent, setSelectedContent] = useState(null);
+export default function StoryTable() {
+  const [storyList, setStoryList] = useState([]);
+  const [selectedStoryItem, setSelectedStoryItem] = useState(null);
   const [message, setMessage] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbarの表示状態を管理
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const handleViewDetails = (content) => {
-    setSelectedContent(content);
+  // コンポーネントがマウントされたときにAPIからデータを取得する
+  useEffect(() => {
+    const fetchStoryList = async () => {
+      try {
+        const response = await fetch('/api/admin/fbp/getStoryList');
+        if (response.ok) {
+          const data = await response.json();
+          setStoryList(data);
+        } else {
+          console.error('Failed to fetch story list');
+        }
+      } catch (error) {
+        console.error('Error fetching story list:', error);
+      }
+    };
+
+    fetchStoryList();
+  }, []);
+
+  const handleViewDetails = (storyItem) => {
+    setSelectedStoryItem(storyItem);
   };
 
-  const handleGenerateImage = async (type, fileId, sectionIndex, wordIndex, prompt, englishWord = '') => {
+  const handleGenerateImage = async (type, contentId, sectionIndex, wordIndex, prompt, englishWord = '') => {
     try {
-        setMessage('画像生成をリクエストしました');
-        setOpenSnackbar(true); // Snackbarを表示
+      setMessage('画像生成をリクエストしました');
+      setOpenSnackbar(true);
 
-        const response = await fetch('/api/admin/fbp/createImage', {
+      const response = await fetch('/api/admin/fbp/createImage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           type: type,
-          fileId: fileId,
-          sectionsIndex: sectionIndex,
+          contentId: contentId, 
+          sectionIndex: sectionIndex,
           wordsExplanationIndex: wordIndex,
           prompt: prompt,
           englishWord: englishWord,
@@ -79,7 +53,7 @@ export default function StoryTable({ contentFiles: initialContentFiles }) {
       if (response.ok) {
         setTimeout(() => {
           window.location.reload();
-        }, 1000);  // 1秒後にページ再読み込み
+        }, 1000);
       } else {
         console.error('Failed to generate image');
       }
@@ -103,38 +77,39 @@ export default function StoryTable({ contentFiles: initialContentFiles }) {
   };
 
   const handleCloseSnackbar = () => {
-    setOpenSnackbar(false); // Snackbarを非表示にする
+    setOpenSnackbar(false);
   };
 
+  console.log('test', storyList)
   return (
     <Box sx={{ p: 3 }}>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>File Number</TableCell>
+              <TableCell>Content ID</TableCell>
               <TableCell>Title (Japanese)</TableCell>
               <TableCell>Title Image</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {contentFiles.map(({ id, content }) => (
-              <TableRow key={id}>
-                <TableCell>{id}</TableCell>
+            {storyList.map(({ contentId, content }) => (
+              <TableRow key={contentId}>
+                <TableCell>{contentId}</TableCell>
                 <TableCell>{content.titleJ}</TableCell>
                 <TableCell>
                   {content.titleImageUrl ? <img src={content.titleImageUrl} alt={content.titleJ} style={{ maxHeight: 100 }} /> : 'N/A'}
                 </TableCell>
                 <TableCell>
-                  <Button variant="contained" color="primary" onClick={() => handleViewDetails(content)}>
+                  <Button variant="contained" color="primary" onClick={() => handleViewDetails({ contentId, content })}>
                     詳細を見る
                   </Button>
                   <Button
                     variant="contained"
                     color="secondary"
                     style={{ marginLeft: 8 }}
-                    onClick={() => handleGenerateImage('TITLE', content.id, null, null, content.promptForTitleImage)}
+                    onClick={() => handleGenerateImage('TITLE', contentId, null, null, content.promptForTitleImage)}
                   >
                     タイトル画像生成
                   </Button>
@@ -145,25 +120,25 @@ export default function StoryTable({ contentFiles: initialContentFiles }) {
         </Table>
       </TableContainer>
 
-      {selectedContent && (
+      {selectedStoryItem && (
         <Box sx={{ mt: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>
-                {selectedContent.titleJ}
+                {selectedStoryItem.content.titleJ}
               </Typography>
-              {selectedContent.titleImageFilename && (
+              {selectedStoryItem.content.titleImageFilename && (
                 <Box>
-                  <img src={`${selectedContent.titleImageUrl}`} height={300} />
+                  <img src={`${selectedStoryItem.content.titleImageUrl}`} height={300} />
                 </Box>
               )}
               <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-                {selectedContent.titleE}
+                {selectedStoryItem.content.titleE}
               </Typography>
 
-              {formatStoryText(selectedContent.storyE)}
+              {formatStoryText(selectedStoryItem.content.storyE)}
 
-              {selectedContent.sections.map((section, sectionIndex) => (
+              {selectedStoryItem.content.sections.map((section, sectionIndex) => (
                 <Box
                   key={sectionIndex}
                   sx={{
@@ -206,7 +181,7 @@ export default function StoryTable({ contentFiles: initialContentFiles }) {
                                 variant="contained"
                                 color="secondary"
                                 sx={{ mt: 1 }}
-                                onClick={() => handleGenerateImage('WORD', selectedContent.id, sectionIndex, wordIndex, word.promptForImageGeneration, word.englishWord)}
+                                onClick={() => handleGenerateImage('WORD', selectedStoryItem.contentId, sectionIndex, wordIndex, word.promptForImageGeneration, word.englishWord)}
                               >
                                 単語画像再生成
                               </Button>
@@ -215,7 +190,7 @@ export default function StoryTable({ contentFiles: initialContentFiles }) {
                             <Button
                               variant="contained"
                               color="secondary"
-                              onClick={() => handleGenerateImage('WORD', selectedContent.id, sectionIndex, wordIndex, word.promptForImageGeneration, word.englishWord)}
+                              onClick={() => handleGenerateImage('WORD', selectedStoryItem.contentId, sectionIndex, wordIndex, word.promptForImageGeneration, word.englishWord)}
                             >
                               単語画像生成
                             </Button>
@@ -231,7 +206,6 @@ export default function StoryTable({ contentFiles: initialContentFiles }) {
         </Box>
       )}
 
-      {/* Snackbar component to show messages */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
