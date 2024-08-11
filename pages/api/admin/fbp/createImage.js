@@ -38,8 +38,9 @@ export default async function handler(req, res) {
         // typeに応じてJSONデータを更新
         if (type === 'TITLE') {
             if (!jsonData.content.titleImageFilename) {
+                const titleE = jsonData.content.titleE
                 console.log('image creation started - imageFilename', type, englishWord);
-                const imageFilename = await createImage(type, contentId, prompt, '', '', '');
+                const imageFilename = await createImage(type, contentId, prompt, '', '', '', titleE);
                 console.log('image creation is finished - imageFilename', imageFilename);
                 jsonData.content.titleImageFilename = imageFilename;
 
@@ -53,7 +54,7 @@ export default async function handler(req, res) {
                         const prompt = wordsExplanation[i].promptForImageGeneration;
                         const englishWord = wordsExplanation[i].englishWord;
                         console.log('image creation started - imageFilename', type, englishWord);
-                        const imageFilename = await createImage('WORD', contentId, prompt, englishWord, sectionIndex, wordsExplanationIndex);
+                        const imageFilename = await createImage('WORD', contentId, prompt, englishWord, sectionIndex, wordsExplanationIndex, '');
                         console.log('image creation is finished - imageFilename', imageFilename);
                         wordsExplanation[i].wordImageFilename = imageFilename;
                     }
@@ -62,7 +63,7 @@ export default async function handler(req, res) {
 
         } else if (type === 'WORD' && jsonData.content.sections[sectionIndex]) {
             console.log('image creation started - imageFilename', type, englishWord);
-            const imageFilename = await createImage(type, contentId, prompt, englishWord, sectionIndex, wordsExplanationIndex);
+            const imageFilename = await createImage(type, contentId, prompt, englishWord, sectionIndex, wordsExplanationIndex, '');
             console.log('image creation is finished - imageFilename', imageFilename);
 
             jsonData.content.sections[sectionIndex].wordsExplanation[wordsExplanationIndex].wordImageFilename = imageFilename;

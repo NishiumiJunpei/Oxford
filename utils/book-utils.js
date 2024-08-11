@@ -9,12 +9,14 @@ const sharp = require('sharp');
 
 // type: 'WORD' or 'TITLE'
 // str: 'WORD'なら英単語、'TITLE'ならタイトルID
-export const createImage = async (type, fileId, prompt, englishWord, sectionIndex, wordsExplanationIndex) =>{
+export const createImage = async (type, fileId, prompt, englishWord, sectionIndex, wordsExplanationIndex, titleE) =>{
 
     try {
 
         // ----------- 画像の生成と保存 ---------------------------
-        const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(prompt));
+        const description = type == 'TITLE' ? `Please create a design image for the story titled "${titleE}" Please do not include any text in the image. overview of the content: ${prompt}`
+                                    : `Please create an image representing the word "${englishWord}" using the following scene. ${prompt}`
+        const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(description));
   
         if (imageUrlAtOpenAI) { 
           // imageUrlAtOpenAIから画像データを取得
