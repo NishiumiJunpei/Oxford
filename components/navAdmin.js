@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Typography } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Typography, Divider } from '@mui/material';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import HomeIcon from '@mui/icons-material/Home';
@@ -37,25 +37,34 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="ワード検索" />
+          <ListItemText primary="英単語検索" />
         </ListItem>
         <ListItem button component="a" href={`/admin/autoPlayWords`}>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="ワード再生" />
+          <ListItemText primary="テーマ別英単語再生(YT)" />
         </ListItem>
+
+        <ListItem button component="a" href={`/admin/fbp`}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="書籍プロジェクト🎶" />
+        </ListItem>
+
+        <Divider/>
         <ListItem button component="a" href={`/admin/autoPlayScene`}>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="シーン再生" />
+          <ListItemText primary="シーン再生(YT)" />
         </ListItem>
         <ListItem button component="a" href={`/admin/autoPlayPhrase`}>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="フレーズ再生" />
+          <ListItemText primary="フレーズ再生(YT)" />
         </ListItem>
         <ListItem button component="a" href={`/admin/managePhraseList`}>
           <ListItemIcon>
@@ -63,6 +72,7 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           </ListItemIcon>
           <ListItemText primary="フレーズ検索" />
         </ListItem>
+        <Divider/>
         <ListItem button component="a" href={`/admin/manageUsers`}>
           <ListItemIcon>
             <HomeIcon />

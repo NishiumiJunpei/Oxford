@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Typography, Card, CardContent, Snackbar } from '@mui/material';
+import Link from 'next/link';
 
 export default function StoryTable() {
   const [storyList, setStoryList] = useState([]);
@@ -80,9 +81,12 @@ export default function StoryTable() {
     setOpenSnackbar(false);
   };
 
-  console.log('test', storyList)
+  console.log('storyList', storyList)
   return (
     <Box sx={{ p: 3 }}>
+      <Link href="/admin/fbp/bookDraft" style={{ color: 'blue', marginBottom: '2rem', display: 'inline-block' }}>
+        書籍のドラフト
+      </Link>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NavAdmin from './navAdmin';
 import { useTheme } from '@mui/material/styles';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 export default function LayoutAdmin({ children }) {
   const theme = useTheme();

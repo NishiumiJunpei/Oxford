@@ -5,6 +5,9 @@ import { getS3FileUrl } from '@/utils/aws-s3-utils';
 export default async function handler(req, res) {
   if (req.method === 'GET') { 
     try {
+      // クエリパラメータからcategoryを取得
+      const { category } = req.query;
+
       // ユーザーのセッションからユーザーIDを取得
       const { userId } = await getUserFromSession(req, res);
 
@@ -15,10 +18,16 @@ export default async function handler(req, res) {
       // Google Sheetsからデータを取得
       const rawData = await getGoogleSheetData(spreadsheetId, sheetRange);
 
-      // データをパースして画像URLを補完
+      // categoryが指定されている場合は、まずそれをフィルタリング
+      const filteredData = rawData.filter(row => {
+        const [rowCategory] = row;
+        return !category || rowCategory === category;
+      });
+
+      // フィルタリングされたデータに対してのみ処理を行う
       const processedData = await Promise.all(
-        rawData.map(async (row) => {
-          const [category, contentId, contentString, displayOrder] = row;
+        filteredData.map(async (row) => {
+          const [rowCategory, contentId, contentString, displayOrder] = row;
           const content = JSON.parse(contentString).content;  // JSONをパース
 
           // メインの画像URLを取得
@@ -48,7 +57,7 @@ export default async function handler(req, res) {
           }
 
           return {
-            category,
+            category: rowCategory,
             contentId,
             content,
             displayOrder,
