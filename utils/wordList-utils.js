@@ -36,6 +36,7 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
             mode.image.on = true
             mode.image.rewrite = true
 
+            console.log('(jap is created:  ', jap)
           }
         }
 
@@ -103,7 +104,6 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
         if (mode.usage.on){
           if (mode.usage.rewrite || !word.usage){
             const usage = await generateUsage(word.id, word.english)
-            console.log('usage', usage)
             word.usage = usage ? JSON.parse(usage) : ''
           }
   

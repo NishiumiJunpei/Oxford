@@ -1,51 +1,57 @@
-// Prismaクライアントのインポート
-import { PrismaClient } from '@prisma/client';
 import { createExampleSentenceAndImageByGPT } from '../../../utils/wordList-utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { getUserFromSession } from '@/utils/session-utils';
+import prisma from '@/prisma/prisma';
 
-const prisma = new PrismaClient();
+export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
 
-async function updateWordList() {
+  const { userId } = await getUserFromSession(req, res);
+
+  if (userId !== 1) {
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
   try {
-    // imageFilenameがnullのWordListを取得
-    const wordLists = await prisma.wordList.findMany({
+    // クライアントに「受け付けました」とすぐに応答
+    res.status(200).json({ message: '受け付けました' });
+
+    // blockId 719に関連するWordListを取得
+    const wordListBlocks = await prisma.wordListBlock.findMany({
       where: {
-        imageFilename: null
+        blockId: 719,
+      },
+      include: {
+        wordList: true, // WordListの詳細を取得
       },
     });
 
-    const mode = {
-      japanese: { on: true, rewrite: true },
-      exampleSentence: { on: true, rewrite: true },
-      image: { on: true, rewrite: false },
-      usage: { on: false, rewrite: false },
-      synonyms: { on: false, rewrite: false },
-    };
+    const words = wordListBlocks.map(block => block.wordList);
 
-    // WordListをループして処理
-    console.log('GenImage creation started', wordLists.length)
-    for (const [index, wordList] of wordLists.entries()) {
-      console.log(`GenImage(temp):: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - processing`);
-      await createExampleSentenceAndImageByGPT(wordList.id, mode);
-      console.log(`GenImage(temp):: ${index + 1}/${wordLists.length}: ${wordList.id}.${wordList.english} - completed`);
+    // トータルの処理件数を出力
+    console.log(`Total words to process: ${words.length}`);
+
+    let mode = {
+      japanese: {on: true, rewrite: false},
+      exampleSentence: {on: true, rewrite: false},
+      image: {on: true, rewrite: false},
+      usage: {on: true, rewrite: false},
+      synonyms: {on: true, rewrite: false},
     }
-  } catch (error) {
-    console.error('Error updating word lists:', error);
-  }
-}
 
-export default async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  const userId = session.userId;
-  if (userId !== 1) {
-    return res.status(403).json({ message: 'Forbidden' });
-  }
+    // 各単語について処理
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      console.log(`Processing ${i + 1}/${words.length}: ${word.english}`);
 
-  try {
-    updateWordList();
-    res.status(200).json("done");
+      // 処理を実行
+      await createExampleSentenceAndImageByGPT(word.id, mode);
+      console.log(`Completed processing for word: ${word.english}`);
+    }
+
+    console.log('Processing complete.');
   } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    console.error('Error during processing:', error);
   }
 }
