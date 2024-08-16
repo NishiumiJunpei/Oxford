@@ -81,6 +81,8 @@ model WordList {
   synonyms                   String?
   imageFilename              String?
   usage                      String?
+  explanationScript          String?
+  explanationAudioFilename   String?
   remark                     String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @default(now()) @updatedAt

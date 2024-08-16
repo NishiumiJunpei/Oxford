@@ -211,7 +211,31 @@ export default function Home() {
 
                 </>
               )}
+              {wordDetail.explanationScript && wordDetail.explanationAudioUrl && (
+                <>
+                  {/* ボタンを押して音声を再生する処理 */}
+                  <audio id="audioPlayer" src={wordDetail.explanationAudioUrl} />
 
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      const audioElement = document.getElementById('audioPlayer');
+                      if (audioElement) {
+                        audioElement.play(); // 音声ファイルの再生処理
+                      }
+                    }}
+                    sx={{ mt: 2 }}
+                  >
+                    スクリプト再生
+                  </Button>
+
+                  <Typography sx={{ mt: 2 }}>
+                    {wordDetail.explanationScript} {/* スクリプトは最初から表示 */}
+                  </Typography>
+                </>
+              )}
+              
             </Grid>
             <Grid item xs={6}>
                 {wordDetail?.imageUrl && (

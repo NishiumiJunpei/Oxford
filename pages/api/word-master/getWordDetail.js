@@ -1,5 +1,5 @@
 import { getWordListById } from '../../../utils/prisma-utils';
-import { getS3FileUrl } from '../../../utils/aws-s3-utils';
+import { getS3FileUrl, getS3AudioFileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
       const wordDetail = await getWordListById(parseInt(wordListId));
       wordDetail.imageUrl =  await getS3FileUrl(wordDetail.imageFilename),
       wordDetail.usage =  wordDetail.usage ? JSON.parse(wordDetail.usage) : '',
-
+     wordDetail.explanationAudioUrl = await getS3AudioFileUrl(wordDetail.explanationAudioFilename),
 
       res.status(200).json({
         wordDetail

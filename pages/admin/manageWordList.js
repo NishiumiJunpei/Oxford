@@ -48,16 +48,20 @@ export default function Home() {
     }
 };
 
-
   return (
     <>
       <Box sx={{mb: 5}}>
-        <TextField
-          label="English"
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <TextField
+        label="English"
+        variant="outlined"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSearch(); // Enterキーを押したら検索ボタンの処理を実行
+          }
+        }}
+      />
         <Button variant="contained" color="primary" onClick={handleSearch}>
           検索
         </Button>
@@ -150,6 +154,31 @@ export default function Home() {
                   <Typography>{element.exampleJ}</Typography>
                 </>
               ))}
+              {wordDetail.explanationScript && wordDetail.explanationAudioUrl && (
+                <>
+                  {/* ボタンを押して音声を再生する処理 */}
+                  <audio id="audioPlayer" src={wordDetail.explanationAudioUrl} />
+
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      const audioElement = document.getElementById('audioPlayer');
+                      if (audioElement) {
+                        audioElement.play(); // 音声ファイルの再生処理
+                      }
+                    }}
+                    sx={{ mt: 2 }}
+                  >
+                    スクリプト再生
+                  </Button>
+
+                  <Typography sx={{ mt: 2 }}>
+                    {wordDetail.explanationScript} {/* スクリプトは最初から表示 */}
+                  </Typography>
+                </>
+              )}
+
 
             </>
           )}

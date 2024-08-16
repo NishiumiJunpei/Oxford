@@ -1,6 +1,6 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getBlock, getWordListByCriteria, getWordListUserStatus, findBlockByDisplayOrderAndThemeId, getWordStoriesByUserIdAndBlockId, getBlocks } from '../../../utils/prisma-utils';
-import { getS3FileUrl } from '../../../utils/aws-s3-utils';
+import { getS3FileUrl, getS3AudioFileUrl } from '../../../utils/aws-s3-utils';
 import { getTimeDifferenceText, isWithinDays } from '@/utils/utils';
 
 export default async function handler(req, res) {
@@ -60,6 +60,7 @@ export default async function handler(req, res) {
           memorizeStatusEJ: userWordListStatus?.memorizeStatusEJ || 'NOT_MEMORIZED',
           memorizeStatusJE: userWordListStatus?.memorizeStatusJE || 'NOT_MEMORIZED',
           imageUrl: await getS3FileUrl(word.imageFilename),
+          explanationAudioUrl: await getS3AudioFileUrl(word.explanationAudioFilename),
           usage: word.usage ? JSON.parse(word.usage) : '',
           userWordListStatus,
           lastMemorizedDateEJ: {

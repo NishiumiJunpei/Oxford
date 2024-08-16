@@ -1,7 +1,7 @@
 //wordList-utils.js
 import axios from 'axios';
-import { generateJapanese, generateExampleSentences, generateImage, generateUsage } from '@/utils/openai-utils'
-import { getS3FileUrl, uploadImageToS3 } from '@/utils/aws-s3-utils'
+import { generateJapanese, generateExampleSentences, generateImage, generateUsage, generateAudio, generateExplanationScript } from '@/utils/openai-utils'
+import { getS3FileUrl, uploadImageToS3, uploadAudioToS3 } from '@/utils/aws-s3-utils'
 import { getWordListById, updateWordList } from '@/utils/prisma-utils'
 import { enqueueRequest } from '@/utils/queue-util';
 
@@ -115,7 +115,59 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
       } catch (error) {
         console.error('Error during image generation:', error);
       }
-  
-
-
 }
+
+
+//  引数
+// mode = {
+//   explanationScript: {on: false, rewrite: false},
+//   explanationAudio: {on: false, rewrite: false},
+// }
+
+export const createAudioFromScript = async (wordListId, mode) => {
+  try {
+    const word = await getWordListById(wordListId);
+
+    // ----------- スクリプト生成 ---------------------------
+    if (mode.explanationScript.on) {
+      if (mode.explanationScript.rewrite || !word.explanationScript) {
+        const explanationScript = await generateExplanationScript(word.english); 
+        await updateWordList(wordListId, { explanationScript });
+        word.explanationScript = explanationScript;
+
+        mode.explanationAudio.on = true; // スクリプトが生成された場合、音声生成も有効化
+        mode.explanationAudio.rewrite = true;
+
+        console.log(`Script created for: ${word.english}`);
+      }
+    }
+
+    // ----------- 音声の生成とS3アップロード ---------------------------
+    if (mode.explanationAudio.on) {
+      if (mode.explanationAudio.rewrite || !word.explanationAudioFilename) {
+        // 音声を生成
+        const mp3 = await generateAudio(word.explanationScript);
+        const audioBuffer = Buffer.from(await mp3.arrayBuffer());
+
+        // S3にアップロードするファイル名を設定 (例: wordData/wordAudio-[単語ID].mp3)
+        const audioFilename = `wordAudio/explanationAudio-${wordListId}.mp3`;
+
+        // S3にアップロード
+        const audioUrl = await uploadAudioToS3(audioBuffer, audioFilename);
+
+        // 音声ファイル名をデータベースに保存
+        await updateWordList(wordListId, {
+          explanationAudioFilename: audioFilename,
+        });
+
+        console.log(`Audio uploaded and saved for word: ${word.english}`);
+      }
+    }
+
+    return word;
+  } catch (error) {
+    console.error('Error during audio generation and upload:', error);
+    throw error;
+  }
+};
+

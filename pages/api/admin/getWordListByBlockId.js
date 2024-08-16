@@ -1,5 +1,5 @@
 import { getWordListByCriteria } from '../../../utils/prisma-utils'; // getUserById 関数のインポート
-import { getS3FileUrl } from '../../../utils/aws-s3-utils';
+import { getS3FileUrl, getS3AudioFileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
@@ -13,6 +13,7 @@ export default async function handler(req, res) {
             ...word,
             imageUrl: await getS3FileUrl(word.imageFilename),
             usage: word.usage ? JSON.parse(word.usage) : '',
+            explanationAudioUrl: await getS3AudioFileUrl(word.explanationAudioFilename),
           };
         }));
   

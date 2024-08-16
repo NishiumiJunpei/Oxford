@@ -123,6 +123,44 @@ export async function generateUsage(wordListId, english){
 }
 
 
+export async function generateExplanationScript(english) {
+  try{
+    const content = `${english}という英単語を楽しく解説する日本語のスクリプトを作ってください。「今日は」や「今回は」などではじめない、発音については言及しない、ですます調で、最大300字程度でスクリプトだけ回答して。`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o', //"gpt-4o", 
+      messages: [{role: 'assistant', content }],
+      temperature: 0.8,
+      max_tokens: 500,
+    });
+
+    const res = response.choices[0].message.content
+
+    return res;
+
+  } catch (error) {
+    console.error('generateExampleSentences error:', error);
+    throw error; // このエラーを上位の関数に伝播させます
+  }
+}
+
+
+// 画像を生成する関数
+export async function generateAudio(input) {
+  try {
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1",
+      voice: "alloy",
+      input: input,
+    });
+  
+    return mp3; 
+  } catch (error) {
+    console.error('generateAudio error:', error);
+  }
+}
+
+
 
 export async function generateWordStory(wordList, length, genre, characters, levelKeyword, user) {
 
