@@ -60,7 +60,8 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
       processedWords = shuffleArray(processedWords);
     }
     const limitedWords = maxWords === '指定なし' ? processedWords : processedWords.slice(0, Number(maxWords));
-    const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
+    // const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
+    const wordsText = limitedWords.map((word, index) => `${word.english}`).join('\n');
     let fullText = fullThemeText + wordsText;
   
     if (!dialogFlag) {
