@@ -1,6 +1,6 @@
 import { getUserById, getWordListUserStatus } from '../../../utils/prisma-utils';
 import { getUserFromSession } from '@/utils/session-utils';
-import { getS3FileUrl } from '@/utils/aws-s3-utils';
+import { getS3FileUrl, getS3AudioFileUrl } from '@/utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -26,6 +26,7 @@ export default async function handler(req, res) {
           selectedWords.push({
             ...randomWordStatus.wordList,
             imageUrl: await getS3FileUrl(randomWordStatus.wordList.imageFilename),
+            explanationAudioUrl: await getS3AudioFileUrl(randomWordStatus.wordList.explanationAudioFilename),
             usage: randomWordStatus.wordList.usage ? JSON.parse(randomWordStatus.wordList.usage) : '',
             memorizeStatusEJ: randomWordStatus.memorizeStatusEJ,
             memorizeStatusJE: randomWordStatus.memorizeStatusJE,

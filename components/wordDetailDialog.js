@@ -110,16 +110,23 @@ const handleNext = () => {
   };
 
   const handleClose = () => {
-        setIndex(initialIndex);
-        setTabValue(0)
-        setExampleSentenceForUser('')
-        setUserSentence('')
-        setReviewByAI('')
-        setStreamQuestionJE('')
-        setStreamAnswerJE('')
-        setAccordionExpanded(false)            
-        onClose();
-    };
+    if (audioRef.current) {
+        audioRef.current.pause();  // 音声を停止
+        audioRef.current.currentTime = 0;  // 再生位置をリセット
+        audioRef.current = null;  // Audioオブジェクトをクリア
+        setIsPlaying(false);  // 再生中の状態をリセット
+    }
+
+    setIndex(initialIndex);
+    setTabValue(0);
+    setExampleSentenceForUser('');
+    setUserSentence('');
+    setReviewByAI('');
+    setStreamQuestionJE('');
+    setStreamAnswerJE('');
+    setAccordionExpanded(false);            
+    onClose();
+};
 
     useEffect(() => {
         // 次の単語が切り替わった際に、解説の音声をリセット
