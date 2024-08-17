@@ -4,6 +4,7 @@ import { Box, Checkbox, CircularProgress, Paper, Table, TableBody, TableCell, Ta
 import DisplayAutoPlayWordsBasic from '@/components/admin/DisplayAutoPlayWordsBasic';
 import DisplayAutoPlayWordsReproduction from '@/components/admin/DisplayAutoPlayWordsReproduction';
 import { ThemeContext } from '@emotion/react';
+import DisplayAutoPlayWordsExpScript from '@/components/admin/DisplayAutoPlayWordsExpScript';
 
 
 
@@ -133,6 +134,7 @@ export default function Home() {
             </TableContainer>
             <Button variant="contained" onClick={()=>handleClickButton('wordPlayBasic')}>通常</Button>
             <Button variant="contained" onClick={()=>handleClickButton('wordPlayReproduction')}>リプロダクション</Button>
+            <Button variant="contained" onClick={()=>handleClickButton('wordPlayExpScript')}>単語解説</Button>
           </>
 
           )}
@@ -149,6 +151,14 @@ export default function Home() {
               <Typography variant="h5" gutterBottom>リプロダクション</Typography>
               
               <DisplayAutoPlayWordsReproduction wordList={wordList} />
+            </Box>
+
+          )}
+          {currentStep === 'wordPlayExpScript' && (
+            <Box>
+              <Typography variant="h5" gutterBottom>単語解説</Typography>
+              
+              <DisplayAutoPlayWordsExpScript wordList={wordList} selectedTheme={selectedTheme}/>
             </Box>
 
           )}

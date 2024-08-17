@@ -16,6 +16,7 @@ import ProfileKeywordsSettingDialog from './profileKeywordsSettingDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
 import GPTCoachButton from './gptCoachButton';
+import { playAudioMP3, stopAudioMP3 } from '@/utils/audioPlayer';
 
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue, tabDisabledPersonalizedEx, tabDisabledAIReview }) => {
@@ -75,58 +76,48 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
     
     }, [openProfileKeywordsSettingDialog, setOpenProfileKeywordsSettingDialog]);
     
-// 次へボタンが押されたときに音声をリセット
-const handleNext = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();  // 前の音声を停止
-      audioRef.current.currentTime = 0;  // 再生位置をリセット
-      audioRef.current = null;  // Audioオブジェクトをクリア
-    }
-    
-    if (index < wordList.length - 1) {
-      setIndex(index + 1);
-      setIsPlaying(false);  // 再生中の状態をリセット
-      setStreamQuestionJE('');
-      setStreamAnswerJE('');
-      setAccordionExpanded(false);  
-    }
-  };
-  
-  // 前へボタンが押されたときにも同様に音声をリセット
-  const handlePrev = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();  // 前の音声を停止
-      audioRef.current.currentTime = 0;  // 再生位置をリセット
-      audioRef.current = null;  // Audioオブジェクトをクリア
-    }
-    
-    if (index > 0) {
-      setIndex(index - 1);
-      setIsPlaying(false);  // 再生中の状態をリセット
-      setStreamQuestionJE('');
-      setStreamAnswerJE('');
-      setAccordionExpanded(false);  
-    }
-  };
 
-  const handleClose = () => {
-    if (audioRef.current) {
-        audioRef.current.pause();  // 音声を停止
-        audioRef.current.currentTime = 0;  // 再生位置をリセット
-        audioRef.current = null;  // Audioオブジェクトをクリア
-        setIsPlaying(false);  // 再生中の状態をリセット
-    }
+    // 次へボタンが押されたときに音声をリセット
+    const handleNext = () => {
+        stopAudioMP3();  // 再生中の音声を停止
 
-    setIndex(initialIndex);
-    setTabValue(0);
-    setExampleSentenceForUser('');
-    setUserSentence('');
-    setReviewByAI('');
-    setStreamQuestionJE('');
-    setStreamAnswerJE('');
-    setAccordionExpanded(false);            
-    onClose();
-};
+        if (index < wordList.length - 1) {
+            setIndex(index + 1);
+            setIsPlaying(false);  // 再生中の状態をリセット
+            setStreamQuestionJE('');
+            setStreamAnswerJE('');
+            setAccordionExpanded(false);  
+        }
+    };
+
+    // 前へボタンが押されたときにも同様に音声をリセット
+    const handlePrev = () => {
+        stopAudioMP3();  // 再生中の音声を停止
+
+        if (index > 0) {
+            setIndex(index - 1);
+            setIsPlaying(false);  // 再生中の状態をリセット
+            setStreamQuestionJE('');
+            setStreamAnswerJE('');
+            setAccordionExpanded(false);  
+        }
+    };
+
+    // ダイアログを閉じるときに音声を停止
+    const handleClose = () => {
+        stopAudioMP3();  // 再生中の音声を停止
+
+        setIndex(initialIndex);
+        setTabValue(0);
+        setExampleSentenceForUser('');
+        setUserSentence('');
+        setReviewByAI('');
+        setStreamQuestionJE('');
+        setStreamAnswerJE('');
+        setAccordionExpanded(false);            
+        onClose();
+    };
+
 
     useEffect(() => {
         // 次の単語が切り替わった際に、解説の音声をリセット
@@ -140,23 +131,18 @@ const handleNext = () => {
       
 
 
-    const handleExplanationAudioPlayToggle = () => {
-        if (!audioRef.current) {
-            audioRef.current = new Audio(word.explanationAudioUrl);  // オーディオオブジェクトを初期化
-          }
-        
-          if (!isPlaying) {
-            audioRef.current.play();  // 音声を再生
+          
+    const handleExplanationAudioPlayToggle = async () => {
+        if (!isPlaying) {
             setIsPlaying(true);  // 再生中の状態を更新
-            audioRef.current.onended = () => setIsPlaying(false);  // 再生終了時に状態をリセット
-          } else {
-            audioRef.current.pause();  // 音声を一時停止
-            audioRef.current.currentTime = 0;  // 再生位置をリセット
+            await playAudioMP3(word.explanationAudioUrl);  // 再生終了まで待機
+            setIsPlaying(false);  // 再生終了後に状態をリセット
+        } else {
+            stopAudioMP3();  // 手動で停止
             setIsPlaying(false);
-          }
+        }
     };
-      
-        
+            
 
 
     const handleTabChange = (event, newValue) => {

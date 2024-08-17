@@ -44,8 +44,47 @@ export const stopAudio = () => {
 };
 
 
+//------------------------------   mp3用  ------------------------------------
+
+let audioRef = null;
+
+export const playAudioMP3 = (audioUrl) => {
+    return new Promise((resolve, reject) => {
+        if (!audioRef) {
+            audioRef = new Audio(audioUrl); // MP3ファイルのURLでAudioオブジェクトを作成
+        }
+
+        audioRef.play().then(() => {
+            // 再生が完了したらPromiseを解決
+            audioRef.onended = () => {
+                stopAudioMP3(); // 再生終了時に停止処理を実行
+                resolve(); // 終了を検知してPromiseを解決
+            };
+        }).catch((error) => {
+            reject(error); // エラー発生時にPromiseを拒否
+        });
+    });
+};
+
+export const stopAudioMP3 = () => {
+    if (audioRef) {
+        audioRef.pause(); // 再生中の音声を停止
+        audioRef.currentTime = 0; // 再生位置をリセット
+        audioRef = null; // Audioオブジェクトをクリア
+    }
+};
+
+
+//------------------------------   mp3用  ------------------------------------
+
+
+
+
 const correctSoundPath = "/audio/correct-answer.mp3"
 export const playCorrectSound = () => {
     const audio = new Audio(correctSoundPath);
     audio.play();
-  };
+};
+
+
+
