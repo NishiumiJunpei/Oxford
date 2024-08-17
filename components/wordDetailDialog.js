@@ -467,20 +467,23 @@ const handleNext = () => {
                                 {word?.synonyms}
                             </Typography>
 
-                            <Box sx={{mt:5}}>
-                                <Button 
-                                    onClick={handleExplanationAudioPlayToggle} 
-                                    style={{ margin: 5, padding: 5, minWidth: 90 }}
-                                    variant="outlined"
-                                    startIcon={!isPlaying ? <PlayArrowIcon /> : <StopIcon />}  // 再生中はStopアイコンを表示
-                                    disabled={tabValue === 2}
-                                    color="inherit"
-                                    sx={{ml:3}}
-                                    >
-                                    解説再生
-                                </Button>
+                            {word?.explanationAudioUrl && (
+                                <Box sx={{mt:5}}>
+                                    <Button 
+                                        onClick={handleExplanationAudioPlayToggle} 
+                                        style={{ margin: 5, padding: 5, minWidth: 90 }}
+                                        variant="outlined"
+                                        startIcon={!isPlaying ? <PlayArrowIcon /> : <StopIcon />}  // 再生中はStopアイコンを表示
+                                        disabled={tabValue === 2}
+                                        color="inherit"
+                                        sx={{ml:3}}
+                                        >
+                                        解説再生
+                                    </Button>
 
-                            </Box>
+                                </Box>
+                            )}
+
                         </Grid>
                         <Grid item xs={12} md={6}>
                             {word?.imageUrl ? (
