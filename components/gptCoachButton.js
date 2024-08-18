@@ -20,7 +20,8 @@ const modeOptions = [
   { label: '英単語解説', code: 'JYDO' },
   { label: 'ストーリー生成（英語）', code: 'MR74' },
   { label: 'ストーリー生成（日本語）', code: 'OK4K' },
-  { label: '問題生成', code: 'IGUB' },
+  { label: '問題生成(例文)', code: 'IGUB' },
+  { label: '問題生成(シーン)', code: 'H4JK' },
 ];
 
 // 単一単語
