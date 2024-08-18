@@ -15,7 +15,7 @@ const themesForGPT = [
   'ギャグ',
 ];
 
-// モードとそれに対応する4文字コードを配列で定義
+// 複数単語
 const modeOptions = [
   { label: '英単語解説', code: 'JYDO' },
   { label: 'ストーリー生成（英語）', code: 'MR74' },
@@ -23,13 +23,13 @@ const modeOptions = [
   { label: '問題生成', code: 'IGUB' },
 ];
 
-// 2つ目のダイアログで使うモード
+// 単一単語
 const secondaryModeOptions = [
-  { label: '英単語説明生成', code: '¥A8X' },
+  { label: '英単語説明生成', code: 'YA8X' },
   { label: '解説スクリプト生成', code: 'N6FV' },
   { label: '会話生成', code: 'T8RW' },
   { label: '物語生成', code: 'B3ML' },
-  { label: '問題生成(例文)', code: 'Z9QP' },
+  { label: '問題生成(意味)', code: 'Z9QP' },
   { label: '問題生成(シーン)', code: 'H4JK' },
 ];
 
@@ -45,15 +45,17 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
 
   useEffect(() => {
     setSelectedTheme('指定なし');
-
-    // 単語数に応じて表示するダイアログを決定
+  
+    // 単語数に応じて表示するダイアログとモードを決定
     if (words.length === 1) {
       setDialogIndex(1); // 2つ目のダイアログを表示
+      setMode(secondaryModeOptions[0].label); // secondaryModeOptionsの1つ目のモードをデフォルトで選択
     } else {
       setDialogIndex(0); // 1つ目のダイアログを表示
+      setMode(modeOptions[0].label); // modeOptionsの1つ目のモードをデフォルトで選択
     }
   }, [words]);
-
+  
   const handleOpen = () => {
     setOpen(true);
   };
@@ -89,10 +91,10 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
     let fullText = fullThemeText + wordsText;
   
     if (!dialogFlag) {
-      fullText = `CONVERSATION CODE: CZX9\n${words[0].english}`;
+      fullText = `CONVERSATION CODE: YA8X\n${words[0].english}`;
     } else {
       // 選択されたモードに対応する4文字コードを取得
-      const selectedMode = modeOptions.find(option => option.label === mode);
+      const selectedMode = modeOptions.find(option => option.label === mode) || secondaryModeOptions.find(option => option.label === mode);
       const conversationCode = selectedMode ? selectedMode.code : '';
   
       fullText = `CONVERSATION CODE: ${conversationCode}\n` + fullText;
