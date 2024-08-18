@@ -379,7 +379,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
                     </Box>
                      <Box>
-                        <GPTCoachButton words={[word]} dialogFlag={false} styleType='LINK'/>
+                        <GPTCoachButton words={[word]} styleType='LINK'/>
 
                     </Box> 
 

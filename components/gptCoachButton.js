@@ -15,8 +15,27 @@ const themesForGPT = [
   'ギャグ',
 ];
 
+// モードとそれに対応する4文字コードを配列で定義
+const modeOptions = [
+  { label: '英単語解説', code: 'JYDO' },
+  { label: 'ストーリー生成（英語）', code: 'MR74' },
+  { label: 'ストーリー生成（日本語）', code: 'OK4K' },
+  { label: '問題生成', code: 'IGUB' },
+];
+
+// 2つ目のダイアログで使うモード
+const secondaryModeOptions = [
+  { label: '英単語説明生成', code: '¥A8X' },
+  { label: '解説スクリプト生成', code: 'N6FV' },
+  { label: '会話生成', code: 'T8RW' },
+  { label: '物語生成', code: 'B3ML' },
+  { label: '問題生成(例文)', code: 'Z9QP' },
+  { label: '問題生成(シーン)', code: 'H4JK' },
+];
+
 const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
   const [open, setOpen] = useState(false);
+  const [dialogIndex, setDialogIndex] = useState(0); // 表示するダイアログのインデックス
   const [maxWords, setMaxWords] = useState('10');
   const [mode, setMode] = useState('英単語解説');
   const [selectedTheme, setSelectedTheme] = useState('指定なし');
@@ -24,10 +43,16 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
   const windowRef = useRef(null); // ウィンドウの参照を保存するためのuseRef
   const theme = useTheme();
 
-
   useEffect(() => {
     setSelectedTheme('指定なし');
-  }, []);
+
+    // 単語数に応じて表示するダイアログを決定
+    if (words.length === 1) {
+      setDialogIndex(1); // 2つ目のダイアログを表示
+    } else {
+      setDialogIndex(0); // 1つ目のダイアログを表示
+    }
+  }, [words]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -60,23 +85,15 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
       processedWords = shuffleArray(processedWords);
     }
     const limitedWords = maxWords === '指定なし' ? processedWords : processedWords.slice(0, Number(maxWords));
-    // const wordsText = limitedWords.map((word, index) => `${index + 1}. ${word.english}, ${word.japanese}`).join('\n');
     const wordsText = limitedWords.map((word, index) => `${word.english}`).join('\n');
     let fullText = fullThemeText + wordsText;
   
     if (!dialogFlag) {
       fullText = `CONVERSATION CODE: CZX9\n${words[0].english}`;
     } else {
-      let conversationCode = '';
-      if (mode === '英単語解説') {
-        conversationCode = 'JYDO';
-      } else if (mode === 'ストーリー生成（英語）') {
-        conversationCode = 'MR74';
-      } else if (mode === 'ストーリー生成（日本語）') {
-        conversationCode = 'OK4K';
-      } else if (mode === '問題生成') {
-        conversationCode = 'IGUB';
-      }
+      // 選択されたモードに対応する4文字コードを取得
+      const selectedMode = modeOptions.find(option => option.label === mode);
+      const conversationCode = selectedMode ? selectedMode.code : '';
   
       fullText = `CONVERSATION CODE: ${conversationCode}\n` + fullText;
     }
@@ -122,48 +139,97 @@ const GPTCoachButton = ({ words, dialogFlag = true, styleType = 'BUTTON' }) => {
       >
         GPT Coach
       </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>GPT Coach</DialogTitle>
-        <DialogContent>
-          <Typography variant="subtitle2" color="textSecondary">モード</Typography>
-          <Stack direction="row" mt={1} sx={{ flexWrap: 'wrap' }}>
-            <Chip sx={{mb:1, mr:1}} label="英単語解説" onClick={() => handleChipClick('英単語解説', 'mode')} color={mode === '英単語解説' ? 'primary' : 'default'} />
-            <Chip sx={{mb:1, mr:1}} label="ストーリー生成（英語）" onClick={() => handleChipClick('ストーリー生成（英語）', 'mode')} color={mode === 'ストーリー生成（英語）' ? 'primary' : 'default'} />
-            <Chip sx={{mb:1, mr:1}} label="ストーリー生成（日本語）" onClick={() => handleChipClick('ストーリー生成（日本語）', 'mode')} color={mode === 'ストーリー生成（日本語）' ? 'primary' : 'default'} />
-            <Chip sx={{mb:1, mr:1}} label="問題生成" onClick={() => handleChipClick('問題生成', 'mode')} color={mode === '問題生成' ? 'primary' : 'default'} />
-          </Stack>
+      
+      {/* 1つ目のダイアログ */}
+      {dialogIndex === 0 && (
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>GPT Coach</DialogTitle>
+          <DialogContent>
+            <Typography variant="subtitle2" color="textSecondary">モード</Typography>
+            <Stack direction="row" mt={1} sx={{ flexWrap: 'wrap' }}>
+              {/* モード選択を配列を使って生成 */}
+              {modeOptions.map(option => (
+                <Chip
+                  key={option.label}
+                  sx={{ mb: 1, mr: 1 }}
+                  label={option.label}
+                  onClick={() => handleChipClick(option.label, 'mode')}
+                  color={mode === option.label ? 'primary' : 'default'}
+                />
+              ))}
+            </Stack>
 
-          <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
-          <Stack direction="row" mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
-            {themesForGPT.map(theme => (
-              <Chip
-                key={theme}
-                label={theme}
-                onClick={() => handleChipClick(theme, 'theme')}
-                color={selectedTheme === theme ? 'primary' : 'default'}
-                sx={{mb:1, mr:1}}
-              />
-            ))}
-          </Stack>
+            <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
+            <Stack direction="row" mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
+              {themesForGPT.map(theme => (
+                <Chip
+                  key={theme}
+                  label={theme}
+                  onClick={() => handleChipClick(theme, 'theme')}
+                  color={selectedTheme === theme ? 'primary' : 'default'}
+                  sx={{ mb: 1, mr: 1 }}
+                />
+              ))}
+            </Stack>
 
-          <Typography variant="subtitle2" color="textSecondary">最大単語数</Typography>
-          <Stack direction="row" spacing={2} mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
-            <Chip label="10" onClick={() => handleChipClick('10', 'words')} color={maxWords === '10' ? 'primary' : 'default'} />
-            <Chip label="20" onClick={() => handleChipClick('20', 'words')} color={maxWords === '20' ? 'primary' : 'default'} />
-            <Chip label="指定なし" onClick={() => handleChipClick('指定なし', 'words')} color={maxWords === '指定なし' ? 'primary' : 'default'} />
-          </Stack>
+            <Typography variant="subtitle2" color="textSecondary">最大単語数</Typography>
+            <Stack direction="row" spacing={2} mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
+              <Chip label="10" onClick={() => handleChipClick('10', 'words')} color={maxWords === '10' ? 'primary' : 'default'} />
+              <Chip label="20" onClick={() => handleChipClick('20', 'words')} color={maxWords === '20' ? 'primary' : 'default'} />
+              <Chip label="指定なし" onClick={() => handleChipClick('指定なし', 'words')} color={maxWords === '指定なし' ? 'primary' : 'default'} />
+            </Stack>
 
-          <Typography variant="subtitle2" color="textSecondary">単語ランダム</Typography>
-          <FormControlLabel
-            control={<Checkbox checked={isRandom} onChange={() => setIsRandom(!isRandom)} />}
-            label="ランダムにする"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} style={{ color: 'grey' }}>キャンセル</Button>
-          <Button onClick={handleAction} color="primary">コーチを呼び出す</Button>
-        </DialogActions>
-      </Dialog>
+            <Typography variant="subtitle2" color="textSecondary">単語ランダム</Typography>
+            <FormControlLabel
+              control={<Checkbox checked={isRandom} onChange={() => setIsRandom(!isRandom)} />}
+              label="ランダムにする"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} style={{ color: 'grey' }}>キャンセル</Button>
+            <Button onClick={handleAction} color="primary">コーチを呼び出す</Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* 2つ目のダイアログ */}
+      {dialogIndex === 1 && (
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>GPT Coach</DialogTitle>
+          <DialogContent>
+            <Typography variant="subtitle2" color="textSecondary">モード</Typography>
+            <Stack direction="row" mt={1} sx={{ flexWrap: 'wrap' }}>
+              {/* 2つ目のダイアログ用モード選択を配列を使って生成 */}
+              {secondaryModeOptions.map(option => (
+                <Chip
+                  key={option.label}
+                  sx={{ mb: 1, mr: 1 }}
+                  label={option.label}
+                  onClick={() => handleChipClick(option.label, 'mode')}
+                  color={mode === option.label ? 'primary' : 'default'}
+                />
+              ))}
+            </Stack>
+
+            <Typography variant="subtitle2" color="textSecondary">テーマ</Typography>
+            <Stack direction="row" mb={2} mt={1} sx={{ flexWrap: 'wrap' }}>
+              {themesForGPT.map(theme => (
+                <Chip
+                  key={theme}
+                  label={theme}
+                  onClick={() => handleChipClick(theme, 'theme')}
+                  color={selectedTheme === theme ? 'primary' : 'default'}
+                  sx={{ mb: 1, mr: 1 }}
+                />
+              ))}
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} style={{ color: 'grey' }}>キャンセル</Button>
+            <Button onClick={handleAction} color="primary">コーチを呼び出す</Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 };

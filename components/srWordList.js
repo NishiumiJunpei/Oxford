@@ -229,7 +229,7 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                                 style={{ maxWidth: '150px', maxHeight: 'auto', objectFit: 'contain' }}
                               />
                               <Box>
-                                <GPTCoachButton words={[word]} dialogFlag={false} styleType="LINK" />
+                                <GPTCoachButton words={[word]} styleType="LINK" />
                               </Box>
                             </Box>
                           ) : (
