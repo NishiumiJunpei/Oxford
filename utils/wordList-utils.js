@@ -60,6 +60,8 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
         // ----------- 画像の生成と保存 ---------------------------
         if (mode.image.on){
           if (mode.image.rewrite || !word.imageFilename){
+            console.log('   Image will be created -- ', word.english, word.imageFilename)
+
             let imageUrl = ''
             const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${word.exampleSentenceE}`;  
             const imageUrlAtOpenAI = await enqueueRequest(() => generateImage(imageDescription));

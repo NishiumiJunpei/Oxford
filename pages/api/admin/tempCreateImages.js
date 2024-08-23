@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       console.log(`Processing ${i + 1}/${words.length}: ${word.english}`);
 
       // 処理を実行
-      await createExampleSentenceAndImageByGPT(word.id, mode);
+        await createExampleSentenceAndImageByGPT(word.id, mode);
       console.log(`Completed processing for word: ${word.english}`);
     }
 
