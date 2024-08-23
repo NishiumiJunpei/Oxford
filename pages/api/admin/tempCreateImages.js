@@ -17,17 +17,22 @@ export default async function handler(req, res) {
     // クライアントに「受け付けました」とすぐに応答
     res.status(200).json({ message: '受け付けました' });
 
-    // blockId 719に関連するWordListを取得
-    const wordListBlocks = await prisma.wordListBlock.findMany({
+    // themeId 8に関連するBlocksを取得し、それに関連するWordListを取得
+    const blocks = await prisma.block.findMany({
       where: {
-        blockId: 719,
+        themeId: 8, // themeIdでフィルタリング
       },
       include: {
-        wordList: true, // WordListの詳細を取得
+        wordLists: {
+          include: {
+            wordList: true, // WordListの詳細を取得
+          },
+        },
       },
     });
 
-    const words = wordListBlocks.map(block => block.wordList);
+    // Blockに関連するWordListを抽出
+    const words = blocks.flatMap(block => block.wordLists.map(wb => wb.wordList));
 
     // トータルの処理件数を出力
     console.log(`Total words to process: ${words.length}`);
@@ -38,7 +43,7 @@ export default async function handler(req, res) {
       image: {on: true, rewrite: false},
       usage: {on: true, rewrite: false},
       synonyms: {on: true, rewrite: false},
-    }
+    };
 
     // 各単語について処理
     for (let i = 0; i < words.length; i++) {
@@ -46,7 +51,7 @@ export default async function handler(req, res) {
       console.log(`Processing ${i + 1}/${words.length}: ${word.english}`);
 
       // 処理を実行
-      // await createExampleSentenceAndImageByGPT(word.id, mode);
+      await createExampleSentenceAndImageByGPT(word.id, mode);
       console.log(`Completed processing for word: ${word.english}`);
     }
 

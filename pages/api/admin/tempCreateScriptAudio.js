@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
     // themeId 3に関連するすべてのブロックIDを取得
     const blocks = await prisma.block.findMany({
-      where: { themeId: 3 },
+      where: { themeId: 8 },
       include: {
         wordLists: {
           include: {
