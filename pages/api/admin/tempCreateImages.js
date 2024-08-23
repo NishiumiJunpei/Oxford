@@ -37,21 +37,22 @@ export default async function handler(req, res) {
     // トータルの処理件数を出力
     console.log(`Total words to process: ${words.length}`);
 
-    let mode = {
-      japanese: {on: true, rewrite: false},
-      exampleSentence: {on: true, rewrite: false},
-      image: {on: true, rewrite: false},
-      usage: {on: true, rewrite: false},
-      synonyms: {on: true, rewrite: false},
-    };
 
     // 各単語について処理
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
       console.log(`Processing ${i + 1}/${words.length}: ${word.english}`);
 
+      let mode = {
+        japanese: {on: true, rewrite: false},
+        exampleSentence: {on: true, rewrite: false},
+        image: {on: true, rewrite: false},
+        usage: {on: true, rewrite: false},
+        synonyms: {on: true, rewrite: false},
+      };
+  
       // 処理を実行
-        await createExampleSentenceAndImageByGPT(word.id, mode);
+      await createExampleSentenceAndImageByGPT(word.id, mode);
       console.log(`Completed processing for word: ${word.english}`);
     }
 

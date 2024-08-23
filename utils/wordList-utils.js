@@ -27,6 +27,8 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
         // ----------- 日本語 ---------------------------
         if (mode.japanese.on){
           if (mode.japanese.rewrite || !word.japanese){
+            console.log('   exampleSentence will be created -- ', word.english, mode.japanese.rewrite, word.japanese )
+
             const jap = await generateJapanese(english);
             await updateWordList(wordListId, {japanese: jap});
             word.japanese = jap
@@ -44,6 +46,8 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
         // ----------- 例文と類語の生成と保存 ---------------------------
         if (mode.exampleSentence.on){
           if (mode.exampleSentence.rewrite || !word.exampleSentenceE){
+            console.log('   exampleSentence will be created -- ', word.english, mode.exampleSentence.rewrite, word.exampleSentenceE)
+
             const data = await generateExampleSentences(english, word.japanese);
             await updateWordList(wordListId, data);
             word.exampleSentenceE = data.exampleSentenceE
@@ -60,7 +64,7 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
         // ----------- 画像の生成と保存 ---------------------------
         if (mode.image.on){
           if (mode.image.rewrite || !word.imageFilename){
-            console.log('   Image will be created -- ', word.english, word.imageFilename)
+            console.log('   Image will be created -- ', word.english, mode.image.rewrite, word.imageFilename)
 
             let imageUrl = ''
             const imageDescription = `「${english}」を強調して、この文章の画像を作ってください。\n${word.exampleSentenceE}`;  
