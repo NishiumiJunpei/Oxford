@@ -70,7 +70,7 @@ export const challengeThemes = [
     { id: 12, name: 'TOEIC 800レベル', imageFilename: 'TOEIC800.png', activeStatus: 'ACTIVE' },
     { id: 13, name: 'TOEIC 700レベル', imageFilename: 'TOEIC700.png', activeStatus: 'ACTIVE' },
     { id: 14, name: 'TOEIC 600レベル', imageFilename: 'TOEIC600.png', activeStatus: 'ACTIVE' },
-    { id: 3, name: '英検１級', imageFilename: 'eiken1.png', activeStatus: 'ACTIVE' },
+    { id: 8, name: '英検１級', imageFilename: 'eiken1.png', activeStatus: 'ACTIVE' },
     { id: 2, name: '英検準１級', imageFilename: 'eiken1-sub.png', activeStatus: 'ACTIVE' },
     { id: 5, name: '英検２級', imageFilename: 'eiken2.png', activeStatus: 'ACTIVE' },
     { id: 6, name: '英検準２級', imageFilename: 'eiken2-sub.png', activeStatus: 'ACTIVE' },
