@@ -57,7 +57,6 @@ export const authOptions = {
         if (!existingUser) {
           const token = await createSignUpToken(userEmail); 
 
-          const domainUrl = process.env.DOMAIN_URL;
           return `/auth/signup/inputUserInfo?token=${token}`;
         } else {
           user.id = existingUser.id; 

@@ -16,8 +16,8 @@ export default async function handler(req, res) {
       const token = await createSignUpToken(email); // この関数は独自に実装する必要があります
 
       // 確認用URLをメールで送信
-      const domainUrl = process.env.DOMAIN_URL;
-      const confirmationUrl = `${domainUrl}auth/signup/inputUserInfo?token=${token}`;
+      const domainUrl /= process.env.DOMAIN_URL;
+      const confirmationUrl = `${domainUrl}/auth/signup/inputUserInfo?token=${token}`;
       await sendSignUpConfirmationEmail(email, confirmationUrl);
 
       return res.status(200).json({ message: 'サインアップ確認メールを送信しました。' });

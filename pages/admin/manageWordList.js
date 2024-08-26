@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, 
   Box, Typography, Grid } from '@mui/material';
+import SEOHeader from '@/components/seoHeader';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,6 +51,7 @@ export default function Home() {
 
   return (
     <>
+      <SEOHeader title="管理画面"/>
       <Box sx={{mb: 5}}>
       <TextField
         label="English"

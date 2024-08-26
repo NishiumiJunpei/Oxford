@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
       // パスワードリセット用のURLをメールで送信
       const domainUrl = process.env.DOMAIN_URL
-      const resetUrl = `${domainUrl}auth/resetPassword?token=${token}`;
+      const resetUrl = `${domainUrl}/auth/resetPassword?token=${token}`;
       await sendPasswordResetEmail(email, resetUrl);
     
       return res.status(200).json({ message: 'パスワード再設定のメールを送信しました。' });

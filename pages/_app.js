@@ -13,6 +13,7 @@ const layoutPaths = [
   { path: '/user-setting', layout: Layout },
   { path: '/word-master', layout: Layout },
   { path: '/admin/fbp/bookDraft', layout: LayoutNone },
+  { path: '/admin/fbp/tangocho', layout: LayoutNone },
   { path: '/admin', layout: LayoutAdmin },
   // 他のパスをここに追加可能
 ];
