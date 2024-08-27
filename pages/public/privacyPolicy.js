@@ -3,12 +3,14 @@ import { Box, Typography, Button, Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import HomePageHeader from '@/components/public/homepageHeader';
 import HomePageFooter from '@/components/public/homepageFooter';
+import SEOHeader from '@/components/seoHeader';
 
 export default function PrivacyPolicy() {
   const router = useRouter();
 
   return (
     <>
+      <SEOHeader title="プライバシーポリシー"/>
       <HomePageHeader />
       <Container maxWidth="lg">
         <Box my={4}>

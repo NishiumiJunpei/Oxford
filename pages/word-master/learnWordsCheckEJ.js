@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのイ�
 import WordDetailDialog from '@/components/wordDetailDialog';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { playCorrectSound } from '@/utils/audioPlayer';
+import SEOHeader from '@/components/seoHeader';
 
 
 const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, updateWordList, themeAllWordsFlag}) =>{
@@ -65,91 +66,95 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, 
   };
 
   return (
-    <Container maxWidth="sm">
-    <Box 
-      display="flex" 
-      flexDirection="column" 
-      alignItems="center" 
-      justifyContent="flex-start" // このプロパティを 'flex-start' に変更
-      marginTop={2} // 上にマージンを追加
-    >
-      <Typography variant="h4" gutterBottom sx={{mb: 5}}>
-        よくできました！
-      </Typography>
+    <>
+      <SEOHeader title="アセスメント"/>
 
-      {notMemorizedWordList?.length > 0 ? (
-        <>
-          <Typography variant="h6" gutterBottom>
-            わからなかった単語
+      <Container maxWidth="sm">
+        <Box 
+          display="flex" 
+          flexDirection="column" 
+          alignItems="center" 
+          justifyContent="flex-start" // このプロパティを 'flex-start' に変更
+          marginTop={2} // 上にマージンを追加
+        >
+          <Typography variant="h4" gutterBottom sx={{mb: 5}}>
+            よくできました！
           </Typography>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>英語</TableCell>
-                  <TableCell>日本語</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {notMemorizedWordList?.map((word, index) =>
-                    <TableRow key={word.id} hover onClick={() => handleOpenModalWord(index)} sx={{cursor: 'pointer'}}>
-                      <TableCell>{word.english}</TableCell>
-                      <TableCell>{word.japanese}</TableCell>
-                    </TableRow>
-                  )}
-              </TableBody>
-            </Table>
-          </TableContainer>
 
-          <Box sx={{mt: 5, display: 'flex', justifyContent: 'center'}}>
-            <Button variant="contained" color="secondary" onClick={handleClickSetSrWords} disabled={loading || message}>間隔反復をセットする</Button>
-          </Box>
-          {message && (
-            <Box>
-              <Typography variant="body1">
-                    {message} 
-                <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
-                    (間隔反復の単語リスト)
-                </Link>
+          {notMemorizedWordList?.length > 0 ? (
+            <>
+              <Typography variant="h6" gutterBottom>
+                わからなかった単語
               </Typography>
-            </Box>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>英語</TableCell>
+                      <TableCell>日本語</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {notMemorizedWordList?.map((word, index) =>
+                        <TableRow key={word.id} hover onClick={() => handleOpenModalWord(index)} sx={{cursor: 'pointer'}}>
+                          <TableCell>{word.english}</TableCell>
+                          <TableCell>{word.japanese}</TableCell>
+                        </TableRow>
+                      )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <Box sx={{mt: 5, display: 'flex', justifyContent: 'center'}}>
+                <Button variant="contained" color="secondary" onClick={handleClickSetSrWords} disabled={loading || message}>間隔反復をセットする</Button>
+              </Box>
+              {message && (
+                <Box>
+                  <Typography variant="body1">
+                        {message} 
+                    <Link href={`/word-master/wordMasterTop?tab=1`} passHref>
+                        (間隔反復の単語リスト)
+                    </Link>
+                  </Typography>
+                </Box>
+              )}
+
+            </>
+          ) : (
+            <>
+              <img width="300" src={`/images/${randomImage}`} alt="Completion" />
+            </>
           )}
 
-        </>
-      ) : (
-        <>
-          <img width="300" src={`/images/${randomImage}`} alt="Completion" />
-        </>
-      )}
+          <Box display="flex" alignItems="center" justifyContent="flex-start" sx={{mt: 5, mb: 5}}>
+            <Link href={`/word-master/wordMasterTop`} passHref>
+              <Button variant="default" color="link" sx={{marginTop: 3}}>
+                英単語マスタートップへ
+              </Button>
+            </Link>
+            {themeAllWordsFlag == '0' &&(
+              <Link href={`/word-master/wordList?blockId=${block.id}`} passHref>
+                <Button variant="default" color="link" sx={{marginTop: 3}}>
+                  <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1, width: 32, height: 32, fontSize: '1rem' }}>
+                    {block?.name}
+                  </Avatar>  
+                  へ戻る
+                </Button>
+              </Link>
+            )}
+          </Box>
 
-      <Box display="flex" alignItems="center" justifyContent="flex-start" sx={{mt: 5, mb: 5}}>
-        <Link href={`/word-master/wordMasterTop`} passHref>
-          <Button variant="default" color="link" sx={{marginTop: 3}}>
-            英単語マスタートップへ
-          </Button>
-        </Link>
-        {themeAllWordsFlag == '0' &&(
-          <Link href={`/word-master/wordList?blockId=${block.id}`} passHref>
-            <Button variant="default" color="link" sx={{marginTop: 3}}>
-              <Avatar sx={{ bgcolor: 'secondary.main', color: '#fff', ml: 1, mr: 1, width: 32, height: 32, fontSize: '1rem' }}>
-                {block?.name}
-              </Avatar>  
-              へ戻る
-            </Button>
-          </Link>
-        )}
-      </Box>
+        </Box>
+        <WordDetailDialog
+          open={openModal}
+          onClose={()=>setOpenModal(false)}
+          wordList={notMemorizedWordList}
+          initialIndex={selectedIndex}
+          updateWordList={updateWordList}
+        />
 
-    </Box>
-    <WordDetailDialog
-      open={openModal}
-      onClose={()=>setOpenModal(false)}
-      wordList={notMemorizedWordList}
-      initialIndex={selectedIndex}
-      updateWordList={updateWordList}
-    />
-
-  </Container>
+      </Container>
+    </>
   )
 }
 

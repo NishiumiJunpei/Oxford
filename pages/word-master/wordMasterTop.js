@@ -12,6 +12,7 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { useTheme } from '@mui/material/styles';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { Visibility, VisibilityOff, Error, StarBorder, Star } from '@mui/icons-material';
+import SEOHeader from '@/components/seoHeader';
 
 
 const ThickProgressBar = ({ value }) => {
@@ -21,18 +22,21 @@ const ThickProgressBar = ({ value }) => {
   const progressValue = Math.round((value / max) * 100); // パーセンテージに変換
 
   return (
-    <Box display="flex" alignItems="center" flexDirection="column" width="100%">
-      <Box width="100%" mr={1}>
-        <LinearProgress 
-          variant="determinate" 
-          value={progressValue} 
-          sx={{ height: 20 }} // 太いプログレスバー
-        />
+    <>
+      <SEOHeader title="英単語ブロック一覧"/>
+      <Box display="flex" alignItems="center" flexDirection="column" width="100%">
+        <Box width="100%" mr={1}>
+          <LinearProgress 
+            variant="determinate" 
+            value={progressValue} 
+            sx={{ height: 20 }} // 太いプログレスバー
+          />
+        </Box>
+        <Box minWidth={35}>
+          <Typography variant="body2" color="textSecondary">{`${progressValue}%`}</Typography>
+        </Box>
       </Box>
-      <Box minWidth={35}>
-        <Typography variant="body2" color="textSecondary">{`${progressValue}%`}</Typography>
-      </Box>
-    </Box>
+    </>
   );
 };
 

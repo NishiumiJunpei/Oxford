@@ -17,6 +17,7 @@ import SubTitleTypography from '@/components/subTitleTypography';
 import GPTCoachButton from '@/components/gptCoachButton';
 import { Visibility, VisibilityOff, Error, StarBorder, Star, CheckBox } from '@mui/icons-material';
 import SrTimingDialog from '@/components/srTimingDialog';
+import SEOHeader from '@/components/seoHeader';
 
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
@@ -215,7 +216,8 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
   };
 
   return (
-    <div>
+    <>
+      <SEOHeader title="英単語リスト"/>
       <Dialog open={open} onClose={onClose}>
         <DialogTitle>間隔反復セット</DialogTitle>
         <DialogContent>
@@ -256,7 +258,7 @@ const SrSetDialog = ({ open, onClose, filteredWordList, setFilterDialogOpen }) =
         </DialogActions>
       </Dialog>
 
-    </div>
+    </>
   );
 };
 

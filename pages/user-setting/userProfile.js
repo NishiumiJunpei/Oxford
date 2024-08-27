@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button, Box, Snackbar, CircularProgress, Chip, Grid} from '@mui/material';
 import UserSettingMenu from '@/components/userSettingMenu';
+import SEOHeader from '@/components/seoHeader';
 
 const UserProfile = () => {
   const [userInfo, setUserInfo] = useState({ email: '', name: '', birthday: '', profile: '' });
@@ -135,96 +136,100 @@ const UserProfile = () => {
 
   
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: { xs: 'column', md: 'row' }, // モバイルでは縦方向、それ以外では横方向
-        maxWidth: '100%', 
-        margin: 'auto' 
-      }}>
-        <UserSettingMenu/>
+      <>
+        <SEOHeader title="ユーザ設定"/>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' }, // モバイルでは縦方向、それ以外では横方向
+          maxWidth: '100%', 
+          margin: 'auto' 
+          }}>
+          <UserSettingMenu/>
 
-        <Box sx={{ maxWidth: '600px', margin: 'auto' }}> 
-          <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={userInfo.email} disabled autoComplete='off'/>
-          <TextField label="名前" variant="outlined" fullWidth margin="normal" name="name" value={userInfo.name} onChange={handleChange} autoComplete='off'/>
-          {/* <TextField
-              label="誕生日"
-              type="date"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              name="birthday"
-              value={userInfo.birthday}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-          /> */}
-
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs>
-              <TextField
-                label="プロフィール"
+          <Box sx={{ maxWidth: '600px', margin: 'auto' }}> 
+            <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={userInfo.email} disabled autoComplete='off'/>
+            <TextField label="名前" variant="outlined" fullWidth margin="normal" name="name" value={userInfo.name} onChange={handleChange} autoComplete='off'/>
+            {/* <TextField
+                label="誕生日"
+                type="date"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                value={newProfile}
-                onChange={(e) => setNewProfile(e.target.value)}
-                inputProps={{ maxLength: 15 }}
-                autoComplete='off'
-              />
-            </Grid>
-            <Grid item>
-              <Button variant="outlined" color="primary" onClick={handleAddKeyword} disabled={profileKeywords.length >= 3 || IsloadingProfile}>
-                セット
-              </Button>
-            </Grid>
-          </Grid>
-          <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：大学生、営業職、母親 (最大10個まで)</Typography>
-          <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {profileKeywords.map((keyword, index) => (
-              <Chip
-                key={index}
-                label={keyword}
-                onDelete={handleDeleteKeyword(keyword)}
-                color="primary"
-              />
-            ))}
-          </Box>
+                name="birthday"
+                value={userInfo.birthday}
+                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
+            /> */}
 
-          <Grid container spacing={1} alignItems="center" sx={{mt: 5}}>
-            <Grid item xs>
-              <TextField
-                label="興味・好きなこと"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={newInterest}
-                onChange={(e) => setNewInterest(e.target.value)}
-                inputProps={{ maxLength: 15 }}
-                autoComplete='off'
-              />
+            <Grid container spacing={1} alignItems="center">
+              <Grid item xs>
+                <TextField
+                  label="プロフィール"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={newProfile}
+                  onChange={(e) => setNewProfile(e.target.value)}
+                  inputProps={{ maxLength: 15 }}
+                  autoComplete='off'
+                />
+              </Grid>
+              <Grid item>
+                <Button variant="outlined" color="primary" onClick={handleAddKeyword} disabled={profileKeywords.length >= 3 || IsloadingProfile}>
+                  セット
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Button variant="outlined" color="primary" onClick={handleAddInterest} disabled={interestKeywords.length >= 5 || IsloadingInterest}>
-                セット
-              </Button>
-            </Grid>
-          </Grid>
-          <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：旅行、読書、映画鑑賞 (最大10個まで)</Typography>
-          <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {interestKeywords.map((keyword, index) => (
-              <Chip
-                key={index}
-                label={keyword}
-                onDelete={handleDeleteInterest(keyword)}
-                color="primary"
-              />
-            ))}
-          </Box>
+            <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：大学生、営業職、母親 (最大10個まで)</Typography>
+            <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {profileKeywords.map((keyword, index) => (
+                <Chip
+                  key={index}
+                  label={keyword}
+                  onDelete={handleDeleteKeyword(keyword)}
+                  color="primary"
+                />
+              ))}
+            </Box>
 
-          <Button variant="outlined" color="primary" fullWidth onClick={handleUpdate} sx={{ mt: 10 }}>更新</Button>
-    
-          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="更新されました。" />
+            <Grid container spacing={1} alignItems="center" sx={{mt: 5}}>
+              <Grid item xs>
+                <TextField
+                  label="興味・好きなこと"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={newInterest}
+                  onChange={(e) => setNewInterest(e.target.value)}
+                  inputProps={{ maxLength: 15 }}
+                  autoComplete='off'
+                />
+              </Grid>
+              <Grid item>
+                <Button variant="outlined" color="primary" onClick={handleAddInterest} disabled={interestKeywords.length >= 5 || IsloadingInterest}>
+                  セット
+                </Button>
+              </Grid>
+            </Grid>
+            <Typography variant="body2" color="GrayText" sx={{mb: 1}}>例：旅行、読書、映画鑑賞 (最大10個まで)</Typography>
+            <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {interestKeywords.map((keyword, index) => (
+                <Chip
+                  key={index}
+                  label={keyword}
+                  onDelete={handleDeleteInterest(keyword)}
+                  color="primary"
+                />
+              ))}
+            </Box>
+
+            <Button variant="outlined" color="primary" fullWidth onClick={handleUpdate} sx={{ mt: 10 }}>更新</Button>
+      
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="更新されました。" />
+          </Box>
         </Box>
-      </Box>
+      </>
+
     );
   };
   

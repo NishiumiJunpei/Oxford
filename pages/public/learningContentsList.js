@@ -3,6 +3,7 @@ import { Box, Typography, Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import HomePageHeader from '@/components/public/homepageHeader';
 import HomePageFooter from '@/components/public/homepageFooter';
+import SEOHeader from '@/components/seoHeader';
 
 export default function HomePage() {
   const router = useRouter()
@@ -13,6 +14,7 @@ export default function HomePage() {
 
   return (
     <>
+      <SEOHeader title="学習コンテンツ"/>
       <HomePageHeader/>
       <Container maxWidth="lg">
         <Box

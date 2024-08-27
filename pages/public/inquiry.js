@@ -3,6 +3,7 @@ import { Box, Typography, Button, Container, TextField } from '@mui/material';
 import { useRouter } from 'next/router';
 import HomePageHeader from '@/components/public/homepageHeader';
 import HomePageFooter from '@/components/public/homepageFooter';
+import SEOHeader from '@/components/seoHeader';
 
 export default function InquiryPage() {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function InquiryPage() {
 
   return (
     <>
+      <SEOHeader title="お問い合わせ"/>
       <HomePageHeader />
       <Container maxWidth="lg">
         <Box my={4}>

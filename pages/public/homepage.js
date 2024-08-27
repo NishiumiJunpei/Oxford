@@ -3,6 +3,7 @@ import { Box, Typography, Button, Container, Grid, AppBar, Toolbar } from '@mui/
 import { useRouter } from 'next/router';
 import HomePageHeader from '@/components/public/homepageHeader';
 import HomePageFooter from '@/components/public/homepageFooter';
+import SEOHeader from '@/components/seoHeader';
 
 export default function HomePage() {
   const router = useRouter()
@@ -13,6 +14,7 @@ export default function HomePage() {
 
   return (
     <>
+      <SEOHeader title="SusuEnglish"/>
       <HomePageHeader/>
 
       <Container sx={{

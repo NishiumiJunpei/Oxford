@@ -3,12 +3,14 @@ import { Box, Typography, Button, Container, Link } from '@mui/material';
 import { useRouter } from 'next/router';
 import HomePageHeader from '@/components/public/homepageHeader';
 import HomePageFooter from '@/components/public/homepageFooter';
+import SEOHeader from '@/components/seoHeader';
 
 export default function TermsOfService() {
   const router = useRouter();
 
   return (
     <>
+      <SEOHeader title="利用規約"/>
       <HomePageHeader />
       <Container maxWidth="lg">
         <Box my={4}>

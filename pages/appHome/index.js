@@ -8,6 +8,7 @@ import { Typography, Box } from '@mui/material';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import { Error, StarBorder, Star } from '@mui/icons-material';
 import SubTitleTypography from '@/components/subTitleTypography';
+import SEOHeader from '@/components/seoHeader';
 
 export default function Home() {
   const router = useRouter();
@@ -51,10 +52,7 @@ export default function Home() {
   
   return (
     <Box maxWidth="lg">
-      <Head>
-        <link rel="icon" href="/icon/favicon.ico" type="image/x-icon" />
-        <title>SusuEnglish</title>
-      </Head>
+      <SEOHeader title="SusuEnglish"/>
 
       {isLoading ? (
         <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
