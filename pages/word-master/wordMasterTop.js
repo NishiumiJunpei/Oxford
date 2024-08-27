@@ -23,7 +23,6 @@ const ThickProgressBar = ({ value }) => {
 
   return (
     <>
-      <SEOHeader title="英単語ブロック一覧"/>
       <Box display="flex" alignItems="center" flexDirection="column" width="100%">
         <Box width="100%" mr={1}>
           <LinearProgress 
@@ -193,154 +192,157 @@ const WordMasterTop = () => {
   
   console.log('data', data)
   return (
-    <Box maxWidth="lg">
-      {isLoading ? (
-      <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-      ) : (
-      <>
+    <>
+      <SEOHeader title="英単語ブロック一覧"/>
+      <Box maxWidth="lg">
+        {isLoading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
+          <CircularProgress />
+        </Box>
+        ) : (
+        <>
 
-        <Tabs value={tabValue} onChange={handleTabChange} >
-          <Tab label="学習進捗" />
-          <Tab 
-            label="間隔反復" 
-            icon={srWordCount > 0 ? (<PriorityHighIcon sx={{ color: theme.palette.error.main }}/>) : (<></>)} 
-            iconPosition="end" />
-          <Tab label="苦手単語" />
-        </Tabs>
+          <Tabs value={tabValue} onChange={handleTabChange} >
+            <Tab label="学習進捗" />
+            <Tab 
+              label="間隔反復" 
+              icon={srWordCount > 0 ? (<PriorityHighIcon sx={{ color: theme.palette.error.main }}/>) : (<></>)} 
+              iconPosition="end" />
+            <Tab label="苦手単語" />
+          </Tabs>
 
-        {tabValue === 0 && (
-          <>    
-            <TableContainer component={Paper} sx={{ marginTop: 5 }}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px'}}>
-                    <TableSortLabel
-                      active={orderBy === 'block'}
-                      direction={orderBy === 'block' ? order : 'asc'}
-                      onClick={(e) => handleRequestSort(e, 'block')}
-                    >
-                      ブロック
-                    </TableSortLabel>
-                  </TableCell>
-                  {/* <TableCell align="left" style={{ fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'status'}
-                      direction={orderBy === 'status' ? order : 'asc'}
-                      onClick={(e) => handleRequestSort(e, 'status')}
-                    >
-                      ステータス
-                    </TableSortLabel>
-                  </TableCell> */}
-                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
-                    <TableSortLabel
-                      active={orderBy === 'numNOTSTARTED'}
-                      direction={orderBy === 'numNOTSTARTED' ? order : 'asc'}
-                      onClick={(e) => handleRequestSort(e, 'numNOTSTARTED')}
-                    >
-                      <Error color="error" />
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
-                    <TableSortLabel
-                      active={orderBy === 'numMEMORIZED'}
-                      direction={orderBy === 'numMEMORIZED' ? order : 'asc'}
-                      onClick={(e) => handleRequestSort(e, 'numMEMORIZED')}
-                    >
-                      <StarBorder color="warning" />
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
-                    <TableSortLabel
-                      active={orderBy === 'numMEMORIZED2'}
-                      direction={orderBy === 'numMEMORIZED2' ? order : 'asc'}
-                      onClick={(e) => handleRequestSort(e, 'numMEMORIZED2')}
-                    >
-                      <Star color="success" />
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell align="left" style={{ fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'lastStudy'}
-                      direction={orderBy === 'lastStudy' ? order : 'asc'}
-                      onClick={(e) => handleRequestSort(e, 'lastStudy')}
-                    >
-                      最後に勉強した日
-                    </TableSortLabel>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sortedData(data).map((item, index) => (
-                  <TableRow key={index} sx={{cursor: 'pointer', backgroundColor: item.lastMemorizedDateEJ?.within1day ? theme.palette.primary.light : 'inherit'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
-                    <TableCell component="th" scope="row" align="left">
-                      <ListItem>
-                        <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
-                          {item.block.name}
-                        </Avatar>
-                      </ListItem>
+          {tabValue === 0 && (
+            <>    
+              <TableContainer component={Paper} sx={{ marginTop: 5 }}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left" style={{ fontWeight: 'bold', width: '10px'}}>
+                      <TableSortLabel
+                        active={orderBy === 'block'}
+                        direction={orderBy === 'block' ? order : 'asc'}
+                        onClick={(e) => handleRequestSort(e, 'block')}
+                      >
+                        ブロック
+                      </TableSortLabel>
                     </TableCell>
-                    {/* <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
-                        <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
-                          { Math.round(item.progress?.EJ) == 200 ? (
-                            <WorkspacePremiumIcon fontSize='large' color='success' />
-                          ) : (
-                            <ThickProgressBar value={item.progress?.EJ} />
-                          )}
-                        </Link>
-                      </Typography>
+                    {/* <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                      <TableSortLabel
+                        active={orderBy === 'status'}
+                        direction={orderBy === 'status' ? order : 'asc'}
+                        onClick={(e) => handleRequestSort(e, 'status')}
+                      >
+                        ステータス
+                      </TableSortLabel>
                     </TableCell> */}
-
-                    <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" >
-                        {item.progress.NOT_STARTED}
-                      </Typography>
+                    <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
+                      <TableSortLabel
+                        active={orderBy === 'numNOTSTARTED'}
+                        direction={orderBy === 'numNOTSTARTED' ? order : 'asc'}
+                        onClick={(e) => handleRequestSort(e, 'numNOTSTARTED')}
+                      >
+                        <Error color="error" />
+                      </TableSortLabel>
                     </TableCell>
-                    <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" >
-                        {item.progress.MEMORIZED}
-                      </Typography>
+                    <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
+                      <TableSortLabel
+                        active={orderBy === 'numMEMORIZED'}
+                        direction={orderBy === 'numMEMORIZED' ? order : 'asc'}
+                        onClick={(e) => handleRequestSort(e, 'numMEMORIZED')}
+                      >
+                        <StarBorder color="warning" />
+                      </TableSortLabel>
                     </TableCell>
-                    <TableCell component="th" scope="row" align="left">
-                      <Typography variant="subtitle1" >
-                        {item.progress.MEMORIZED2}
-                      </Typography>
+                    <TableCell align="left" style={{ fontWeight: 'bold', width: '10px' }}>
+                      <TableSortLabel
+                        active={orderBy === 'numMEMORIZED2'}
+                        direction={orderBy === 'numMEMORIZED2' ? order : 'asc'}
+                        onClick={(e) => handleRequestSort(e, 'numMEMORIZED2')}
+                      >
+                        <Star color="success" />
+                      </TableSortLabel>
                     </TableCell>
-
-                    <TableCell component="th" scope="row" align="left" sx={{color: item.lastMemorizedDateEJ?.within1day ? 'primary.main' : 'inherit'}}>
-                      <Typography variant="subtitle1" >
-                        {item.lastMemorizedDateEJ?.datetimeText}
-                      </Typography>
+                    <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                      <TableSortLabel
+                        active={orderBy === 'lastStudy'}
+                        direction={orderBy === 'lastStudy' ? order : 'asc'}
+                        onClick={(e) => handleRequestSort(e, 'lastStudy')}
+                      >
+                        最後に勉強した日
+                      </TableSortLabel>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
+                </TableHead>
+                <TableBody>
+                  {sortedData(data).map((item, index) => (
+                    <TableRow key={index} sx={{cursor: 'pointer', backgroundColor: item.lastMemorizedDateEJ?.within1day ? theme.palette.primary.light : 'inherit'}} onClick={() => handleBlockClick(item.block.id, 'EJ')}>
+                      <TableCell component="th" scope="row" align="left">
+                        <ListItem>
+                          <Avatar sx={{ width: 24, height: 24, marginRight: 2, fontSize:'0.75rem', bgcolor: 'secondary.main', color: '#fff' }}>
+                            {item.block.name}
+                          </Avatar>
+                        </ListItem>
+                      </TableCell>
+                      {/* <TableCell component="th" scope="row" align="left">
+                        <Typography variant="subtitle1" color={Math.round(item.progress?.EJ) < 100 ? 'textPrimary' : 'primary'}>
+                          <Link onClick={() => handleBlockClick(item.block.id, 'EJ')}>
+                            { Math.round(item.progress?.EJ) == 200 ? (
+                              <WorkspacePremiumIcon fontSize='large' color='success' />
+                            ) : (
+                              <ThickProgressBar value={item.progress?.EJ} />
+                            )}
+                          </Link>
+                        </Typography>
+                      </TableCell> */}
+
+                      <TableCell component="th" scope="row" align="left">
+                        <Typography variant="subtitle1" >
+                          {item.progress.NOT_STARTED}
+                        </Typography>
+                      </TableCell>
+                      <TableCell component="th" scope="row" align="left">
+                        <Typography variant="subtitle1" >
+                          {item.progress.MEMORIZED}
+                        </Typography>
+                      </TableCell>
+                      <TableCell component="th" scope="row" align="left">
+                        <Typography variant="subtitle1" >
+                          {item.progress.MEMORIZED2}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell component="th" scope="row" align="left" sx={{color: item.lastMemorizedDateEJ?.within1day ? 'primary.main' : 'inherit'}}>
+                        <Typography variant="subtitle1" >
+                          {item.lastMemorizedDateEJ?.datetimeText}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
 
 
 
-              </Table>
-            </TableContainer>
-          </>
+                </Table>
+              </TableContainer>
+            </>
+          )}
+
+          {tabValue === 1 && (
+            <SrWordList srWordList={srWordList} setSrWordList={setSrWordList} updateWordList={updateWordListForSR}/> 
+          )}
+
+
+        {tabValue === 2 && (
+            <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList} updateWordList={updateWordListForWeak}/> 
+          )}
+
+
+
+        </>
         )}
 
-        {tabValue === 1 && (
-          <SrWordList srWordList={srWordList} setSrWordList={setSrWordList} updateWordList={updateWordListForSR}/> 
-        )}
-
-
-      {tabValue === 2 && (
-          <WeakWordsList wordList={weakWordList} setWordList={setWeakWordList} updateWordList={updateWordListForWeak}/> 
-        )}
-
-
-
-      </>
-      )}
-
-    </Box>
+      </Box>
+    </>
   );
 };
 
