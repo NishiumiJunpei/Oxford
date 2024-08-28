@@ -18,6 +18,7 @@ import GPTCoachButton from '@/components/gptCoachButton';
 import { Visibility, VisibilityOff, Error, StarBorder, Star, CheckBox } from '@mui/icons-material';
 import SrTimingDialog from '@/components/srTimingDialog';
 import SEOHeader from '@/components/seoHeader';
+import AudioPlayerModalButton from '@/components/audioPlayerModalButton';
 
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
@@ -492,12 +493,15 @@ const WordListPage = () => {
               <Box sx={{mr: 3}}>
                 <GPTCoachButton words={filteredWordList} />
               </Box>
-              <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{mr: 3}}> 
-                間隔反復セット
-              </Button>
+              <Box sx={{mr: 3}}>
+                <AudioPlayerModalButton words={filteredWordList} />
+              </Box>
               <Button variant="contained" color="primary" 
                 onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{mr: 3}}>
                   アセスメント
+              </Button>
+              <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{mr: 3}}> 
+                間隔反復セット
               </Button>
 
             </Box>

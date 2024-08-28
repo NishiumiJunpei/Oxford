@@ -12,6 +12,7 @@ import SrTimingDialog  from './srTimingDialog';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { formatDate } from '@/utils/utils';
 import GPTCoachButton from './gptCoachButton';
+import AudioPlayerModalButton from './audioPlayerModalButton';
 
 const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [loading, setLoading] = useState(false);
@@ -198,11 +199,14 @@ const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
                   </IconButton>
                 </Box>
 
-                <FormControlLabel
-                  control={<Switch checked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
-                  label="答えを表示"
-                />
-                <GPTCoachButton words={words}/>
+                <Box display="flex" alignItems="center" justifyContent="flex-start" gap={2}>
+                  <FormControlLabel
+                    control={<Switch checked={switchStates[timeIndex] || false} onChange={() => handleSwitchChange(timeIndex)} />}
+                    label="答えを表示"
+                  />
+                  <AudioPlayerModalButton words={words} />
+                  <GPTCoachButton words={words} />
+                </Box>
 
                 <Grid container spacing={2} sx={{mt: 2}}>
                   {words.map((word, wordIndex) => (

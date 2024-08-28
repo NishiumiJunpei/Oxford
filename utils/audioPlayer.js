@@ -45,35 +45,41 @@ export const stopAudio = () => {
 
 
 //------------------------------   mp3用  ------------------------------------
-
-let audioRef = null;
+let audioRef = null; // audioRefはグローバルで保持
 
 export const playAudioMP3 = (audioUrl) => {
     return new Promise((resolve, reject) => {
         if (!audioRef) {
-            audioRef = new Audio(audioUrl); // MP3ファイルのURLでAudioオブジェクトを作成
-        }
+            audioRef = new Audio(audioUrl); // 新しいオーディオインスタンスを作成
+        } 
 
-        audioRef.play().then(() => {
-            // 再生が完了したらPromiseを解決
-            audioRef.onended = () => {
-                stopAudioMP3(); // 再生終了時に停止処理を実行
-                resolve(); // 終了を検知してPromiseを解決
-            };
-        }).catch((error) => {
-            reject(error); // エラー発生時にPromiseを拒否
-        });
+        audioRef.play()
+            .then(() => {
+                audioRef.onended = () => {
+                    resolve(); // 音声が終了したら次へ
+                };
+            })
+            .catch((error) => {
+                reject(error); // 再生エラー時にPromiseを拒否
+            });
     });
+};
+
+export const pauseAudioMP3 = () => {
+    if (audioRef) {
+        audioRef.pause(); // 再生中の音声を一時停止
+        console.log("音声が一時停止しました。");
+    }
 };
 
 export const stopAudioMP3 = () => {
     if (audioRef) {
-        audioRef.pause(); // 再生中の音声を停止
+        audioRef.pause();
         audioRef.currentTime = 0; // 再生位置をリセット
-        audioRef = null; // Audioオブジェクトをクリア
+        audioRef = null; // 停止時にはaudioRefをクリア
+        console.log("音声が停止しました。");
     }
 };
-
 
 //------------------------------   mp3用  ------------------------------------
 

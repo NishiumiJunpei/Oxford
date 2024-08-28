@@ -190,7 +190,6 @@ const WordMasterTop = () => {
     });
   };
   
-  console.log('data', data)
   return (
     <>
       <SEOHeader title="英単語ブロック一覧"/>
