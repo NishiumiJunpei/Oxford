@@ -23,6 +23,7 @@ const AudioPlayerModalButton = ({ words }) => {
     handleStop(); // 閉じるときに音声を停止
   };
 
+
   const handlePlay = async () => {
     if (isPaused) {
       try {
@@ -34,28 +35,70 @@ const AudioPlayerModalButton = ({ words }) => {
       }
       return;
     }
-
+  
     setIsPlaying(true);
     isStopped.current = false; // 再生を続行
-
-    for (let i = currentIndex; i < words.length; i++) {
-      if (isStopped.current) break; // 停止された場合にループを終了
-
-      const word = words[i];
+  
+    const playWordAudio = async (index) => {
+      if (isStopped.current || index >= words.length) {
+        setIsPlaying(false); 
+        setCurrentIndex(0); // すべて再生終了後にインデックスをリセット
+        return;
+      }
+  
+      const word = words[index];
       setCurrentWord(word);
-      setCurrentIndex(i);
-
+      setCurrentIndex(index);
+  
       try {
         await playAudioMP3(word.explanationAudioUrl);
+
+        // 2秒の待機時間を追加
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        playWordAudio(index + 1); // 次の単語の再生
       } catch (error) {
         console.error('Error playing audio:', error);
-        break;
+        setIsPlaying(false);
       }
-    }
-
-    setIsPlaying(false);
-    setCurrentIndex(0); // 再生終了後にインデックスをリセット
+    };
+  
+    await playWordAudio(currentIndex); // 初回の再生を開始
   };
+
+//   const handlePlay = async () => {
+//     if (isPaused) {
+//       try {
+//         setIsPlaying(true); // 再生状態に更新
+//         setIsPaused(false); // 一時停止を解除
+//         await playAudioMP3(currentWord.explanationAudioUrl); // 現在の単語のURLで再生
+//       } catch (error) {
+//         console.error('Error resuming audio:', error);
+//       }
+//       return;
+//     }
+
+//     setIsPlaying(true);
+//     isStopped.current = false; // 再生を続行
+
+//     for (let i = currentIndex; i < words.length; i++) {
+//       if (isStopped.current) break; // 停止された場合にループを終了
+
+//       const word = words[i];
+//       setCurrentWord(word);
+//       setCurrentIndex(i);
+
+//       try {
+//         await playAudioMP3(word.explanationAudioUrl);
+//       } catch (error) {
+//         console.error('Error playing audio:', error);
+//         break;
+//       }
+//     }
+
+//     setIsPlaying(false);
+//     setCurrentIndex(0); // 再生終了後にインデックスをリセット
+//   };
 
   const handlePause = () => {
     pauseAudioMP3();

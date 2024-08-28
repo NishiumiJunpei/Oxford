@@ -115,6 +115,7 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
         setStreamQuestionJE('');
         setStreamAnswerJE('');
         setAccordionExpanded(false);            
+        setIsPlaying(false)        
         onClose();
     };
 

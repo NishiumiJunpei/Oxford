@@ -49,9 +49,12 @@ let audioRef = null; // audioRefはグローバルで保持
 
 export const playAudioMP3 = (audioUrl) => {
     return new Promise((resolve, reject) => {
-        if (!audioRef) {
-            audioRef = new Audio(audioUrl); // 新しいオーディオインスタンスを作成
-        } 
+        if (audioRef) {
+            audioRef.pause(); // 再生中の音声を停止
+            audioRef.currentTime = 0; // 再生位置をリセット
+        }
+
+        audioRef = new Audio(audioUrl); // 新しいオーディオインスタンスを作成
 
         audioRef.play()
             .then(() => {
