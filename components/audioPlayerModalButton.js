@@ -11,13 +11,18 @@ const AudioPlayerModalButton = ({ words }) => {
   const [currentWord, setCurrentWord] = useState(null);
   const [isMobile, setIsMobile] = useState(false); // スマホかどうかを判定
   const isStopped = useRef(false); 
-
+  const audioContextRef = useRef(null);
+  const sourceRef = useRef(null);
+  const [pausePosition, setPausePosition] = useState(0); // 一時停止位置を記録
+  const [audioBuffer, setAudioBuffer] = useState(null); // デコードしたオーディオデータを保持
+  
   const totalWords = words.length;
 
   useEffect(() => {
-    // スマホかPCかを判別するためのロジック
     const userAgent = navigator.userAgent;
-    setIsMobile(/iPhone|iPad|iPod|Android/i.test(userAgent));
+//    setIsMobile(/iPhone|iPad|iPod|Android/i.test(userAgent));
+    setIsMobile(true);
+    
   }, []);
 
   const handleOpen = () => {
@@ -26,63 +31,104 @@ const AudioPlayerModalButton = ({ words }) => {
   };
 
   const handleClose = () => {
-    setOpen(false);
     handleStop(); 
+    setOpen(false);
   };
 
   const handlePlay = async () => {
-    if (isPaused) {
-      try {
-        setIsPlaying(true); 
-        setIsPaused(false); 
-        await playAudioMP3(currentWord.explanationAudioUrl); 
-      } catch (error) {
-        console.error('Error resuming audio:', error);
-      }
+    if (isPaused && audioBuffer) {
+      sourceRef.current = audioContextRef.current.createBufferSource();
+      sourceRef.current.buffer = audioBuffer;
+      sourceRef.current.connect(audioContextRef.current.destination);
+      sourceRef.current.start(0, isFinite(pausePosition) ? pausePosition : 0); // 保存した位置から再生を再開
+      
+      setIsPlaying(true);
+      setIsPaused(false);
       return;
     }
   
+    // それ以外の通常の再生処理
     setIsPlaying(true);
-    isStopped.current = false; 
+    isStopped.current = false;
   
-    const playWordAudio = async (index) => {
-      if (isStopped.current || index >= words.length) {
-        setIsPlaying(false); 
-        setCurrentIndex(0); 
-        if (isMobile) {
-          setOpen(false); // モバイルではダイアログを閉じる
-        }
-        return;
-      }
-  
-      const word = words[index];
-      setCurrentWord(word);
-      setCurrentIndex(index);
-  
+    if (isMobile) {
       try {
-        await playAudioMP3(word.explanationAudioUrl);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        playWordAudio(index + 1); 
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+  
+        const response = await fetch(currentWord.explanationAudioUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        const decodedAudio = await audioContextRef.current.decodeAudioData(arrayBuffer);
+        
+        setAudioBuffer(decodedAudio);
+  
+        sourceRef.current = audioContextRef.current.createBufferSource();
+        sourceRef.current.buffer = decodedAudio;
+        sourceRef.current.connect(audioContextRef.current.destination);
+        sourceRef.current.start(0);
       } catch (error) {
-        console.error('Error playing audio:', error);
+        console.error('Error playing audio on mobile:', error);
         setIsPlaying(false);
       }
-    };
+    } else {
+      // PCの場合の再生処理 (変更なし)
+      const playWordAudio = async (index) => {
+        if (isStopped.current || index >= words.length) {
+          setIsPlaying(false);
+          setCurrentIndex(0);
+          return;
+        }
   
-    await playWordAudio(currentIndex); 
+        const word = words[index];
+        setCurrentWord(word);
+        setCurrentIndex(index);
+  
+        try {
+          await playAudioMP3(word.explanationAudioUrl);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          playWordAudio(index + 1);
+        } catch (error) {
+          console.error('Error playing audio on PC:', error);
+          setIsPlaying(false);
+        }
+      };
+  
+      await playWordAudio(currentIndex);
+    }
   };
-
+      
   const handlePause = () => {
-    pauseAudioMP3();
-    setIsPaused(true);
-    setIsPlaying(false);
+    if (isMobile && sourceRef.current) {
+      // 現在の再生位置を計算して保存
+      const elapsedTime = audioContextRef.current.currentTime - sourceRef.current.startTime;
+      setPausePosition(isFinite(elapsedTime) ? elapsedTime : 0); // 非有限な値を避けるためのチェック
+      
+      // オーディオ再生を停止
+      sourceRef.current.stop();
+      setIsPaused(true);
+      setIsPlaying(false);
+    } else {
+      pauseAudioMP3();
+      setIsPaused(true);
+      setIsPlaying(false);
+    }
   };
 
-  const handleStop = () => {
-    stopAudioMP3();
-    setIsPaused(false);
-    setIsPlaying(false);
-    isStopped.current = true; 
+    const handleStop = () => {
+    if (isMobile && audioContextRef.current && sourceRef.current) {
+      sourceRef.current.stop();
+      sourceRef.current.disconnect();
+      setIsPaused(false);
+      setIsPlaying(false);
+      isStopped.current = true; 
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+      sourceRef.current = null;
+    } else {
+      stopAudioMP3();
+      setIsPaused(false);
+      setIsPlaying(false);
+      isStopped.current = true; 
+    }
   };
   
   const handleNext = async () => {
@@ -90,7 +136,7 @@ const AudioPlayerModalButton = ({ words }) => {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       setCurrentWord(words[nextIndex]);
-      stopAudioMP3(); 
+      handleStop(); 
       if (isPlaying) {
         try {
           await playAudioMP3(words[nextIndex].explanationAudioUrl); 
@@ -106,7 +152,7 @@ const AudioPlayerModalButton = ({ words }) => {
       const prevIndex = currentIndex - 1;
       setCurrentIndex(prevIndex);
       setCurrentWord(words[prevIndex]);
-      stopAudioMP3(); 
+      handleStop(); 
       if (isPlaying) {
         try {
           await playAudioMP3(words[prevIndex].explanationAudioUrl); 
