@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography } from '@mui/material';
-import { PlayArrow, Pause, Stop, SkipNext, SkipPrevious } from '@mui/icons-material'; 
+import { PlayArrow, Pause, Stop, SkipNext, SkipPrevious } from '@mui/icons-material'; // アイコン追加
 import { playAudioMP3, stopAudioMP3, pauseAudioMP3 } from '../utils/audioPlayer';
 
 const AudioPlayerModalButton = ({ words }) => {
@@ -9,33 +9,27 @@ const AudioPlayerModalButton = ({ words }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentWord, setCurrentWord] = useState(null);
-  const [isMobile, setIsMobile] = useState(false); // スマホかどうかを判定
-  const isStopped = useRef(false); 
+  const isStopped = useRef(false); // 再生停止の状態を記録するためのフラグ
 
   const totalWords = words.length;
 
-  useEffect(() => {
-    // スマホかPCかを判別するためのロジック
-    const userAgent = navigator.userAgent;
-    setIsMobile(/iPhone|iPad|iPod|Android/i.test(userAgent));
-  }, []);
-
   const handleOpen = () => {
     setOpen(true);
-    setCurrentWord(words[0]); 
+    setCurrentWord(words[0]); // 最初の単語をセット
   };
 
   const handleClose = () => {
     setOpen(false);
-    handleStop(); 
+    handleStop(); // 閉じるときに音声を停止
   };
+
 
   const handlePlay = async () => {
     if (isPaused) {
       try {
-        setIsPlaying(true); 
-        setIsPaused(false); 
-        await playAudioMP3(currentWord.explanationAudioUrl); 
+        setIsPlaying(true); // 再生状態に更新
+        setIsPaused(false); // 一時停止を解除
+        await playAudioMP3(currentWord.explanationAudioUrl); // 現在の単語のURLで再生
       } catch (error) {
         console.error('Error resuming audio:', error);
       }
@@ -43,15 +37,12 @@ const AudioPlayerModalButton = ({ words }) => {
     }
   
     setIsPlaying(true);
-    isStopped.current = false; 
+    isStopped.current = false; // 再生を続行
   
     const playWordAudio = async (index) => {
       if (isStopped.current || index >= words.length) {
         setIsPlaying(false); 
-        setCurrentIndex(0); 
-        if (isMobile) {
-          setOpen(false); // モバイルではダイアログを閉じる
-        }
+        setCurrentIndex(0); // すべて再生終了後にインデックスをリセット
         return;
       }
   
@@ -61,15 +52,18 @@ const AudioPlayerModalButton = ({ words }) => {
   
       try {
         await playAudioMP3(word.explanationAudioUrl);
+
+        // 2秒の待機時間を追加
         await new Promise(resolve => setTimeout(resolve, 2000));
-        playWordAudio(index + 1); 
+
+        playWordAudio(index + 1); // 次の単語の再生
       } catch (error) {
         console.error('Error playing audio:', error);
         setIsPlaying(false);
       }
     };
   
-    await playWordAudio(currentIndex); 
+    await playWordAudio(currentIndex); // 初回の再生を開始
   };
 
   const handlePause = () => {
@@ -82,7 +76,7 @@ const AudioPlayerModalButton = ({ words }) => {
     stopAudioMP3();
     setIsPaused(false);
     setIsPlaying(false);
-    isStopped.current = true; 
+    isStopped.current = true; // 再生停止をフラグ
   };
   
   const handleNext = async () => {
@@ -90,10 +84,12 @@ const AudioPlayerModalButton = ({ words }) => {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       setCurrentWord(words[nextIndex]);
-      stopAudioMP3(); 
+      
+      stopAudioMP3(); // 現在のMP3を停止
+  
       if (isPlaying) {
         try {
-          await playAudioMP3(words[nextIndex].explanationAudioUrl); 
+          await playAudioMP3(words[nextIndex].explanationAudioUrl); // 次のMP3を再生
         } catch (error) {
           console.error('Error playing next audio:', error);
         }
@@ -106,16 +102,19 @@ const AudioPlayerModalButton = ({ words }) => {
       const prevIndex = currentIndex - 1;
       setCurrentIndex(prevIndex);
       setCurrentWord(words[prevIndex]);
-      stopAudioMP3(); 
+      
+      stopAudioMP3(); // 現在のMP3を停止
+  
       if (isPlaying) {
         try {
-          await playAudioMP3(words[prevIndex].explanationAudioUrl); 
+          await playAudioMP3(words[prevIndex].explanationAudioUrl); // 前のMP3を再生
         } catch (error) {
           console.error('Error playing previous audio:', error);
         }
       }
     }
   };
+
 
   return (
     <div>
@@ -124,56 +123,46 @@ const AudioPlayerModalButton = ({ words }) => {
       </Button>
 
       <Dialog open={open} onClose={handleClose} disableEscapeKeyDown={isPlaying}>
-        <DialogTitle>
-          音声解説
-        </DialogTitle>
+        <DialogTitle>音声解説</DialogTitle>
         <DialogContent>
-          {isMobile ? (
-            <Typography>
-            </Typography>
-          ) : (
-            currentWord && currentWord.english && (
-              <>
-                <Typography>再生中: {currentIndex + 1} / {totalWords}</Typography>
-                <Typography variant="h5" gutterBottom>{currentWord.english}</Typography>
-                <Typography variant="subtitle1" gutterBottom>{currentWord.japanese}</Typography>
+          {currentWord && currentWord.english && (
+            <>
+              <Typography>再生中: {currentIndex + 1} / {totalWords}</Typography>
+              <Typography variant="h5" gutterBottom>{currentWord.english}</Typography>
+              <Typography variant="subtitle1" gutterBottom>{currentWord.japanese}</Typography>
 
-                <div style={{ width: '300px', height: '300px', marginTop: '8px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid lightgray' }}>
-                  {currentWord.imageUrl ? (
-                    <img
-                      src={currentWord.imageUrl}
-                      alt={currentWord.english}
-                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                    />
-                  ) : (
-                    <span>画像なし</span>
-                  )}
-                </div>
-              </>
-            )
+              <div style={{ width: '300px', height: '300px', marginTop: '8px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid lightgray' }}>
+                {currentWord.imageUrl ? (
+                  <img
+                    src={currentWord.imageUrl}
+                    alt={currentWord.english}
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                  />
+                ) : (
+                  <span>画像なし</span>
+                )}
+              </div>
+            </>
           )}
         </DialogContent>
         <DialogActions>
+          <IconButton onClick={handlePrev} disabled={currentIndex === 0} color="primary">
+            <SkipPrevious />
+          </IconButton>
           <IconButton onClick={handlePlay} disabled={isPlaying && !isPaused} color="primary">
             <PlayArrow />
           </IconButton>
           <IconButton onClick={handlePause} disabled={!isPlaying} color="secondary">
             <Pause />
           </IconButton>
+          <IconButton onClick={handleNext} disabled={currentIndex >= totalWords - 1} color="primary">
+            <SkipNext />
+          </IconButton>
           <IconButton onClick={handleStop} disabled={!isPlaying && !isPaused} color="error">
             <Stop />
           </IconButton>
-          {!isMobile && (
-            <>
-              <IconButton onClick={handlePrev} disabled={currentIndex === 0} color="primary">
-                <SkipPrevious />
-              </IconButton>
-              <IconButton onClick={handleNext} disabled={currentIndex >= totalWords - 1} color="primary">
-                <SkipNext />
-              </IconButton>
-            </>
-          )}
-          <Button onClick={handleClose}>
+
+          <Button onClick={handleClose} disabled={isPlaying}>
             閉じる
           </Button>
         </DialogActions>
