@@ -62,7 +62,6 @@ const AudioPlayerModalButton = ({ words }) => {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       setCurrentWord(words[nextIndex]);
-      handleStop(); 
       if (isPlaying) {
         try {
           await playAudioMP3(words[nextIndex].explanationAudioUrl); 
