@@ -12,7 +12,7 @@ import SrTimingDialog  from './srTimingDialog';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { formatDate } from '@/utils/utils';
 import GPTCoachButton from './gptCoachButton';
-import AudioPlayerModalButton from './audioPlayerModalButton';
+import AudioPlayerModalButton from './audioPlayerModalButtonXXX';
 
 const SrWordList = ({srWordList, setSrWordList, updateWordList}) => {
   const [loading, setLoading] = useState(false);
