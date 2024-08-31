@@ -98,7 +98,7 @@ export async function deleteUserWordList(id) {
 }
 
 export async function getWordListById(id) {
-  return await prisma.WordList.findUnique({
+  return await prisma.wordList.findUnique({
     where: { id },
     include: {
       blocks: {
@@ -118,7 +118,8 @@ export async function getWordListByBlockIds(blockIds) {
   // blockIdsが数値の配列でない場合（例えば、文字列の配列の場合）、数値に変換
   const numericBlockIds = blockIds.map(id => parseInt(id));
 
-  return await prisma.wordList.findMany({
+  // データベースから取得
+  const wordLists = await prisma.wordList.findMany({
     where: {
       // blocksリレーションに紐づくblockIdが、指定されたblockIds配列内のいずれかに一致するレコードを取得
       blocks: {
@@ -133,12 +134,25 @@ export async function getWordListByBlockIds(blockIds) {
       blocks: true // blocksリレーションを結果に含める
     }
   });
+
+  // JavaScript でソート
+  const sortedWordLists = wordLists.sort((a, b) => {
+    // 指定された blockIds の中で最初の block の displayOrder を使ってソート
+    const aBlock = a.blocks.find(block => numericBlockIds.includes(block.blockId));
+    const bBlock = b.blocks.find(block => numericBlockIds.includes(block.blockId));
+
+    const aOrder = aBlock ? aBlock.displayOrder : Infinity; // 見つからない場合は最後に
+    const bOrder = bBlock ? bBlock.displayOrder : Infinity; // 見つからない場合は最後に
+
+    return aOrder - bOrder;
+  });
+
+
+  return sortedWordLists;
 }
 
-
-
 export async function getWordListByEnglish(searchTerm) {
-  return await prisma.WordList.findMany({
+  return await prisma.wordList.findMany({
     where: {
       english: {
         contains: searchTerm,
@@ -169,22 +183,46 @@ export async function getWordListByCriteria(criteria) {
     };
   } else if (criteria.themeId) {
     query.blocks = {
-        some: { 
-          block: {
-            themeId: parseInt(criteria.themeId)
-          }
+      some: { 
+        block: {
+          themeId: parseInt(criteria.themeId)
+        }
       }
     };
   }
 
-  return await prisma.wordList.findMany({
+  // データベースから取得
+  const wordLists = await prisma.wordList.findMany({
     where: query,
     include: {
-      blocks: true
+      blocks: {
+        include: {
+          block: true
+        }
       }
+    }
   });
-}
 
+  // ソート処理
+  if (criteria.blockId) {
+    const targetBlockId = parseInt(criteria.blockId);
+    const sortedWordLists = wordLists.sort((a, b) => {
+      // WordListBlock の displayOrder を基にソート
+      const aBlock = a.blocks.find(block => block.blockId === targetBlockId);
+      const bBlock = b.blocks.find(block => block.blockId === targetBlockId);
+
+      // ここで WordListBlock の displayOrder を使用
+      const aOrder = aBlock ? aBlock.displayOrder : Infinity;
+      const bOrder = bBlock ? bBlock.displayOrder : Infinity;
+
+      return aOrder - bOrder;
+    });
+
+    return sortedWordLists;
+  }
+
+  return wordLists;
+}
 
 export async function getWordListUserStatus(userId, themeId, blockId = '') {
   let whereClause = {

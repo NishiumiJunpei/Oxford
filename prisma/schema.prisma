@@ -95,6 +95,7 @@ model WordListBlock {
   blockId     Int
   wordList    WordList  @relation(fields: [wordListId], references: [id], onDelete: Cascade)
   block       Block     @relation(fields: [blockId], references: [id])
+  displayOrder Int?     
 
   @@id([wordListId, blockId])
   @@index([blockId])

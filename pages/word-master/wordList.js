@@ -448,7 +448,7 @@ const WordListPage = () => {
   });
 
   
-  // console.log('wordList', wordList)
+  console.log('wordList', wordList)
   return (
     <Box maxWidth="lg">
       {isLoading ? (

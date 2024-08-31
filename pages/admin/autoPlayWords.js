@@ -68,6 +68,7 @@ export default function Home() {
     fetchBlocks(theme.id)
   }
 
+  console.log('test', wordList)
   return (
     <>
       <Box>
