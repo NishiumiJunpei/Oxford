@@ -131,7 +131,6 @@ export async function generateExplanationScript(english) {
       model: 'gpt-4o', //"gpt-4o", 
       messages: [{role: 'assistant', content }],
       temperature: 0.8,
-      max_tokens: 500,
     });
 
     const res = response.choices[0].message.content

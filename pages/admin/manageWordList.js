@@ -44,10 +44,27 @@ export default function Home() {
             setWordDetail(response.data.wordDetail);
             setIsLoadingWordDetail(false);
           } catch (error) {
-            console.error('Error creating example sentence:', error);
+            console.error('Error creating example sentence etc:', error);
         }
     }
-};
+  };
+
+  const createScriptAudio = async (rewirteScope) => {
+    setIsLoadingWordDetail(true);
+    setWordDetail(null)
+    if (wordDetail && wordDetail.id) {
+        try {
+            const response = await axios.post(`/api/admin/createScriptAudioForWordListId`, { wordListId: wordDetail.id, rewirteScope });
+            setWordDetail(response.data.wordDetail);
+            setIsLoadingWordDetail(false);
+          } catch (error) {
+            console.error('Error creating script and audio:', error);
+        }
+    }
+  };
+
+  
+
 
   return (
     <>
@@ -149,7 +166,7 @@ export default function Home() {
           {wordDetail.usage?.length > 0 && (
             <>
               <Typography> この単語を使うシチュエーション</Typography>
-              {wordDetail.usage?.map((element, index)=>(
+              {wordDetail?.usage?.map((element, index)=>(
                 <>
                   <Typography sx={{fontWeight: 700}}>{index+1}.{element.situation}</Typography>
                   <Typography>{element.exampleE}</Typography>
@@ -203,8 +220,11 @@ export default function Home() {
               <Button variant="contained" color="primary" onClick={()=>createExampleSentence("J_EX_IMAGE")} disabled={isLoadingWordDetail} sx={{mr: 2, mt:2}}>
                   日・例文・画像生成(上書き)
               </Button>
-              <Button variant="contained" color="secondary" onClick={()=>createExampleSentence("USAGE")} disabled={isLoadingWordDetail} sx={{mr: 2, mt:2}}>
+              <Button variant="contained" color="primary" onClick={()=>createExampleSentence("USAGE")} disabled={isLoadingWordDetail} sx={{mr: 2, mt:2}}>
                   利用シーン生成(上書き)
+              </Button>
+              <Button variant="contained" color="primary" onClick={()=>createScriptAudio("SCRIPT")} disabled={isLoadingWordDetail} sx={{mr: 2, mt:2}}>
+                  解説スクリプト・音声生成(上書き)
               </Button>
 
             </Box>

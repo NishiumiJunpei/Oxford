@@ -1,7 +1,7 @@
 //wordList-utils.js
 import axios from 'axios';
 import { generateJapanese, generateExampleSentences, generateImage, generateUsage, generateAudio, generateExplanationScript } from '@/utils/openai-utils'
-import { getS3FileUrl, uploadImageToS3, uploadAudioToS3 } from '@/utils/aws-s3-utils'
+import { getS3FileUrl, uploadImageToS3, uploadAudioToS3, getS3AudioFileUrl } from '@/utils/aws-s3-utils'
 import { getWordListById, updateWordList } from '@/utils/prisma-utils'
 import { enqueueRequest } from '@/utils/queue-util';
 
@@ -133,6 +133,7 @@ export const createExampleSentenceAndImageByGPT = async (wordListId, mode) =>{
 export const createAudioFromScript = async (wordListId, mode) => {
   try {
     const word = await getWordListById(wordListId);
+    word.usage = word.usage ? JSON.parse(word.usage) : ''
 
     // ----------- スクリプト生成 ---------------------------
     if (mode.explanationScript.on) {
@@ -160,6 +161,7 @@ export const createAudioFromScript = async (wordListId, mode) => {
 
         // S3にアップロード
         const audioUrl = await uploadAudioToS3(audioBuffer, audioFilename);
+        word.explanationAudioUrl = await getS3AudioFileUrl(audioFilename),
 
         // 音声ファイル名をデータベースに保存
         await updateWordList(wordListId, {
