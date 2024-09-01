@@ -68,7 +68,6 @@ const BlocksList = () => {
     return <Typography>No blocks found.</Typography>;
   }
 
-  console.log('test', blocks)
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -97,7 +96,7 @@ const BlocksList = () => {
                     <div>
                       <Typography>Normal Movie</Typography>
                       <video controls width="250">
-                        <source src={block.normalMovieUrl} type="video/mp4" />
+                        <source src={block.normalMovieUrl} type="video/quicktime" />
                         Your browser does not support the video tag.
                       </video>
                     </div>
@@ -106,7 +105,7 @@ const BlocksList = () => {
                     <div>
                       <Typography>Reproduction Movie</Typography>
                       <video controls width="250">
-                        <source src={block.reproductionMovieUrl} type="video/mp4" />
+                        <source src={block.reproductionMovieUrl} type="video/quicktime" />
                         Your browser does not support the video tag.
                       </video>
                     </div>
@@ -115,7 +114,7 @@ const BlocksList = () => {
                     <div>
                       <Typography>Explanation Movie</Typography>
                       <video controls width="250">
-                        <source src={block.explanationMovieUrl} type="video/mp4" />
+                        <source src={block.explanationMovieUrl} type="video/quicktime" />
                         Your browser does not support the video tag.
                       </video>
                     </div>
