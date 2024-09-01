@@ -37,18 +37,6 @@ const BlocksList = () => {
       }
     };
 
-    const getSignedMovieUrl = async (filename) => {
-      try {
-        const response = await axios.get('/api/getSignedMovieUrl', {
-          params: { filename },
-        });
-        return response.data.url;
-      } catch (error) {
-        console.error('Error fetching signed movie URL:', error);
-        return null;
-      }
-    };
-
     fetchBlocks();
   }, []);
 
@@ -78,7 +66,7 @@ const BlocksList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Block Name</TableCell>
-              <TableCell align="center">単語リスト</TableCell>
+              {/* <TableCell align="center">単語リスト</TableCell> */}
               <TableCell align="center">動画</TableCell>
             </TableRow>
           </TableHead>
@@ -86,11 +74,11 @@ const BlocksList = () => {
             {blocks.map((block) => (
               <TableRow key={block.id}>
                 <TableCell>{block.name}</TableCell>
-                <TableCell align="center">
+                {/* <TableCell align="center">
                   <Link href={`/wordList?blockId=${block.id}`} variant="body2">
                     View Word List
                   </Link>
-                </TableCell>
+                </TableCell> */}
                 <TableCell align="center">
                   {block.normalMovieUrl && (
                     <div>
