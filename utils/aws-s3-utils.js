@@ -99,3 +99,29 @@ export const getS3AudioFileUrl = async (filename) => {
   }
 };
 
+export const getS3MovieFileUrl = async (filename) => {
+  const params = {
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: filename,
+    Expires: 60 * 60 * 24 * 3, // URLの有効期限（秒）
+  };
+
+  try {
+    let url = '';
+
+    // ファイル名が空の場合はプレースホルダーURLを返す
+    if (!filename || filename.trim() === '') {
+      url = `/movies/under_prep.mp4`; // 動画ファイルが準備中の場合のプレースホルダー
+    }
+    else if (filename === 'NO_MOVIE'){
+      url = `/movies/no_movie.mp4`; // 動画ファイルが存在しない場合のプレースホルダー
+    } else {
+      // S3の署名付きURLを生成
+      url = await s3.getSignedUrlPromise('getObject', params);
+    }
+    return url;
+  } catch (error) {
+    console.error('Error generating signed URL for movie:', error);
+    return null;
+  }
+};

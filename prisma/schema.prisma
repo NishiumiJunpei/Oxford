@@ -64,6 +64,9 @@ model Block {
   id        Int         @id @default(autoincrement())
   name      String
   themeId   Int
+  normalMovieFilename   String?
+  reproductionMovieFilename   String?
+  explanationMovieFilename   String?
   displayOrder Int?
   theme     Theme       @relation(fields: [themeId], references: [id])
   wordLists WordListBlock[]

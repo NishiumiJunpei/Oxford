@@ -18,7 +18,7 @@ const layoutPaths = [
   // 他のパスをここに追加可能
 ];
 
-const noLayoutPaths = ['/public', '/auth', '/404']; // noLayoutのためのパス
+const noLayoutPaths = ['/public', '/auth', '/404', '/eiken1']; // noLayoutのためのパス
 
 const MyApp = ({ Component, pageProps: { session, ...pageProps } }) => {
   const router = useRouter();

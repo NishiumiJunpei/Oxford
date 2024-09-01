@@ -34,7 +34,7 @@ export default function Home() {
   const fetchBlocks = async (themeId) => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`/api/admin/getBlocksByThemeId?themeId=${themeId}`);
+      const response = await axios.get(`/api/admin/getBlocksByThemeId?themeId=${themeId}&includeWordInfo=true`);
       setBlocks(response.data.blocks);
       setCurrentStep('blockSelection');
     } catch (error) {
