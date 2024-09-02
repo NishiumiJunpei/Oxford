@@ -55,6 +55,7 @@ const BlocksList = () => {
     return <Typography>No blocks found.</Typography>;
   }
 
+  console.log('blocks', blocks)
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
