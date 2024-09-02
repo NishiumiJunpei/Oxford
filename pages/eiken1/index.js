@@ -27,7 +27,6 @@ const BlocksList = () => {
             includeWordInfo: false // WordInfoを含めるかどうかを指定
           }
         });
-        console.log('test2', response)
 
         setBlocks(response.data.blocks);
       } catch (error) {
@@ -84,7 +83,7 @@ const BlocksList = () => {
                     <div>
                       <Typography>Normal Movie</Typography>
                       <video controls width="250">
-                        <source src={block.normalMovieUrl} type="video/quicktime" />
+                        <source src={block.normalMovieUrl} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
                     </div>
@@ -93,7 +92,7 @@ const BlocksList = () => {
                     <div>
                       <Typography>Reproduction Movie</Typography>
                       <video controls width="250">
-                        <source src={block.reproductionMovieUrl} type="video/quicktime" />
+                        <source src={block.reproductionMovieUrl} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
                     </div>
@@ -102,7 +101,7 @@ const BlocksList = () => {
                     <div>
                       <Typography>Explanation Movie</Typography>
                       <video controls width="250">
-                        <source src={block.explanationMovieUrl} type="video/quicktime" />
+                        <source src={block.explanationMovieUrl} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
                     </div>
