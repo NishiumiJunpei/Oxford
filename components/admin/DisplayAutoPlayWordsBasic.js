@@ -92,7 +92,10 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
             <Typography>{index + 1} / {wordList.length}</Typography>
 
             <Box sx={{ width: 1200, height: 675, backgroundColor: '#F8EDED', padding: 3, pt: 2, border: 'solid', borderWidth: 0.5 }}>
-            <Grid container spacing={2} sx={{ height: '100%' }}>
+                <Box>
+                    <Typography color="GrayText">{index+1} / {wordList.length}</Typography>
+                </Box>
+                <Grid container spacing={2} sx={{ height: '100%' }}>
                 {showDetails ? (
                     <>
                         <Grid item xs={12} md={6}>
@@ -141,9 +144,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                         </Typography>
                     </Grid>
                 )}
-            </Grid>
-
-
+                </Grid>
 
             </Box>
 
