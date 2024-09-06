@@ -16,6 +16,7 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
             while (!isCancelled && currentIndex < wordList.length && isAutoPlaying) {
                 // 英単語を再生するまで詳細情報を非表示
                 setShowDetails(false);
+                await new Promise(r => setTimeout(r, 1000)); // 次の音声再生までの間隔
 
                 // 英単語の音声再生
                 await playAudio({ text: wordList[currentIndex].english });
@@ -36,8 +37,6 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                 if (!isAutoPlaying || isCancelled) break;
 
 
-                await new Promise(r => setTimeout(r, 1000)); // 次の音声再生までの間隔
-
                 // 次の単語に進む
                 currentIndex++;
                 if (currentIndex < wordList.length) {
@@ -46,6 +45,10 @@ const DisplayAutoPlayWordsBasic = ({ open, onClose, wordList, selectedTheme }) =
                     setIsAutoPlaying(false); // リストの最後に到達したら停止
                     break;
                 }
+
+                await new Promise(r => setTimeout(r, 1000)); // 次の音声再生までの間隔
+
+
             }
         };
 
