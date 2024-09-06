@@ -1,18 +1,20 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
-import { getBlock, getWordListByCriteria, getWordListUserStatus, findBlockByDisplayOrderAndThemeId, getWordStoriesByUserIdAndBlockId, getBlocks } from '../../../utils/prisma-utils';
+import { getBlock, getBlocks, getWordListByCriteria, } from '../../../utils/prisma-utils';
 import { getS3FileUrl, getS3AudioFileUrl } from '../../../utils/aws-s3-utils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const session = await getServerSession(req, res, authOptions);
-      const userId = session.userId; // セッションから userId を取得
+      // const session = await getServerSession(req, res, authOptions);
+      // const userId = session.userId; // セッションから userId を取得
 
       const { blockId } = req.query;
       if (!blockId) {
         return res.status(400).json({ error: 'Theme and block are required' });
       }
+      const block = await getBlock(parseInt(blockId));
+      const blocks = await getBlocks(block.theme.id)      
 
       const criteria = {
         blockId: parseInt(blockId)
@@ -27,9 +29,10 @@ export default async function handler(req, res) {
         };
       }));
 
-
       res.status(200).json({
         wordList: updatedWordList,
+        block,
+        blocks,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

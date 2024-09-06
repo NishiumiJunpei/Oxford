@@ -18,6 +18,7 @@ import {
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useRouter } from 'next/router';
 
 const BlocksList = () => {
   const [blocks, setBlocks] = useState([]);
@@ -26,6 +27,7 @@ const BlocksList = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState('');
+  const router = useRouter()
 
   useEffect(() => {
     const fetchBlocks = async () => {
@@ -87,6 +89,7 @@ const BlocksList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Block Name</TableCell>
+              <TableCell align="center">単語一覧</TableCell>
               <TableCell align="center">Normal Movie</TableCell>
               <TableCell align="center">Explanation Movie</TableCell>
             </TableRow>
@@ -95,6 +98,16 @@ const BlocksList = () => {
             {blocks.map((block) => (
               <TableRow key={block.id}>
                 <TableCell>{block.name}</TableCell>
+                <TableCell>
+                  <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => router.push(`/eiken1/wordList?blockId=${block.id}`)}
+                    >
+                      Normal Movie 視聴
+                  </Button>
+
+                </TableCell>
                 {/* Normal Movieの列 */}
                 <TableCell align="center">
                   {block.normalMovieUrl ? (
