@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router'; // useRouterをインポート
 import axios from 'axios';
 import { Box, Checkbox, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import DisplayAutoPlayWordsBasic from '@/components/admin/DisplayAutoPlayWordsBasic';
 import DisplayAutoPlayWordsReproduction from '@/components/admin/DisplayAutoPlayWordsReproduction';
-import { ThemeContext } from '@emotion/react';
 import DisplayAutoPlayWordsExpScript from '@/components/admin/DisplayAutoPlayWordsExpScript';
 
-
-
 export default function Home() {
+  const router = useRouter(); // useRouterを使ってクエリを取得
+  const { themeId } = router.query; // URLパラメータからthemeIdを取得
   const [themes, setThemes] = useState([]);
   const [blocks, setBlocks] = useState([]);
   const [blockIds, setBlockIds] = useState([]);
@@ -34,7 +34,7 @@ export default function Home() {
   const fetchBlocks = async (themeId) => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`/api/admin/getBlocksByThemeId?themeId=${themeId}&includeWordInfo=true`);
+      const response = await axios.get(`/api/admin/getBlocksByThemeId?themeId=${themeId}`);
       setBlocks(response.data.blocks);
       setCurrentStep('blockSelection');
     } catch (error) {
@@ -68,7 +68,7 @@ export default function Home() {
     fetchBlocks(theme.id)
   }
 
-  console.log('test', wordList)
+
   return (
     <>
       <Box>
@@ -125,7 +125,6 @@ export default function Home() {
                       <TableCell>
                         <Checkbox
                           checked={blockIds.includes(block.id)}
-                          // onChange={() => handleBlockSelect(block.id)}
                         />
                       </TableCell>
                     </TableRow>
@@ -163,6 +162,20 @@ export default function Home() {
             </Box>
 
           )}
+          {selectedTheme && (
+            <Box>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setCurrentStep('blockSelection');
+                  fetchBlocks(selectedTheme.id);
+                }}
+              >
+                ブロック一覧
+              </Button>
+            </Box>
+          )}
+
 
         </>
       )}
