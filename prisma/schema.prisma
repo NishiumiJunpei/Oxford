@@ -68,6 +68,7 @@ model Block {
   reproductionMovieFilename   String?
   explanationMovieFilename   String?
   displayOrder Int?
+  categoryName      String?
   theme     Theme       @relation(fields: [themeId], references: [id])
   wordLists WordListBlock[]
   WordStoryByGPT            WordStoryByGPT[]
@@ -87,6 +88,7 @@ model WordList {
   explanationScript          String?
   explanationAudioFilename   String?
   remark                     String?
+  detailExplanation                     String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @default(now()) @updatedAt
   blocks          WordListBlock[]

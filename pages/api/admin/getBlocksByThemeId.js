@@ -1,11 +1,13 @@
 import { getS3MovieFileUrl } from '@/utils/aws-s3-utils';
 import { getBlocks, getWordListByCriteria } from '../../../utils/prisma-utils';
 
+
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {  
       const themeId = parseInt(req.query.themeId);
       const includeWordInfo = req.query.includeWordInfo === 'true'; // includeWordInfo パラメータを取得
+      const summarizeByCategory = req.query.summarizeByCategory === 'true'; // summarizeByCategory パラメータを取得
 
       // Blocksの取得
       const blocks = await getBlocks(themeId);
@@ -53,6 +55,22 @@ export default async function handler(req, res) {
             explanationMovieUrl
           };
         }));
+      }
+
+
+      // カテゴリごとにまとめる処理
+      if (summarizeByCategory) {
+        const blocksByCategory = updatedBlocks.reduce((acc, block) => {
+          const categoryName = block.categoryName || 'Unknown'; // categoryNameがない場合は'Unknown'を使う
+          if (!acc[categoryName]) {
+            acc[categoryName] = { categoryName, blocks: [] };
+          }
+          acc[categoryName].blocks.push(block);
+          return acc;
+        }, {});
+
+        // 結果を配列形式に変換
+        updatedBlocks = Object.values(blocksByCategory);
       }
 
       res.status(200).json({ blocks: updatedBlocks });

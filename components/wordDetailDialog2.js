@@ -17,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { playAudio, stopAudio, pauseAudio } from '@/utils/audioPlayer';
 import GPTCoachButton from './gptCoachButton';
 import { playAudioMP3, stopAudioMP3 } from '@/utils/audioPlayer';
+import { markdownToHTML } from '@/utils/utils';
 
 
 const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordList, initialTabValue, tabDisabledPersonalizedEx, tabDisabledAIReview }) => {
@@ -355,7 +356,12 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
 
             {tabValue === 1 && (
                 <DialogContent>
-
+                    <Box sx={{maxWidth: '700px', display: 'flex', justifyContent: 'center', margin: '0 auto'}}>
+                        <div 
+                            style={{ whiteSpace: 'pre-wrap' }}
+                            dangerouslySetInnerHTML={{ __html: markdownToHTML(word.detailExplanation) }} 
+                        />                    
+                    </Box>
                 </DialogContent>
             )}
 

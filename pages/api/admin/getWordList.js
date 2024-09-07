@@ -10,6 +10,7 @@ export default async function handler(req, res) {
       // const userId = session.userId; // セッションから userId を取得
 
       const { blockId } = req.query;
+
       if (!blockId) {
         return res.status(400).json({ error: 'Theme and block are required' });
       }

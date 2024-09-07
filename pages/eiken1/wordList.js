@@ -268,169 +268,175 @@ const WordListPage = () => {
   
   console.log('wordList', wordList)
   return (
-    <Container>
-      {isLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <CircularProgress />
-        </div>
-      ) : (
-          <>
-            <Box sx={{mt: 2}}>
-              <Box display="flex" alignItems="center" onClick={handleBack} sx={{cursor: 'pointer'}}>
-                <Typography sx={{mb: 1, mr: 2}}>
-                    戻る
-                </Typography>
-              </Box>
+    <>
+      <SEOHeader title="爆速で覚える英検１級単語"/>
+      <Container>
+        {isLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress />
+          </div>
+        ) : (
+            <>
+              <Box sx={{mt: 2}}>
+                <Box display="flex" alignItems="center" onClick={handleBack} sx={{cursor: 'pointer'}}>
+                  <Typography sx={{mb: 1, mr: 2}}>
+                      戻る
+                  </Typography>
+                </Box>
 
-              <Box display="flex" alignItems="center" justifyContent="flex-start">
-                <IconButton
-                  onClick={() => handleBlockMoveClick(-1)}
-                >
-                  <ArrowBackIosIcon />
-                </IconButton>
-                <Avatar sx={{ bgcolor: 'primary.main', color: '#fff', ml: 1, mr: 1 }}>
-                  {block?.name}
-                </Avatar>
-                <IconButton
-                  onClick={() => handleBlockMoveClick(1)}
+                <Box display="flex" alignItems="center" justifyContent="flex-start">
+                  <IconButton
+                    onClick={() => handleBlockMoveClick(-1)}
                   >
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              </Box>
-            </Box>
-
-        <Box sx={{mt: 2}}>
-          <>
-            <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
-              {/* <IconButton onClick={() => setFilterDialogOpen(true)} sx={{mr: 3}}>
-                <FilterListIcon />
-              </IconButton> */}
-              {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
-                フィルター解除
-              </Button> */}
-              {/* <Box sx={{mr: 3}}>
-                <GPTCoachButton words={filteredWordList} />
-              </Box> */}
-              {/* <Box sx={{mr: 3}}>
-                <AudioPlayerModalButton words={filteredWordList} />
-              </Box> */}
-
-
-            </Box>
-            <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-              <Table >
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell style={{ width: '10px' }} >No</TableCell>
-                    <TableCell style={{ width: '100px' }}>
-                      英語
-                    </TableCell>
-                    <TableCell style={{ width: '100px' }}>
-                      意味
-                      <IconButton onClick={toggleJapaneseVisibility} style={{ marginLeft: 8 }}>
-                        {showJapanese ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </TableCell>
-                    {isLargeScreen && (
-                      <TableCell style={{ width: '400px' }}>
-                        例文
-                      </TableCell>
-                    )}
-
-                  </TableRow>
-                </TableHead>
-
-
-                <TableBody>
-                  {filteredWordList?.map((word, index) => (
-                    <TableRow 
-                      key={index}
-                      sx={{ 
-                        backgroundColor: index % 2 === 0 ? theme.palette.primary.light : 'white', // 偶数行に薄灰色の背景を適用
-                        cursor: 'pointer', 
-                        verticalAlign: 'top'
-                      }}
-                      onClick={(event) => handleOpenModalWord(event, index)}
+                    <ArrowBackIosIcon />
+                  </IconButton>
+                  <Avatar sx={{ bgcolor: 'primary.main', color: '#fff', ml: 1, mr: 1 }}>
+                    {block?.name}
+                  </Avatar>
+                  <IconButton
+                    onClick={() => handleBlockMoveClick(1)}
                     >
-                      <TableCell style={{ width: '10px' }} >{index+1}</TableCell>
-                      <TableCell sx={{ verticalAlign: 'top', width: '100px' }}>
-                        <Typography variant="body2">{word.english}</Typography>
-                      </TableCell>
-                      <TableCell sx={{ verticalAlign: 'top', width: '100px' }}>
-                        {showJapanese || visibleRows[word.id]?.showJapanese ? (
-                          <>
-                            <Typography variant="body2">{word.japanese}</Typography>
-                            {word.imageUrl && (
-                              <img 
-                                src={word.imageUrl} 
-                                alt={word.english} 
-                                style={{ maxWidth: '200px', maxHeight: 'auto', objectFit: 'contain', display: 'block', marginTop: '8px' }} 
-                              />
-                            )}
-                            {/* <GPTCoachButton words={[word]} styleType="LINK" /> */}
-                          </>
-                        ) : (
-                          <>
-                            {visibleRows[word.id]?.showButton && (
-                              <Button 
-                                onClick={() => handleViewClick(word.id)}
-                                sx={{
-                                  fontSize: theme.typography.body2.fontSize,
-                                  margin: 0,
-                                  padding: 0,
-                                  textTransform: 'none' // ボタンテキストの大文字変換を防止
-                                }}
-                              >
-                              見る
-                            </Button>
+                    <ArrowForwardIosIcon />
+                  </IconButton>
+                </Box>
+              </Box>
 
-                            )}
-                            <div style={{ width: '200px', height: '200px', backgroundColor: 'transparent', marginTop: '8px' }}></div>
-                          </>
-                        )}
+          <Box sx={{mt: 2}}>
+            <>
+              <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
+                {/* <IconButton onClick={() => setFilterDialogOpen(true)} sx={{mr: 3}}>
+                  <FilterListIcon />
+                </IconButton> */}
+                {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
+                  フィルター解除
+                </Button> */}
+                {/* <Box sx={{mr: 3}}>
+                  <GPTCoachButton words={filteredWordList} />
+                </Box> */}
+                {/* <Box sx={{mr: 3}}>
+                  <AudioPlayerModalButton words={filteredWordList} />
+                </Box> */}
+
+
+              </Box>
+              <TableContainer component={Paper} sx={{ marginTop: 2 }}>
+                <Table >
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                      <TableCell style={{ width: '10px' }} >No</TableCell>
+                      <TableCell style={{ width: '100px' }}>
+                        英語
+                      </TableCell>
+                      <TableCell style={{ width: '100px' }}>
+                        意味
+                        <IconButton onClick={toggleJapaneseVisibility} style={{ marginLeft: 8 }}>
+                          {showJapanese ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
                       </TableCell>
                       {isLargeScreen && (
                         <TableCell style={{ width: '400px' }}>
-                          <Box>
-                            {word.exampleSentenceE}
-                          </Box>
-                          <Box>
-                            {word.exampleSentenceJ}
-                          </Box>
+                          例文
                         </TableCell>
                       )}
-                    </TableRow>
-                  ))}
-                </TableBody>
 
-              </Table>
-            </TableContainer>
+                    </TableRow>
+                  </TableHead>
+
+
+                  <TableBody>
+                    {filteredWordList?.map((word, index) => (
+                      <TableRow 
+                        key={index}
+                        sx={{ 
+                          backgroundColor: index % 2 === 0 ? theme.palette.primary.light : 'white', // 偶数行に薄灰色の背景を適用
+                          cursor: 'pointer', 
+                          verticalAlign: 'top'
+                        }}
+                        onClick={(event) => handleOpenModalWord(event, index)}
+                      >
+                        <TableCell style={{ width: '10px' }} >{index+1}</TableCell>
+                        <TableCell sx={{ verticalAlign: 'top', width: '100px' }}>
+                          <Typography variant="body2">{word.english}</Typography>
+                        </TableCell>
+                        <TableCell sx={{ verticalAlign: 'top', width: '100px' }}>
+                          {showJapanese || visibleRows[word.id]?.showJapanese ? (
+                            <>
+                              <Typography variant="body2">{word.japanese}</Typography>
+                              {word.imageUrl && (
+                                <img 
+                                  src={word.imageUrl} 
+                                  alt={word.english} 
+                                  style={{ maxWidth: '200px', maxHeight: 'auto', objectFit: 'contain', display: 'block', marginTop: '8px' }} 
+                                />
+                              )}
+                              {/* <GPTCoachButton words={[word]} styleType="LINK" /> */}
+                            </>
+                          ) : (
+                            <>
+                              {visibleRows[word.id]?.showButton && (
+                                <Button 
+                                  onClick={() => handleViewClick(word.id)}
+                                  sx={{
+                                    fontSize: theme.typography.body2.fontSize,
+                                    margin: 0,
+                                    padding: 0,
+                                    textTransform: 'none' // ボタンテキストの大文字変換を防止
+                                  }}
+                                >
+                                  見る
+                                </Button>
+
+                              )}
+                              <div style={{ width: '200px', height: '200px', backgroundColor: 'transparent', marginTop: '8px' }}></div>
+                            </>
+                          )}
+                        </TableCell>
+                        {isLargeScreen && (
+                          <TableCell style={{ width: '400px' }}>
+                            <Box>
+                              {word.exampleSentenceE}
+                            </Box>
+                            {(showJapanese || visibleRows[word.id]?.showJapanese) && (
+                              <Box>
+                                {word.exampleSentenceJ}
+                              </Box>
+                            )}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+
+                </Table>
+              </TableContainer>
+
+            </>
+
+          </Box>
 
           </>
+        )}
 
-        </Box>
+        <WordDetailDialog
+          open={modalOpenWord}
+          onClose={() => setModalOpenWord(false)}
+          wordList={filteredWordList}
+          initialIndex={selectedIndex}
+          updateWordList={updateWordList}
+          initialTabValue={tabForWordDetailDialog || 0}
+        />
 
-        </>
-      )}
-
-      <WordDetailDialog
-        open={modalOpenWord}
-        onClose={() => setModalOpenWord(false)}
-        wordList={filteredWordList}
-        initialIndex={selectedIndex}
-        updateWordList={updateWordList}
-        initialTabValue={tabForWordDetailDialog || 0}
-      />
-
-      <FilterDialog
-        open={filterDialogOpen}
-        onClose={()=>setFilterDialogOpen(false)}
-        filterSettings={filterSettings}
-        setFilterSettings={setFilterSettings}
-      />
+        <FilterDialog
+          open={filterDialogOpen}
+          onClose={()=>setFilterDialogOpen(false)}
+          filterSettings={filterSettings}
+          setFilterSettings={setFilterSettings}
+        />
 
 
-    </Container>
+      </Container>
+    </>
+
   );
 };
 

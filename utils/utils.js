@@ -188,3 +188,26 @@ export function convertToSSML(text) {
   // 最終的なSSML
   return `<speak>${ssmlText}</speak>`;
 }
+
+export function markdownToHTML(text) {
+  // 見出し（#）
+  text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');  // H3
+  text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');   // H2
+  text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');    // H1
+
+  // 強調（*italic*）
+  text = text.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+
+  // 太字（**bold**）
+  text = text.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+
+  // 番号なしリスト（-）
+  text = text.replace(/^\- (.*$)/gim, '<li>$1</li>');
+  text = text.replace(/<\/li>(\n<li>)/gim, '<ul>$1</ul>'); // リストの囲み
+
+  // 改行
+  text = text.replace(/\n$/gim, '<br />');
+
+  return text.trim(); // 余分な空白の削除
+}
+
