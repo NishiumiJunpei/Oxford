@@ -357,10 +357,12 @@ const WordDetailDialog = ({ open, onClose, wordList, initialIndex, updateWordLis
             {tabValue === 1 && (
                 <DialogContent>
                     <Box sx={{maxWidth: '700px', display: 'flex', justifyContent: 'center', margin: '0 auto'}}>
-                        <div 
-                            style={{ whiteSpace: 'pre-wrap' }}
-                            dangerouslySetInnerHTML={{ __html: markdownToHTML(word.detailExplanation) }} 
-                        />                    
+                        {word.detailExplanation && (
+                            <div 
+                                style={{ whiteSpace: 'pre-wrap' }}
+                                dangerouslySetInnerHTML={{ __html: markdownToHTML(word.detailExplanation) }} 
+                            />                    
+                        )}
                     </Box>
                 </DialogContent>
             )}
