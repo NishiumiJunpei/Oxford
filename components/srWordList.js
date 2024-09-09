@@ -6,7 +6,7 @@ import {
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Deleteアイコンのインポート
-import WordDetailDialog from './wordDetailDialog';
+import WordDetailDialog from './wordDetailDialog2';
 import { timeAgo } from '@/utils/utils'; // timeAgo関数をインポート
 import SrTimingDialog  from './srTimingDialog';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
