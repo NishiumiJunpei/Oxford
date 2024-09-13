@@ -1,6 +1,6 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getBlock, getWordListByCriteria, getWordListUserStatus, findBlockByDisplayOrderAndThemeId, getWordStoriesByUserIdAndBlockId, getBlocks } from '../../../utils/prisma-utils';
-import { getS3FileUrl, getS3AudioFileUrl } from '../../../utils/aws-s3-utils';
+import { getS3FileUrl, getS3AudioFileUrl, getS3MovieFileUrl } from '../../../utils/aws-s3-utils';
 import { getTimeDifferenceText, isWithinDays } from '@/utils/utils';
 
 export default async function handler(req, res) {
@@ -18,6 +18,20 @@ export default async function handler(req, res) {
       };
 
       const block = await getBlock(parseInt(blockId));
+
+      // 非同期処理を並列に行うためにPromise.allを使用
+      const [normalMovieUrl, reproductionMovieUrl, explanationMovieUrl] = await Promise.all([
+        block.normalMovieFilename ? getS3MovieFileUrl(block.normalMovieFilename) : null,
+        block.reproductionMovieFilename ? getS3MovieFileUrl(block.reproductionMovieFilename) : null,
+        block.explanationMovieFilename ? getS3MovieFileUrl(block.explanationMovieFilename) : null
+      ]);
+      
+      // 結果をblockに追加
+      block.normalMovieUrl = normalMovieUrl;
+      block.reproductionMovieUrl = reproductionMovieUrl;
+      block.explanationMovieUrl = explanationMovieUrl;
+      
+
       const blocks = await getBlocks(block.theme.id)      
 
       const wordList = await getWordListByCriteria(criteria);

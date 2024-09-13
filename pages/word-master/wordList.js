@@ -19,6 +19,7 @@ import { Visibility, VisibilityOff, Error, StarBorder, Star, CheckBox } from '@m
 import SrTimingDialog from '@/components/srTimingDialog';
 import SEOHeader from '@/components/seoHeader';
 import AudioPlayerModalButton from '@/components/audioPlayerModalButton';
+import VideoDialogButton from '@/components/videoDialogButton';
 
 
 const FilterDialog = ({ open, onClose, filterSettings, setFilterSettings }) => {
@@ -483,6 +484,32 @@ const WordListPage = () => {
 
         <Box sx={{mt: 5}}>
           <>
+            <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', mb: 3}}>
+              {block?.normalMovieUrl && (
+                <Box sx={{mr: 3}}>
+                  <VideoDialogButton
+                    videoUrl={block.normalMovieUrl}
+                    videoTitle="キソ動画"
+                    buttonText="キソ動画"
+                  />
+                </Box>
+              )}
+              {block?.explanationMovieUrl && (
+                <Box sx={{mr: 3}}>
+                  <VideoDialogButton
+                    videoUrl={block.explanationMovieUrl}
+                    videoTitle="解説動画"
+                    buttonText="解説動画"
+                    messageType={1}
+                  />
+                </Box>
+              )}
+               
+              <Button 
+                onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{mr: 3}}>
+                  アセスメント
+              </Button>
+            </Box>
             <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center'}}>
               <IconButton onClick={() => setFilterDialogOpen(true)} sx={{mr: 3}}>
                 <FilterListIcon />
@@ -490,21 +517,18 @@ const WordListPage = () => {
               {/* <Button variant='text' color='inherit' onClick={handleRemoveFilter}>
                 フィルター解除
               </Button> */}
-              <Box sx={{mr: 3}}>
+              {/* <Box sx={{mr: 3}}>
                 <GPTCoachButton words={filteredWordList} />
-              </Box>
+              </Box> */}
               <Box sx={{mr: 3}}>
                 <AudioPlayerModalButton words={filteredWordList} />
               </Box>
-              <Button variant="contained" color="primary" 
-                onClick={() => router.push(`/word-master/learnWordsCriteriaInput?blockId=${blockId}&languageDirection=${languageDirection}`)} sx={{mr: 3}}>
-                  アセスメント
-              </Button>
               <Button variant="contained" color="primary" onClick={handleSrDialogOpen} sx={{mr: 3}}> 
                 間隔反復セット
               </Button>
 
             </Box>
+
             <TableContainer component={Paper} sx={{ marginTop: 5 }}>
               <Table sx={{ maxWidth: 800 }}>
                 <TableHead>
