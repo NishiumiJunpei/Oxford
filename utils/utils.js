@@ -190,24 +190,20 @@ export function convertToSSML(text) {
 }
 
 export function markdownToHTML(text) {
-  // 見出し（#）
+  // 見出し（#）の変換
   text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');  // H3
   text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');   // H2
   text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');    // H1
 
-  // 強調（*italic*）
-  text = text.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+  // 強調表現の変換（太字と斜体のみ）
+  text = text.replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>');  // 太字
+  text = text.replace(/\*(.*?)\*/gim, '<i>$1</i>');  // 斜体
 
-  // 太字（**bold**）
-  text = text.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+  // 段落の変換
+  text = text.replace(/\n\n/gim, '</p><p>');  // 改行2回で段落分け
 
-  // 番号なしリスト（-）
-  text = text.replace(/^\- (.*$)/gim, '<li>$1</li>');
-  text = text.replace(/<\/li>(\n<li>)/gim, '<ul>$1</ul>'); // リストの囲み
+  // 最初と最後に<p>タグを追加
+  text = '<p>' + text + '</p>';
 
-  // 改行
-  text = text.replace(/\n$/gim, '<br />');
-
-  return text.trim(); // 余分な空白の削除
+  return text.trim();  // 余計なスペースや改行を削除
 }
-

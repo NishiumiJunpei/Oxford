@@ -7,7 +7,6 @@ export default function SEOHeader({ title, description, url, image }) {
   const metaDescription = description || "Welcome to SusuEnglish, the best place for English Learning using GPT";
   const metaUrl = url || process.env.NEXT_PUBLIC_DOMAIN_URL;
   const metaImage = image || `${process.env.NEXT_PUBLIC_DOMAIN_URL}/logo-mark.png`;
-  console.log(metaImage)
   return (
     <Head>
       {/* ページタイトル */}

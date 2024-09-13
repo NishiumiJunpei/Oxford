@@ -61,7 +61,7 @@ export default async function handler(req, res) {
       // カテゴリごとにまとめる処理
       if (summarizeByCategory) {
         const blocksByCategory = updatedBlocks.reduce((acc, block) => {
-          const categoryName = block.categoryName || 'Unknown'; // categoryNameがない場合は'Unknown'を使う
+          const categoryName = block.categoryName || '英単語ブロック'; 
           if (!acc[categoryName]) {
             acc[categoryName] = { categoryName, blocks: [] };
           }

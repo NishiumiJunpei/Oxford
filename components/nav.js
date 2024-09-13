@@ -57,7 +57,7 @@ function Nav({ isOpen, onClose, isMobile }) {
             <ListItemIcon>
               <ImportContactsIcon /> {/* 理解度ステータスのアイコン */}
             </ListItemIcon>
-            <ListItemText primary="英単語マスター" />
+            <ListItemText primary="英単語帳" />
           </ListItem>
           {/* <ListItem button component="a" href="/word-master/myWordList">
             <ListItemIcon>

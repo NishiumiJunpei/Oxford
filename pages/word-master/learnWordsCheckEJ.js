@@ -129,7 +129,7 @@ const FinishLearnWordsCheck = ({block, notMemorizedWordList, languageDirection, 
           <Box display="flex" alignItems="center" justifyContent="flex-start" sx={{mt: 5, mb: 5}}>
             <Link href={`/word-master/wordMasterTop`} passHref>
               <Button variant="default" color="link" sx={{marginTop: 3}}>
-                英単語マスタートップへ
+                英単語帳トップへ
               </Button>
             </Link>
             {themeAllWordsFlag == '0' &&(

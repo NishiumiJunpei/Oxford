@@ -16,12 +16,12 @@ export default function Custom404() {
       <Typography variant="body1" sx={{ marginBottom: '32px' }}>
         ご不便をおかけして申し訳ありません。お探しのページは削除されたか、URLが変更された可能性があります。
       </Typography>
-      <Link href="/public/homepage" passHref>
+      <Link href="/" passHref>
         <Button variant="contained" color="primary" sx={{ marginRight: '12px' }}>
           ホームページへ戻る
         </Button>
       </Link>
-      <Link href="/" passHref>
+      <Link href="/appHome" passHref>
         <Button variant="contained" color="primary">
           アプリトップ
         </Button>
