@@ -3,7 +3,7 @@
 export async function getServerSideProps(context) {
   return {
     redirect: {
-      destination: '/appHome',
+      destination: '/eiken1',
       permanent: false,
     },
   };
