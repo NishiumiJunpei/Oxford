@@ -1,5 +1,3 @@
-// components/VideoDialogButton.js
-
 import React, { useState } from 'react';
 import {
   Button, Dialog, DialogContent, DialogTitle,
@@ -37,6 +35,11 @@ const VideoDialogButton = ({
     message = 'この動画はAI音声を使用しているため、一部の発音が正確でない場合があります。';
   }
 
+  // 右クリック無効化の関数
+  const disableRightClick = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       <Button onClick={handleOpen} {...buttonProps}>
@@ -62,7 +65,13 @@ const VideoDialogButton = ({
         <DialogContent>
           {videoUrl ? (
             <>
-              <video controls width="100%">
+              {/* 動画の右クリックを無効化し、controlsListでダウンロードを禁止 */}
+              <video 
+                controls 
+                width="100%" 
+                controlsList="nodownload" 
+                onContextMenu={disableRightClick}
+              >
                 <source src={videoUrl} type="video/mp4" />
                 お使いのブラウザは動画タグをサポートしていません。
               </video>
