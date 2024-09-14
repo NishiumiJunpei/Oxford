@@ -18,7 +18,6 @@ const WordMasterTop = () => {
   const [blocks, setBlocks] = useState([]);
   const [tabValue, setTabValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [weakWordList, setWeakWordList] = useState([]);
   const [srWordList, setSrWordList] = useState({});
   const [srWordCount, setSrWordCount] = useState(0);
 
@@ -63,7 +62,7 @@ const WordMasterTop = () => {
     };
 
     fetchSrWordsToReview();  // 間隔反復タブが選択されたときのみ実行
-  }, [tabValue]);  // タブの値が変更されるたびに実行
+  }, [tabValue, srWordList]);  
 
   const handleBlockClick = (blockId, languageDirection) => {
     router.push(`/word-master/wordList?blockId=${blockId}&languageDirection=${languageDirection || 'EJ'}`);
@@ -74,7 +73,6 @@ const WordMasterTop = () => {
     router.push(`/word-master/wordMasterTop?tab=${newValue}`, undefined, { shallow: true });
   };
 
-  console.log('test', blocks)
   return (
     <>
       <SEOHeader title="英単語ブロック一覧" />
@@ -97,7 +95,7 @@ const WordMasterTop = () => {
             {tabValue === 0 && (
               <>
                 {blocks.map((category) => (
-                  <Box key={category.categoryName} sx={{ mt: 7 }}>
+                  <Box key={category.categoryName} sx={{ mt: 7, mb: 5 }}>
                     <Typography
                       variant="h5"
                       gutterBottom
@@ -109,7 +107,7 @@ const WordMasterTop = () => {
                     >
                       {category.categoryName}
                     </Typography>
-                    <TableContainer component={Paper} sx={{ marginTop: 5, mb: 5 }}>
+                    <TableContainer component={Paper} sx={{ marginTop: 5 }}>
                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                           <TableRow>
