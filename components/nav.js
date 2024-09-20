@@ -47,7 +47,7 @@ function Nav({ isOpen, onClose, isMobile }) {
 
       <List>
         {/* ListItems... */}
-        <ListItem button component="a" href="/">
+        <ListItem button component="a" href="/appHome">
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>

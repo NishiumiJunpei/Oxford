@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link, Avatar, IconButton } from '@mui/material';
 // import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
-import WordDetailDialog from '@/components/wordDetailDialog';
+import WordDetailDialog from '@/components/wordDetailDialog2';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { playCorrectSound } from '@/utils/audioPlayer';
 import SEOHeader from '@/components/seoHeader';

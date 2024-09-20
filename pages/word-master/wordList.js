@@ -449,7 +449,6 @@ const WordListPage = () => {
   });
 
   
-  console.log('wordList', wordList)
   return (
     <Box maxWidth="lg">
       {isLoading ? (
@@ -460,8 +459,8 @@ const WordListPage = () => {
           <>
             <Box >
               <Box display="flex" alignItems="center" onClick={handleBack} sx={{cursor: 'pointer'}}>
-                <Typography variant="h4"sx={{mb: 1, mr: 2}}>
-                    {block?.theme.name}
+                <Typography variant="h5"sx={{mb: 1, mr: 2}}>
+                    {block?.theme.name} - {block?.categoryName}
                 </Typography>
               </Box>
 

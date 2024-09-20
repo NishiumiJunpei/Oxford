@@ -5,7 +5,7 @@ import { Typography, Button, Box, CircularProgress, Container,Table, TableBody, 
   Paper, Link, Avatar, IconButton,TextField, Tabs, Tab } from '@mui/material';
 // import Link from 'next/link';
 import CloseIcon from '@mui/icons-material/Close'; // 終了アイコンのインポート
-import WordDetailDialog from '@/components/wordDetailDialog';
+import WordDetailDialog from '@/components/wordDetailDialog2';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { playCorrectSound } from '@/utils/audioPlayer';
