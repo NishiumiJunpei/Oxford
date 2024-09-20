@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { PlayArrow, Stop, SkipNext, SkipPrevious } from '@mui/icons-material'; 
 import { playAudioMP3, stopAudioMP3 } from '../utils/audioPlayer';
 
@@ -8,6 +8,7 @@ const AudioPlayerModalButton = ({ words }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentWord, setCurrentWord] = useState(null);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
   const isStopped = useRef(false); 
 
   const totalWords = words.length;
@@ -39,7 +40,7 @@ const AudioPlayerModalButton = ({ words }) => {
       setCurrentIndex(index);
 
       try {
-        await playAudioMP3(word.explanationAudioUrl);
+        await playAudioMP3(word.explanationAudioUrl, playbackRate);
         await new Promise(resolve => setTimeout(resolve, 2000));
         playWordAudio(index + 1);
       } catch (error) {
@@ -64,7 +65,7 @@ const AudioPlayerModalButton = ({ words }) => {
       setCurrentWord(words[nextIndex]);
       if (isPlaying) {
         try {
-          await playAudioMP3(words[nextIndex].explanationAudioUrl); 
+          await playAudioMP3(words[nextIndex].explanationAudioUrl, playbackRate); 
         } catch (error) {
           console.error('Error playing next audio:', error);
         }
@@ -80,13 +81,18 @@ const AudioPlayerModalButton = ({ words }) => {
       handleStop(); 
       if (isPlaying) {
         try {
-          await playAudioMP3(words[prevIndex].explanationAudioUrl); 
+          await playAudioMP3(words[prevIndex].explanationAudioUrl, playbackRate); 
         } catch (error) {
           console.error('Error playing previous audio:', error);
         }
       }
     }
   };
+
+  const handleSpeedChange = (rate) => {
+    setPlaybackRate(rate);
+  };
+  
 
   return (
     <div>
@@ -120,23 +126,39 @@ const AudioPlayerModalButton = ({ words }) => {
           )}
         </DialogContent>
         <DialogActions>
-          <IconButton onClick={handlePlay} disabled={isPlaying} color="primary">
-            <PlayArrow />
-          </IconButton>
-          <IconButton onClick={handleStop} disabled={!isPlaying} color="error">
-            <Stop />
-          </IconButton>
-          <>
-            <IconButton onClick={handlePrev} disabled={currentIndex === 0} color="primary">
-              <SkipPrevious />
+            <IconButton onClick={handlePlay} disabled={isPlaying} color="primary">
+              <PlayArrow />
             </IconButton>
-            <IconButton onClick={handleNext} disabled={currentIndex >= totalWords - 1} color="primary">
-              <SkipNext />
+            <IconButton onClick={handleStop} disabled={!isPlaying} color="error">
+              <Stop />
             </IconButton>
-          </>
-          <Button onClick={handleClose}>
-            閉じる
-          </Button>
+            <>
+              <IconButton onClick={handlePrev} disabled={currentIndex === 0} color="primary">
+                <SkipPrevious />
+              </IconButton>
+              <IconButton onClick={handleNext} disabled={currentIndex >= totalWords - 1} color="primary">
+                <SkipNext />
+              </IconButton>
+            </>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel id="speed-select-label">再生速度</InputLabel>
+              <Select
+                labelId="speed-select-label"
+                id="speed-select"
+                value={playbackRate}
+                onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
+                label="再生速度"
+              >
+                <MenuItem value={1.0}>1.0x</MenuItem>
+                <MenuItem value={1.25}>1.25x</MenuItem>
+                <MenuItem value={1.5}>1.5x</MenuItem>
+                <MenuItem value={2.0}>2.0x</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Button onClick={handleClose}>
+              閉じる
+            </Button>
         </DialogActions>
       </Dialog>
     </div>

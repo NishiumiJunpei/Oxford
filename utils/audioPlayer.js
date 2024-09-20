@@ -47,7 +47,7 @@ export const stopAudio = () => {
 //------------------------------   mp3用  ------------------------------------
 let audioRef = null; // audioRefはグローバルで保持
 
-export const playAudioMP3 = (audioUrl) => {
+export const playAudioMP3 = (audioUrl, playbackRate = 1.0) => {
     return new Promise((resolve, reject) => {
         if (audioRef) {
             audioRef.pause(); // 再生中の音声を停止
@@ -55,6 +55,7 @@ export const playAudioMP3 = (audioUrl) => {
         }
 
         audioRef = new Audio(audioUrl); // 新しいオーディオインスタンスを作成
+        audioRef.playbackRate = playbackRate; // 再生速度を設定
 
         audioRef.play()
             .then(() => {
