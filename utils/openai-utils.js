@@ -609,54 +609,105 @@ export async function generatePhraseSentences(conditionData, numSentence) {
   }
 }
 
-export async function generatePhraseSentencesOLD(category1, category2, category2_desc, engLevel, numSentence) {
-  try{
-    console.log('gpt api called')
+export async function generateSpeakingTopicData(category, topic) {
+  try {
+    // Task 1: Generate the knowledge base
+    const generateKnowledgeBase = async () => {
+      const content = `
+        Please organize a structured knowledge base in English about the topic "${topic}" under the category "${category}". 
+        Include overview, poblems, impact of problems, causes, solutions. each should have examples of Japan. 
 
-    const content = `
-    あなたは日本一人気がある英語教師です。
-    下記のテーマにおいて、ネイティブがよく使う英語フレーズを、${engLevel}のレベルで、${numSentence}個作ってください。
-    回答はアウトプットフォーマットの通りJSON形式の配列にしてください。
-    必ず${numSentence}個の作成して、${numSentence}個の要素数の配列になるようにしてください。
-    senteceEはアメリカのネイティブが使う英文
-    sentenceJは自然な日本語訳
-    
-    ＃テーマ
-    ${category1}
-    ${category2}
-    ${category2_desc}
-    
-    ＃アウトプットフォーマット
-    {
-      phrases:
-      [
-        {""sentenceE"": ""XXXX"",
-        ""sentenceJ"": ""XXXX"",
-        },
-        {""sentenceE"": ""XXXX"",
-        ""sentenceJ"": ""XXXX"",
-        },
-        ....
-      ]
-    
-    }
-    `;
-    
+        output format (all English)
+        ### Problems
+        **1.XXX**
+        XXXXXXX
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview", //"gpt-4-0125-preview", //"gpt-3.5-turbo-1106", // "gpt-4-1106-preview",gpt-4, gpt-3.5-turbo-1106
-      messages: [{role: 'assistant', content }],
-      response_format: { "type": "json_object" },
-      temperature: 0.2,
-    });
+        **2.XXX**
+        XXXXXXX
 
-    const responseJSON = JSON.parse(response.choices[0].message.content)
-    
-    return responseJSON.phrases;
+        **3.XX**
+        XXXXXXX
+
+        ### Causes
+        ...
+
+      `;
+
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content }],
+        temperature: 0.2,
+      });
+
+      return response.choices[0].message.content;
+    };
+
+    // Task 2: Generate the presentation script
+    const generatePresentation = async () => {
+      const content = `
+        Create a presentation script in English explaining the structured issues and solutions with examples for the topic "${topic}". 
+
+        output format
+        ### Introduction
+        XXXXX
+
+        ### Body
+        **1. Problem**
+        **2. Impact and Causes**
+        **3. Solutions and Conclusion**
+
+        ### Conclusion
+        XXXXX
+      `;
+
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content }],
+        temperature: 0.2,
+      });
+
+      return response.choices[0].message.content;
+    };
+
+    // Task 3: Generate the conversation
+    const generateConversation = async () => {
+      const content = `
+        Create a conversation in English between two people discussing the topic "${topic}". 
+        The conversation should cover the problems and possible solutions.
+
+        output format
+        ### PersonA
+        XXXXX
+        ### PersonB
+        XXXXX
+
+      `;
+
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content }],
+        temperature: 0.2,
+      });
+
+      return response.choices[0].message.content;
+    };
+
+    // 並列で各タスクを実行
+    const [knowledgeBase, presentation, conversation] = await Promise.all([
+      generateKnowledgeBase(),
+      generatePresentation(),
+      generateConversation(),
+    ]);
+
+    // 3つの結果を持つオブジェクトを返す
+    return {
+      knowledgeBase,
+      presentation,
+      conversation,
+    };
 
   } catch (error) {
-    console.error('generatePhraseSentences error:', error);
-    throw error; // このエラーを上位の関数に伝播させます
+    console.error('generateSpeakingTopicData error:', error);
+    throw error; // エラーを上位に伝播
   }
 }
-

@@ -46,11 +46,11 @@ function NavAdmin({ isOpen, onClose, isMobile }) {
           <ListItemText primary="テーマ別英単語再生(YT)" />
         </ListItem>
 
-        <ListItem button component="a" href={`/admin/fbp`}>
+        <ListItem button component="a" href={`/admin/speaking/topicList`}>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="書籍プロジェクト🎶" />
+          <ListItemText primary="スピーキング🎶" />
         </ListItem>
 
         <Divider/>

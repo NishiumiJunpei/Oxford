@@ -190,6 +190,8 @@ export function convertToSSML(text) {
 }
 
 export function markdownToHTML(text) {
+  if (!text) return ''; // textが未定義またはnullの場合、空文字を返す
+
   // 見出し（#）の変換
   text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');  // H3
   text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');   // H2
