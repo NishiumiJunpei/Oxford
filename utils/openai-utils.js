@@ -698,10 +698,12 @@ export async function generateSpeakingTopicData(category, topic) {
       const content = `
         Generate a dialogue between two individuals discussing "${topic}". One person should take a more critical stance, questioning the current state or approach to the issue, while the other defends it but acknowledges areas for improvement. Both should offer creative suggestions for how to address the challenges or enhance the current strategy. The conversation should feel natural, with moments of agreement, disagreement, and thoughtful reflection. Include a mix of factual information and personal opinion, avoiding overly formal language.
 
+        Assign random Western names to "Person A" and "Person B."
+
         output format (all English)
-        ### PersonA
+        ### [Random Name for Person A]
         XXXXX
-        ### PersonB
+        ### [Random Name for Person B]
         XXXXX
 
       `;
