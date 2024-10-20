@@ -614,11 +614,20 @@ export async function generateSpeakingTopicData(category, topic) {
     // Task 1: Generate the knowledge base
     const generateKnowledgeBase = async () => {
       const content = `
-        Please organize a structured knowledge base in English about the topic "${topic}" under the category "${category}". 
-        Include overview, poblems, impact of problems, causes, solutions. each should have examples of Japan. 
+        Organize a knowledge framework on "${topic}" using the following structure:
+
+        Overview: Summarize the theme and its broader significance.
+        Key Problems: Identify major challenges, using specific examples or statistics from Japan where applicable.
+        Impact of Problems: Explain the societal or economic impact, both in Japan and globally, with supporting data or examples.
+        Causes: Outline root causes, focusing on social, political, or economic factors in Japan, supported by relevant data or facts.
+        Solutions: Suggest actionable solutions with examples from Japan (e.g., policies, innovations).
+        Future Outlook: Discuss future trends and developments.
 
         output format (all English)
-        ### Problems
+        ### Overview
+        XXX
+
+        ### Key Problems
         **1.XXX**
         XXXXXXX
 
@@ -628,8 +637,17 @@ export async function generateSpeakingTopicData(category, topic) {
         **3.XX**
         XXXXXXX
 
-        ### Causes
-        ...
+        ### Impact of Problems
+        **1.XXX**
+        XXXXXXX
+
+        **2.XXX**
+        XXXXXXX
+
+        **3.XX**
+        XXXXXXX
+
+        ... repeat like key probelms and impact of problems
 
       `;
 
@@ -645,25 +663,31 @@ export async function generateSpeakingTopicData(category, topic) {
     // Task 2: Generate the presentation script
     const generatePresentation = async () => {
       const content = `
-        Create a presentation script in English explaining the structured issues and solutions with examples for the topic "${topic}". 
+        Create a compelling presentation script addressing the given social issue. Topic: "${topic}"        
+       
+        ### Introduction:
+        Briefly introduce the social issue and explain its importance. Use data, statistics, or a real-life example to grab attention.
 
-        output format
-        ### Introduction
-        XXXXX
+        ### Key Points Summary:
+        Clearly state the main solution or approach to addressing the problem.
 
-        ### Body
-        **1. Problem**
-        **2. Impact and Causes**
-        **3. Solutions and Conclusion**
+        ### Key Point 1 - [Insert a concise phrase summarizing the key point]: 
+        Explain one major cause or impact of the issue, supported by data or examples.
 
-        ### Conclusion
-        XXXXX
+        ### Key Point 2 - [Insert a concise phrase summarizing the key point]: 
+        Provide a second cause or impact, backed with evidence or examples.
+
+        ### Key Point 3  - [Insert a concise phrase summarizing the key point]: 
+        Discuss a third cause or impact, including supporting data or examples.
+
+        ### Conclusion: 
+        Summarize the key points and present a strong call to action for the audience."
       `;
 
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [{ role: 'user', content }],
-        temperature: 0.2,
+        temperature: 0.3,
       });
 
       return response.choices[0].message.content;
@@ -672,10 +696,9 @@ export async function generateSpeakingTopicData(category, topic) {
     // Task 3: Generate the conversation
     const generateConversation = async () => {
       const content = `
-        Create a conversation in English between two people discussing the topic "${topic}". 
-        The conversation should cover the problems and possible solutions.
+        Generate a dialogue between two individuals discussing "${topic}". One person should take a more critical stance, questioning the current state or approach to the issue, while the other defends it but acknowledges areas for improvement. Both should offer creative suggestions for how to address the challenges or enhance the current strategy. The conversation should feel natural, with moments of agreement, disagreement, and thoughtful reflection. Include a mix of factual information and personal opinion, avoiding overly formal language.
 
-        output format
+        output format (all English)
         ### PersonA
         XXXXX
         ### PersonB
@@ -686,7 +709,7 @@ export async function generateSpeakingTopicData(category, topic) {
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [{ role: 'user', content }],
-        temperature: 0.2,
+        temperature: 0.5,
       });
 
       return response.choices[0].message.content;

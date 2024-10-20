@@ -45,7 +45,8 @@ export default async function handler(req, res) {
       const generatedData = await generateSpeakingTopicData(Category, Topic);
 
       // 処理内容のログ
-      console.log(`Generated data for Category: ${Category}, Topic: ${Topic}`, generatedData);
+      console.log(`Generated data for Category: ${Category}, Topic: ${Topic}`);
+      // console.log(`Generated data for Category: ${Category}, Topic: ${Topic}`, generatedData);
 
       const dataToWrite = JSON.stringify(generatedData);
 
