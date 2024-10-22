@@ -651,7 +651,7 @@ export async function generateSpeakingTopicData(category, topic) {
     // Task 2: Generate the presentation script
     const generatePresentation = async () => {
       const content = `
-          Create a compelling presentation script addressing the given social issue. Topic: "${topic}"
+          Create a compelling presentation script addressing the given social issue in English. Topic: "${topic}"
 
           Output the response in **Markdown** format. Use elements such as '**bold**', '*italic*', and lists '-'. You can use '###' for subheadings (H3), but avoid using '#' or '##' for H1 or H2.
 
