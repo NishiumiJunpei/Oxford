@@ -201,6 +201,9 @@ export function markdownToHTML(text) {
   text = text.replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>');  // 太字
   text = text.replace(/\*(.*?)\*/gim, '<i>$1</i>');  // 斜体
 
+  // 改行コードの直後にハイフンがある箇条書き部分を改行
+  text = text.replace(/\n-\s+(.*)/g, '<br>- $1');  // \n- のパターンにのみマッチ
+
   // 段落の変換
   text = text.replace(/\n\n/gim, '</p><p>');  // 改行2回で段落分け
 

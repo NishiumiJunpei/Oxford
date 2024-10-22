@@ -614,41 +614,29 @@ export async function generateSpeakingTopicData(category, topic) {
     // Task 1: Generate the knowledge base
     const generateKnowledgeBase = async () => {
       const content = `
-        Organize a knowledge framework on "${topic}" using the following structure:
+        Create a knowledge framework for the given topic: "${topic}"
+        Structure the output using headings (###) and bold text (**).
 
-        Overview: Summarize the theme and its broader significance.
-        Key Problems: Identify major challenges, using specific examples or statistics from Japan where applicable.
-        Impact of Problems: Explain the societal or economic impact, both in Japan and globally, with supporting data or examples.
-        Causes: Outline root causes, focusing on social, political, or economic factors in Japan, supported by relevant data or facts.
-        Solutions: Suggest actionable solutions with examples from Japan (e.g., policies, innovations).
-        Future Outlook: Discuss future trends and developments.
+        Define and Contextualize
+        Define the topic (e.g., Japan's role in global poverty) and explain its historical, social, or economic context. Why is this topic relevant today?
 
-        output format (all English)
-        ### Overview
-        XXX
+        Identify Key Issues
+        Highlight 3+ key issues related to the topic. Explain how each issue arises, who it affects, and provide specific examples or data.
 
-        ### Key Problems
-        **1.XXX**
-        XXXXXXX
+        Analyze Causes and Effects
+        Explore the root causes behind each issue and explain how they are interconnected. Discuss the long-term consequences.
 
-        **2.XXX**
-        XXXXXXX
+        Consider Multiple Perspectives
+        Analyze the topic from different viewpoints (government, business, individuals, international organizations, environment, etc.).
 
-        **3.XX**
-        XXXXXXX
+        Propose Solutions
+        Suggest solutions or policies addressing the key issues, and explain how they can be effective. Mention lessons from past successes or failures.
 
-        ### Impact of Problems
-        **1.XXX**
-        XXXXXXX
+        Discuss Future Outlook
+        Predict how the topic will evolve in the future. Discuss upcoming challenges, opportunities, and the impact of new technologies or ideas.
 
-        **2.XXX**
-        XXXXXXX
-
-        **3.XX**
-        XXXXXXX
-
-        ... repeat like key probelms and impact of problems
-
+        Summarize and Conclude
+        Provide a concise summary, highlighting the topic’s importance, long-term impact, and key actions or takeaways.
       `;
 
       const response = await openai.chat.completions.create({
@@ -663,25 +651,28 @@ export async function generateSpeakingTopicData(category, topic) {
     // Task 2: Generate the presentation script
     const generatePresentation = async () => {
       const content = `
-        Create a compelling presentation script addressing the given social issue. Topic: "${topic}"        
-       
-        ### Introduction:
-        Briefly introduce the social issue and explain its importance. Use data, statistics, or a real-life example to grab attention.
+          Create a compelling presentation script addressing the given social issue. Topic: "${topic}"
 
-        ### Key Points Summary:
-        Clearly state the main solution or approach to addressing the problem.
+          Output the response in **Markdown** format. Use elements such as '**bold**', '*italic*', and lists '-'. You can use '###' for subheadings (H3), but avoid using '#' or '##' for H1 or H2.
 
-        ### Key Point 1 - [Insert a concise phrase summarizing the key point]: 
-        Explain one major cause or impact of the issue, supported by data or examples.
+          ### Introduction:
+          Briefly introduce the social issue and explain its importance. Use data, statistics, or a real-life example to grab attention.
 
-        ### Key Point 2 - [Insert a concise phrase summarizing the key point]: 
-        Provide a second cause or impact, backed with evidence or examples.
+          ### Key Points Summary:
+          Clearly state the main solution or approach to addressing the problem.
 
-        ### Key Point 3  - [Insert a concise phrase summarizing the key point]: 
-        Discuss a third cause or impact, including supporting data or examples.
+          ### Key Point 1 - [Insert a concise phrase summarizing the key point]:
+          Explain one major cause or impact of the issue, supported by data or examples.
 
-        ### Conclusion: 
-        Summarize the key points and present a strong call to action for the audience."
+          ### Key Point 2 - [Insert a concise phrase summarizing the key point]:
+          Provide a second cause or impact, backed with evidence or examples.
+
+          ### Key Point 3 - [Insert a concise phrase summarizing the key point]:
+          Discuss a third cause or impact, including supporting data or examples.
+
+          ### Conclusion:
+          Summarize the key points and present a strong call to action for the audience.
+
       `;
 
       const response = await openai.chat.completions.create({

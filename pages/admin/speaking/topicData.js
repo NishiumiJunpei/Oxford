@@ -58,20 +58,50 @@ const TopicDataPage = () => {
               {category} - {topic}
             </Typography>
 
+            <Typography 
+              variant="h5" 
+              gutterBottom
+              sx={{
+                padding: '0.5em',  // 文字周りの余白
+                color: '#010101',  // 文字色
+                backgroundColor: '#eaf3ff',  // 背景色
+                borderBottom: 'solid 3px #516ab6',  // 下線
+              }}
+            >
+              知識体系
+            </Typography>
+
             <Typography variant="h5" gutterBottom>
-              知識体系:
             </Typography>
             <div dangerouslySetInnerHTML={{ __html: markdownToHTML(topicData.knowledgeBase) }} />
 
             <Divider sx={{mt:5, mb:5}}/>
-            <Typography variant="h5" gutterBottom>
-              プレゼン:
+            <Typography 
+              variant="h5" 
+              gutterBottom
+              sx={{
+                padding: '0.5em',  // 文字周りの余白
+                color: '#010101',  // 文字色
+                backgroundColor: '#eaf3ff',  // 背景色
+                borderBottom: 'solid 3px #516ab6',  // 下線
+              }}
+            >
+              プレゼン
             </Typography>
             <div dangerouslySetInnerHTML={{ __html: markdownToHTML(topicData.presentation) }} />
 
             <Divider sx={{mt:5, mb:5}}/>
-            <Typography variant="h5" gutterBottom>
-              会話:
+            <Typography 
+              variant="h5" 
+              gutterBottom
+              sx={{
+                padding: '0.5em',  // 文字周りの余白
+                color: '#010101',  // 文字色
+                backgroundColor: '#eaf3ff',  // 背景色
+                borderBottom: 'solid 3px #516ab6',  // 下線
+              }}
+            >
+              会話
             </Typography>
             <div dangerouslySetInnerHTML={{ __html: markdownToHTML(topicData.conversation) }} />
           </Box>
