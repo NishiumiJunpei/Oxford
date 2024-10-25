@@ -734,8 +734,11 @@ export async function generateQuestionData(topic) {
 
     const content = `
     Theme: "${topic}"
-    Instructions: Please generate a list of question categories and corresponding questions based on the provided theme. Each category should have no more than 3 key questions. The purpose is to cover the topic comprehensively and focus on understanding the most important aspects of the theme. Make sure the questions are concise and clear, addressing critical points related to the theme.
-    questions should be relevant to ${exam}
+    Instructions:
+    Please generate a list of question categories and corresponding questions based on the provided theme. Each category should include no more than three key questions. The purpose is to ensure comprehensive coverage of the topic, with a focus on helping learners understand the most critical aspects. The questions should be concise, clear, and address important points related to the theme. Additionally, ensure the questions are relevant to ${exam} and help students prepare for the types of discussions and essays commonly encountered in it.
+
+    Please tailor the content and examples specifically for Japanese learners, taking into account common challenges and cultural contexts.
+    All responses must be in English.
 
     Output format: Provide the output in json format with the following structure:
 
