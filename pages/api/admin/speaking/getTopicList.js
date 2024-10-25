@@ -25,26 +25,26 @@ export default async function handler(req, res) {
       });
 
       // Statusが 'Created' のものだけをフィルタ
-      const filteredData = data.filter(row => row.Status === 'Created');
+      const filteredData = data.filter(row => row.status === 'Created');
 
       // カテゴリごとにトピックリストを作成
       const categoryMap = {};
       filteredData.forEach(row => {
-        const { Category, Topic, Status, FlagToCreate } = row;
+        const { category, topic, status, flagToCreate } = row;
 
         // カテゴリがすでに存在しなければ新しく作成
-        if (!categoryMap[Category]) {
-          categoryMap[Category] = {
-            category: Category,
+        if (!categoryMap[category]) {
+          categoryMap[category] = {
+            category: category,
             topicList: []
           };
         }
 
         // トピックリストにトピックを追加
-        categoryMap[Category].topicList.push({
-          topicName: Topic,
-          Status: Status,
-          FlagToCreate: FlagToCreate
+        categoryMap[category].topicList.push({
+          topicName: topic,
+          status: status,
+          flagToCreate: flagToCreate
         });
       });
 

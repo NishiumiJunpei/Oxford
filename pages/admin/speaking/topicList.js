@@ -30,7 +30,7 @@ const TopicListPage = () => {
   const handleCreateTopicData = async () => {
     setIsCreating(true); // 作成中状態に変更
     try {
-      await axios.post('/api/admin/speaking/createTopicData');
+      await axios.post('/api/admin/speaking/createQuestionData');
       // 作成完了後にトピックリストを再取得
       fetchTopics();
     } catch (error) {
@@ -42,11 +42,12 @@ const TopicListPage = () => {
   // トピックボタンが押されたときの処理 (パラメータを渡して遷移)
   const handleTopicClick = (category, topic) => {
     router.push({
-      pathname: '/admin/speaking/topicData',
+      pathname: '/admin/speaking/questionData',
       query: { category, topic }
     });
   };
 
+  console.log('topics', topics)
   return (
     <Container sx={{ mb: 10 }}>
       {/* トピックデータ作成ボタン */}

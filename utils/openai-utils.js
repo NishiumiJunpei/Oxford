@@ -727,3 +727,156 @@ export async function generateSpeakingTopicData(category, topic) {
     throw error; // エラーを上位に伝播
   }
 }
+
+export async function generateQuestionData(topic) {
+  try {
+    const exam = "EIKEN Grade 1 exam"
+
+    const content = `
+    Theme: "${topic}"
+    Instructions: Please generate a list of question categories and corresponding questions based on the provided theme. Each category should have no more than 3 key questions. The purpose is to cover the topic comprehensively and focus on understanding the most important aspects of the theme. Make sure the questions are concise and clear, addressing critical points related to the theme.
+    questions should be relevant to ${exam}
+
+    Output format: Provide the output in json format with the following structure:
+
+    {
+      "categories": [
+        {
+          "title": "Category 1 Title",
+          "questions": [
+            "Question 1",
+            "Question 2",
+            "Question 3"
+          ]
+        },
+        {
+          "title": "Category 2 Title",
+          "questions": [
+            "Question 1",
+            "Question 2",
+            "Question 3"
+          ]
+        },
+        {
+          "title": "Category 3 Title",
+          "questions": [
+            "Question 1",
+            "Question 2",
+            "Question 3"
+          ]
+        }
+      ]
+    }`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', // GPT-4を利用
+      messages: [{role: 'user', content }],
+      temperature: 0.2,
+      response_format: { "type": "json_object" },
+      
+    });
+
+    const generatedData = response.choices[0].message.content;
+    return JSON.parse(generatedData); // JSON形式にパースして返す
+
+  } catch (error) {
+    console.error('Error generating question data:', error);
+    throw error;
+  }
+}
+
+
+export async function generateAnswerData(question) {
+  try {
+    // 1. 質問に基づいて回答を生成（simpleとdetailedの両方を含む）
+    const content = `
+    **Question**: "${question}"
+
+    **Instructions**:
+    1. **Simple Version**  
+       Please provide a concise answer to the question in no more than 200 words. Focus on clearly stating the key points.
+
+    2. **Detailed Version (Structured)**  
+       Please provide a detailed and structured answer to the question in markdown format using the following elements:
+       - **Introduction**: Briefly explain the background and importance of the question.
+       - **Main Points**: Break down the answer into 3 key points. For each key point, use the following structure:
+         1. **First Key Point Title**
+            - Provide an explanation for the first key point with 1-2 bullet points.
+         2. **Second Key Point Title**
+            - Provide an explanation for the second key point with 1-2 bullet points.
+         3. **Third Key Point Title**
+            - Provide an explanation for the third key point with 1-2 bullet points.
+       - **Conclusion**: Summarize the answer and mention future relevance or impact.
+
+    **Output Format**: Use markdown format with '###' for headers, '**' for bold, and '-' for bullet points. Follow this structure:
+
+    ### Simple Version:
+    [Provide a simple answer here]
+
+    ### Detailed Version (Structured):
+    **Introduction**: [Provide a brief introduction here]
+
+    ### Main Points:
+    1. **First Key Point Title**
+       - [Explanation for the first key point]
+       - [Additional supporting detail if needed]
+
+    2. **Second Key Point Title**
+       - [Explanation for the second key point]
+       - [Additional supporting detail if needed]
+
+    3. **Third Key Point Title**
+       - [Explanation for the third key point]
+       - [Additional supporting detail if needed]
+
+    **Conclusion**: [Summarize the answer and mention future relevance or implications]
+    `;
+
+    // OpenAI APIにリクエストを送信し、simpleとdetailedを含む回答を取得
+    const initialResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{role: 'assistant', content }],
+      temperature: 0.3,
+    });
+
+    const generatedText = initialResponse.choices[0].message.content;
+
+    // 2. Simple Versionの抽出
+    const simpleExtractPrompt = `
+    以下のテキストから「### Simple Version:」のセクションのみを抽出してください。ヘッダー「### Simple Version:」は含めないでください。
+
+    ${generatedText}
+    `;
+
+    const simpleResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{role: 'assistant', content: simpleExtractPrompt }],
+      temperature: 0.3,
+    });
+    const simpleAnswer = simpleResponse.choices[0].message.content;
+
+    // 3. Detailed Versionの抽出
+    const detailedExtractPrompt = `
+    以下のテキストから「### Detailed Version (Structured):」のセクションのみを抽出してください。ヘッダー「### Detailed Version (Structured):」は含めないでください。
+
+    ${generatedText}
+    `;
+
+      const detailedResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{role: 'assistant', content: detailedExtractPrompt }],
+      temperature: 0.3,
+    });
+    const detailedAnswer = detailedResponse.choices[0].message.content;
+
+    // simpleとdetailedをオブジェクトとして返す
+    return {
+      simpleAnswer: simpleAnswer,
+      detailedAnswer: detailedAnswer,
+    };
+
+  } catch (error) {
+    console.error('Error generating answer data:', error);
+    throw error;
+  }
+}

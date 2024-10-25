@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
       // Google Sheetsの情報
       const spreadsheetId = '1pfKfTmiF_H11qSRToHNX8qcE0ApN4RrDxlx5V9DkQ3M'; // あなたのスプレッドシートIDに置き換えてください
-      const range = 'topicData'; // シート名
+      const range = 'questionData'; // シート名
 
       // Google Sheetsからデータを取得
       const rawData = await getGoogleSheetData(spreadsheetId, range);
@@ -24,26 +24,35 @@ export default async function handler(req, res) {
       const headers = rawData[0]; // 1行目がヘッダー
       const data = rawData.slice(1); // ヘッダー以降のデータ
 
-      // CategoryとTopicが一致するデータを探す
-      const matchedData = data.find(row => row[0] === category && row[1] === topic);
+      // CategoryとTopicが一致するデータをフィルタリング
+      const filteredData = data.filter(row => row[0] === category && row[1] === topic);
 
       // 一致するデータがない場合
-      if (!matchedData) {
+      if (filteredData.length === 0) {
         return res.status(404).json({ error: 'No matching data found' });
       }
 
-      // Dataカラム (3列目) の内容をJSONにパース
-      let parsedData;
-      try {
-        parsedData = JSON.parse(matchedData[2]); // 3列目にDataがある
-        console.log('test', parsedData)
-      } catch (error) {
-        return res.status(500).json({ error: 'Failed to parse Data as JSON' });
-      }
+      // データを questionCategory 毎に構造化する
+      const structuredData = filteredData.reduce((result, row) => {
+        const [category, topic, questionCategory, question, simpleAnswer, detailedAnswer] = row;
 
-      // パースしたデータを返す
-      res.status(200).json(parsedData);
-    } catch (error) {
+        if (!result[questionCategory]) {
+          result[questionCategory] = [];
+        }
+
+        result[questionCategory].push({
+          question,
+          simpleAnswer,
+          detailedAnswer,
+        });
+
+        return result;
+      }, {});
+
+      // 整形されたデータを返す
+      res.status(200).json(structuredData);
+
+      } catch (error) {
       console.error('Error fetching data:', error);
       res.status(500).json({ error: 'Error fetching data' });
     }
