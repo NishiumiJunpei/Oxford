@@ -609,124 +609,6 @@ export async function generatePhraseSentences(conditionData, numSentence) {
   }
 }
 
-export async function generateSpeakingTopicData(category, topic) {
-  try {
-    // Task 1: Generate the knowledge base
-    const generateKnowledgeBase = async () => {
-      const content = `
-        Create a knowledge framework for the given topic: "${topic}"
-        Structure the output using headings (###) and bold text (**).
-
-        Define and Contextualize
-        Define the topic (e.g., Japan's role in global poverty) and explain its historical, social, or economic context. Why is this topic relevant today?
-
-        Identify Key Issues
-        Highlight 3+ key issues related to the topic. Explain how each issue arises, who it affects, and provide specific examples or data.
-
-        Analyze Causes and Effects
-        Explore the root causes behind each issue and explain how they are interconnected. Discuss the long-term consequences.
-
-        Consider Multiple Perspectives
-        Analyze the topic from different viewpoints (government, business, individuals, international organizations, environment, etc.).
-
-        Propose Solutions
-        Suggest solutions or policies addressing the key issues, and explain how they can be effective. Mention lessons from past successes or failures.
-
-        Discuss Future Outlook
-        Predict how the topic will evolve in the future. Discuss upcoming challenges, opportunities, and the impact of new technologies or ideas.
-
-        Summarize and Conclude
-        Provide a concise summary, highlighting the topic’s importance, long-term impact, and key actions or takeaways.
-      `;
-
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content }],
-        temperature: 0.2,
-      });
-
-      return response.choices[0].message.content;
-    };
-
-    // Task 2: Generate the presentation script
-    const generatePresentation = async () => {
-      const content = `
-          Create a compelling presentation script addressing the given social issue in English. Topic: "${topic}"
-
-          Output the response in **Markdown** format. Use elements such as '**bold**', '*italic*', and lists '-'. You can use '###' for subheadings (H3), but avoid using '#' or '##' for H1 or H2.
-
-          ### Introduction:
-          Briefly introduce the social issue and explain its importance. Use data, statistics, or a real-life example to grab attention.
-
-          ### Key Points Summary:
-          Clearly state the main solution or approach to addressing the problem.
-
-          ### Key Point 1 - [Insert a concise phrase summarizing the key point]:
-          Explain one major cause or impact of the issue, supported by data or examples.
-
-          ### Key Point 2 - [Insert a concise phrase summarizing the key point]:
-          Provide a second cause or impact, backed with evidence or examples.
-
-          ### Key Point 3 - [Insert a concise phrase summarizing the key point]:
-          Discuss a third cause or impact, including supporting data or examples.
-
-          ### Conclusion:
-          Summarize the key points and present a strong call to action for the audience.
-
-      `;
-
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content }],
-        temperature: 0.3,
-      });
-
-      return response.choices[0].message.content;
-    };
-
-    // Task 3: Generate the conversation
-    const generateConversation = async () => {
-      const content = `
-        Generate a dialogue between two individuals discussing "${topic}". One person should take a more critical stance, questioning the current state or approach to the issue, while the other defends it but acknowledges areas for improvement. Both should offer creative suggestions for how to address the challenges or enhance the current strategy. The conversation should feel natural, with moments of agreement, disagreement, and thoughtful reflection. Include a mix of factual information and personal opinion, avoiding overly formal language.
-
-        Assign random Western names to "Person A" and "Person B."
-
-        output format (all English)
-        ### [Random Name for Person A]
-        XXXXX
-        ### [Random Name for Person B]
-        XXXXX
-
-      `;
-
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content }],
-        temperature: 0.5,
-      });
-
-      return response.choices[0].message.content;
-    };
-
-    // 並列で各タスクを実行
-    const [knowledgeBase, presentation, conversation] = await Promise.all([
-      generateKnowledgeBase(),
-      generatePresentation(),
-      generateConversation(),
-    ]);
-
-    // 3つの結果を持つオブジェクトを返す
-    return {
-      knowledgeBase,
-      presentation,
-      conversation,
-    };
-
-  } catch (error) {
-    console.error('generateSpeakingTopicData error:', error);
-    throw error; // エラーを上位に伝播
-  }
-}
 
 export async function generateQuestionData(topic) {
   try {
@@ -735,10 +617,12 @@ export async function generateQuestionData(topic) {
     const content = `
     Theme: "${topic}"
     Instructions:
-    Please generate a list of question categories and corresponding questions based on the provided theme. Each category should include no more than three key questions. The purpose is to ensure comprehensive coverage of the topic, with a focus on helping learners understand the most critical aspects. The questions should be concise, clear, and address important points related to the theme. Additionally, ensure the questions are relevant to ${exam} and help students prepare for the types of discussions and essays commonly encountered in it.
+    Please generate a list of question categories and corresponding questions based on the provided theme. Each category should include no more than three key questions. The purpose is to encourage learners to think critically about the topic, explore their opinions, and express their viewpoints clearly. Questions should not merely test knowledge but instead focus on eliciting personal insights, opinions, and reasoning on important aspects of the theme. Additionally, ensure the questions are relevant to ${exam} and help students practice the types of discussions and essays that often appear in such exams.
 
-    Please tailor the content and examples specifically for Japanese learners, taking into account common challenges and cultural contexts.
+    Consider the unique challenges faced by Japanese learners and their cultural context when crafting the questions. Avoid questions that lead to simple factual answers, and instead encourage debate, reflection, and the expression of diverse perspectives.
+
     All responses must be in English.
+
 
     Output format: Provide the output in json format with the following structure:
 
@@ -769,7 +653,8 @@ export async function generateQuestionData(topic) {
           ]
         }
       ]
-    }`;
+    }
+    `;
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini', // GPT-4を利用
