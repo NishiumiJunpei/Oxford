@@ -663,6 +663,34 @@ export async function generateKnowledgeBase(topic) {
   }
 }
 
+export async function generateInterstingBlog(knowledgeBaseJ){
+  try {
+    // プロンプトの設定
+    const prompt = `
+    あなたは日本トップレベルの人気ブロガーです。
+    経済や政治などの難しい話題についても、誰にでもわかりやすく、ユーモアを出して楽しい記事を書くのが得意です。
+    この内容についてブログを書いてください。
+
+    ${knowledgeBaseJ}
+
+    `;
+
+    // OpenAI APIにリクエストを送信して質問データを生成
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+    });
+
+    // レスポンスからJSON形式のデータを抽出
+    return response.choices[0].message.content
+
+  } catch (error) {
+    console.error('Error generating question data:', error);
+    throw error;
+  }  
+}
+
 
 export async function generateQuestionData(knowledgeBaseE) {
   try {

@@ -1,6 +1,6 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getGoogleSheetData, writeToGoogleSheet } from '@/utils/googleapi-utils';
-import { generateKnowledgeBase, generateQuestionData, generateAnswerData } from '@/utils/openai-utils';
+import { generateKnowledgeBase, generateQuestionData, generateAnswerData, generateInterstingBlog } from '@/utils/openai-utils';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -27,6 +27,19 @@ export default async function handler(req, res) {
       return obj;
     });
 
+    const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
+    for (const row of rowsToProcess2) {
+      const { category, topic, rowIndex, knowledgeBaseJ } = row;
+      const interestingBlog = await generateInterstingBlog(knowledgeBaseJ);
+
+      const statusRange = `topicList!G${rowIndex}:G${rowIndex}`;
+      await writeToGoogleSheet(spreadsheetId, statusRange, [[ interestingBlog]], 'UPDATE');
+
+    }
+
+
+
+
     // フィルタリング: status が空で、flagToCreate が 1 の行のみを対象に
     const rowsToProcess = data.filter(row => !row.status && row.flagToCreate === '1');
 
@@ -35,9 +48,10 @@ export default async function handler(req, res) {
 
       // KnowledgeBase生成
       const { knowledgeBaseE, knowledgeBaseJ } = await generateKnowledgeBase(topic);
+      const interestingBlog = await generateInterstingBlog(knowledgeBaseJ);
 
       // 状態更新準備: Statusを "Created" に設定
-      const statusRange = `topicList!C${rowIndex}:F${rowIndex}`;
+      const statusRange = `topicList!C${rowIndex}:G${rowIndex}`;
 
       // 問題データ生成
       const questionData = await generateQuestionData(topic, knowledgeBaseE);
@@ -55,7 +69,7 @@ export default async function handler(req, res) {
       }
 
       // topicListへ書き込み
-      await writeToGoogleSheet(spreadsheetId, statusRange, [['Created', '1', knowledgeBaseE, knowledgeBaseJ]], 'UPDATE');
+      await writeToGoogleSheet(spreadsheetId, statusRange, [['Created', '1', knowledgeBaseE, knowledgeBaseJ, interestingBlog]], 'UPDATE');
       // questionData シートへの書き込み
       await writeToGoogleSheet(spreadsheetId, `${questionDataSheetName}!A:F`, questionEntries, 'APPEND');
     }

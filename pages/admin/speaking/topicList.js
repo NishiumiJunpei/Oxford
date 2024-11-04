@@ -109,8 +109,9 @@ const TopicListPage = () => {
         <DialogTitle>{selectedTopic ? selectedTopic.topicName : 'Knowledge Base'}</DialogTitle>
         <DialogContent>
           <Tabs value={tabValue} onChange={handleTabChange} aria-label="Knowledge Base Tabs">
-            <Tab label="English" />
-            <Tab label="日本語" />
+            <Tab label="ナレッジ(E)" />
+            <Tab label="ナレッジ(J)" />
+            <Tab label="ブログ" />
           </Tabs>
           <Box mt={2}>
             {tabValue === 0 && selectedTopic && (
@@ -123,6 +124,12 @@ const TopicListPage = () => {
                 dangerouslySetInnerHTML={{ __html: markdownToHTML(selectedTopic.knowledgeBaseJ) }}
               />
             )}
+            {tabValue === 2 && selectedTopic && (
+              <div
+                dangerouslySetInnerHTML={{ __html: markdownToHTML(selectedTopic.interestingBlog) }}
+              />
+            )}
+
           </Box>
         </DialogContent>
       </Dialog>
