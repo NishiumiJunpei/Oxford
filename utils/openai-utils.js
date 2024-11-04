@@ -614,7 +614,13 @@ export async function generateKnowledgeBase(topic) {
   try {
     // プロンプト1: 英語のコンサルティングレポートを生成
     const englishPrompt = `
-    You are a top consultant at McKinsey. Please write a consulting report on this topic in English.
+    You are a top consultant at McKinsey, renowned for your structured, data-driven insights and visually impactful reports. 
+    Please write a high-quality consulting report on the following topic in English.
+
+    Begin with an executive summary of the key findings and recommendations.
+    Present a structured analysis with sections such as Background, Key Challenges, Opportunities, Recommendations, and Conclusion.
+
+
     Do not include title in the response.
     Topic: ${topic}
 
@@ -702,6 +708,7 @@ export async function generateAnswerData(questionE, knowledgeBaseE) {
     // プロンプト1: 英語の構造化された回答を生成
     const englishPrompt = `
     Please write a structured answer in English to this question. Refer to the report for guidance.
+
     Question: ${questionE}
     Report: ${knowledgeBaseE}
 

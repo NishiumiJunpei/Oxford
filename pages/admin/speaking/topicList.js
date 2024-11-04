@@ -106,7 +106,7 @@ const TopicListPage = () => {
 
       {/* ダイアログ */}
       <Dialog open={openDialog} onClose={handleDialogClose} fullWidth maxWidth="md">
-        <DialogTitle>Knowledge Base</DialogTitle>
+        <DialogTitle>{selectedTopic ? selectedTopic.topicName : 'Knowledge Base'}</DialogTitle>
         <DialogContent>
           <Tabs value={tabValue} onChange={handleTabChange} aria-label="Knowledge Base Tabs">
             <Tab label="English" />
