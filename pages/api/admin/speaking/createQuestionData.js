@@ -27,16 +27,15 @@ export default async function handler(req, res) {
       return obj;
     });
 
-    const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
-    for (const row of rowsToProcess2) {
-      const { category, topic, rowIndex, knowledgeBaseJ } = row;
-      const interestingBlog = await generateInterstingBlog(knowledgeBaseJ);
+    // const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
+    // for (const row of rowsToProcess2) {
+    //   const { category, topic, rowIndex, knowledgeBaseJ } = row;
+    //   const interestingBlog = await generateInterstingBlog(knowledgeBaseJ);
 
-      const statusRange = `topicList!G${rowIndex}:G${rowIndex}`;
-      await writeToGoogleSheet(spreadsheetId, statusRange, [[ interestingBlog]], 'UPDATE');
+    //   const statusRange = `topicList!G${rowIndex}:G${rowIndex}`;
+    //   await writeToGoogleSheet(spreadsheetId, statusRange, [[ interestingBlog]], 'UPDATE');
 
-    }
-
+    // }
 
 
 
