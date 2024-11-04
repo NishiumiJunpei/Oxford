@@ -610,62 +610,85 @@ export async function generatePhraseSentences(conditionData, numSentence) {
 }
 
 
-export async function generateQuestionData(topic) {
+export async function generateKnowledgeBase(topic) {
   try {
-    const exam = "EIKEN Grade 1 exam"
+    // プロンプト1: 英語のコンサルティングレポートを生成
+    const englishPrompt = `
+    You are a top consultant at McKinsey. Please write a consulting report on this topic in English.
+    Do not include title in the response.
+    Topic: ${topic}
 
-    const content = `
-    Theme: "${topic}"
-    Instructions:
-    Please generate a list of question categories and corresponding questions based on the provided theme. Each category should include no more than three key questions. The purpose is to encourage learners to think critically about the topic, explore their opinions, and express their viewpoints clearly. Questions should not merely test knowledge but instead focus on eliciting personal insights, opinions, and reasoning on important aspects of the theme. Additionally, ensure the questions are relevant to ${exam} and help students practice the types of discussions and essays that often appear in such exams.
+    Output Format: Use markdown format with '##' and '###' for headers, '**' for bold text, and '-' for bullet points.Include numbering in headers where appropriate.
 
-    Consider the unique challenges faced by Japanese learners and their cultural context when crafting the questions. Avoid questions that lead to simple factual answers, and instead encourage debate, reflection, and the expression of diverse perspectives.
+    `;
 
-    All responses must be in English.
+    // OpenAI APIにリクエストして英語の知識ベースを生成
+    const englishResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: englishPrompt }],
+      temperature: 0.3,
+    });
+    const knowledgeBaseE = englishResponse.choices[0].message.content;
+
+    // プロンプト2: 英語から自然な日本語への翻訳を指示
+    const japanesePrompt = `
+    以下の内容を、自然な日本語で書き直してください。
+
+    ${knowledgeBaseE}
+    `;
+
+    // OpenAI APIにリクエストして日本語の知識ベースを生成
+    const japaneseResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: japanesePrompt }],
+      temperature: 0.3,
+    });
+    const knowledgeBaseJ = japaneseResponse.choices[0].message.content;
+
+    // 英語と日本語の知識ベースをオブジェクトとして返す
+    return {
+      knowledgeBaseE,
+      knowledgeBaseJ
+    };
+
+  } catch (error) {
+    console.error('Error generating knowledge base:', error);
+    throw error;
+  }
+}
 
 
-    Output format: Provide the output in json format with the following structure:
+export async function generateQuestionData(knowledgeBaseE) {
+  try {
+    // プロンプトの設定
+    const prompt = `
+    Please create three fundamental questions that this report answers.
+    Then, translate them into natural Japanese. 
+    Report: ${knowledgeBaseE}
 
+    Respond in json format.
     {
-      "categories": [
-        {
-          "title": "Category 1 Title",
-          "questions": [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        },
-        {
-          "title": "Category 2 Title",
-          "questions": [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        },
-        {
-          "title": "Category 3 Title",
-          "questions": [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        }
-      ]
+      "questionsEnglish": ["XXX", "XXX", "XXX"],
+      "questionsJapanese": ["XXX", "XXX", "XXX"]
     }
     `;
 
+    // OpenAI APIにリクエストを送信して質問データを生成
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // GPT-4を利用
-      messages: [{role: 'user', content }],
-      temperature: 0.2,
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
       response_format: { "type": "json_object" },
-      
+      temperature: 0.3,
     });
 
-    const generatedData = response.choices[0].message.content;
-    return JSON.parse(generatedData); // JSON形式にパースして返す
+    // レスポンスからJSON形式のデータを抽出
+    const questionData = JSON.parse(response.choices[0].message.content);
+
+    // questionsEnglish と questionsJapanese のデータを返す
+    return {
+      questionsE: questionData.questionsEnglish,
+      questionsJ: questionData.questionsJapanese
+    };
 
   } catch (error) {
     console.error('Error generating question data:', error);
@@ -674,93 +697,44 @@ export async function generateQuestionData(topic) {
 }
 
 
-export async function generateAnswerData(question) {
+export async function generateAnswerData(questionE, knowledgeBaseE) {
   try {
-    // 1. 質問に基づいて回答を生成（simpleとdetailedの両方を含む）
-    const content = `
-    **Question**: "${question}"
+    // プロンプト1: 英語の構造化された回答を生成
+    const englishPrompt = `
+    Please write a structured answer in English to this question. Refer to the report for guidance.
+    Question: ${questionE}
+    Report: ${knowledgeBaseE}
 
-    **Instructions**:
-    1. **Simple Version**  
-       Please provide a concise answer to the question in no more than 200 words. Focus on clearly stating the key points.
-
-    2. **Detailed Version (Structured)**  
-       Please provide a detailed and structured answer to the question in markdown format using the following elements:
-       - **Introduction**: Briefly explain the background and importance of the question.
-       - **Main Points**: Break down the answer into 3 key points. For each key point, use the following structure:
-         1. **First Key Point Title**
-            - Provide an explanation for the first key point with 1-2 bullet points.
-         2. **Second Key Point Title**
-            - Provide an explanation for the second key point with 1-2 bullet points.
-         3. **Third Key Point Title**
-            - Provide an explanation for the third key point with 1-2 bullet points.
-       - **Conclusion**: Summarize the answer and mention future relevance or impact.
-
-    **Output Format**: Use markdown format with '###' for headers, '**' for bold, and '-' for bullet points. Follow this structure:
-
-    ### Simple Version:
-    [Provide a simple answer here]
-
-    ### Detailed Version (Structured):
-    **Introduction**: [Provide a brief introduction here]
-
-    ### Main Points:
-    1. **First Key Point Title**
-       - [Explanation for the first key point]
-       - [Additional supporting detail if needed]
-
-    2. **Second Key Point Title**
-       - [Explanation for the second key point]
-       - [Additional supporting detail if needed]
-
-    3. **Third Key Point Title**
-       - [Explanation for the third key point]
-       - [Additional supporting detail if needed]
-
-    **Conclusion**: [Summarize the answer and mention future relevance or implications]
+    Output Format: Use markdown format with '##' and '###' for headers, '**' for bold text, and '-' for bullet points.Include numbering in headers where appropriate.
     `;
 
-    // OpenAI APIにリクエストを送信し、simpleとdetailedを含む回答を取得
-    const initialResponse = await openai.chat.completions.create({
+    // OpenAI APIにリクエストして英語の回答を生成
+    const englishResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      messages: [{role: 'assistant', content }],
+      messages: [{ role: 'user', content: englishPrompt }],
       temperature: 0.3,
     });
+    const answerE = englishResponse.choices[0].message.content;
 
-    const generatedText = initialResponse.choices[0].message.content;
+    // プロンプト2: 英語の回答を自然な日本語に翻訳
+    const japanesePrompt = `
+    以下の内容を自然な日本語で書き直してください。
 
-    // 2. Simple Versionの抽出
-    const simpleExtractPrompt = `
-    以下のテキストから「### Simple Version:」のセクションのみを抽出してください。ヘッダー「### Simple Version:」は含めないでください。
-
-    ${generatedText}
+    ${answerE}
     `;
 
-    const simpleResponse = await openai.chat.completions.create({
+    // OpenAI APIにリクエストして日本語の回答を生成
+    const japaneseResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      messages: [{role: 'assistant', content: simpleExtractPrompt }],
+      messages: [{ role: 'user', content: japanesePrompt }],
       temperature: 0.3,
     });
-    const simpleAnswer = simpleResponse.choices[0].message.content;
+    const answerJ = japaneseResponse.choices[0].message.content;
 
-    // 3. Detailed Versionの抽出
-    const detailedExtractPrompt = `
-    以下のテキストから「### Detailed Version (Structured):」のセクションのみを抽出してください。ヘッダー「### Detailed Version (Structured):」は含めないでください。
-
-    ${generatedText}
-    `;
-
-      const detailedResponse = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [{role: 'assistant', content: detailedExtractPrompt }],
-      temperature: 0.3,
-    });
-    const detailedAnswer = detailedResponse.choices[0].message.content;
-
-    // simpleとdetailedをオブジェクトとして返す
+    // 英語と日本語の回答をオブジェクトとして返す
     return {
-      simpleAnswer: simpleAnswer,
-      detailedAnswer: detailedAnswer,
+      answerE,
+      answerJ
     };
 
   } catch (error) {

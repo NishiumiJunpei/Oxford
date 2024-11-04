@@ -192,23 +192,24 @@ export function convertToSSML(text) {
 export function markdownToHTML(text) {
   if (!text) return ''; // textが未定義またはnullの場合、空文字を返す
 
-  // 見出し（#）の変換
-  text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');  // H3
-  text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');   // H2
-  text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');    // H1
+  // 見出しの変換
+  text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>'); // H3
+  text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');  // H2
+  text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');   // H1
 
-  // 強調表現の変換（太字と斜体のみ）
-  text = text.replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>');  // 太字
-  text = text.replace(/\*(.*?)\*/gim, '<i>$1</i>');  // 斜体
+  // 強調表現の変換（太字と斜体）
+  text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');  // 太字
+  text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');      // 斜体
 
-  // 改行コードの直後にハイフンがある箇条書き部分を改行
-  text = text.replace(/\n-\s+(.*)/g, '<br>- $1');  // \n- のパターンにのみマッチ
+  // 箇条書きリストの変換
+  text = text.replace(/^\s*-\s+(.*)/gm, '<ul><li>$1</li></ul>'); // 各リスト項目を<ul><li></li></ul>で囲む
+  text = text.replace(/<\/ul>\n<ul>/g, '\n'); // リストの各行で重複する<ul>タグを削除
 
-  // 段落の変換
-  text = text.replace(/\n\n/gim, '</p><p>');  // 改行2回で段落分け
+  // 改行2回で段落分け
+  text = text.replace(/\n\n/g, '</p><p>'); 
 
   // 最初と最後に<p>タグを追加
   text = '<p>' + text + '</p>';
 
-  return text.trim();  // 余計なスペースや改行を削除
+  return text.trim(); // 余計なスペースや改行を削除
 }

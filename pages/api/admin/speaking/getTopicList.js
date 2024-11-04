@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       // カテゴリごとにトピックリストを作成
       const categoryMap = {};
       filteredData.forEach(row => {
-        const { category, topic, status, flagToCreate } = row;
+        const { category, topic, status, flagToCreate, knowledgeBaseE, knowledgeBaseJ } = row;
 
         // カテゴリがすでに存在しなければ新しく作成
         if (!categoryMap[category]) {
@@ -44,7 +44,9 @@ export default async function handler(req, res) {
         categoryMap[category].topicList.push({
           topicName: topic,
           status: status,
-          flagToCreate: flagToCreate
+          flagToCreate: flagToCreate,
+          knowledgeBaseE,
+          knowledgeBaseJ
         });
       });
 
