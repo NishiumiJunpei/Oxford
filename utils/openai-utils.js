@@ -777,3 +777,44 @@ export async function generateAnswerData(questionE, knowledgeBaseE) {
     throw error;
   }
 }
+
+
+export async function generateSentenceData(knowledgeBaseE) {
+  try {
+    // プロンプトの設定
+    const prompt = `
+    Please create a speech or writing draft focusing on the topic with an emphasis on the Eiken Grade 1 level. From this draft, extract 30 key expressions (sentences). After that, translate each of these expressions into natural Japanese. The final result should be a combination of 30 English and Japanese pairs. The draft itself is not needed.
+
+
+    Content
+    ${knowledgeBaseE}
+
+    Respond in json format.
+    {"expressions":
+    [{
+      "sentenceJ": "XXXX",
+      "sentenceE": "XXXX"
+    },
+    {
+      "sentenceJ": "XXXX",
+      "sentenceE": "XXXX"
+    },
+    ...    
+    ]}
+    `;
+
+    // OpenAI APIにリクエストを送信して質問データを生成
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { "type": "json_object" },
+      temperature: 0.3,
+    });
+
+    return JSON.parse(response.choices[0].message.content).expressions;
+
+  } catch (error) {
+    console.error('Error generating question data:', error);
+    throw error;
+  }
+}

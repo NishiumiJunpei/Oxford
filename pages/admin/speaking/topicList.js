@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Stack, CircularProgress, Typography, Divider, Container, Box, IconButton, List, ListItem, Dialog, DialogTitle, DialogContent, Tabs, Tab } from '@mui/material';
-import { Book as BookIcon, QuestionAnswer as QuestionIcon } from '@mui/icons-material';
+import { Book as BookIcon, QuestionAnswer as QuestionIcon, ListAlt as SentenceListIcon } from '@mui/icons-material';
 import { useRouter } from 'next/router';
 import { markdownToHTML } from '@/utils/utils'; // markdown変換ユーティリティをインポート
 
@@ -48,6 +48,13 @@ const TopicListPage = () => {
     });
   };
 
+  const handleSentenceListClick = (category, topic) => {
+    router.push({
+      pathname: '/admin/speaking/sentenceData',
+      query: { category, topic }
+    });
+  };
+
   const handleDialogOpen = (topicData) => {
     setSelectedTopic(topicData);
     setOpenDialog(true);
@@ -76,7 +83,7 @@ const TopicListPage = () => {
         </Box>
       ) : (
         topics.map((categoryData, index) => (
-          <Box key={index} marginBottom={5}>
+          <Box key={index} marginBottom={5} sx={{maxWidth: 800}}>
             <Typography variant="h6" gutterBottom>
               {categoryData.category}
             </Typography>
@@ -85,14 +92,17 @@ const TopicListPage = () => {
                 <ListItem
                   key={idx}
                   secondaryAction={
-                    <>
+                    <Stack direction="row" spacing={2}> {/* Add spacing between icons */}
                       <IconButton edge="end" aria-label="view knowledge base" onClick={() => handleDialogOpen(topicData)}>
                         <BookIcon />
                       </IconButton>
                       <IconButton edge="end" aria-label="view questions" onClick={() => handleTopicClick(categoryData.category, topicData.topicName)}>
                         <QuestionIcon />
                       </IconButton>
-                    </>
+                      <IconButton edge="end" aria-label="view sentence list" onClick={() => handleSentenceListClick(categoryData.category, topicData.topicName)}>
+                        <SentenceListIcon />
+                      </IconButton>
+                    </Stack>
                   }
                 >
                   <Typography>{topicData.topicName}</Typography>
@@ -129,7 +139,6 @@ const TopicListPage = () => {
                 dangerouslySetInnerHTML={{ __html: markdownToHTML(selectedTopic.interestingBlog) }}
               />
             )}
-
           </Box>
         </DialogContent>
       </Dialog>

@@ -1,6 +1,6 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getGoogleSheetData, writeToGoogleSheet } from '@/utils/googleapi-utils';
-import { generateKnowledgeBase, generateQuestionData, generateAnswerData, generateInterstingBlog } from '@/utils/openai-utils';
+import { generateKnowledgeBase, generateQuestionData, generateAnswerData, generateInterstingBlog, generateSentenceData } from '@/utils/openai-utils';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -27,16 +27,24 @@ export default async function handler(req, res) {
       return obj;
     });
 
-    // const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
-    // for (const row of rowsToProcess2) {
-    //   const { category, topic, rowIndex, knowledgeBaseJ } = row;
-    //   const interestingBlog = await generateInterstingBlog(knowledgeBaseJ);
+    const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
+    for (const row of rowsToProcess2) {
+      const { category, topic, knowledgeBaseE } = row
+      const sentences = await generateSentenceData(knowledgeBaseE);
+      let no = 1; // 連番の初期値を1に設定
+      // 書き込むデータを整形
 
-    //   const statusRange = `topicList!G${rowIndex}:G${rowIndex}`;
-    //   await writeToGoogleSheet(spreadsheetId, statusRange, [[ interestingBlog]], 'UPDATE');
-
-    // }
-
+      const sentenceDataToWrite = sentences.map(sentence => [
+        category,          // category
+        topic,             // topic
+        no++,              // 連番（No）
+        sentence.sentenceJ, // 日本語文
+        sentence.sentenceE  // 英文
+      ]);    
+      // Google Sheetにデータを追加
+      await writeToGoogleSheet(spreadsheetId, 'sentenceData', sentenceDataToWrite, 'APPEND');
+    }
+    
 
 
     // フィルタリング: status が空で、flagToCreate が 1 の行のみを対象に
@@ -67,10 +75,27 @@ export default async function handler(req, res) {
         questionEntries.push([category, topic, questionE, questionJ, answerE, answerJ]);
       }
 
+
+
+      const sentences = await generateSentenceData(knowledgeBaseE);
+      let no = 1; // 連番の初期値を1に設定
+      // 書き込むデータを整形
+
+      const sentenceDataToWrite = sentences.map(sentence => [
+        category,          // category
+        topic,             // topic
+        no++,              // 連番（No）
+        sentence.sentenceJ, // 日本語文
+        sentence.sentenceE  // 英文
+      ]);    
+
       // topicListへ書き込み
       await writeToGoogleSheet(spreadsheetId, statusRange, [['Created', '1', knowledgeBaseE, knowledgeBaseJ, interestingBlog]], 'UPDATE');
       // questionData シートへの書き込み
       await writeToGoogleSheet(spreadsheetId, `${questionDataSheetName}!A:F`, questionEntries, 'APPEND');
+      // Google Sheetにデータを追加
+      await writeToGoogleSheet(spreadsheetId, 'sentenceData', sentenceDataToWrite, 'APPEND');
+
     }
 
     res.status(200).json({ message: 'Processed successfully.' });
