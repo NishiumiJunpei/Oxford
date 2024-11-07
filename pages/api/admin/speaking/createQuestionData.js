@@ -30,7 +30,22 @@ export default async function handler(req, res) {
     const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
     for (const row of rowsToProcess2) {
       const { category, topic, knowledgeBaseE } = row
-      const sentences = await generateSentenceData(knowledgeBaseE);
+
+      const range = 'questionData';
+      // Google Sheetsからデータを取得
+      const rawData = await getGoogleSheetData(spreadsheetId, range);  
+      // ヘッダーとデータを分離
+      const headers = rawData[0];
+      const data = rawData.slice(1);  
+      // CategoryとTopicが一致するデータをフィルタリングし、オブジェクト形式に整形
+      const filteredData = data
+        .filter(row => row[0] === category && row[1] === topic)
+        .map(row => ({
+          answerE: row[4]
+        }));
+
+
+      const sentences = await generateSentenceData(filteredData.map(item => item.answerE).join('\n'));
       let no = 1; // 連番の初期値を1に設定
       // 書き込むデータを整形
 
@@ -64,12 +79,15 @@ export default async function handler(req, res) {
       const questionData = await generateQuestionData(topic, knowledgeBaseE);
       const questionEntries = [];
 
+  
+      const answerE_merged = []
       for (let i = 0; i < questionData.questionsE.length; i++) {
         const questionE = questionData.questionsE[i];
         const questionJ = questionData.questionsJ[i];
 
         // 各質問に対して回答データ生成
         const { answerE, answerJ } = await generateAnswerData(questionE, knowledgeBaseE);
+        answerE_merged.push(answerE)
 
         // 書き込みデータ準備
         questionEntries.push([category, topic, questionE, questionJ, answerE, answerJ]);
@@ -77,7 +95,7 @@ export default async function handler(req, res) {
 
 
 
-      const sentences = await generateSentenceData(knowledgeBaseE);
+      const sentences = await generateSentenceData(answerE_merged.join('\n'));
       let no = 1; // 連番の初期値を1に設定
       // 書き込むデータを整形
 

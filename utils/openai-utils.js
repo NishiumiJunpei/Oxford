@@ -779,15 +779,14 @@ export async function generateAnswerData(questionE, knowledgeBaseE) {
 }
 
 
-export async function generateSentenceData(knowledgeBaseE) {
+export async function generateSentenceData(content) {
   try {
     // プロンプトの設定
     const prompt = `
-    Please create a speech or writing draft focusing on the topic with an emphasis on the Eiken Grade 1 level. From this draft, extract 30 key expressions (sentences). After that, translate each of these expressions into natural Japanese. The final result should be a combination of 30 English and Japanese pairs. The draft itself is not needed.
-
+    I want to be able to explain the following content in English. Please extract 50 important sentences comprehensively. Additionally, please provide a Japanese translation for each sentence.
 
     Content
-    ${knowledgeBaseE}
+    ${content}
 
     Respond in json format.
     {"expressions":
