@@ -1,6 +1,6 @@
 import { getUserFromSession } from '@/utils/session-utils';
 import { getGoogleSheetData, writeToGoogleSheet } from '@/utils/googleapi-utils';
-import { generateKnowledgeBase, generateQuestionData, generateAnswerData, generateInterstingBlog, generateSentenceData } from '@/utils/openai-utils';
+import { generateKnowledgeBase, generateQuestionData, generateAnswerData, generateInterstingBlog, generateSentenceData, enhanceKnowledgeBase } from '@/utils/openai-utils';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -27,38 +27,19 @@ export default async function handler(req, res) {
       return obj;
     });
 
-    const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
-    for (const row of rowsToProcess2) {
-      const { category, topic, knowledgeBaseE } = row
 
-      const range = 'questionData';
-      // Google Sheetsからデータを取得
-      const rawData = await getGoogleSheetData(spreadsheetId, range);  
-      // ヘッダーとデータを分離
-      const headers = rawData[0];
-      const data = rawData.slice(1);  
-      // CategoryとTopicが一致するデータをフィルタリングし、オブジェクト形式に整形
-      const filteredData = data
-        .filter(row => row[0] === category && row[1] === topic)
-        .map(row => ({
-          answerE: row[4]
-        }));
+    // const rowsToProcess2 = data.filter(row => row.flagToCreate === '2');
+    // for (const row of rowsToProcess2) {
+    //   const { category, topic, rowIndex, knowledgeBaseE } = row
 
+    //   const { knowledgeBaseEnew, knowledgeBaseJ } = await enhanceKnowledgeBase(knowledgeBaseE);
+    //   const interestingBlog = await generateInterstingBlog(knowledgeBaseJ);
+    //   const statusRange = `topicList!C${rowIndex}:G${rowIndex}`;
 
-      const sentences = await generateSentenceData(filteredData.map(item => item.answerE).join('\n'));
-      let no = 1; // 連番の初期値を1に設定
-      // 書き込むデータを整形
+    //   // topicListへ書き込み
+    //   await writeToGoogleSheet(spreadsheetId, statusRange, [['Created', '1', knowledgeBaseEnew, knowledgeBaseJ, interestingBlog]], 'UPDATE');
 
-      const sentenceDataToWrite = sentences.map(sentence => [
-        category,          // category
-        topic,             // topic
-        no++,              // 連番（No）
-        sentence.sentenceJ, // 日本語文
-        sentence.sentenceE  // 英文
-      ]);    
-      // Google Sheetにデータを追加
-      await writeToGoogleSheet(spreadsheetId, 'sentenceData', sentenceDataToWrite, 'APPEND');
-    }
+    // }
     
 
 

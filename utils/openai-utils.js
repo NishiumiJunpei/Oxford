@@ -618,8 +618,7 @@ export async function generateKnowledgeBase(topic) {
     Please write a high-quality consulting report on the following topic in English.
 
     Begin with an executive summary of the key findings and recommendations.
-    Present a structured analysis with sections such as Background, Key Challenges, Opportunities, Recommendations, and Conclusion.
-
+    Present a structured analysis which includes fact and quantitative data in Japan.
 
     Do not include title in the response.
     Topic: ${topic}
@@ -662,6 +661,51 @@ export async function generateKnowledgeBase(topic) {
     throw error;
   }
 }
+
+export async function enhanceKnowledgeBase(knowledgeBaseE) {
+  try {
+    // プロンプト1: 英語のコンサルティングレポートを生成
+    const englishPrompt = `
+    Please add fact and quantitative data for this content.
+
+    ${knowledgeBaseE}
+    `;
+
+    // OpenAI APIにリクエストして英語の知識ベースを生成
+    const englishResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: englishPrompt }],
+      temperature: 0.3,
+    });
+    const knowledgeBaseEnew = englishResponse.choices[0].message.content;
+
+    // プロンプト2: 英語から自然な日本語への翻訳を指示
+    const japanesePrompt = `
+    以下の内容を、自然な日本語で書き直してください。
+
+    ${knowledgeBaseEnew}
+    `;
+
+    // OpenAI APIにリクエストして日本語の知識ベースを生成
+    const japaneseResponse = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: japanesePrompt }],
+      temperature: 0.3,
+    });
+    const knowledgeBaseJ = japaneseResponse.choices[0].message.content;
+
+    // 英語と日本語の知識ベースをオブジェクトとして返す
+    return {
+      knowledgeBaseEnew,
+      knowledgeBaseJ
+    };
+
+  } catch (error) {
+    console.error('Error generating knowledge base:', error);
+    throw error;
+  }
+}
+
 
 export async function generateInterstingBlog(knowledgeBaseJ){
   try {
